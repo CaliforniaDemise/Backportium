@@ -204,7 +204,7 @@ public class TridentTransformer extends BasicTransformer {
             visitor.visitEnd();
         }
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("onUpdate", ""))) {
+            if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != RETURN) {
                     node = node.getPrevious();
@@ -243,7 +243,7 @@ public class TridentTransformer extends BasicTransformer {
             m_riptide.visitVarInsn(ISTORE, 2);
 
             m_riptide.visitVarInsn(ALOAD, 0);
-            m_riptide.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getLookVec", ""), "()Lnet/minecraft/util/math/Vec3d;", false);
+            m_riptide.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getLookVec", "func_70040_Z"), "()Lnet/minecraft/util/math/Vec3d;", false);
             m_riptide.visitVarInsn(ASTORE, 3);
 
             m_riptide.visitInsn(DCONST_1);
@@ -386,7 +386,7 @@ public class TridentTransformer extends BasicTransformer {
     public static byte[] transformEntityPlayer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("updateSize", ""))) {
+            if (method.name.equals(getName("updateSize", "func_184808_cD"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
 
                 AbstractInsnNode node = null;

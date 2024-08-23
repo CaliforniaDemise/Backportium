@@ -18,6 +18,7 @@ import surreal.backportium.util.RandomHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.GLOWSTONE_DUST;
@@ -82,7 +83,7 @@ public class ModRecipes {
     }
 
     private static void addShaped(ItemStack output, Object... params) {
-        addShaped(output.getItem().getRegistryName(), output, params);
+        addShaped(new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(output.getItem().getRegistryName()).getPath()), output, params);
     }
 
     private static void addShaped(ResourceLocation location, ItemStack output, Object... params) {

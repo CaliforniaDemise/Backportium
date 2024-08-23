@@ -55,59 +55,17 @@ public class Backportium {
     }
 
     // Registry Events
-    @SubscribeEvent
-    public void registerBlocks(RegistryEvent.Register<Block> event) {
-        ModBlocks.registerBlocks(event);
-    }
-
-    @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> event) {
-        ModItems.registerItems(event);
-    }
-
-    @SubscribeEvent
-    public void registerEntities(RegistryEvent.Register<EntityEntry> event) {
-        ModEntities.registerEntities(event);
-    }
-
-    @SubscribeEvent
-    public void registerEnchantments(RegistryEvent.Register<Enchantment> event) {
-        ModEnchantments.registerEnchantments(event);
-    }
-
-    @SubscribeEvent
-    public void registerPotions(RegistryEvent.Register<Potion> event) {
-        ModPotions.registerPotions(event);
-    }
-
-    @SubscribeEvent
-    public void registerPotionTypes(RegistryEvent.Register<PotionType> event) {
-        ModPotions.registerPotionTypes(event);
-    }
-
-    @SubscribeEvent
-    public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        ModRecipes.registerRecipes(event);
-    }
-
-    @SubscribeEvent
-    public void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-        ModSounds.registerSounds(event);
-    }
+    @SubscribeEvent public void registerBlocks(RegistryEvent.Register<Block> event) { ModBlocks.registerBlocks(event); }
+    @SubscribeEvent public void registerItems(RegistryEvent.Register<Item> event) { ModItems.registerItems(event); }
+    @SubscribeEvent public void registerEntities(RegistryEvent.Register<EntityEntry> event) { ModEntities.registerEntities(event); }
+    @SubscribeEvent public void registerEnchantments(RegistryEvent.Register<Enchantment> event) { ModEnchantments.registerEnchantments(event); }
+    @SubscribeEvent public void registerPotions(RegistryEvent.Register<Potion> event) { ModPotions.registerPotions(event); }
+    @SubscribeEvent public void registerPotionTypes(RegistryEvent.Register<PotionType> event) { ModPotions.registerPotionTypes(event); }
+    @SubscribeEvent public void registerRecipes(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerRecipes(event); }
+    @SubscribeEvent public void registerSounds(RegistryEvent.Register<SoundEvent> event) { ModSounds.registerSounds(event); }
 
     // In-Game Events
-    @SubscribeEvent
-    public void isPotionApplicable(PotionEvent.PotionApplicableEvent event) {
-        EventHandler.isPotionApplicable(event);
-    }
-
-    @SubscribeEvent
-    public void applyBonemeal(BonemealEvent event) {
-        EventHandler.applyBonemeal(event);
-    }
-
-    @SubscribeEvent
-    public void playNoteBlock(NoteBlockEvent.Play event) {
-        EventHandler.playNoteBlock(event);
-    }
+    @SubscribeEvent public void isPotionApplicable(PotionEvent.PotionApplicableEvent event) { EventHandler.isPotionApplicable(event); }
+    @SubscribeEvent public void applyBonemeal(BonemealEvent event) { EventHandler.applyBonemeal(event); }
+    @SubscribeEvent public void playNoteBlock(NoteBlockEvent.Play event) { EventHandler.playNoteBlock(event); }
 }

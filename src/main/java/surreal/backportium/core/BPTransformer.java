@@ -18,30 +18,21 @@ public class BPTransformer implements IClassTransformer {
         switch (transformedName) {
 //            case "net.minecraft.block.BlockButton": return transformBlockButton(basicClass);
             // Trident
-            case "net.minecraft.client.model.ModelBiped":
-                return TridentTransformer.transformModelBiped(basicClass);
-            case "net.minecraft.entity.projectile.EntityArrow":
-                return TridentTransformer.transformEntityArrow(basicClass);
-            case "net.minecraft.util.DamageSource":
-                return TridentTransformer.transformDamageSource(basicClass);
-            case "net.minecraft.entity.EntityLivingBase":
-                return TridentTransformer.transformEntityLivingBase(basicClass);
-            case "net.minecraft.entity.player.EntityPlayer":
-                return TridentTransformer.transformEntityPlayer(basicClass);
-            case "net.minecraft.client.renderer.entity.RenderLivingBase":
-                return TridentTransformer.transformRenderLivingBase(basicClass);
-            case "net.minecraft.client.renderer.entity.RenderPlayer":
-                return TridentTransformer.transformRenderPlayer(basicClass);
+            case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(basicClass);
+            case "net.minecraft.entity.projectile.EntityArrow": return TridentTransformer.transformEntityArrow(basicClass);
+            case "net.minecraft.util.DamageSource": return TridentTransformer.transformDamageSource(basicClass);
+            case "net.minecraft.entity.EntityLivingBase": return TridentTransformer.transformEntityLivingBase(basicClass);
+            case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);
+            case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(basicClass);
 
             // Pumpkin
             case "net.minecraft.block.BlockPane":
             case "net.minecraft.block.BlockWall":
                 return PumpkinTransformer.transformBlockFenceLike(basicClass);
-            case "net.minecraft.block.BlockStem":
-                return PumpkinTransformer.transformBlockStem(basicClass);
-//            case "net.minecraft.stats.StatList": return PumpkinTransformer.transformStatList(basicClass); TODO Find a way without loading ModBlocks early
-            case "net.minecraft.world.gen.feature.WorldGenPumpkin":
-                return PumpkinTransformer.transformWorldGenPumpkin(basicClass);
+            case "net.minecraft.block.BlockStem": return PumpkinTransformer.transformBlockStem(basicClass);
+//            case "net.minecraft.stats.StatList":return PumpkinTransformer.transformStatList(basicClass); TODO Find a way without loading ModBlocks early
+            case "net.minecraft.world.gen.feature.WorldGenPumpkin": return PumpkinTransformer.transformWorldGenPumpkin(basicClass);
         }
         return basicClass;
     }
