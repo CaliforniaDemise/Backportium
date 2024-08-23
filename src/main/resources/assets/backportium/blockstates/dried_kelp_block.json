@@ -1,0 +1,15 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cube_bottom_top",
+    "textures": {
+      "top": "blocks/dried_kelp_top",
+      "bottom": "blocks/dried_kelp_bottom",
+      "side": "blocks/dried_kelp_side"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

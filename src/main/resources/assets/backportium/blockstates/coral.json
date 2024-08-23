@@ -1,0 +1,66 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "alive=true,variant=tube": {
+      "model": "cross", "textures": { "cross": "blocks/tube_coral" }
+    },
+    "alive=true,variant=brain": {
+      "model": "cross", "textures": { "cross": "blocks/brain_coral" }
+    },
+    "alive=true,variant=bubble": {
+      "model": "cross", "textures": { "cross": "blocks/bubble_coral" }
+    },
+    "alive=true,variant=fire": {
+      "model": "cross", "textures": { "cross": "blocks/fire_coral" }
+    },
+    "alive=true,variant=horn": {
+      "model": "cross", "textures": { "cross": "blocks/horn_coral" }
+    },
+    "alive=false,variant=tube": {
+      "model": "cross", "textures": { "cross": "blocks/dead_tube_coral" }
+    },
+    "alive=false,variant=brain": {
+      "model": "cross", "textures": { "cross": "blocks/dead_brain_coral" }
+    },
+    "alive=false,variant=bubble": {
+      "model": "cross", "textures": { "cross": "blocks/dead_bubble_coral" }
+    },
+    "alive=false,variant=fire": {
+      "model": "cross", "textures": { "cross": "blocks/dead_fire_coral" }
+    },
+    "alive=false,variant=horn": {
+      "model": "cross", "textures": { "cross": "blocks/dead_horn_coral" }
+    },
+
+    "alive=true,variant=tube,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/tube_coral" }
+    },
+    "alive=true,variant=brain,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/brain_coral" }
+    },
+    "alive=true,variant=bubble,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/bubble_coral" }
+    },
+    "alive=true,variant=fire,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/fire_coral" }
+    },
+    "alive=true,variant=horn,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/horn_coral" }
+    },
+    "alive=false,variant=tube,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_tube_coral" }
+    },
+    "alive=false,variant=brain,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_brain_coral" }
+    },
+    "alive=false,variant=bubble,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_bubble_coral" }
+    },
+    "alive=false,variant=fire,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_fire_coral" }
+    },
+    "alive=false,variant=horn,inventory": {
+      "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_horn_coral" }
+    }
+  }
+}

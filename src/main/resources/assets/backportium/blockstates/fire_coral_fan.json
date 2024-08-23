@@ -1,0 +1,25 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "coral_wall_fan",
+    "textures": { "fan": "blocks/fire_coral_fan" }
+  },
+  "variants": {
+    "alive": {
+      "true": {},
+      "false": { "textures": { "fan": "blocks/dead_fire_coral_fan" } }
+    },
+
+    "facing": {
+      "up": { "model": "coral_fan" },
+      "down": { "model": "coral_fan", "x": 180 },
+      "north": {},
+      "south": { "y": 180 },
+      "east": { "y": 90 },
+      "west": { "y": 270 }
+    },
+
+    "alive=true,facing=up,inventory": { "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "#fan" } },
+    "alive=false,facing=up,inventory": { "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_fire_coral_fan" } }
+  }
+}

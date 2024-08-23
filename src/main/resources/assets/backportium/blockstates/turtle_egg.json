@@ -1,0 +1,77 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "amount=0,hatch=0": [
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_turtle_egg" },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_turtle_egg", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_turtle_egg", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_turtle_egg", "y": 270 }
+    ],
+    "amount=0,hatch=1": [
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_turtle_egg" },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_turtle_egg", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_turtle_egg", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_turtle_egg", "y": 270 }
+    ],
+    "amount=0,hatch=2": [
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_turtle_egg" },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_turtle_egg", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_turtle_egg", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_turtle_egg", "y": 270 }
+    ],
+    "amount=1,hatch=0": [
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_two_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_two_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_two_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_two_turtle_eggs", "y": 270 }
+    ],
+    "amount=1,hatch=1": [
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_two_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_two_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_two_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_two_turtle_eggs", "y": 270 }
+    ],
+    "amount=1,hatch=2": [
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_two_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_two_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_two_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_two_turtle_eggs", "y": 270 }
+    ],
+    "amount=2,hatch=0": [
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_three_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_three_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_three_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_three_turtle_eggs", "y": 270 }
+    ],
+    "amount=2,hatch=1": [
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_three_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_three_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_three_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_three_turtle_eggs", "y": 270 }
+    ],
+    "amount=2,hatch=2": [
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_three_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_three_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_three_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_three_turtle_eggs", "y": 270 }
+    ],
+    "amount=3,hatch=0": [
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_four_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_four_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_four_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg" }, "model": "template_four_turtle_eggs", "y": 270 }
+    ],
+    "amount=3,hatch=1": [
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_four_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_four_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_four_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_slightly_cracked" }, "model": "template_four_turtle_eggs", "y": 270 }
+    ],
+    "amount=3,hatch=2": [
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_four_turtle_eggs" },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_four_turtle_eggs", "y": 90 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_four_turtle_eggs", "y": 180 },
+      { "textures": { "all": "blocks/turtle_egg_very_cracked" }, "model": "template_four_turtle_eggs", "y": 270 }
+    ]
+  }
+}

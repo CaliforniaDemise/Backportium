@@ -1,0 +1,12 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "template_seagrass",
+    "textures": {
+      "texture": "blocks/seagrass"
+    }
+  },
+  "variants": {
+    "normal": [{}]
+  }
+}

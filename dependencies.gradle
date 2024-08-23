@@ -1,0 +1,29 @@
+repositories {
+    maven {
+        url 'https://maven.cleanroommc.com'
+    }
+    maven {
+        name 'CurseMaven'
+        url 'https://cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+    maven { url 'https://jitpack.io' }
+    mavenLocal() // Must be last for caching to work
+}
+
+dependencies {
+    implementation "com.cleanroommc:assetmover:2.5"
+
+    implementation rfg.deobf("com.github.jbredwards:fluidlogged-api:47f153989e")
+//    implementation rfg.deobf("curse.maven:aquaacrobatics-321792:5225456") TODO Potential remake
+
+//    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+//    annotationProcessor 'com.google.guava:guava:32.1.2-jre'
+//    annotationProcessor 'com.google.code.gson:gson:2.8.9'
+//
+//    String mixinBooter = modUtils.enableMixins('zone.rong:mixinbooter:9.1')
+//    api (mixinBooter) { transitive = false }
+//    annotationProcessor (mixinBooter) { transitive = false }
+}

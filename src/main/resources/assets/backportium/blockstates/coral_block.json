@@ -1,0 +1,66 @@
+{
+  "forge_marker": 1,
+  "variants": {
+    "alive=true,variant=tube": {
+      "model": "cube_all", "textures": { "all": "blocks/tube_coral_block" }
+    },
+    "alive=true,variant=brain": {
+      "model": "cube_all", "textures": { "all": "blocks/brain_coral_block" }
+    },
+    "alive=true,variant=bubble": {
+      "model": "cube_all", "textures": { "all": "blocks/bubble_coral_block" }
+    },
+    "alive=true,variant=fire": {
+      "model": "cube_all", "textures": { "all": "blocks/fire_coral_block" }
+    },
+    "alive=true,variant=horn": {
+      "model": "cube_all", "textures": { "all": "blocks/horn_coral_block" }
+    },
+    "alive=false,variant=tube": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_tube_coral_block" }
+    },
+    "alive=false,variant=brain": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_brain_coral_block" }
+    },
+    "alive=false,variant=bubble": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_bubble_coral_block" }
+    },
+    "alive=false,variant=fire": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_fire_coral_block" }
+    },
+    "alive=false,variant=horn": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_horn_coral_block" }
+    },
+
+    "alive=true,variant=tube,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/tube_coral_block" }
+    },
+    "alive=true,variant=brain,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/brain_coral_block" }
+    },
+    "alive=true,variant=bubble,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/bubble_coral_block" }
+    },
+    "alive=true,variant=fire,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/fire_coral_block" }
+    },
+    "alive=true,variant=horn,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/horn_coral_block" }
+    },
+    "alive=false,variant=tube,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_tube_coral_block" }
+    },
+    "alive=false,variant=brain,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_brain_coral_block" }
+    },
+    "alive=false,variant=bubble,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_bubble_coral_block" }
+    },
+    "alive=false,variant=fire,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_fire_coral_block" }
+    },
+    "alive=false,variant=horn,inventory": {
+      "model": "cube_all", "textures": { "all": "blocks/dead_horn_coral_block" }
+    }
+  }
+}

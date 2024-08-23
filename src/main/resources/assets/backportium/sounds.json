@@ -1,0 +1,13 @@
+{
+  "block.pumpkin.carve": { "category": "block", "sounds": [ "block/pumpkin/carve1", "block/pumpkin/carve2" ], "subtitle": "subtitles.block.pumpkin.carve" },
+  "item.armor.equip_turtle": { "category": "player", "sounds": [ "mob/turtle/armor", { "name": "mob/turtle/armor", "pitch": 0.85 }, { "name": "mob/turtle/armor", "pitch": 1.1 } ], "subtitle": "subtitles.item.armor.equip_turtle" },
+  "item.trident.hit": { "category": "player", "sounds": [ "item/trident/pierce1", "item/trident/pierce2", "item/trident/pierce3" ], "subtitle": "subtitles.item.trident.hit" },
+  "item.trident.hit_ground": { "category": "player", "sounds": [ { "name": "item/trident/ground_impact1", "volume": 0.9 }, { "name": "item/trident/ground_impact2", "volume": 0.9 }, { "name": "item/trident/ground_impact3", "volume": 0.9 }, { "name": "item/trident/ground_impact4", "volume": 0.9 } ], "subtitle": "subtitles.item.trident.hit_ground" },
+  "item.trident.return": { "category": "player", "sounds": [ { "name": "item/trident/return1", "volume": 0.8 }, { "name": "item/trident/return2", "volume": 0.8 }, { "name": "item/trident/return2", "pitch": 0.8, "volume": 0.8 }, { "name": "item/trident/return2", "pitch": 1.2, "volume": 0.8 }, { "name": "item/trident/return2", "pitch": 1.2, "volume": 0.8 }, { "name": "item/trident/return3", "volume": 0.8 }, { "name": "item/trident/return3", "pitch": 0.8, "volume": 0.8 }, { "name": "item/trident/return3", "pitch": 0.8, "volume": 0.8 }, { "name": "item/trident/return3", "pitch": 1.2, "volume": 0.8 } ], "subtitle": "subtitles.item.trident.return" },
+  "item.trident.riptide_1": { "category": "player", "sounds": [ "item/trident/riptide1" ], "subtitle": "subtitles.item.trident.riptide" },
+  "item.trident.riptide_2": { "category": "player", "sounds": [ "item/trident/riptide2" ], "subtitle": "subtitles.item.trident.riptide" },
+  "item.trident.riptide_3": { "category": "player", "sounds": [ "item/trident/riptide3" ], "subtitle": "subtitles.item.trident.riptide" },
+  "item.trident.throw": { "category": "player", "sounds": [ "item/trident/throw1", "item/trident/throw2" ], "subtitle": "subtitles.item.trident.throw" },
+  "item.trident.thunder": { "category": "player", "sounds": [ "item/trident/thunder1", "item/trident/thunder2" ], "subtitle": "subtitles.item.trident.thunder" },
+  "entity.drowned.shoot": { "category": "entity", "sounds": [ "item/trident/throw1", "item/trident/throw2" ], "subtitle": "subtitles.entity.drowned.shoot" }
+}
