@@ -55,10 +55,8 @@ public class BlockKelp extends BlockPlantWater {
             IBlockState upperState = worldIn.getBlockState(fromPos);
             if (upperState.getBlock() == this) {
                 worldIn.setBlockState(pos, state.withProperty(HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 3);
-            }
-            else worldIn.setBlockState(pos, state.withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 3);
-        }
-        else if (fromPos.getY() < pos.getY() && worldIn.getBlockState(fromPos).getBlock() != this) {
+            } else worldIn.setBlockState(pos, state.withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 3);
+        } else if (fromPos.getY() < pos.getY() && worldIn.getBlockState(fromPos).getBlock() != this) {
             worldIn.scheduleBlockUpdate(pos, this, 2, 10);
         }
     }
@@ -90,7 +88,7 @@ public class BlockKelp extends BlockPlantWater {
             return waterCheck && soil.getBlock().canSustainPlant(soil, worldIn, downPos, EnumFacing.UP, this);
         }
 
-        return (this.canSustainBush(soil) || (soil.getBlock() == this && soil.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)) && waterCheck ;
+        return (this.canSustainBush(soil) || (soil.getBlock() == this && soil.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)) && waterCheck;
     }
 
     @Override

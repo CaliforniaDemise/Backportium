@@ -13,4 +13,9 @@ public class BlockStairsDef extends BlockStairs {
     public BlockStairsDef(Block block) {
         super(block.getDefaultState());
     }
+
+    public BlockStairsDef setForce(float force) {
+        this.setHardness(force).setResistance(force);
+        return this;
+    }
 }

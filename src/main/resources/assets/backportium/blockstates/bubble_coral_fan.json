@@ -19,7 +19,7 @@
       "west": { "y": 270 }
     },
 
-    "alive=true,facing=up,inventory": { "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "#fan" } },
-    "alive=false,facing=up,inventory": { "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_bubble_coral_fan" } }
+    "alive=true,inventory": { "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "#fan" } },
+    "alive=false,inventory": { "transform": "forge:default-item", "model": "builtin/generated", "textures": { "layer0": "blocks/dead_bubble_coral_fan" } }
   }
 }

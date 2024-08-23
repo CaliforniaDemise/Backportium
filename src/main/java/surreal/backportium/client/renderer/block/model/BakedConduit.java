@@ -15,7 +15,6 @@ import net.minecraftforge.common.model.IModelState;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.vecmath.Vector4f;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

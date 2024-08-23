@@ -51,8 +51,7 @@ public class ItemSlabDef extends ItemSlab implements ModelProvider {
                 String variantIn = variant + objects[i].getName();
                 ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), variantIn));
             }
-        }
-        else {
+        } else {
             for (int i = 0; i < loopAmount; i++) {
                 String variantIn = variant + RandomHelper.getNameFromVariant(property, i);
                 ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), variantIn));

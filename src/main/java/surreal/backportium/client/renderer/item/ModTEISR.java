@@ -47,7 +47,7 @@ public class ModTEISR extends TileEntityItemStackRenderer {
                 TileEntitySpecialRenderer<TileConduit> tesr = TileEntityRendererDispatcher.instance.getRenderer(conduit);
                 if (tesr != null) {
                     GlStateManager.pushMatrix();
-                    tesr.render(conduit, 0, 0,0, partialTicks, 0, 255);
+                    tesr.render(conduit, 0, 0, 0, partialTicks, 0, 255);
                     GlStateManager.popMatrix();
                 }
             }

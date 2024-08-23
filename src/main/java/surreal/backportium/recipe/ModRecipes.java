@@ -19,11 +19,11 @@ import surreal.backportium.util.RandomHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.minecraft.init.Blocks.*;
+import static net.minecraft.init.Items.GLOWSTONE_DUST;
+import static net.minecraft.init.Items.REDSTONE;
 import static surreal.backportium.block.ModBlocks.*;
 import static surreal.backportium.item.ModItems.*;
-
-import static net.minecraft.init.Blocks.*;
-import static net.minecraft.init.Items.*;
 
 public class ModRecipes {
 

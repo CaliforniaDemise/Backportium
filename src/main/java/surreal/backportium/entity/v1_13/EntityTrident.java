@@ -50,26 +50,22 @@ public class EntityTrident extends EntityArrow {
             float speed = 0.25F;
             if (this.shootingEntity.posX < this.posX) {
                 this.motionX = -speed;
-            }
-            else if (this.shootingEntity.posX > this.posX) {
+            } else if (this.shootingEntity.posX > this.posX) {
                 this.motionX = speed;
             }
 
             if (this.shootingEntity.posZ < this.posZ) {
                 this.motionZ = -speed;
-            }
-            else if (this.shootingEntity.posZ > this.posZ) {
+            } else if (this.shootingEntity.posZ > this.posZ) {
                 this.motionZ = speed;
             }
 
             if (this.shootingEntity.posY < this.posY) {
                 this.motionY = -speed;
-            }
-            else if (this.shootingEntity.posY > this.posY) {
+            } else if (this.shootingEntity.posY > this.posY) {
                 this.motionY = speed;
             }
-        }
-        else if (this.loyaltyLvl > 0 && this.inGround) {
+        } else if (this.loyaltyLvl > 0 && this.inGround) {
             this.moveLoyalty = true;
         }
     }
@@ -146,8 +142,7 @@ public class EntityTrident extends EntityArrow {
 
                 if (id == impaling) {
                     impalingLvl = lvl;
-                }
-                else if (id == loyalty) {
+                } else if (id == loyalty) {
                     this.loyaltyLvl = lvl;
                 }
             }

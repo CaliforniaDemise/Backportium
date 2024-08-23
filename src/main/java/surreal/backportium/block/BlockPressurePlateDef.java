@@ -8,4 +8,9 @@ public class BlockPressurePlateDef extends BlockPressurePlate {
     public BlockPressurePlateDef(Material materialIn, Sensitivity sensitivityIn) {
         super(materialIn, sensitivityIn);
     }
+
+    public BlockPressurePlateDef setForce(float force) {
+        this.setHardness(force).setResistance(force);
+        return this;
+    }
 }

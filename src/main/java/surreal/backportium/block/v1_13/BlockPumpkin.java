@@ -52,10 +52,20 @@ public class BlockPumpkin extends Block {
             worldIn.setBlockState(pos, Blocks.PUMPKIN.getDefaultState().withProperty(BlockHorizontal.FACING, facing));
 
             int xOff = facing.getXOffset();
-            int yOff = facing.getYOffset();
             int zOff = facing.getZOffset();
 
-            EntityItem entityItem = new EntityItem(worldIn, pos.getX() + xOff + (xOff * 0.3F), pos.getY() + yOff + (yOff * 0.3F), pos.getZ() + zOff + (zOff * 0.3F), new ItemStack(Items.PUMPKIN_SEEDS, 4));
+            EntityItem entityItem = new EntityItem(worldIn, pos.getX() + 0.5F + (0.7F * xOff), pos.getY() + 0.5F, pos.getZ() + 0.5F + (0.7F * zOff), new ItemStack(Items.PUMPKIN_SEEDS, 4));
+            entityItem.motionX = 0.05F * xOff;
+            entityItem.motionZ = 0.05F * zOff;
+            int xMul = worldIn.rand.nextInt(3);
+            if (xMul == 2) xMul = -1;
+
+            int zMul = worldIn.rand.nextInt(3);
+            if (zMul == 2) zMul = -1;
+
+            entityItem.motionX += worldIn.rand.nextInt(3) * 0.05F * xMul;
+            entityItem.motionZ += worldIn.rand.nextInt(3) * 0.05F * zMul;
+            entityItem.motionY += worldIn.rand.nextInt(2) * 0.05F;
             entityItem.setNoPickupDelay();
             worldIn.spawnEntity(entityItem);
 

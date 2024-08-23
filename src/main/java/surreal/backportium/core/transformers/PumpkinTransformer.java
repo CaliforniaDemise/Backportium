@@ -5,7 +5,7 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
-public class PumpkinTransformer extends BasicTransformer{
+public class PumpkinTransformer extends BasicTransformer {
 
     public static byte[] transformBlockFenceLike(byte[] basicClass) {
         ClassNode cls = read(basicClass);
@@ -35,10 +35,9 @@ public class PumpkinTransformer extends BasicTransformer{
             String name = method.name;
             if (name.equals(getName("getActualState", "func_176221_a"))) {
                 transformBlockStem$apply(method);
-            }
-            else if (name.equals(getName("updateTick", "func_180650_b"))) {
-               transformBlockStem$apply(method);
-               break;
+            } else if (name.equals(getName("updateTick", "func_180650_b"))) {
+                transformBlockStem$apply(method);
+                break;
             }
         }
         return write(cls);
@@ -53,7 +52,8 @@ public class PumpkinTransformer extends BasicTransformer{
                     AbstractInsnNode node = iterator.next();
                     if (node.getOpcode() == INVOKESTATIC) {
                         InsnList list = new InsnList();
-                        list.add(new VarInsnNode(ALOAD, 0));;
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        ;
                         list.add(getUncarvedPumpkin());
                         list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", getName("PUMPKIN", "field_150423_aK"), "Lnet/minecraft/block/Block;"));
                         list.add(new VarInsnNode(ILOAD, 1));
@@ -86,7 +86,7 @@ public class PumpkinTransformer extends BasicTransformer{
             m_generate.visitVarInsn(ALOAD, 1);
             m_generate.visitVarInsn(ALOAD, 2);
             m_generate.visitVarInsn(ALOAD, 3);
-            m_generate.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/transforrmers/BPHooks", "WorldGenPumpkin$generate", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", false);
+            m_generate.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "WorldGenPumpkin$generate", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", false);
             m_generate.visitInsn(IRETURN);
         }
 

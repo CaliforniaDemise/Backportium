@@ -65,8 +65,7 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
             this.bindTexture(SHELL_TEXTURE);
             GlStateManager.translate(0, 0.075F, 0);
             this.SHELL.render(mc, te, x, y, z, 0.0625F, partialTicks);
-        }
-        else {
+        } else {
             this.bindTexture(CAGE_TEXTURE);
             GlStateManager.disableCull();
             this.CAGE.render(mc, te, x, y, z, 0.0625F, partialTicks);
@@ -143,10 +142,10 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
 
         builder.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
         double size = 0.6;
-        builder.pos(-size/2 + 0.15F , -size/4 - 0.3F, 0.0D).tex(0, 1).normal(0, 1, 0).endVertex();
-        builder.pos(size/2 + 0.15F, -size/4 - 0.3F, 0.0D).tex(1, 1).normal(0, 1, 0).endVertex();
-        builder.pos(size/2 + 0.15F, (size/4) * 3 - 0.3F, 0.0D).tex(1, 0).normal(0, 1, 0).endVertex();
-        builder.pos(-size/2 + 0.15F, (size/4) * 3 - 0.3F, 0.0D).tex(0, 0).normal(0, 1, 0).endVertex();
+        builder.pos(-size / 2 + 0.15F, -size / 4 - 0.3F, 0.0D).tex(0, 1).normal(0, 1, 0).endVertex();
+        builder.pos(size / 2 + 0.15F, -size / 4 - 0.3F, 0.0D).tex(1, 1).normal(0, 1, 0).endVertex();
+        builder.pos(size / 2 + 0.15F, (size / 4) * 3 - 0.3F, 0.0D).tex(1, 0).normal(0, 1, 0).endVertex();
+        builder.pos(-size / 2 + 0.15F, (size / 4) * 3 - 0.3F, 0.0D).tex(0, 0).normal(0, 1, 0).endVertex();
         tessellator.draw();
         GlStateManager.popMatrix();
     }

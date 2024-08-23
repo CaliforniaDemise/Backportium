@@ -76,8 +76,7 @@ public class TridentTransformer extends BasicTransformer {
                         break;
                     }
                 }
-            }
-            else if (method.name.equals(getName("onHit", "func_184549_a"))) {
+            } else if (method.name.equals(getName("onHit", "func_184549_a"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 int i = 0;
                 while (iterator.hasNext()) {
@@ -86,8 +85,7 @@ public class TridentTransformer extends BasicTransformer {
                         method.instructions.insertBefore(node.getPrevious(), new VarInsnNode(ALOAD, 0));
                         method.instructions.insertBefore(node.getPrevious(), new VarInsnNode(ALOAD, 2));
                         method.instructions.insert(node, new MethodInsnNode(INVOKEVIRTUAL, cls.name, "getHitDamage", "(Lnet/minecraft/entity/Entity;F)F", false));
-                    }
-                    else if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals(hitSound)) {
+                    } else if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals(hitSound)) {
                         node = node.getNext();
                         method.instructions.remove(node.getPrevious());
                         InsnList list = new InsnList();
@@ -99,8 +97,7 @@ public class TridentTransformer extends BasicTransformer {
                         if (i == 2) {
                             break;
                         }
-                    }
-                    else if (node.getOpcode() == INSTANCEOF && ((TypeInsnNode) node).desc.equals("net/minecraft/entity/monster/EntityEnderman")) {
+                    } else if (node.getOpcode() == INSTANCEOF && ((TypeInsnNode) node).desc.equals("net/minecraft/entity/monster/EntityEnderman")) {
                         method.instructions.insertBefore(node.getPrevious(), new VarInsnNode(ALOAD, 0));
                         node = node.getNext();
                         method.instructions.remove(node.getPrevious());
@@ -177,7 +174,7 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(new LdcInsnNode("arrow"));
                 list.add(new VarInsnNode(ASTORE, 2));
                 list.add(l_con);
-                list.add(new FrameNode(F_APPEND, 1, new Object[] { "java/lang/String" }, 0, null));
+                list.add(new FrameNode(F_APPEND, 1, new Object[]{"java/lang/String"}, 0, null));
                 method.instructions.insertBefore(node, list);
 
                 while (iterator.hasNext()) {
@@ -362,8 +359,7 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(hook("RenderPlayer$fixElytraRotations", "(Lnet/minecraft/entity/player/EntityPlayer;ZIF)V"));
                 method.instructions.insertBefore(node, list);
                 break;
-            }
-            else if (method.name.equals("<init>")) {
+            } else if (method.name.equals("<init>")) {
                 String riptideModel = "surreal/backportium/client/model/entity/ModelRiptide";
                 String riptideLayer = "surreal/backportium/client/renderer/entity/layer/LayerRiptide";
                 AbstractInsnNode node = method.instructions.getLast();

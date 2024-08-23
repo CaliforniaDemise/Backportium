@@ -4,14 +4,15 @@ import net.minecraft.util.math.BlockPos;
 
 public class MutBlockPos extends BlockPos.MutableBlockPos {
 
-    public MutBlockPos() {}
+    public MutBlockPos() {
+    }
 
     public MutBlockPos(BlockPos pos) {
         super(pos);
     }
 
     public MutBlockPos setPos(BlockPos pos, int x, int y, int z) {
-        return (MutBlockPos) this.setPos(pos.getX() + x, pos.getY() + y,pos.getZ() + z);
+        return (MutBlockPos) this.setPos(pos.getX() + x, pos.getY() + y, pos.getZ() + z);
     }
 
     public MutBlockPos setX(int x) {

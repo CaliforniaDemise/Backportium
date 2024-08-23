@@ -21,12 +21,10 @@ public class RandomHelper {
         if (property instanceof PropertyInteger) {
             PropertyInteger intProperty = (PropertyInteger) property;
             return state.getValue(intProperty);
-        }
-        else if (property instanceof PropertyBool) {
+        } else if (property instanceof PropertyBool) {
             PropertyBool boolProperty = (PropertyBool) property;
             return state.getValue(boolProperty) ? 1 : 0;
-        }
-        else if (property instanceof PropertyEnum<?>) {
+        } else if (property instanceof PropertyEnum<?>) {
             PropertyEnum<?> enumProperty = (PropertyEnum<?>) property;
             return state.getValue(enumProperty).ordinal();
         }
@@ -36,8 +34,7 @@ public class RandomHelper {
     public static String getNameFromVariant(IProperty<?> property, int meta) {
         if (property instanceof PropertyInteger) {
             return "" + meta;
-        }
-        else if (property instanceof PropertyBool) {
+        } else if (property instanceof PropertyBool) {
             return meta == 1 ? "true" : "false";
         }
 
@@ -47,8 +44,7 @@ public class RandomHelper {
     public static String getNameFromVariant(Comparable<?> comparable) {
         if (comparable.getClass().isEnum()) {
             return ((IStringSerializable) comparable).getName();
-        }
-        else return comparable.toString();
+        } else return comparable.toString();
     }
 
     public static String getVariantFromState(IBlockState state) {

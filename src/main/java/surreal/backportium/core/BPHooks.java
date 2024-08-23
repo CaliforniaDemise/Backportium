@@ -61,8 +61,7 @@ public class BPHooks {
                 if (handSide == EnumHandSide.RIGHT) {
                     model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX * 0.5F - ((float) Math.PI);
                     model.bipedRightArm.rotateAngleZ = model.bipedRightArm.rotateAngleZ - 0.15F; // Attention to detail mode
-                }
-                else {
+                } else {
                     model.bipedLeftArm.rotateAngleX = model.bipedLeftArm.rotateAngleX * 0.5F - ((float) Math.PI);
                     model.bipedLeftArm.rotateAngleZ = model.bipedLeftArm.rotateAngleZ + 0.15F; // Attention to detail mode
                 }
@@ -84,7 +83,7 @@ public class BPHooks {
                 if (d0 > 0.0D && d1 > 0.0D) {
                     double d2 = (entity.motionX * vec3d.x + entity.motionZ * vec3d.z) / (Math.sqrt(d0) * Math.sqrt(d1));
                     double d3 = entity.motionX * vec3d.z - entity.motionZ * vec3d.x;
-                    GlStateManager.rotate((float)(Math.signum(d3) * Math.acos(d2)) * 180.0F / (float)Math.PI, 0.0F, 1.0F, 0.0F);
+                    GlStateManager.rotate((float) (Math.signum(d3) * Math.acos(d2)) * 180.0F / (float) Math.PI, 0.0F, 1.0F, 0.0F);
                 }
 
                 GlStateManager.rotate(yRotation, 0, 1, 0);

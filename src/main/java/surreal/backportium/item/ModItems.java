@@ -14,8 +14,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
 import surreal.backportium.api.client.model.ModelProvider;
-import surreal.backportium.api.item.OredictProvider;
 import surreal.backportium.api.enums.ModArmorMaterials;
+import surreal.backportium.api.item.OredictProvider;
 import surreal.backportium.item.v1_13.ItemArmorTurtle;
 import surreal.backportium.item.v1_13.ItemTrident;
 

@@ -11,7 +11,9 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.RenderSpecificHandEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
@@ -93,7 +95,7 @@ public class ClientHandler {
             GlStateManager.pushMatrix();
 
             int i = rightArm ? 1 : -1;
-            GlStateManager.translate((float)i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
+            GlStateManager.translate((float) i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
 
 //            float yTranslation = rightArm ? 0.8F : 0.75F;
 

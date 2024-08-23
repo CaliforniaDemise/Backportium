@@ -5,10 +5,12 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fml.common.Loader;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.util.IntegrationHelper;
@@ -48,18 +50,24 @@ public class BlockPlantWater extends BlockPlant implements FluidLogged {
     @Override
     @ParametersAreNonnullByDefault
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-        return super.canPlaceBlockAt(worldIn, pos) && WorldHelper.inWater(worldIn, pos);
+        return super.canPlaceBlockAt(worldIn, pos) && WorldHelper.inWater(worldIn, pos) && worldIn.isSideSolid(pos.down(), EnumFacing.UP);
     }
 
     @Override
     @ParametersAreNonnullByDefault
     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
-        return super.canBlockStay(worldIn, pos, state) && WorldHelper.inWater(worldIn, pos);
+        return super.canBlockStay(worldIn, pos, state) && worldIn.isSideSolid(pos.down(), EnumFacing.UP);
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, IPlantable plantable) {
+        return state.isSideSolid(world, pos, EnumFacing.UP);
     }
 
     @Override
     protected boolean canSustainBush(@Nonnull IBlockState state) {
-        return state.isNormalCube();
+        return true;
     }
 
     @Nonnull

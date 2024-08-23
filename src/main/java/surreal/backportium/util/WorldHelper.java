@@ -107,8 +107,7 @@ public class WorldHelper {
     public static boolean inWater(IBlockAccess world, BlockPos pos) {
         if (Loader.isModLoaded(IntegrationHelper.FLUIDLOGGED)) {
             return WorldHelper.isWater(world, pos);
-        }
-        else {
+        } else {
             for (int i = 1; i < 6; i++) {
                 EnumFacing facing = EnumFacing.byIndex(i);
                 if (!WorldHelper.isWater(world, pos.offset(facing))) return false;

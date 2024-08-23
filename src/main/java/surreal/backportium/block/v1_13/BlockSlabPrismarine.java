@@ -22,6 +22,7 @@ public class BlockSlabPrismarine extends BlockSlabDef {
 
     public BlockSlabPrismarine(Material material, MapColor mapColor) {
         super(material, mapColor);
+        this.setHardness(1.5F).setResistance(6F);
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 

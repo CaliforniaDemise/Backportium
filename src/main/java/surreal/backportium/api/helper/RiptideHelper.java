@@ -26,8 +26,7 @@ public class RiptideHelper {
     public static void handleRiptide(EntityLivingBase entity, ItemStack stack) {
         try {
             HANDLE_RIPTIDE.invoke(entity, stack);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -35,8 +34,7 @@ public class RiptideHelper {
     public static boolean isInRiptide(EntityLivingBase entity) {
         try {
             return (boolean) IS_IN_RIPTIDE.invoke(entity);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -44,8 +42,7 @@ public class RiptideHelper {
     public static int getRiptideTickLeft(EntityLivingBase entity) {
         try {
             return (int) GET_RIPTIDE_TICK.invoke(entity);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -55,8 +52,7 @@ public class RiptideHelper {
             HANDLE_RIPTIDE = EntityLivingBase.class.getMethod("handleRiptide", ItemStack.class);
             IS_IN_RIPTIDE = EntityLivingBase.class.getMethod("isInRiptide");
             GET_RIPTIDE_TICK = EntityLivingBase.class.getMethod("getRiptideTickLeft");
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

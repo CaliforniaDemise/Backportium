@@ -26,11 +26,16 @@ public enum CoralType implements IStringSerializable {
 
     public static CoralType byMetadata(int meta) {
         switch (meta) {
-            default: return TUBE;
-            case 1: return BRAIN;
-            case 2: return BUBBLE;
-            case 3: return FIRE;
-            case 4: return HORN;
+            default:
+                return TUBE;
+            case 1:
+                return BRAIN;
+            case 2:
+                return BUBBLE;
+            case 3:
+                return FIRE;
+            case 4:
+                return HORN;
         }
     }
 }

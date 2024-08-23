@@ -8,9 +8,10 @@ import surreal.backportium.sound.ModSounds;
 public class ModArmorMaterials {
 
     public static final ItemArmor.ArmorMaterial
-        TURTLE_SHELL;
+            TURTLE_SHELL;
 
-    public static void register() {}
+    public static void register() {
+    }
 
     private static ItemArmor.ArmorMaterial register(String name, int durability, int enchantability, float toughness, SoundEvent soundOnEquip, int... reductionAmounts) {
         return EnumHelper.addArmorMaterial(name, name, durability, reductionAmounts, enchantability, soundOnEquip, toughness);

@@ -34,8 +34,7 @@ public class ItemBlockKelp extends ItemBlockSpecial {
 
             if (half == BlockDoublePlant.EnumBlockHalf.UPPER) {
                 facing = EnumFacing.UP;
-            }
-            else {
+            } else {
                 MutBlockPos mutPos = new MutBlockPos(pos);
                 while (true) {
                     IBlockState upState = worldIn.getBlockState(mutPos.move(EnumFacing.UP));

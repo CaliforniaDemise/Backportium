@@ -144,7 +144,8 @@ public class BlockTurtleEgg extends BlockClustered {
         if (entityIn instanceof EntityLivingBase) {
             EntityLivingBase entityLiving = (EntityLivingBase) entityIn;
             int amount = state.getValue(AMOUNT);
-            if (EnchantmentHelper.getEnchantmentLevel(Objects.requireNonNull(Enchantments.FEATHER_FALLING), entityLiving.getItemStackFromSlot(EntityEquipmentSlot.FEET)) != 0) return;
+            if (EnchantmentHelper.getEnchantmentLevel(Objects.requireNonNull(Enchantments.FEATHER_FALLING), entityLiving.getItemStackFromSlot(EntityEquipmentSlot.FEET)) != 0)
+                return;
             if (!worldIn.isRemote) worldIn.destroyBlock(pos, false); // TODO Handle it's own breaking
             if (amount > 0) {
                 entityIn.posY += 0.05F;

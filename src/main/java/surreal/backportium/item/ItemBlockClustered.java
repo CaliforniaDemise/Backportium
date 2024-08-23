@@ -6,7 +6,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
@@ -25,6 +24,7 @@ public class ItemBlockClustered extends ItemBlockSpecial {
 
     public ItemBlockClustered(Block block) {
         super(block);
+        this.setCreativeTab(block.getCreativeTab());
     }
 
     @Nonnull
@@ -48,7 +48,7 @@ public class ItemBlockClustered extends ItemBlockSpecial {
             worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 
             if (player instanceof EntityPlayerMP) {
-                CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP)player, pos, itemstack);
+                CriteriaTriggers.PLACED_BLOCK.trigger((EntityPlayerMP) player, pos, itemstack);
             }
 
             state.getBlock().onBlockPlacedBy(worldIn, pos, state, player, itemstack);
@@ -56,7 +56,6 @@ public class ItemBlockClustered extends ItemBlockSpecial {
             itemstack.shrink(1);
 
             return EnumActionResult.SUCCESS;
-        }
-        else return super.onItemUse(player, worldIn, oldPos, hand, facing, hitX, hitY, hitZ);
+        } else return super.onItemUse(player, worldIn, oldPos, hand, facing, hitX, hitY, hitZ);
     }
 }

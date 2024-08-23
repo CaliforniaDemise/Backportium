@@ -59,8 +59,7 @@ public class TileConduit extends TileEntity implements ITickable {
         if (!world.isRemote && updateTick == 0) {
             handleUpdate();
             updateTick = UPDATE_TICK;
-        }
-        else updateTick--;
+        } else updateTick--;
     }
 
     @Nonnull
@@ -111,8 +110,7 @@ public class TileConduit extends TileEntity implements ITickable {
                         if (this.getDistanceSq(entity.posX, entity.posY, entity.posZ) <= 64) {
                             entity.attackEntityFrom(DamageSource.DROWN, 4.0F);
                         }
-                    }
-                    else if (entity instanceof EntityPlayer) {
+                    } else if (entity instanceof EntityPlayer) {
                         entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, (20 * 12) + 1, 0));
                     }
                 }

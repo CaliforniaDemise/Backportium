@@ -15,7 +15,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import surreal.backportium.api.block.CoralBlock;
 import surreal.backportium.block.BlockClustered;
 import surreal.backportium.util.MutBlockPos;
 import surreal.backportium.util.WorldHelper;
@@ -25,6 +24,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 import java.util.Random;
 
+// TODO Might want to make sea pickle growable blocks an interface, or something else.
 @SuppressWarnings("deprecation")
 public class BlockSeaPickle extends BlockClustered implements IGrowable {
 
@@ -53,9 +53,12 @@ public class BlockSeaPickle extends BlockClustered implements IGrowable {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         int amount = state.getValue(AMOUNT);
         switch (amount) {
-            case 0: return ONE_AABB;
-            case 1: return TWO_AABB;
-            default: return THREE_AABB;
+            case 0:
+                return ONE_AABB;
+            case 1:
+                return TWO_AABB;
+            default:
+                return THREE_AABB;
         }
     }
 
@@ -82,12 +85,7 @@ public class BlockSeaPickle extends BlockClustered implements IGrowable {
     @ParametersAreNonnullByDefault
     public void grow(World worldIn, Random rand, BlockPos pos, IBlockState state) {
         IBlockState stateDown = worldIn.getBlockState(pos.down());
-
-        // TODO Replace with coral block
-        if (stateDown.getBlock() instanceof CoralBlock) {
-            CoralBlock coralBlock = (CoralBlock) state.getBlock();
-            if (!coralBlock.canPickleGrow(worldIn, pos, stateDown)) return;
-
+        if (stateDown.getMaterial() == Material.CORAL) {
             if (state.getValue(AMOUNT) < 3) {
                 handleEntities(worldIn, rand, pos);
                 worldIn.setBlockState(pos, state.withProperty(AMOUNT, 3));
@@ -129,7 +127,7 @@ public class BlockSeaPickle extends BlockClustered implements IGrowable {
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-       return new BlockStateContainer(this, ALIVE, BlockClustered.AMOUNT);
+        return new BlockStateContainer(this, ALIVE, BlockClustered.AMOUNT);
     }
 
     private void handleEntities(World world, Random rand, BlockPos pos) {
@@ -145,9 +143,7 @@ public class BlockSeaPickle extends BlockClustered implements IGrowable {
 
         IBlockState stateDown = worldIn.getBlockState(pos.down());
 
-        if (stateDown.getBlock() instanceof CoralBlock) {
-            CoralBlock coralBlock = (CoralBlock) stateDown.getBlock();
-            if (!coralBlock.canPickleGrow(worldIn, pos, stateDown)) return;
+        if (stateDown.getMaterial() == Material.CORAL) {
             int amount = rand.nextInt(5);
             if (amount > 0) {
                 handleEntities(worldIn, rand, pos);

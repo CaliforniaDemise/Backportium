@@ -15,12 +15,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.IShearable;
-import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -67,20 +68,13 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
     @ParametersAreNonnullByDefault
     protected void checkAndDropBlock(World worldIn, BlockPos pos, IBlockState state) {
         if (!this.canBlockStay(worldIn, pos, state)) {
-            boolean flag = state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER;
-            BlockPos blockpos = flag ? pos : pos.up();
-            BlockPos blockpos1 = flag ? pos.down() : pos;
-            Block block = flag ? this : worldIn.getBlockState(blockpos).getBlock();
-            Block block1 = flag ? worldIn.getBlockState(blockpos1).getBlock() : this;
-
-            if (!flag) this.dropBlockAsItem(worldIn, pos, state, 0); //Forge move above the setting to air.
-
-            if (block == this) {
-                worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 2);
+            boolean isTop = state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER;
+            if (isTop) {
+                worldIn.setBlockState(pos, Blocks.WATER.getDefaultState(), 2);
             }
-
-            if (block1 == this) {
-                worldIn.setBlockState(blockpos1, Blocks.AIR.getDefaultState(),3);
+            else if (worldIn.getBlockState(pos.up()).getBlock() != this || !worldIn.isSideSolid(pos.down(), EnumFacing.UP)) {
+                this.dropBlockAsItem(worldIn, pos, state, 0);
+                worldIn.setBlockState(pos, Blocks.WATER.getDefaultState(), 3);
             }
         }
     }
@@ -91,11 +85,19 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
         if (state.getBlock() != this) return super.canBlockStay(worldIn, pos, state); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
         if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER) {
             return worldIn.getBlockState(pos.down()).getBlock() == this;
-        }
-        else {
+        } else {
             IBlockState iblockstate = worldIn.getBlockState(pos.up());
-            return iblockstate.getBlock() == this && super.canBlockStay(worldIn, pos, iblockstate);
+            return iblockstate.getBlock() == this && super.canBlockStay(worldIn, pos.up(), iblockstate) && worldIn.isSideSolid(pos.down(), EnumFacing.UP);
         }
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, IPlantable plantable) {
+        if (state.getBlock() == this) {
+            return state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.LOWER;
+        }
+        return super.canSustainPlant(state, world, pos, direction, plantable);
     }
 
     @Override
@@ -103,8 +105,7 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
         if (state.getBlock() == this) {
             return state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.LOWER;
         }
-        System.out.println(state.isNormalCube());
-        return state.isNormalCube();
+        return true;
     }
 
     @Nonnull
@@ -112,8 +113,7 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
     public Item getItemDropped(IBlockState state, @Nonnull Random rand, int fortune) {
         if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER) {
             return Items.AIR;
-        }
-        else return super.getItemDropped(state, rand, fortune);
+        } else return super.getItemDropped(state, rand, fortune);
     }
 
     @Override
@@ -123,34 +123,8 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
     }
 
     public void place(World world, BlockPos pos, IBlockState state) {
-        world.setBlockState(pos, this.getDefaultState(), 3);
-        world.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 2);
-    }
-
-    @Override
-    @ParametersAreNonnullByDefault
-    public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
-        if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER) {
-            BlockPos down = pos.down();
-            if (worldIn.getBlockState(down).getBlock() == this) {
-                if (player.capabilities.isCreativeMode) {
-                    worldIn.setBlockToAir(down);
-                }
-                else {
-                    if (worldIn.isRemote) {
-                        worldIn.setBlockToAir(down);
-                    }
-                    else {
-                        worldIn.destroyBlock(down, true);
-                    }
-                }
-            }
-        }
-        else if (worldIn.getBlockState(pos.up()).getBlock() == this) {
-            worldIn.setBlockState(pos.up(), Blocks.AIR.getDefaultState(), 2);
-        }
-
-        super.onBlockHarvested(worldIn, pos, state, player);
+        if (world.setBlockState(pos, this.getDefaultState(), 3))
+            world.setBlockState(pos.up(), this.getDefaultState().withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 2);
     }
 
     @Nonnull
@@ -160,7 +134,7 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
         return new ItemStack(this);
     }
 
-   @Nonnull
+    @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return meta == 1 ? getDefaultState().withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER) : getDefaultState().withProperty(HALF, BlockDoublePlant.EnumBlockHalf.LOWER);

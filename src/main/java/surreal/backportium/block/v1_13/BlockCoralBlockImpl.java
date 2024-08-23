@@ -49,6 +49,6 @@ public class BlockCoralBlockImpl extends BlockCoralBlock {
     @Nonnull
     @Override
     protected BlockStateContainer createBlockState() {
-       return new BlockStateContainer(this, VARIANT, ALIVE);
+        return new BlockStateContainer(this, VARIANT, ALIVE);
     }
 }

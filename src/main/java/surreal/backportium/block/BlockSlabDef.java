@@ -40,6 +40,11 @@ public abstract class BlockSlabDef extends BlockSlab {
         return this;
     }
 
+    public BlockSlabDef setForce(float force) {
+        this.setHardness(force).setResistance(force);
+        return this;
+    }
+
     @Override
     public int getMetaFromState(@Nonnull IBlockState state) {
         int variant = RandomHelper.getMetaFromVariant(state, getVariantProperty());

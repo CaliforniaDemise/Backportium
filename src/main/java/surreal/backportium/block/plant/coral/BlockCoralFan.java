@@ -1,6 +1,5 @@
 package surreal.backportium.block.plant.coral;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -47,12 +46,18 @@ public class BlockCoralFan extends BlockCoral {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         EnumFacing facing = state.getValue(FACING);
         switch (facing) {
-            default: return UP_AABB;
-            case DOWN: return DOWN_AABB;
-            case WEST: return WEST_AABB;
-            case EAST: return EAST_AABB;
-            case NORTH: return NORTH_AABB;
-            case SOUTH: return SOUTH_AABB;
+            default:
+                return UP_AABB;
+            case DOWN:
+                return DOWN_AABB;
+            case WEST:
+                return WEST_AABB;
+            case EAST:
+                return EAST_AABB;
+            case NORTH:
+                return NORTH_AABB;
+            case SOUTH:
+                return SOUTH_AABB;
         }
     }
 

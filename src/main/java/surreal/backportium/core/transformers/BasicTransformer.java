@@ -47,8 +47,8 @@ public abstract class BasicTransformer implements Opcodes {
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             cls.accept(writer);
             stream.write(writer.toByteArray());
+        } catch (IOException ignored) {
         }
-        catch (IOException ignored) {}
     }
 
     protected static MethodNode clinit(ClassNode cls) {

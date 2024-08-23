@@ -17,9 +17,10 @@ import surreal.backportium.block.plant.BlockPlantWater;
 import surreal.backportium.block.plant.coral.BlockCoral;
 import surreal.backportium.block.plant.coral.BlockCoralBlock;
 import surreal.backportium.block.plant.coral.BlockCoralFan;
-import surreal.backportium.block.v1_13.*;
 import surreal.backportium.block.v1_13.BlockPumpkin;
+import surreal.backportium.block.v1_13.*;
 import surreal.backportium.item.*;
+import surreal.backportium.item.v1_13.ItemBlockCoralFan;
 import surreal.backportium.tile.v1_13.TileConduit;
 import surreal.backportium.util.SupplierInput;
 
@@ -40,6 +41,7 @@ public class ModBlocks {
     private static final SupplierInput<Block, Item> BASIC_ITEM_TEISR = ItemBlockTEISR::new;
     private static final SupplierInput<Block, Item> BASIC_CLUSTERED_ITEM = ItemBlockClustered::new;
     private static final SupplierInput<Block, Item> BASIC_KELP_ITEM = ItemBlockKelp::new;
+    private static final SupplierInput<Block, Item> BASIC_FAN_ITEM = ItemBlockCoralFan::new;
     private static final SupplierInput<Block, Item> BASIC_SLAB_ITEM = block -> {
         assert block instanceof BlockSlabDef;
         BlockSlabDef slab = (BlockSlabDef) block;
@@ -58,11 +60,11 @@ public class ModBlocks {
     public static final BlockTurtleEgg TURTLE_EGG = register(new BlockTurtleEgg(Material.SPONGE, Material.SPONGE.getMaterialMapColor()), BASIC_CLUSTERED_ITEM, "turtle_egg");
     public static final BlockCoral CORAL = register(new BlockCoralImpl(Material.CORAL), BASIC_ITEM_SUBTYPE, "coral");
     public static final BlockCoralBlock CORAL_BLOCK = register(new BlockCoralBlockImpl(Material.CORAL), BASIC_ITEM_SUBTYPE, "coral_block");
-    public static final BlockCoralFan TUBE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, TUBE), BASIC_ITEM_SUBTYPE, "tube_coral_fan");
-    public static final BlockCoralFan BRAIN_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, BRAIN), BASIC_ITEM_SUBTYPE, "brain_coral_fan");
-    public static final BlockCoralFan BUBBLE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, BUBBLE), BASIC_ITEM_SUBTYPE, "bubble_coral_fan");
-    public static final BlockCoralFan FIRE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, FIRE), BASIC_ITEM_SUBTYPE, "fire_coral_fan");
-    public static final BlockCoralFan HORN_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, HORN), BASIC_ITEM_SUBTYPE, "horn_coral_fan");
+    public static final BlockCoralFan TUBE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, TUBE), BASIC_FAN_ITEM, "tube_coral_fan");
+    public static final BlockCoralFan BRAIN_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, BRAIN), BASIC_FAN_ITEM, "brain_coral_fan");
+    public static final BlockCoralFan BUBBLE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, BUBBLE), BASIC_FAN_ITEM, "bubble_coral_fan");
+    public static final BlockCoralFan FIRE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, FIRE), BASIC_FAN_ITEM, "fire_coral_fan");
+    public static final BlockCoralFan HORN_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, HORN), BASIC_FAN_ITEM, "horn_coral_fan");
 
     public static final BlockSlabDef PRISMARINE_SLAB = register(new BlockSlabPrismarine(Material.ROCK).setDoubleSlab(register(new BlockSlabPrismarine.Double(Material.ROCK), null, "prismarine_slab_double")), BASIC_SLAB_ITEM, "prismarine_slab");
 
@@ -70,17 +72,17 @@ public class ModBlocks {
     public static final BlockStairsDef PRISMARINE_BRICKS_STAIRS = register(new BlockStairsDef(Blocks.PRISMARINE.getStateFromMeta(1)), BASIC_ITEM, "prismarine_bricks_stairs");
     public static final BlockStairsDef DARK_PRISMARINE_STAIRS = register(new BlockStairsDef(Blocks.PRISMARINE.getStateFromMeta(2)), BASIC_ITEM, "dark_prismarine_stairs");
 
-    public static final BlockTrapDoor SPRUCE_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD), BASIC_ITEM, "spruce_trapdoor");
-    public static final BlockTrapDoor BIRCH_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD), BASIC_ITEM, "birch_trapdoor");
-    public static final BlockTrapDoor JUNGLE_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD), BASIC_ITEM, "jungle_trapdoor");
-    public static final BlockTrapDoor ACACIA_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD), BASIC_ITEM, "acacia_trapdoor");
-    public static final BlockTrapDoor DARKOAK_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD), BASIC_ITEM, "dark_oak_trapdoor");
+    public static final BlockTrapDoor SPRUCE_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "spruce_trapdoor");
+    public static final BlockTrapDoor BIRCH_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "birch_trapdoor");
+    public static final BlockTrapDoor JUNGLE_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "jungle_trapdoor");
+    public static final BlockTrapDoor ACACIA_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "acacia_trapdoor");
+    public static final BlockTrapDoor DARKOAK_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "dark_oak_trapdoor");
 
-    public static final BlockPressurePlate SPRUCE_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING), BASIC_ITEM, "spruce_plate");
-    public static final BlockPressurePlate BIRCH_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING), BASIC_ITEM, "birch_plate");
-    public static final BlockPressurePlate JUNGLE_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING), BASIC_ITEM, "jungle_plate");
-    public static final BlockPressurePlate ACACIA_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING), BASIC_ITEM, "acacia_plate");
-    public static final BlockPressurePlate DARKOAK_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING), BASIC_ITEM, "dark_oak_plate");
+    public static final BlockPressurePlate SPRUCE_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING).setForce(0.5F), BASIC_ITEM, "spruce_plate");
+    public static final BlockPressurePlate BIRCH_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING).setForce(0.5F), BASIC_ITEM, "birch_plate");
+    public static final BlockPressurePlate JUNGLE_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING).setForce(0.5F), BASIC_ITEM, "jungle_plate");
+    public static final BlockPressurePlate ACACIA_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING).setForce(0.5F), BASIC_ITEM, "acacia_plate");
+    public static final BlockPressurePlate DARKOAK_PLATE = register(new BlockPressurePlateDef(Material.WOOD, BlockPressurePlate.Sensitivity.EVERYTHING).setForce(0.5F), BASIC_ITEM, "dark_oak_plate");
 
     public static final BlockButton SPRUCE_BUTTON = register(new BlockButtonWoodDef(), BASIC_ITEM, "spruce_button");
     public static final BlockButton BIRCH_BUTTON = register(new BlockButtonWoodDef(), BASIC_ITEM, "birch_button");
@@ -109,45 +111,69 @@ public class ModBlocks {
 
     public static Block getWoodTrapdoor(BlockPlanks.EnumType type) {
         switch (type) {
-            default: return Blocks.TRAPDOOR;
-            case SPRUCE: return SPRUCE_TRAPDOOR;
-            case BIRCH: return BIRCH_TRAPDOOR;
-            case JUNGLE: return JUNGLE_TRAPDOOR;
-            case ACACIA: return ACACIA_TRAPDOOR;
-            case DARK_OAK: return DARKOAK_TRAPDOOR;
+            default:
+                return Blocks.TRAPDOOR;
+            case SPRUCE:
+                return SPRUCE_TRAPDOOR;
+            case BIRCH:
+                return BIRCH_TRAPDOOR;
+            case JUNGLE:
+                return JUNGLE_TRAPDOOR;
+            case ACACIA:
+                return ACACIA_TRAPDOOR;
+            case DARK_OAK:
+                return DARKOAK_TRAPDOOR;
         }
     }
 
     public static Block getWoodPlate(BlockPlanks.EnumType type) {
         switch (type) {
-            default: return Blocks.WOODEN_PRESSURE_PLATE;
-            case SPRUCE: return SPRUCE_PLATE;
-            case BIRCH: return BIRCH_PLATE;
-            case JUNGLE: return JUNGLE_PLATE;
-            case ACACIA: return ACACIA_PLATE;
-            case DARK_OAK: return DARKOAK_PLATE;
+            default:
+                return Blocks.WOODEN_PRESSURE_PLATE;
+            case SPRUCE:
+                return SPRUCE_PLATE;
+            case BIRCH:
+                return BIRCH_PLATE;
+            case JUNGLE:
+                return JUNGLE_PLATE;
+            case ACACIA:
+                return ACACIA_PLATE;
+            case DARK_OAK:
+                return DARKOAK_PLATE;
         }
     }
 
     public static Block getWoodButton(BlockPlanks.EnumType type) {
         switch (type) {
-            default: return Blocks.WOODEN_BUTTON;
-            case SPRUCE: return SPRUCE_BUTTON;
-            case BIRCH: return BIRCH_BUTTON;
-            case JUNGLE: return JUNGLE_BUTTON;
-            case ACACIA: return ACACIA_BUTTON;
-            case DARK_OAK: return DARKOAK_BUTTON;
+            default:
+                return Blocks.WOODEN_BUTTON;
+            case SPRUCE:
+                return SPRUCE_BUTTON;
+            case BIRCH:
+                return BIRCH_BUTTON;
+            case JUNGLE:
+                return JUNGLE_BUTTON;
+            case ACACIA:
+                return ACACIA_BUTTON;
+            case DARK_OAK:
+                return DARKOAK_BUTTON;
         }
     }
 
     public static Block getCoralFan(CoralType type) {
         switch (type) {
-            default: return Blocks.AIR;
-            case TUBE: return TUBE_CORAL_FAN;
-            case BRAIN: return BRAIN_CORAL_FAN;
-            case BUBBLE: return BUBBLE_CORAL_FAN;
-            case FIRE: return FIRE_CORAL_FAN;
-            case HORN: return HORN_CORAL_FAN;
+            default:
+                return Blocks.AIR;
+            case TUBE:
+                return TUBE_CORAL_FAN;
+            case BRAIN:
+                return BRAIN_CORAL_FAN;
+            case BUBBLE:
+                return BUBBLE_CORAL_FAN;
+            case FIRE:
+                return FIRE_CORAL_FAN;
+            case HORN:
+                return HORN_CORAL_FAN;
         }
     }
 }

@@ -63,12 +63,6 @@ public class BlockCoral extends BlockBush implements FluidLogged {
         return true;
     }
 
-    @Nonnull
-    @Override
-    protected ItemStack getSilkTouchDrop(@Nonnull IBlockState state) {
-        return new ItemStack(this, 1, this.getMetaFromState(state));
-    }
-
     @Override
     @ParametersAreNonnullByDefault
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
@@ -98,7 +92,7 @@ public class BlockCoral extends BlockBush implements FluidLogged {
     @Override
     @ParametersAreNonnullByDefault
     protected boolean canSustainBush(IBlockState state) {
-        return state.isNormalCube();
+        return true;
     }
 
     static {

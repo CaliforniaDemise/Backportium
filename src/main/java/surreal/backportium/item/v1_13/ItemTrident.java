@@ -3,10 +3,8 @@ package surreal.backportium.item.v1_13;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +13,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.*;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.*;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IRarity;
 import surreal.backportium.Backportium;
@@ -28,7 +25,6 @@ import surreal.backportium.sound.ModSounds;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class ItemTrident extends ItemTEISR {
@@ -116,8 +112,7 @@ public class ItemTrident extends ItemTEISR {
 
                     player.addStat(StatList.getObjectUseStats(this));
                     worldIn.spawnEntity(trident);
-                }
-                else infinite = true;
+                } else infinite = true;
 
                 if (!infinite) stack.shrink(1);
             }
@@ -154,8 +149,7 @@ public class ItemTrident extends ItemTEISR {
     static {
         try {
             HANDLE_RIPTIDE = EntityLivingBase.class.getMethod("handleRiptide", ItemStack.class);
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }

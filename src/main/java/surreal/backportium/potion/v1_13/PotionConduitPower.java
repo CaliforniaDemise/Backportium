@@ -2,7 +2,6 @@ package surreal.backportium.potion.v1_13;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
-import net.minecraft.potion.Potion;
 import surreal.backportium.potion.PotionBasic;
 
 import javax.annotation.Nonnull;

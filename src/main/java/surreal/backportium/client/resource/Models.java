@@ -12,18 +12,6 @@ public class Models {
 
         // 1.13
         put(map, "block/template_seagrass");
-        put(map, "block/sea_pickle");
-        put(map, "block/two_sea_pickles");
-        put(map, "block/three_sea_pickles");
-        put(map, "block/four_sea_pickles");
-        put(map, "block/dead_sea_pickle");
-        put(map, "block/two_dead_sea_pickles");
-        put(map, "block/three_dead_sea_pickles");
-        put(map, "block/four_dead_sea_pickles");
-        put(map, "block/template_turtle_egg");
-        put(map, "block/template_two_turtle_eggs");
-        put(map, "block/template_three_turtle_eggs");
-        put(map, "block/template_four_turtle_eggs");
         put(map, "block/template_orientable_trapdoor_open", "block/trapdoor_open");
         put(map, "block/coral_fan", "block/coral_fan");
         put(map, "block/coral_wall_fan", "block/coral_wall_fan");

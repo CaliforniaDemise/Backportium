@@ -1,5 +1,6 @@
 package surreal.backportium;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityShulker;
@@ -9,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import surreal.backportium.block.ModBlocks;
@@ -30,51 +32,61 @@ public class EventHandler {
         }
     }
 
+    public static void playNoteBlock(NoteBlockEvent.Play event) {
+        World world = event.getWorld();
+        BlockPos downPos = event.getPos().down();
+
+        IBlockState downState = world.getBlockState(downPos);
+        if (downState.getMaterial() == Material.CORAL) {
+            event.setInstrument(NoteBlockEvent.Instrument.BASSDRUM);
+        }
+    }
+
     // TODO Make it better... Seagrass works grows on all solid blocks which makes normal grass block implementation not work........
     public static void applyBonemeal(BonemealEvent event) {
         World worldIn = event.getWorld();
+
         Random rand = worldIn.rand;
         BlockPos pos = event.getPos();
 
-         BlockPos blockpos = pos.up();
+        BlockPos blockpos = pos.up();
 
-         if (WorldHelper.inWater(worldIn, blockpos) && worldIn.getBlockState(blockpos).getBlock() instanceof IFluidBlock && worldIn.getBlockState(pos).isNormalCube()) {
-             event.setResult(Event.Result.ALLOW);
-             for (int i = 0; i < 128; ++i) {
-                 BlockPos blockpos1 = blockpos;
-                 int j = 0;
+        if (WorldHelper.inWater(worldIn, blockpos) && worldIn.isSideSolid(pos, EnumFacing.UP)) {
+            event.setResult(Event.Result.ALLOW);
+            if (worldIn.isRemote) return;
+            for (int i = 0; i < 64; ++i) {
+                BlockPos blockpos1 = blockpos;
+                int j = 0;
 
-                 while (true) {
-                     if (j >= i / 16) {
-                         if (WorldHelper.inWater(worldIn, blockpos1) && worldIn.getBlockState(blockpos1).getBlock() instanceof IFluidBlock) {
-                             if (rand.nextInt(8) == 0) {
-                                 BlockPos upPos = blockpos1.up();
-                                 if (worldIn.getBlockState(upPos).getBlock() instanceof IFluidBlock) {
-                                     IBlockState state = ModBlocks.SEAGRASS_DOUBLE.getDefaultState();
-                                     ModBlocks.SEAGRASS_DOUBLE.place(worldIn, blockpos1, state);
-                                 }
-                             }
-                             else {
-                                 IBlockState iblockstate1 = ModBlocks.SEAGRASS.getDefaultState();
-                                 if (ModBlocks.SEAGRASS.canBlockStay(worldIn, blockpos1, iblockstate1)) {
-                                     worldIn.setBlockState(blockpos1, iblockstate1, 3);
-                                 }
-                             }
-                         }
+                while (true) {
+                    if (j >= i / 16) {
+                        IBlockState check = worldIn.getBlockState(blockpos1);
+                        if (check.getBlock() == ModBlocks.SEAGRASS && worldIn.rand.nextInt(8) == 0) {
+                            BlockPos upPos = blockpos1.up();
+                            if (WorldHelper.inWater(worldIn, upPos)) {
+                                ModBlocks.SEAGRASS_DOUBLE.place(worldIn, blockpos1, ModBlocks.SEAGRASS.getDefaultState());
+                            }
+                        }
+                        else if (check.getBlock() != ModBlocks.SEAGRASS_DOUBLE) {
+                            IBlockState state = ModBlocks.SEAGRASS.getDefaultState();
+                            if (ModBlocks.SEAGRASS.canBlockStay(worldIn, blockpos1, state)) {
+                                worldIn.setBlockState(blockpos1, state, 3);
+                            }
+                        }
 
-                         break;
-                     }
+                        break;
+                    }
 
-                     blockpos1 = blockpos1.add(rand.nextInt(3) - 1, (rand.nextInt(3) - 1) * rand.nextInt(3) / 2, rand.nextInt(3) - 1);
+                    blockpos1 = blockpos1.add(rand.nextInt(3) - 1, (rand.nextInt(3) - 1) * rand.nextInt(3) / 2, rand.nextInt(3) - 1);
 
-                     BlockPos downPos = blockpos1.down();
-                     if (!worldIn.getBlockState(downPos).isSideSolid(worldIn, downPos, EnumFacing.UP) || worldIn.getBlockState(blockpos1).isNormalCube()) {
-                         break;
-                     }
+                    BlockPos downPos = blockpos1.down();
+                    if (!worldIn.getBlockState(downPos).isSideSolid(worldIn, downPos, EnumFacing.UP) || worldIn.isSideSolid(blockpos1, EnumFacing.UP)) {
+                        break;
+                    }
 
-                     ++j;
-                 }
-             }
-         }
+                    ++j;
+                }
+            }
+        }
     }
 }

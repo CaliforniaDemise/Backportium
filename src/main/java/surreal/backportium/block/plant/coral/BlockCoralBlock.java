@@ -14,8 +14,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import surreal.backportium.api.block.CoralBlock;
 import surreal.backportium.api.enums.CoralType;
+import surreal.backportium.block.BlockDef;
 import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
@@ -23,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
 @SuppressWarnings("deprecation")
-public class BlockCoralBlock extends Block implements CoralBlock {
+public class BlockCoralBlock extends BlockDef {
 
     protected static final PropertyEnum<CoralType> VARIANT = BlockCoral.VARIANT;
     protected static final PropertyBool ALIVE = BlockCoral.ALIVE;
@@ -34,6 +34,7 @@ public class BlockCoralBlock extends Block implements CoralBlock {
 
     public BlockCoralBlock(Material blockMaterialIn, MapColor blockMapColorIn) {
         super(blockMaterialIn, blockMapColorIn);
+        this.setHardness(1.5F).setResistance(6F);
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
     }
 

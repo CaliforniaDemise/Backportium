@@ -8,4 +8,9 @@ public class BlockTrapDoorDef extends BlockTrapDoor {
     public BlockTrapDoorDef(Material materialIn) {
         super(materialIn);
     }
+
+    public BlockTrapDoorDef setForce(float force) {
+        this.setHardness(force).setResistance(force);
+        return this;
+    }
 }
