@@ -139,8 +139,8 @@ public class ClientHandler {
             GlStateManager.pushMatrix();
             GlStateManager.translate((float) i * 0.21F, -0.34F + equipProgress * -0.6F, -0.46F);
 
-            GlStateManager.rotate(95, 0, 0, 1);
-            GlStateManager.rotate(-5, 0, 1, 0);
+            GlStateManager.rotate(i * 95, 0, 0, 1);
+            GlStateManager.rotate(i * -5, 0, 1, 0);
             GlStateManager.rotate(-65F, 1, 0, 0);
 
             Minecraft.getMinecraft().getItemRenderer().renderItemSide(player, stack, rightArm ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !rightArm);
