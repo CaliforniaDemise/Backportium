@@ -25,6 +25,7 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(basicClass);
+            case "net.minecraft.client.entity.EntityPlayerSP": return TridentTransformer.transformEntityPlayerSP(basicClass);
 
             // Pumpkin
             case "net.minecraft.block.BlockPane":

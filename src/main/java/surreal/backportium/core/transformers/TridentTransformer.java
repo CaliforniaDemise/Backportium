@@ -401,7 +401,6 @@ public class TridentTransformer extends BasicTransformer {
         return write(cls);
     }
 
-    // TODO Size update doesn't work with Aqua Acrobatics
     public static byte[] transformEntityPlayer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
@@ -440,7 +439,29 @@ public class TridentTransformer extends BasicTransformer {
                 break;
             }
         }
-        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformEntityPlayerSP(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("isSneaking", "func_70093_af"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == ILOAD) {
+                        LabelNode label = ((JumpInsnNode) node.getNext()).label;
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "isInRiptide", "()Z", false));
+                        list.add(new JumpInsnNode(IFNE, label));
+                        method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
         return write(cls);
     }
 }
