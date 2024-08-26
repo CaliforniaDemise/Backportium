@@ -22,6 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import surreal.backportium.Backportium;
+import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.client.model.ModelTrident;
 import surreal.backportium.client.renderer.entity.RenderTrident;
 import surreal.backportium.client.renderer.tile.TESRConduit;
@@ -95,9 +96,8 @@ public class ClientHandler {
             GlStateManager.pushMatrix();
 
             int i = rightArm ? 1 : -1;
-            GlStateManager.translate((float) i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
 
-//            float yTranslation = rightArm ? 0.8F : 0.75F;
+            GlStateManager.translate((float) i * 0.56F, -0.52F + equipProgress * -0.6F, -0.72F);
 
             GlStateManager.translate(i * -0.25F, 0.8F, -0.125F);
 
@@ -120,6 +120,28 @@ public class ClientHandler {
                 float f7 = MathHelper.sin((useTime - 0.1F) * 1.3F) * 0.0011F;
                 GlStateManager.translate(f7, f7, f7);
             }
+
+            Minecraft.getMinecraft().getItemRenderer().renderItemSide(player, stack, rightArm ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !rightArm);
+            GlStateManager.popMatrix();
+        }
+        else if (stack.getItemUseAction() == Backportium.SPEAR && RiptideHelper.isInRiptide(player)) {
+            event.setCanceled(true);
+
+            World world = Minecraft.getMinecraft().world;
+
+            float partialTicks = event.getPartialTicks();
+
+            boolean rightArm = handSide == EnumHandSide.RIGHT;
+            int i = rightArm ? 1 : -1;
+
+            float equipProgress = event.getEquipProgress();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate((float) i * 0.21F, -0.34F + equipProgress * -0.6F, -0.46F);
+
+            GlStateManager.rotate(95, 0, 0, 1);
+            GlStateManager.rotate(-5, 0, 1, 0);
+            GlStateManager.rotate(-65F, 1, 0, 0);
 
             Minecraft.getMinecraft().getItemRenderer().renderItemSide(player, stack, rightArm ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !rightArm);
             GlStateManager.popMatrix();

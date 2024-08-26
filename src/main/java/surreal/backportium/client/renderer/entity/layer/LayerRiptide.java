@@ -9,6 +9,7 @@ import surreal.backportium.api.helper.RiptideHelper;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused") // Used in TridentTransformer
 public class LayerRiptide implements LayerRenderer<EntityLivingBase> {
 
     private static final ResourceLocation TRIDENT_RIPTIDE_TEXTURE = new ResourceLocation("textures/entity/trident_riptide.png");

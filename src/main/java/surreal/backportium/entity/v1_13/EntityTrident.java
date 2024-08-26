@@ -106,6 +106,7 @@ public class EntityTrident extends EntityArrow {
     @Override
     public void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
+        if (stackTag == null) stackTag = new NBTTagCompound();
         compound.setTag("stackTag", stackTag);
     }
 

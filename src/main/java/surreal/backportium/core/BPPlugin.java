@@ -1,7 +1,9 @@
 package surreal.backportium.core;
 
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import surreal.backportium.Tags;
+import surreal.backportium.util.IntegrationHelper;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -10,6 +12,7 @@ import java.util.Map;
 @IFMLLoadingPlugin.Name(Tags.MOD_ID)
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(-100)
+@Optional.Interface(modid = IntegrationHelper.AQUA_ACROBATICS, iface = "zone.rong.mixinbooter.IMixinConfigHijacker")
 public class BPPlugin implements IFMLLoadingPlugin {
 
     protected static File GAME_DIR;

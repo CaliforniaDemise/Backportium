@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import surreal.backportium.Backportium;
+import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
 
@@ -51,13 +52,10 @@ public class BPHooks {
 
             handSide = activeHand == EnumHand.MAIN_HAND ? living.getPrimaryHand() : living.getPrimaryHand().opposite();
 
-            int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, activeStack);
-
-            if (riptide > 0 && !(entityIn.isInWater() || entityIn.world.isRainingAt(entityIn.getPosition()))) {
-                return;
-            }
-
             if (activeStack.getItemUseAction() == Backportium.SPEAR && living.isHandActive()) {
+                int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, activeStack);
+                if (riptide != 0 && !RiptideHelper.canRiptide(living.world, living)) return;
+
                 if (handSide == EnumHandSide.RIGHT) {
                     model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX * 0.5F - ((float) Math.PI);
                     model.bipedRightArm.rotateAngleZ = model.bipedRightArm.rotateAngleZ - 0.15F; // Attention to detail mode

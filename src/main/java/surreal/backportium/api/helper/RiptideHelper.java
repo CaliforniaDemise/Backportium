@@ -1,9 +1,13 @@
 package surreal.backportium.api.helper;
 
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
+import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.sound.ModSounds;
+import surreal.backportium.util.RandomHelper;
 
 import java.lang.reflect.Method;
 
@@ -23,6 +27,15 @@ public class RiptideHelper {
         }
     }
 
+    public static int getRiptideLevel(ItemStack stack) {
+        return EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
+    }
+
+    public static boolean canRiptide(World world, EntityLivingBase entity) {
+        return entity.isInWater() || world.isRainingAt(RandomHelper.getEntityPosition(entity).up());
+    }
+
+    // Reflection
     public static void handleRiptide(EntityLivingBase entity, ItemStack stack) {
         try {
             HANDLE_RIPTIDE.invoke(entity, stack);

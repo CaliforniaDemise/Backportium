@@ -232,7 +232,6 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(l_con);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 method.instructions.insertBefore(node, list);
-                break;
             }
         }
         { // handleRiptide. I guess I should handle sound here too?
@@ -247,7 +246,7 @@ public class TridentTransformer extends BasicTransformer {
             m_riptide.visitVarInsn(ASTORE, 3);
 
             m_riptide.visitInsn(DCONST_1);
-            m_riptide.visitInsn(DCONST_1);
+            m_riptide.visitLdcInsn(0.8D);
             m_riptide.visitVarInsn(ILOAD, 2);
             m_riptide.visitInsn(I2D);
             m_riptide.visitInsn(DMUL);
@@ -294,6 +293,26 @@ public class TridentTransformer extends BasicTransformer {
             m_riptide.visitVarInsn(ALOAD, 0);
             m_riptide.visitIntInsn(BIPUSH, 20);
             m_riptide.visitFieldInsn(PUTFIELD, cls.name, "riptideTime", "I");
+
+            m_riptide.visitVarInsn(ILOAD, 2);
+            m_riptide.visitMethodInsn(INVOKESTATIC, "surreal/backportium/api/helper/RiptideHelper", "getSound", "(I)Lnet/minecraft/util/SoundEvent;", false);
+            m_riptide.visitVarInsn(ASTORE, 5);
+
+            m_riptide.visitVarInsn(ALOAD, 0);
+            m_riptide.visitFieldInsn(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;");
+            m_riptide.visitInsn(ACONST_NULL);
+            m_riptide.visitVarInsn(ALOAD, 0);
+            m_riptide.visitFieldInsn(GETFIELD, cls.name, getName("posX", "field_70165_t"), "D");
+            m_riptide.visitVarInsn(ALOAD, 0);
+            m_riptide.visitFieldInsn(GETFIELD, cls.name, getName("posY", "field_70163_u"), "D");
+            m_riptide.visitVarInsn(ALOAD, 0);
+            m_riptide.visitFieldInsn(GETFIELD, cls.name, getName("posZ", "field_70161_v"), "D");
+            m_riptide.visitVarInsn(ALOAD, 5);
+            m_riptide.visitVarInsn(ALOAD, 0);
+            m_riptide.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getSoundCategory", "func_184176_by"), "()Lnet/minecraft/util/SoundCategory;", false);
+            m_riptide.visitInsn(FCONST_1);
+            m_riptide.visitInsn(FCONST_1);
+            m_riptide.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184133_a"), "(Lnet/minecraft/entity/player/EntityPlayer;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", false);
 
             m_riptide.visitInsn(RETURN);
         }

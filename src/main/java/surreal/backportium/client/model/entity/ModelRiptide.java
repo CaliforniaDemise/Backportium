@@ -30,6 +30,7 @@ public class ModelRiptide extends ModelBase {
                 float o = 0.75F * (float) i;
                 GlStateManager.scale(o, o, o);
                 GlStateManager.translate(0.0F, -0.2F + 0.6F * (float) i, 0.0F);
+                GlStateManager.disableCull();
                 this.riptide.render(scale);
                 GlStateManager.popMatrix();
             }

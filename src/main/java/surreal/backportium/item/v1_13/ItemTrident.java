@@ -33,7 +33,7 @@ public class ItemTrident extends ItemTEISR {
         if (worldIn == null || entityIn == null) return -1F;
         if (entityIn.getActiveItemStack().getItem() instanceof ItemTrident) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
-            if (riptide > 0 && !(entityIn.isInWater() || worldIn.isRainingAt(entityIn.getPosition()))) {
+            if (riptide != 0 && !RiptideHelper.canRiptide(worldIn, entityIn)) {
                 return 0F;
             }
             return 1F;
@@ -68,8 +68,8 @@ public class ItemTrident extends ItemTEISR {
         ItemStack stack = playerIn.getHeldItem(handIn);
         int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
 
-        if (riptide > 0 && !(playerIn.isInWater() && worldIn.isRainingAt(playerIn.getPosition()))) {
-            return super.onItemRightClick(worldIn, playerIn, handIn);
+        if (riptide > 0 && !(playerIn.isInWater() || worldIn.isRainingAt(playerIn.getPosition()))) {
+            return ActionResult.newResult(EnumActionResult.FAIL, stack);
         }
 
         playerIn.setActiveHand(handIn);
@@ -84,14 +84,9 @@ public class ItemTrident extends ItemTEISR {
         if (velocity > 0.3F) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
 
-            if (riptide != 0) {
-                if (entityLiving.isInWater() || worldIn.isRainingAt(entityLiving.getPosition())) {
-                    SoundEvent sound = RiptideHelper.getSound(riptide);
-                    RiptideHelper.handleRiptide(entityLiving, stack);
-                    worldIn.playSound(null, entityLiving.posX, entityLiving.posY, entityLiving.posZ, sound, SoundCategory.PLAYERS, 1.0F, 1.0F);
-                    stack.damageItem(1, entityLiving);
-                }
-
+            if (riptide != 0 && RiptideHelper.canRiptide(worldIn, entityLiving)) {
+                RiptideHelper.handleRiptide(entityLiving, stack);
+                stack.damageItem(1, entityLiving);
                 return;
             }
 
