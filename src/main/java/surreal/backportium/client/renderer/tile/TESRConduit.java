@@ -44,7 +44,8 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
 
         if (power != 0) {
             float rotation = (te.getFrame() + partialTicks) * -0.0375F * (float) (180F / Math.PI);
-            float offset = MathHelper.sin((te.getFrame() + partialTicks) * 0.1F) / 2.0F;
+            float offset = MathHelper.sin((te.getFrame() + partialTicks) * 0.1F) / 4.0F;
+            offset += 0.15F;
             offset = offset * offset + offset * 2;
 
             renderWind(mc, te, x, y, z, partialTicks);
@@ -80,45 +81,68 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
 
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-        GlStateManager.translate(-0.5F, -0.0425F, -0.5F);
+        GlStateManager.translate(-0.5F, -0.15F, -0.5F);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
 
         TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite(WIND_TEXTURE);
+        int l = te.getFrame() / 66 % 3;
+        l = 1;
+        if (l == 1) sprite = mc.getTextureMapBlocks().getAtlasSprite(WIND_VERTICAL_TEXTURE);
 
-        double minU = sprite.getMinU();
-        double maxU = sprite.getMaxU();
-        double minV = sprite.getMinV();
-        double maxV = sprite.getMaxV() / 2;
+        double u0 = sprite.getInterpolatedU(0.0D);
+        double u1 = sprite.getInterpolatedU(4.0D);
+        double u2 = sprite.getInterpolatedU(8.0D);
+        double u3 = sprite.getInterpolatedU(12.0D);
+        double u4 = sprite.getInterpolatedU(16.0D);
 
-        float aPix = 1F / 16;
-        float fifteenPix = aPix * 15;
+        double minV = sprite.getInterpolatedV(0.0D);
+        double maxV = sprite.getInterpolatedV(8.0D);
 
-        // -Z
-        builder.begin(7, DefaultVertexFormats.POSITION_TEX);
-        builder.pos(aPix, aPix, 0).tex(minU, maxV).endVertex();
-        builder.pos(fifteenPix, aPix, 0).tex(maxU, maxV).endVertex();
-        builder.pos(fifteenPix, fifteenPix, 0).tex(maxU, minV).endVertex();
-        builder.pos(aPix, fifteenPix, 0).tex(minU, minV).endVertex();
+        float start = 0;
+        float end = 1;
 
-        // +Z
-        builder.pos(aPix, aPix, 1).tex(maxU, maxV).endVertex();
-        builder.pos(fifteenPix, aPix, 1).tex(minU, maxV).endVertex();
-        builder.pos(fifteenPix, fifteenPix, 1).tex(minU, minV).endVertex();
-        builder.pos(aPix, fifteenPix, 1).tex(maxU, minV).endVertex();
+        if (l == 1) {
+            // +Y
+            builder.begin(7, DefaultVertexFormats.POSITION_TEX);
+            builder.pos(start, 0.75D, start).tex(u0, maxV).endVertex();
+            builder.pos(end, 0.75D, start).tex(u1, maxV).endVertex();
+            builder.pos(end, 0.75D, end).tex(u1, minV).endVertex();
+            builder.pos(start, 0.75D, end).tex(u0, minV).endVertex();
 
-        // -X
-        builder.pos(0, aPix, aPix).tex(maxU, maxV).endVertex();
-        builder.pos(0, aPix, fifteenPix).tex(minU, maxV).endVertex();
-        builder.pos(0, fifteenPix, fifteenPix).tex(minU, minV).endVertex();
-        builder.pos(0, fifteenPix, aPix).tex(maxU, minV).endVertex();
+            // -Y
+//            builder.pos(start, 0, start).tex(u2, maxV).endVertex();
+//            builder.pos(end, 0, start).tex(u3, maxV).endVertex();
+//            builder.pos(end, 0, end).tex(u3, minV).endVertex();
+//            builder.pos(start, 0, end).tex(u2, minV).endVertex();
+        }
+        else {
+            // -Z
+            builder.begin(7, DefaultVertexFormats.POSITION_TEX);
+            builder.pos(start, start, 0).tex(u0, maxV).endVertex();
+            builder.pos(end, start, 0).tex(u1, maxV).endVertex();
+            builder.pos(end, end, 0).tex(u1, minV).endVertex();
+            builder.pos(start, end, 0).tex(u0, minV).endVertex();
 
-        // +X
-        builder.pos(1, aPix, aPix).tex(minU, maxV).endVertex();
-        builder.pos(1, aPix, fifteenPix).tex(maxU, maxV).endVertex();
-        builder.pos(1, fifteenPix, fifteenPix).tex(maxU, minV).endVertex();
-        builder.pos(1, fifteenPix, aPix).tex(minU, minV).endVertex();
+            // +X
+            builder.pos(1, start, start).tex(u1, maxV).endVertex();
+            builder.pos(1, start, end).tex(u2, maxV).endVertex();
+            builder.pos(1, end, end).tex(u2, minV).endVertex();
+            builder.pos(1, end, start).tex(u1, minV).endVertex();
+
+            // +Z
+            builder.pos(start, start, 1).tex(u3, maxV).endVertex();
+            builder.pos(end, start, 1).tex(u2, maxV).endVertex();
+            builder.pos(end, end, 1).tex(u2, minV).endVertex();
+            builder.pos(start, end, 1).tex(u3, minV).endVertex();
+
+            // -X
+            builder.pos(0, start, start).tex(u4, maxV).endVertex();
+            builder.pos(0, start, end).tex(u3, maxV).endVertex();
+            builder.pos(0, end, end).tex(u3, minV).endVertex();
+            builder.pos(0, end, start).tex(u4, minV).endVertex();
+        }
 
         tessellator.draw();
 

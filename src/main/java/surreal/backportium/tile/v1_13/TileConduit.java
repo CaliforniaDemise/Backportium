@@ -96,30 +96,39 @@ public class TileConduit extends TileEntity implements ITickable {
     }
 
     protected void handleUpdate() {
-        if (shouldWork()) {
-            int oldPower = this.power;
+        int oldPower = this.power;
+        boolean shouldUpdate = false;
+
+        if (this.shouldWork()) {
             this.power = this.getPowerFromBlocks();
+            if (this.power != 0) {
+                int radius = getRadius();
+                List<EntityLivingBase> nearEntities = WorldHelper.getEntitiesInRadius(this.world, this.pos, radius, EntityLivingBase.class);
+                if (nearEntities == null) return;
 
-            int radius = getRadius();
-            List<EntityLivingBase> nearEntities = WorldHelper.getEntitiesInRadius(this.world, this.pos, radius, EntityLivingBase.class);
-            if (nearEntities == null) return;
-
-            for (EntityLivingBase entity : nearEntities) {
-                if (shouldApplyToEntity(entity)) {
-                    if (entity instanceof EntityMob) {
-                        if (this.getDistanceSq(entity.posX, entity.posY, entity.posZ) <= 64) {
-                            entity.attackEntityFrom(DamageSource.DROWN, 4.0F);
+                for (EntityLivingBase entity : nearEntities) {
+                    if (shouldApplyToEntity(entity)) {
+                        if (entity instanceof EntityMob) {
+                            if (this.getDistanceSq(entity.posX, entity.posY, entity.posZ) <= 64) {
+                                entity.attackEntityFrom(DamageSource.DROWN, 4.0F);
+                            }
+                        } else if (entity instanceof EntityPlayer) {
+                            entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, (20 * 12) + 1, 0, true, false));
                         }
-                    } else if (entity instanceof EntityPlayer) {
-                        entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, (20 * 12) + 1, 0));
                     }
                 }
             }
+        }
+        else this.power = 0;
 
-            if (this.power != oldPower) { // For server to clientside packets. Looks a bit dumb but seen worse.
-                IBlockState state = this.getBlockType().getDefaultState();
-                world.notifyBlockUpdate(pos, state, state, 3);
-            }
+        if (this.power != oldPower) {
+            shouldUpdate = true;
+        }
+
+        if (shouldUpdate) {
+            IBlockState state = this.getBlockType().getDefaultState();
+            world.notifyBlockUpdate(pos, state, state, 3);
+            this.markDirty();
         }
     }
 
