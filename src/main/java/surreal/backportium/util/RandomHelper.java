@@ -6,32 +6,16 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class RandomHelper {
-
-    // getPosition acts dumb when entity is in negative X or Z position
-    public static BlockPos getEntityPosition(EntityLivingBase entity) {
-        double posX = entity.posX, posZ = entity.posZ;
-
-        double x = MathHelper.floor(Math.abs(posX)) + 0.5D;
-        double z = MathHelper.floor(Math.abs(posZ)) + 0.5D;
-
-        if (posX < 0.0D) x *= -1;
-        if (posZ < 0.0D) z *= -1;
-
-        return new BlockPos(x, entity.posY + 0.5F, z);
-    }
 
     public static int getMetaFromVariant(IBlockState state, IProperty<?> property) {
         if (property instanceof PropertyInteger) {
