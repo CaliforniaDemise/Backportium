@@ -1,4 +1,4 @@
-package surreal.backportium.client.model;
+package surreal.backportium.client.model.entity;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
