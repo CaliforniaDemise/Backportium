@@ -20,7 +20,7 @@ import java.util.Random;
 
 // Sea Pickles and Turtle Eggs
 @SuppressWarnings("deprecation")
-public class BlockClustered extends Block implements FluidLogged {
+public class BlockClustered extends BlockDef implements FluidLogged {
 
     public static final PropertyInteger AMOUNT = PropertyInteger.create("amount", 0, 3);
 
@@ -31,10 +31,6 @@ public class BlockClustered extends Block implements FluidLogged {
 
     public BlockClustered(Material material) {
         this(material, material.getMaterialMapColor());
-    }
-
-    public void setForce(float force) {
-        this.setHardness(force).setResistance(force);
     }
 
     @Override
@@ -49,14 +45,6 @@ public class BlockClustered extends Block implements FluidLogged {
             worldIn.destroyBlock(pos, true);
         }
     }
-
-    //    @Override
-//    @ParametersAreNonnullByDefault
-//    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-//        if (!(pos.getY() > fromPos.getY()) && !worldIn.isSideSolid(fromPos, EnumFacing.UP)) {
-//            worldIn.destroyBlock(pos, true);
-//        }
-//    }
 
     @Override
     @ParametersAreNonnullByDefault

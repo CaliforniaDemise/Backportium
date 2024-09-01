@@ -5,18 +5,21 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.fml.common.Loader;
 import surreal.backportium.api.block.FluidLogged;
-import surreal.backportium.util.IntegrationHelper;
+import surreal.backportium.core.BPPlugin;
 import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("deprecation")
@@ -38,7 +41,7 @@ public class BlockPlantWater extends BlockPlant implements FluidLogged {
     @Nonnull
     @Override
     public Material getMaterial(@Nonnull IBlockState state) {
-        return Loader.isModLoaded(IntegrationHelper.FLUIDLOGGED) ? super.getMaterial(state) : Material.WATER;
+        return BPPlugin.FLUIDLOGGED ? Material.PLANTS : super.getMaterial(state);
     }
 
     @Override
@@ -74,6 +77,20 @@ public class BlockPlantWater extends BlockPlant implements FluidLogged {
     @Override
     @ParametersAreNonnullByDefault
     public EnumPlantType getPlantType(IBlockAccess world, BlockPos pos) {
-        return EnumPlantType.Beach;
+        return EnumPlantType.Plains;
+    }
+
+    @Nonnull
+    @Override
+    @ParametersAreNonnullByDefault
+    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
+        return Blocks.WATER.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+    }
+
+    @Nullable
+    @Override
+    @ParametersAreNonnullByDefault
+    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
+        return materialIn == Material.WATER;
     }
 }

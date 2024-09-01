@@ -53,10 +53,10 @@ public class ModBlocks {
     public static final BlockPumpkin UNCARVED_PUMPKIN = register(new BlockPumpkin(), BASIC_ITEM, "pumpkin");
     public static final BlockConduit CONDUIT = register(new BlockConduit(), BASIC_ITEM_TEISR, "conduit");
     public static final BlockKelp KELP = register(new BlockKelp(), BASIC_KELP_ITEM, "kelp");
-    public static final Block DRIED_KELP_BLOCK = register(new BlockDef(Material.PLANTS, MapColor.BLACK).setCreativeTab(CreativeTabs.BUILDING_BLOCKS), block -> new ItemBlockBurnable(block, 4000), "dried_kelp_block");
-    public static final BlockSeaPickle SEA_PICKLE = register(new BlockSeaPickle(Material.PLANTS, Material.PLANTS.getMaterialMapColor()), BASIC_CLUSTERED_ITEM, "sea_pickle");
-    public static final BlockPlantDouble SEAGRASS_DOUBLE = register(new BlockDoubleSeagrass(Material.PLANTS), null, "seagrass_double");
-    public static final BlockPlantWater SEAGRASS = register(new BlockPlantWater(Material.PLANTS, Material.PLANTS.getMaterialMapColor(), SEAGRASS_DOUBLE), BASIC_ITEM, "seagrass");
+    public static final Block DRIED_KELP_BLOCK = register(new BlockDef(Material.GRASS, MapColor.BLACK).setSoundType(SoundType.PLANT).setCreativeTab(CreativeTabs.BUILDING_BLOCKS), block -> new ItemBlockBurnable(block, 4000), "dried_kelp_block");
+    public static final BlockSeaPickle SEA_PICKLE = register((BlockSeaPickle) new BlockSeaPickle(Material.GRASS, Material.GRASS.getMaterialMapColor()).setSoundType(SoundType.PLANT), BASIC_CLUSTERED_ITEM, "sea_pickle");
+    public static final BlockPlantDouble SEAGRASS_DOUBLE = register(new BlockDoubleSeagrass(Material.GRASS), null, "seagrass_double");
+    public static final BlockPlantWater SEAGRASS = register(new BlockPlantWater(Material.GRASS, Material.GRASS.getMaterialMapColor(), SEAGRASS_DOUBLE), BASIC_ITEM, "seagrass");
     public static final BlockTurtleEgg TURTLE_EGG = register(new BlockTurtleEgg(Material.SPONGE, Material.SPONGE.getMaterialMapColor()), BASIC_CLUSTERED_ITEM, "turtle_egg");
     public static final BlockCoral CORAL = register(new BlockCoralImpl(Material.CORAL), BASIC_ITEM_SUBTYPE, "coral");
     public static final BlockCoralBlock CORAL_BLOCK = register(new BlockCoralBlockImpl(Material.CORAL), BASIC_ITEM_SUBTYPE, "coral_block");

@@ -1,6 +1,7 @@
 package surreal.backportium.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import surreal.backportium.core.transformers.FluidloggingTransformer;
 import surreal.backportium.core.transformers.PumpkinTransformer;
 import surreal.backportium.core.transformers.TridentTransformer;
 
@@ -34,6 +35,10 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockStem": return PumpkinTransformer.transformBlockStem(basicClass);
 //            case "net.minecraft.stats.StatList":return PumpkinTransformer.transformStatList(basicClass); TODO Find a way without loading ModBlocks early
             case "net.minecraft.world.gen.feature.WorldGenPumpkin": return PumpkinTransformer.transformWorldGenPumpkin(basicClass);
+
+            // Fluidlogging
+            case "net.minecraftforge.fluids.BlockFluidBase": return FluidloggingTransformer.transformBlockFluidBase(basicClass);
+            case "net.minecraft.block.BlockLiquid": return FluidloggingTransformer.transformBlockLiquid(basicClass);
         }
         return basicClass;
     }

@@ -72,22 +72,18 @@ public class BlockKelp extends BlockPlantWater {
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
         BlockPos downPos = pos.down();
         IBlockState stateDown = worldIn.getBlockState(downPos);
-        return (stateDown.getBlock().canSustainPlant(stateDown, worldIn, downPos, EnumFacing.UP, this) || stateDown.getBlock() == this) && WorldHelper.inWater(worldIn, pos);
+        return (stateDown.isSideSolid(worldIn, downPos, EnumFacing.UP) || stateDown.getBlock() == this) && WorldHelper.inWater(worldIn, pos);
     }
-
 
     @Override
     @ParametersAreNonnullByDefault
     public boolean canBlockStay(World worldIn, BlockPos pos, IBlockState state) {
         boolean waterCheck = WorldHelper.inWater(worldIn, pos);
-
         BlockPos downPos = pos.down();
         IBlockState soil = worldIn.getBlockState(downPos);
-
         if (state.getBlock() == this) {
             return waterCheck && soil.getBlock().canSustainPlant(soil, worldIn, downPos, EnumFacing.UP, this);
         }
-
         return (this.canSustainBush(soil) || (soil.getBlock() == this && soil.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)) && waterCheck;
     }
 

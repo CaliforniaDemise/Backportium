@@ -7,6 +7,7 @@ import surreal.backportium.util.IntegrationHelper;
 
 import javax.annotation.Nullable;
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 @IFMLLoadingPlugin.Name(Tags.MOD_ID)
@@ -14,6 +15,8 @@ import java.util.Map;
 @IFMLLoadingPlugin.SortingIndex(-100)
 @Optional.Interface(modid = IntegrationHelper.AQUA_ACROBATICS, iface = "zone.rong.mixinbooter.IMixinConfigHijacker")
 public class BPPlugin implements IFMLLoadingPlugin {
+
+    public static boolean FLUIDLOGGED;
 
     protected static File GAME_DIR;
 
@@ -36,6 +39,14 @@ public class BPPlugin implements IFMLLoadingPlugin {
     @Override
     public void injectData(Map<String, Object> data) {
         GAME_DIR = (File) data.get("mcLocation");
+        List<Object> coremodList = (List<Object>) data.get("coremodList");
+        for (Object plugin : coremodList) {
+            String pluginName = plugin.toString();
+            if (pluginName.startsWith("Fluidlogged")) {
+                FLUIDLOGGED = true;
+                break;
+            }
+        }
     }
 
     @Override

@@ -5,6 +5,7 @@ import git.jbredwards.fluidlogged_api.api.util.FluidState;
 import git.jbredwards.fluidlogged_api.api.util.FluidloggedUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -15,8 +16,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.common.Loader;
 import surreal.backportium.api.block.FluidLogged;
+import surreal.backportium.core.BPPlugin;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -81,22 +82,13 @@ public class WorldHelper {
 
     @Nullable
     public static Fluid getFluid(IBlockAccess world, BlockPos pos) {
-
-        if (Loader.isModLoaded(IntegrationHelper.FLUIDLOGGED)) {
+        if (BPPlugin.FLUIDLOGGED) {
             FluidState fluidState = FluidloggedUtils.getFluidState(world, pos);
             return fluidState.getFluid();
         }
-
         Block block = world.getBlockState(pos).getBlock();
-
-        if (block instanceof FluidLogged) {
-            return ((FluidLogged) block).getFluid();
-        }
-
-        if (block instanceof IFluidBlock) {
-            return ((IFluidBlock) block).getFluid();
-        }
-
+        if (block instanceof FluidLogged) return ((FluidLogged) block).getFluid();
+        if (block instanceof IFluidBlock) return ((IFluidBlock) block).getFluid();
         return null;
     }
 
@@ -105,15 +97,17 @@ public class WorldHelper {
     }
 
     public static boolean inWater(IBlockAccess world, BlockPos pos) {
-        if (Loader.isModLoaded(IntegrationHelper.FLUIDLOGGED)) {
+        if (BPPlugin.FLUIDLOGGED) {
             return WorldHelper.isWater(world, pos);
         } else {
             for (int i = 1; i < 6; i++) {
                 EnumFacing facing = EnumFacing.byIndex(i);
-                if (!WorldHelper.isWater(world, pos.offset(facing))) return false;
+                BlockPos offset = pos.offset(facing);
+                IBlockState state = world.getBlockState(offset);
+                if (!WorldHelper.isWater(world, offset) && !state.isSideSolid(world, offset, facing.getOpposite()))
+                    return false;
             }
         }
-
-        return false;
+        return true;
     }
 }

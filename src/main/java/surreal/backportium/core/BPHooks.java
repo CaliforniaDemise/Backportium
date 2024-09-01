@@ -11,12 +11,15 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import surreal.backportium.Backportium;
+import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
@@ -96,6 +99,17 @@ public class BPHooks {
         }
     }
 
+    // Fluidlogging
+    public static boolean BlockFluidBase$renderSide(boolean original, IBlockState neighbor) {
+        return original && !(neighbor.getBlock() instanceof FluidLogged);
+    }
+
+    public static boolean BlockLiquid$renderSide(boolean original, IBlockAccess world, BlockPos pos, EnumFacing facing) {
+        IBlockState state = world.getBlockState(pos.offset(facing));
+        return original && !(state.getBlock() instanceof FluidLogged);
+    }
+
+    // Button Placement
     public static IBlockState button$getStateFromMeta(Block block, int meta) {
         return null;
     }

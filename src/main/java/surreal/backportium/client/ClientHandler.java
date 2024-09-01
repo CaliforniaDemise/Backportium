@@ -1,6 +1,8 @@
 package surreal.backportium.client;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -11,6 +13,7 @@ import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -22,13 +25,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import surreal.backportium.Backportium;
+import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
-import surreal.backportium.client.model.ModelTrident;
+import surreal.backportium.client.model.entity.ModelTrident;
 import surreal.backportium.client.renderer.entity.RenderTrident;
 import surreal.backportium.client.renderer.tile.TESRConduit;
 import surreal.backportium.client.resource.Models;
 import surreal.backportium.client.resource.Sounds;
 import surreal.backportium.client.resource.Textures;
+import surreal.backportium.core.BPPlugin;
 import surreal.backportium.entity.v1_13.EntityTrident;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.tile.v1_13.TileConduit;
@@ -145,6 +150,16 @@ public class ClientHandler {
 
             Minecraft.getMinecraft().getItemRenderer().renderItemSide(player, stack, rightArm ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !rightArm);
             GlStateManager.popMatrix();
+        }
+    }
+
+    // Fluidlogging
+    @SubscribeEvent
+    public static void modifyFov(EntityViewRenderEvent.FOVModifier event) {
+        if (BPPlugin.FLUIDLOGGED) return;
+        IBlockState state = ActiveRenderInfo.getBlockStateAtEntityViewpoint(event.getEntity().world, event.getEntity(), Minecraft.getMinecraft().getRenderPartialTicks());
+        if (state.getBlock() instanceof FluidLogged) {
+            event.setFOV(event.getFOV() * 60.0F / 70.0F);
         }
     }
 }
