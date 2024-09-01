@@ -1,15 +1,15 @@
-package surreal.backportium.item;
+package surreal.backportium.item.v1_13;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import surreal.backportium.item.ItemBlockSpecialDef;
 import surreal.backportium.util.MutBlockPos;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static net.minecraft.block.BlockDoublePlant.HALF;
 
-public class ItemBlockKelp extends ItemBlockSpecial {
+public class ItemBlockKelp extends ItemBlockSpecialDef {
 
     public ItemBlockKelp(Block block) {
         super(block);

@@ -21,6 +21,7 @@ import surreal.backportium.block.v1_13.BlockPumpkin;
 import surreal.backportium.block.v1_13.*;
 import surreal.backportium.item.*;
 import surreal.backportium.item.v1_13.ItemBlockCoralFan;
+import surreal.backportium.item.v1_13.ItemBlockKelp;
 import surreal.backportium.tile.v1_13.TileConduit;
 import surreal.backportium.util.SupplierInput;
 

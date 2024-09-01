@@ -6,7 +6,6 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemBlockSpecial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -20,11 +19,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import static surreal.backportium.block.BlockClustered.AMOUNT;
 
-public class ItemBlockClustered extends ItemBlockSpecial {
+public class ItemBlockClustered extends ItemBlockSpecialDef {
 
     public ItemBlockClustered(Block block) {
         super(block);
-        this.setCreativeTab(block.getCreativeTab());
     }
 
     @Nonnull
