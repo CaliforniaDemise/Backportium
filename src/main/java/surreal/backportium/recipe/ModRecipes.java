@@ -2,7 +2,6 @@ package surreal.backportium.recipe;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -12,7 +11,6 @@ import net.minecraft.potion.PotionHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
@@ -63,7 +61,7 @@ public class ModRecipes {
         }
 
         {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 1; i < 6; i++) {
                 BlockPlanks.EnumType type = BlockPlanks.EnumType.byMetadata(i);
                 Ingredient plank = Ingredient.fromStacks(new ItemStack(PLANKS, 1, i));
 
@@ -75,6 +73,17 @@ public class ModRecipes {
                 addShaped(plate.getRegistryName(), new ItemStack(plate), "AA", 'A', plank);
                 addShaped(button.getRegistryName(), new ItemStack(button), "A", 'A', plank);
             }
+
+            BlockPlanks.EnumType type = BlockPlanks.EnumType.OAK;
+            OreIngredientPredicate ingredient = new OreIngredientPredicate("plankWood", s -> s.getMetadata() == 0 || !Objects.requireNonNull(s.getItem().getRegistryName()).getNamespace().equals("minecraft"));
+
+            Block trapdoor = getWoodTrapdoor(type);
+            Block plate = getWoodPlate(type);
+            Block button = getWoodButton(type);
+
+            addShaped(trapdoor.getRegistryName(), new ItemStack(trapdoor), "AAA", "AAA", 'A', ingredient);
+            addShaped(plate.getRegistryName(), new ItemStack(plate), "AA", 'A', ingredient);
+            addShaped(button.getRegistryName(), new ItemStack(button), "A", 'A', ingredient);
         }
 
         {
