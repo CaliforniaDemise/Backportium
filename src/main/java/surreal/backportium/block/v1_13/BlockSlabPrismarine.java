@@ -35,7 +35,7 @@ public class BlockSlabPrismarine extends BlockSlabDef {
     @Override
     public String getTranslationKey(int meta) {
         BlockPrismarine.EnumType type = BlockPrismarine.EnumType.byMetadata(meta);
-        return "prismarine." + type.getTranslationKey() + ".slab";
+        return "smooth_sandstone." + type.getTranslationKey() + ".slab";
     }
 
     @Nonnull

@@ -1,0 +1,13 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cube_all",
+    "textures": { "all": "blocks/sandstone_top" }
+  },
+  "variants": {
+    "variant": {
+      "sand": { "textures": { "all": "blocks/sandstone_top" } },
+      "red_sand": { "textures": { "all": "blocks/red_sandstone_top" } }
+    }
+  }
+}

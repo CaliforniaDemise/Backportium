@@ -67,11 +67,21 @@ public class ModBlocks {
     public static final BlockCoralFan FIRE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, FIRE), BASIC_FAN_ITEM, "fire_coral_fan");
     public static final BlockCoralFan HORN_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, HORN), BASIC_FAN_ITEM, "horn_coral_fan");
 
+    public static final BlockSmoothSandstone SMOOTH_SANDSTONE = register(new BlockSmoothSandstone(Material.ROCK), BASIC_ITEM_SUBTYPE, "smooth_sandstone");
+    public static final Block SMOOTH_QUARTZ = register(new BlockDef(Material.ROCK).setHardness(2F).setResistance(6F).setCreativeTab(CreativeTabs.BUILDING_BLOCKS), BASIC_ITEM, "smooth_quartz");
+    public static final Block SMOOTH_STONE = register(new BlockDef(Material.ROCK).setHardness(2F).setResistance(6F).setCreativeTab(CreativeTabs.BUILDING_BLOCKS), BASIC_ITEM, "smooth_stone");
+
     public static final BlockSlabDef PRISMARINE_SLAB = register(new BlockSlabPrismarine(Material.ROCK).setDoubleSlab(register(new BlockSlabPrismarine.Double(Material.ROCK), null, "prismarine_slab_double")), BASIC_SLAB_ITEM, "prismarine_slab");
+    public static final BlockSlabDef SMOOTH_SANDSTONE_SLAB = register(new BlockSlabSmoothSandstone(Material.ROCK).setDoubleSlab(register(new BlockSlabSmoothSandstone.Double(Material.ROCK), null, "smooth_sandstone_slab_double")), BASIC_SLAB_ITEM, "smooth_sandstone_slab");
+    public static final BlockSlabDef SMOOTH_QUARTZ_SLAB = register((BlockSlabDef) new BlockSlabImpl(Material.ROCK).setDoubleSlab(register(new BlockSlabImpl.Double(Material.ROCK).setHardness(2F).setResistance(6F), null, "smooth_quartz_slab_double")).setHardness(2F).setResistance(6F), BASIC_SLAB_ITEM, "smooth_quartz_slab");
+    public static final BlockSlabDef SMOOTH_STONE_SLAB = register((BlockSlabDef) new BlockSlabImpl(Material.ROCK).setDoubleSlab(register(new BlockSlabImpl.Double(Material.ROCK).setHardness(2F).setResistance(6F), null, "smooth_stone_slab_double")).setHardness(2F).setResistance(6F), BASIC_SLAB_ITEM, "smooth_stone_slab");
 
     public static final BlockStairsDef PRISMARINE_STAIRS = register(new BlockStairsDef(Blocks.PRISMARINE.getStateFromMeta(0)), BASIC_ITEM, "prismarine_stairs");
     public static final BlockStairsDef PRISMARINE_BRICKS_STAIRS = register(new BlockStairsDef(Blocks.PRISMARINE.getStateFromMeta(1)), BASIC_ITEM, "prismarine_bricks_stairs");
     public static final BlockStairsDef DARK_PRISMARINE_STAIRS = register(new BlockStairsDef(Blocks.PRISMARINE.getStateFromMeta(2)), BASIC_ITEM, "dark_prismarine_stairs");
+    public static final BlockStairsDef SMOOTH_SANDSTONE_STAIRS = register(new BlockStairsDef(SMOOTH_SANDSTONE.getDefaultState()), BASIC_ITEM, "smooth_sandstone_stairs");
+    public static final BlockStairsDef SMOOTH_RED_SANDSTONE_STAIRS = register(new BlockStairsDef(SMOOTH_SANDSTONE.getStateFromMeta(1)), BASIC_ITEM, "smooth_red_sandstone_stairs");
+    public static final BlockStairsDef SMOOTH_QUARTZ_STAIRS = register(new BlockStairsDef(SMOOTH_QUARTZ.getDefaultState()), BASIC_ITEM, "smooth_quartz_stairs");
 
     public static final BlockTrapDoor SPRUCE_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "spruce_trapdoor");
     public static final BlockTrapDoor BIRCH_TRAPDOOR = register(new BlockTrapDoorDef(Material.WOOD).setForce(3F), BASIC_ITEM, "birch_trapdoor");
