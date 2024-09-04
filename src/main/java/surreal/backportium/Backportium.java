@@ -18,11 +18,14 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import surreal.backportium.api.enums.ModArmorMaterials;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.ClientHandler;
+import surreal.backportium.command.debug.CommandGenerate;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.ModEntities;
 import surreal.backportium.item.ModItems;
@@ -52,6 +55,15 @@ public class Backportium {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         ModItems.registerOres();
+    }
+
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event) {
+        if (FMLLaunchHandler.isDeobfuscatedEnvironment()) {
+            // Not so good attempt for testing world generations.
+            // Imagine, it's too bad that I added a check. So, it only works in the dev environment.
+            event.registerServerCommand(new CommandGenerate());
+        }
     }
 
     // Registry Events
