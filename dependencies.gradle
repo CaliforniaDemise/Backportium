@@ -16,6 +16,8 @@ repositories {
 dependencies {
     implementation "com.cleanroommc:assetmover:2.5"
 
+    implementation rfg.deobf("mezz:jei:4.25.5")
+
     implementation rfg.deobf("com.github.jbredwards:fluidlogged-api:47f153989e")
 //    implementation rfg.deobf("curse.maven:aquaacrobatics-321792:5225456") TODO Potential remake
 
@@ -26,4 +28,6 @@ dependencies {
 //    String mixinBooter = modUtils.enableMixins('zone.rong:mixinbooter:9.1')
 //    api (mixinBooter) { transitive = false }
 //    annotationProcessor (mixinBooter) { transitive = false }
+
+    runtimeOnly "curse.maven:aainfo-573154:3627065"
 }
