@@ -344,7 +344,6 @@ public class TridentTransformer extends BasicTransformer {
             m_getRiptideTime.visitFieldInsn(GETFIELD, cls.name, "riptideTime", "I");
             m_getRiptideTime.visitInsn(IRETURN);
         }
-        writeClass(cls);
         return write(cls);
     }
 
