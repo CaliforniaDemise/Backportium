@@ -14,20 +14,14 @@ repositories {
 }
 
 dependencies {
-    implementation "com.cleanroommc:assetmover:2.5"
+    if (project.use_assetmover) implementation "com.cleanroommc:assetmover:2.5"
+    else compileOnly "com.cleanroommc:assetmover:2.5"
 
-    implementation rfg.deobf("mezz:jei:4.25.5")
+    if (project.use_fluidloggedAPI) implementation "com.github.jbredwards:fluidlogged-api:47f153989e"
+    else compileOnly "com.github.jbredwards:fluidlogged-api:47f153989e"
 
-    compileOnly rfg.deobf("com.github.jbredwards:fluidlogged-api:47f153989e")
-//    implementation rfg.deobf("curse.maven:aquaacrobatics-321792:5225456") TODO Potential remake
+    if (project.use_jei) implementation rfg.deobf("mezz:jei:4.25.5")
+    else compileOnly rfg.deobf("mezz:jei:4.25.5")
 
-//    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
-//    annotationProcessor 'com.google.guava:guava:32.1.2-jre'
-//    annotationProcessor 'com.google.code.gson:gson:2.8.9'
-//
-//    String mixinBooter = modUtils.enableMixins('zone.rong:mixinbooter:9.1')
-//    api (mixinBooter) { transitive = false }
-//    annotationProcessor (mixinBooter) { transitive = false }
-
-    runtimeOnly "curse.maven:aainfo-573154:3627065"
+    if (project.use_aainfo) runtimeOnly "curse.maven:aainfo-573154:3627065"
 }
