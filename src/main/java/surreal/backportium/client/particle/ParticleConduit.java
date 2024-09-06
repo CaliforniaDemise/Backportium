@@ -15,7 +15,7 @@ public class ParticleConduit extends Particle {
         super(worldIn, posXIn + 0.5D, posYIn + 0.5D, posZIn + 0.5D);
         this.canCollide = false;
         this.conduitPos = pos;
-        this.particleMaxAge = 30;
+        this.particleMaxAge = 40;
         this.setParticleTexture(CONDUIT_PARTICLE);
         this.multipleParticleScaleBy(size);
         this.handleSpeed();

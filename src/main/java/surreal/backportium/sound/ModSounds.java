@@ -14,11 +14,6 @@ public class ModSounds {
     private static final List<SoundEvent> SOUNDS = new ArrayList<>();
 
     public static final SoundEvent BLOCK_PUMPKIN_CARVE = register("block.pumpkin.carve");
-    public static final SoundEvent BLOCK_CONDUIT_ACTIVATE = register("block.conduit.activate");
-    public static final SoundEvent BLOCK_CONDUIT_AMBIENT = register("block.conduit.ambient");
-    public static final SoundEvent BLOCK_CONDUIT_AMBIENT_SHORT = register("block.conduit.ambient.short");
-    public static final SoundEvent BLOCK_CONDUIT_ATTACK_TARGET = register("block.conduit.attack.target");
-    public static final SoundEvent BLOCK_CONDUIT_DEACTIVATE = register("block.conduit.deactivate");
 
     public static final SoundEvent ITEM_ARMOR_EQUIP_TURTLE = register("item.armor.equip_turtle");
     public static final SoundEvent ITEM_TRIDENT_HIT = register("item.trident.hit");
