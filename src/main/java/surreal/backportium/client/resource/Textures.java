@@ -84,9 +84,9 @@ public class Textures {
         put(map, "entity/conduit/closed_eye", "entity/conduit/closed_eye");
         put(map, "entity/conduit/open_eye", "entity/conduit/open_eye");
         put(map, "entity/conduit/wind", "entity/conduit/wind");
-        put2(map, "entity/conduit/wind.png.mcmeta", "entity/conduit/wind.png.mcmeta");
+//        put2(map, "entity/conduit/wind.png.mcmeta", "entity/conduit/wind.png.mcmeta");
         put(map, "entity/conduit/wind_vertical", "entity/conduit/wind_vertical");
-        put2(map, "entity/conduit/wind_vertical.png.mcmeta", "entity/conduit/wind_vertical.png.mcmeta");
+//        put2(map, "entity/conduit/wind_vertical.png.mcmeta", "entity/conduit/wind_vertical.png.mcmeta");
 
         put(map, "models/armor/turtle_layer_1");
 

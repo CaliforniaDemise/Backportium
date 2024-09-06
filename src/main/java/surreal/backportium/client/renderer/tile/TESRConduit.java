@@ -81,15 +81,19 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
 
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-        GlStateManager.translate(-0.5F, -0.15F, -0.5F);
+        GlStateManager.translate(-0.5F, -0.425D, -0.5F);
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
 
-        TextureAtlasSprite sprite = mc.getTextureMapBlocks().getAtlasSprite(WIND_TEXTURE);
-        int l = te.getFrame() / 66 % 3;
-        l = 1;
+        TextureAtlasSprite sprite;
+
+        int l = te.getFrame() / 55 % 3;
+
         if (l == 1) sprite = mc.getTextureMapBlocks().getAtlasSprite(WIND_VERTICAL_TEXTURE);
+        else {
+            sprite = mc.getTextureMapBlocks().getAtlasSprite(WIND_TEXTURE);
+        }
 
         double u0 = sprite.getInterpolatedU(0.0D);
         double u1 = sprite.getInterpolatedU(4.0D);
@@ -97,52 +101,122 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
         double u3 = sprite.getInterpolatedU(12.0D);
         double u4 = sprite.getInterpolatedU(16.0D);
 
-        double minV = sprite.getInterpolatedV(0.0D);
-        double maxV = sprite.getInterpolatedV(8.0D);
+        double minV = sprite.getInterpolatedV(4.01D);
+        double maxV = sprite.getInterpolatedV(7.99D);
 
-        float start = 0;
-        float end = 1;
+        double smallMinV = sprite.getInterpolatedV(4.125D);
+        double smallMaxV = sprite.getInterpolatedV(7.825D);
 
+        double start = 0.01D;
+        double end = 0.99D;
+
+        double smallStart = 0.125D;
+        double smallEnd = 0.875D;
+
+        builder.begin(7, DefaultVertexFormats.POSITION_TEX_NORMAL);
+
+        // ----- LARGE ----- //
         if (l == 1) {
-            // +Y
-            builder.begin(7, DefaultVertexFormats.POSITION_TEX);
-            builder.pos(start, 0.75D, start).tex(u0, maxV).endVertex();
-            builder.pos(end, 0.75D, start).tex(u1, maxV).endVertex();
-            builder.pos(end, 0.75D, end).tex(u1, minV).endVertex();
-            builder.pos(start, 0.75D, end).tex(u0, minV).endVertex();
+            // -X
+            builder.pos(start, start, start).tex(u0, minV).normal(-1, 0, 0).endVertex();
+            builder.pos(start, start, end).tex(u0, maxV).normal(-1, 0, 0).endVertex();
+            builder.pos(start, end, end).tex(u1, maxV).normal(-1, 0, 0).endVertex();
+            builder.pos(start, end, start).tex(u1, minV).normal(-1, 0, 0).endVertex();
 
-            // -Y
-//            builder.pos(start, 0, start).tex(u2, maxV).endVertex();
-//            builder.pos(end, 0, start).tex(u3, maxV).endVertex();
-//            builder.pos(end, 0, end).tex(u3, minV).endVertex();
-//            builder.pos(start, 0, end).tex(u2, minV).endVertex();
-        }
-        else {
-            // -Z
-            builder.begin(7, DefaultVertexFormats.POSITION_TEX);
-            builder.pos(start, start, 0).tex(u0, maxV).endVertex();
-            builder.pos(end, start, 0).tex(u1, maxV).endVertex();
-            builder.pos(end, end, 0).tex(u1, minV).endVertex();
-            builder.pos(start, end, 0).tex(u0, minV).endVertex();
+            // +Y
+            builder.pos(start, end, start).tex(u1, minV).normal(0, 1, 0).endVertex();
+            builder.pos(end, end, start).tex(u2, minV).normal(0, 1, 0).endVertex();
+            builder.pos(end, end, end).tex(u2, maxV).normal(0, 1, 0).endVertex();
+            builder.pos(start, end, end).tex(u1, maxV).normal(0, 1, 0).endVertex();
 
             // +X
-            builder.pos(1, start, start).tex(u1, maxV).endVertex();
-            builder.pos(1, start, end).tex(u2, maxV).endVertex();
-            builder.pos(1, end, end).tex(u2, minV).endVertex();
-            builder.pos(1, end, start).tex(u1, minV).endVertex();
+            builder.pos(end, start, start).tex(u3, minV).normal(-1, 0, 0).endVertex();
+            builder.pos(end, start, end).tex(u3, maxV).normal(-1, 0, 0).endVertex();
+            builder.pos(end, end, end).tex(u2, maxV).normal(-1, 0, 0).endVertex();
+            builder.pos(end, end, start).tex(u2, minV).normal(-1, 0, 0).endVertex();
+
+            // -Y
+//            builder.pos(start, start, start).tex(u4, minV).normal(0, 1, 0).endVertex();
+//            builder.pos(end, start, start).tex(u3, minV).normal(0, 1, 0).endVertex();
+//            builder.pos(end, start, end).tex(u3, maxV).normal(0, 1, 0).endVertex();
+//            builder.pos(start, start, end).tex(u4, maxV).normal(0, 1, 0).endVertex();
+        }
+        else if (l == 2) {
+            // -Z
+            builder.pos(start, start, end).tex(u0, minV).normal(0, 0, -1).endVertex();
+            builder.pos(end, start, end).tex(u0, maxV).normal(0, 0, -1).endVertex();
+            builder.pos(end, end, end).tex(u1, maxV).normal(0, 0, -1).endVertex();
+            builder.pos(start, end, end).tex(u1, minV).normal(0, 0, -1).endVertex();
+
+            // +Y
+            builder.pos(start, end, end).tex(u1, minV).normal(0, 1, 0).endVertex();
+            builder.pos(end, end, end).tex(u1, maxV).normal(0, 1, 0).endVertex();
+            builder.pos(end, end, start).tex(u2, maxV).normal(0, 1, 0).endVertex();
+            builder.pos(start, end, start).tex(u2, minV).normal(0, 1, 0).endVertex();
 
             // +Z
-            builder.pos(start, start, 1).tex(u3, maxV).endVertex();
-            builder.pos(end, start, 1).tex(u2, maxV).endVertex();
-            builder.pos(end, end, 1).tex(u2, minV).endVertex();
-            builder.pos(start, end, 1).tex(u3, minV).endVertex();
+            builder.pos(start, end, start).tex(u2, minV).normal(0, 0, 1).endVertex();
+            builder.pos(end, end, start).tex(u2, maxV).normal(0, 0, 1).endVertex();
+            builder.pos(end, start, start).tex(u3, maxV).normal(0, 0, 1).endVertex();
+            builder.pos(start, start, start).tex(u3, minV).normal(0, 0, 1).endVertex();
+
+            // -Y
+            builder.pos(start, start, end).tex(u4, minV).normal(0, 1, 0).endVertex();
+            builder.pos(end, start, end).tex(u4, maxV).normal(0, 1, 0).endVertex();
+            builder.pos(end, start, start).tex(u3, maxV).normal(0, 1, 0).endVertex();
+            builder.pos(start, start, start).tex(u3, minV).normal(0, 1, 0).endVertex();
+        }
+        else {
+            // ----- BIG ----- //
+            // -Z
+            builder.pos(start, start, start).tex(u0, minV).normal(0, 0, -1).endVertex();
+            builder.pos(end, start, start).tex(u1, minV).normal(0, 0, -1).endVertex();
+            builder.pos(end, end, start).tex(u1, maxV).normal(0, 0, -1).endVertex();
+            builder.pos(start, end, start).tex(u0, maxV).normal(0, 0, -1).endVertex();
+
+            // +X
+            builder.pos(end, start, start).tex(u1, minV).normal(1, 0, 0).endVertex();
+            builder.pos(end, start, end).tex(u2, minV).normal(1, 0, 0).endVertex();
+            builder.pos(end, end, end).tex(u2, maxV).normal(1, 0, 0).endVertex();
+            builder.pos(end, end, start).tex(u1, maxV).normal(1, 0, 0).endVertex();
+
+            // +Z
+            builder.pos(start, start, end).tex(u3, minV).normal(0, 0, 1).endVertex();
+            builder.pos(end, start, end).tex(u2, minV).normal(0, 0, 1).endVertex();
+            builder.pos(end, end, end).tex(u2, maxV).normal(0, 0, 1).endVertex();
+            builder.pos(start, end, end).tex(u3, maxV).normal(0, 0, 1).endVertex();
 
             // -X
-            builder.pos(0, start, start).tex(u4, maxV).endVertex();
-            builder.pos(0, start, end).tex(u3, maxV).endVertex();
-            builder.pos(0, end, end).tex(u3, minV).endVertex();
-            builder.pos(0, end, start).tex(u4, minV).endVertex();
+            builder.pos(start, start, start).tex(u4, minV).normal(-1, 0, 0).endVertex();
+            builder.pos(start, start, end).tex(u3, minV).normal(-1, 0, 0).endVertex();
+            builder.pos(start, end, end).tex(u3, maxV).normal(-1, 0, 0).endVertex();
+            builder.pos(start, end, start).tex(u4, maxV).normal(-1, 0, 0).endVertex();
         }
+
+        // ----- SMALL ----- //
+        // +Z
+        builder.pos(smallStart, smallStart, smallEnd).tex(u1, smallMaxV).normal(0, 0, 1).endVertex();
+        builder.pos(smallEnd, smallStart, smallEnd).tex(u0, smallMaxV).normal(0, 0, 1).endVertex();
+        builder.pos(smallEnd, smallEnd, smallEnd).tex(u0, smallMinV).normal(0, 0, 1).endVertex();
+        builder.pos(smallStart, smallEnd, smallEnd).tex(u1, smallMinV).normal(0, 0, 1).endVertex();
+
+        // -X
+        builder.pos(smallStart, smallStart, smallStart).tex(u2, smallMaxV).normal(-1, 0, 0).endVertex();
+        builder.pos(smallStart, smallStart, smallEnd).tex(u1, smallMaxV).normal(-1, 0, 0).endVertex();
+        builder.pos(smallStart, smallEnd, smallEnd).tex(u1, smallMinV).normal(-1, 0, 0).endVertex();
+        builder.pos(smallStart, smallEnd, smallStart).tex(u2, smallMinV).normal(-1, 0, 0).endVertex();
+
+        // -Z
+        builder.pos(smallStart, smallStart, smallStart).tex(u2, smallMaxV).normal(0, 0, -1).endVertex();
+        builder.pos(smallEnd, smallStart, smallStart).tex(u3, smallMaxV).normal(0, 0, -1).endVertex();
+        builder.pos(smallEnd, smallEnd, smallStart).tex(u3, smallMinV).normal(0, 0, -1).endVertex();
+        builder.pos(smallStart, smallEnd, smallStart).tex(u2, smallMinV).normal(0, 0, -1).endVertex();
+
+        // +X
+        builder.pos(smallEnd, smallStart, smallStart).tex(u3, smallMaxV).normal(1, 0, 0).endVertex();
+        builder.pos(smallEnd, smallStart, smallEnd).tex(u4, smallMaxV).normal(1, 0, 0).endVertex();
+        builder.pos(smallEnd, smallEnd, smallEnd).tex(u4, smallMinV).normal(1, 0, 0).endVertex();
+        builder.pos(smallEnd, smallEnd, smallStart).tex(u3, smallMinV).normal(1, 0, 0).endVertex();
 
         tessellator.draw();
 
