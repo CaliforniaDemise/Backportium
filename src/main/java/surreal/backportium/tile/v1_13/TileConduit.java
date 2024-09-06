@@ -25,6 +25,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.client.particle.ParticleConduit;
+import surreal.backportium.core.BPPlugin;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.MutBlockPos;
@@ -187,6 +188,7 @@ public class TileConduit extends TileEntity implements ITickable {
         for (int x = 1; x > -2; x--) {
             for (int y = 1; y > -2; y--) {
                 for (int z = 1; z > -2; z--) {
+                    if (!BPPlugin.FLUIDLOGGED && x == 0 && y == 0 && z == 0) continue;
                     Fluid fluid = WorldHelper.getFluid(world, mutPos.setPos(this.pos, x, y, z));
                     if (fluid != FluidRegistry.WATER) {
                         return false;

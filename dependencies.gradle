@@ -18,7 +18,7 @@ dependencies {
 
     implementation rfg.deobf("mezz:jei:4.25.5")
 
-    implementation rfg.deobf("com.github.jbredwards:fluidlogged-api:47f153989e")
+    compileOnly rfg.deobf("com.github.jbredwards:fluidlogged-api:47f153989e")
 //    implementation rfg.deobf("curse.maven:aquaacrobatics-321792:5225456") TODO Potential remake
 
 //    annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'

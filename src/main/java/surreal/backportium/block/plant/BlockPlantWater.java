@@ -84,6 +84,7 @@ public class BlockPlantWater extends BlockPlant implements FluidLogged {
     @Override
     @ParametersAreNonnullByDefault
     public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
+        if (BPPlugin.FLUIDLOGGED) return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
         return Blocks.WATER.getFogColor(world, pos, state, entity, originalColor, partialTicks);
     }
 
@@ -91,6 +92,7 @@ public class BlockPlantWater extends BlockPlant implements FluidLogged {
     @Override
     @ParametersAreNonnullByDefault
     public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
+        if (BPPlugin.FLUIDLOGGED) return super.isEntityInsideMaterial(world, blockpos, iblockstate, entity, yToTest, materialIn, testingHead);
         return materialIn == Material.WATER;
     }
 }

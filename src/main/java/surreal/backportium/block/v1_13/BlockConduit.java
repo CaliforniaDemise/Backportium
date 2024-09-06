@@ -6,18 +6,23 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.block.BlockTile;
+import surreal.backportium.core.BPPlugin;
 import surreal.backportium.tile.v1_13.TileConduit;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("deprecation")
@@ -67,6 +72,24 @@ public class BlockConduit extends BlockTile<TileConduit> implements FluidLogged,
     @Override
     public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
         return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Nonnull
+    @Override
+    @ParametersAreNonnullByDefault
+    public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
+        if (BPPlugin.FLUIDLOGGED) return super.getFogColor(world, pos, state, entity, originalColor, partialTicks);
+        BlockPos up = pos.up();
+        IBlockState s = world.getBlockState(up);
+        return s.getBlock().getFogColor(world, up, s, entity, originalColor, partialTicks);
+    }
+
+    @Nullable
+    @Override
+    @ParametersAreNonnullByDefault
+    public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
+        if (BPPlugin.FLUIDLOGGED) return super.isEntityInsideMaterial(world, blockpos, iblockstate, entity, yToTest, materialIn, testingHead);
+        return materialIn == Material.WATER;
     }
 
     @Override

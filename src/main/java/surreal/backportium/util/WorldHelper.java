@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -89,6 +90,8 @@ public class WorldHelper {
         Block block = world.getBlockState(pos).getBlock();
         if (block instanceof FluidLogged) return ((FluidLogged) block).getFluid();
         if (block instanceof IFluidBlock) return ((IFluidBlock) block).getFluid();
+        if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) return FluidRegistry.WATER;
+        if (block == Blocks.LAVA || block == Blocks.FLOWING_LAVA) return FluidRegistry.LAVA;
         return null;
     }
 
