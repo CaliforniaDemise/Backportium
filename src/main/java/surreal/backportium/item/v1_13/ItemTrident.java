@@ -25,7 +25,6 @@ import surreal.backportium.sound.ModSounds;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.Method;
 
 public class ItemTrident extends ItemTEISR {
 
@@ -40,8 +39,6 @@ public class ItemTrident extends ItemTEISR {
         }
         return 0F;
     };
-
-    private static final Method HANDLE_RIPTIDE;
 
     public ItemTrident() {
         this.setCreativeTab(CreativeTabs.COMBAT);
@@ -86,6 +83,7 @@ public class ItemTrident extends ItemTEISR {
 
             if (riptide != 0 && RiptideHelper.canRiptide(worldIn, entityLiving)) {
                 RiptideHelper.handleRiptide(entityLiving, stack);
+                entityLiving.setPosition(entityLiving.posX, entityLiving.posY + 1.0D, entityLiving.posZ);
                 stack.damageItem(1, entityLiving);
                 return;
             }
@@ -139,13 +137,5 @@ public class ItemTrident extends ItemTEISR {
         }
 
         return map;
-    }
-
-    static {
-        try {
-            HANDLE_RIPTIDE = EntityLivingBase.class.getMethod("handleRiptide", ItemStack.class);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

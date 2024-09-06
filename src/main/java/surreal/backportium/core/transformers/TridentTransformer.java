@@ -229,6 +229,22 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(new InsnNode(ICONST_1));
                 list.add(new InsnNode(ISUB));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "riptideTime", "I"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "riptideTime", "I"));
+                list.add(hook("EntityLivingBase$handleRiptide", "(Lnet/minecraft/entity/EntityLivingBase;I)Z"));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "inRiptide", "Z"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "inRiptide", "Z"));
+                LabelNode l_con2 = new LabelNode();
+                list.add(new JumpInsnNode(IFNE, l_con2));
+                list.add(new LabelNode());
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new InsnNode(ICONST_0));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "riptideTime", "I"));
+                list.add(l_con2);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 list.add(l_con);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 method.instructions.insertBefore(node, list);
@@ -328,6 +344,7 @@ public class TridentTransformer extends BasicTransformer {
             m_getRiptideTime.visitFieldInsn(GETFIELD, cls.name, "riptideTime", "I");
             m_getRiptideTime.visitInsn(IRETURN);
         }
+        writeClass(cls);
         return write(cls);
     }
 

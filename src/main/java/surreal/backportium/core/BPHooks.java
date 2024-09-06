@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
@@ -24,6 +25,7 @@ import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
 
+import java.util.List;
 import java.util.Random;
 
 @SuppressWarnings("unused")
@@ -97,6 +99,27 @@ public class BPHooks {
             float rotate = 72F * (tickLeft - partialTicks + 1.0F);
             GlStateManager.rotate(rotate, 0.0F, 1.0F, 0.0F);
         }
+    }
+
+    public static boolean EntityLivingBase$handleRiptide(EntityLivingBase entity, int riptideTime) {
+        World world = entity.world;
+        boolean collided = entity.collidedHorizontally;
+        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, entity.getEntityBoundingBox(), EntityLivingBase::canBeCollidedWith);
+        if (entities.size() > 1) {
+            collided = true;
+            EntityLivingBase e = entities.get(0);
+            if (entity == e) e = entities.get(1);
+            e.attackEntityFrom(DamageSource.GENERIC, 8.0F);
+        }
+
+        if (collided) {
+            entity.motionX = -entity.motionX / 2F;
+            entity.motionY = -entity.motionY / 2F;
+            entity.motionZ = -entity.motionZ / 2F;
+            return false;
+        }
+
+        return true;
     }
 
     // Fluidlogging
