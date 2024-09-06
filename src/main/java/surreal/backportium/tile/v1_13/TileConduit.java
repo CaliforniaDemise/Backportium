@@ -107,13 +107,15 @@ public class TileConduit extends TileEntity implements ITickable {
                 if (nearEntities == null) return;
 
                 for (EntityLivingBase entity : nearEntities) {
+
                     if (shouldApplyToEntity(entity)) {
-                        if (entity instanceof EntityMob) {
+                        if (entity instanceof EntityPlayer) {
+                            entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, (20 * 12) + 1, 0, true, false));
+                        }
+                        else if (this.shouldAttack() && entity instanceof EntityMob) {
                             if (this.getDistanceSq(entity.posX, entity.posY, entity.posZ) <= 64) {
                                 entity.attackEntityFrom(DamageSource.DROWN, 4.0F);
                             }
-                        } else if (entity instanceof EntityPlayer) {
-                            entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, (20 * 12) + 1, 0, true, false));
                         }
                     }
                 }
@@ -200,7 +202,7 @@ public class TileConduit extends TileEntity implements ITickable {
     }
 
     protected boolean shouldApplyToEntity(EntityLivingBase entity) {
-        return entity.isInWater() || this.world.isRainingAt(entity.getPosition());
+        return entity.isInWater() || this.world.isRainingAt(new BlockPos(entity));
     }
 
     protected boolean shouldAttack() {

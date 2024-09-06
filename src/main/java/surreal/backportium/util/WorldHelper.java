@@ -34,17 +34,17 @@ public class WorldHelper {
 
         ImmutableList.Builder<T> list = ImmutableList.builder();
 
-        int chunkRadius = blockRadius / 16; // I don't think MAX_ENTITY_RADIUS is needed, but we'll see
+        int chunkRadius = MathHelper.ceil((float) blockRadius / 16); // I don't think MAX_ENTITY_RADIUS is needed, but we'll see
 
         int radiusSq = blockRadius * blockRadius;
 
-        for (int x = -chunkRadius; Math.abs(x) <= chunkRadius; x++) {
-            for (int z = -chunkRadius; Math.abs(z) <= chunkRadius; z++) {
+        for (int x = -chunkRadius; x <= chunkRadius; x++) {
+            for (int z = -chunkRadius; z <= chunkRadius; z++) {
 
                 Chunk chunk = world.getChunk(chunkX + x, chunkZ + z);
 
-                int minY = MathHelper.clamp(pos.getY() - blockRadius, 0, chunk.getEntityLists().length - 1);
-                int maxY = MathHelper.clamp(pos.getY() + blockRadius, blockRadius, chunk.getEntityLists().length - 1);
+                int minY = MathHelper.clamp((pos.getY() - blockRadius) / 16, 0, chunk.getEntityLists().length - 1);
+                int maxY = MathHelper.clamp((pos.getY() + blockRadius) / 16, blockRadius / 16, chunk.getEntityLists().length - 1);
 
                 if (chunk.isLoaded()) {
                     for (int i = minY; i <= maxY; i++) {
