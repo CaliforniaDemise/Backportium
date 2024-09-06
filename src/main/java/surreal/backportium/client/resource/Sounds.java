@@ -15,6 +15,31 @@ public class Sounds {
         put(map, "block/pumpkin/carve1");
         put(map, "block/pumpkin/carve2");
 
+        // block.conduit.activate
+        put(map, "block/conduit/activate");
+
+        // block.conduit.ambient
+        put(map, "block/conduit/ambient");
+
+        // block.conduit.attack.target
+        put(map, "block/conduit/attack1");
+        put(map, "block/conduit/attack2");
+        put(map, "block/conduit/attack3");
+
+        // block.conduit.deactivate
+        put(map, "block/conduit/deactivate");
+
+        // block.conduit.ambient.short
+        put(map, "block/conduit/short1");
+        put(map, "block/conduit/short2");
+        put(map, "block/conduit/short3");
+        put(map, "block/conduit/short4");
+        put(map, "block/conduit/short5");
+        put(map, "block/conduit/short6");
+        put(map, "block/conduit/short7");
+        put(map, "block/conduit/short8");
+        put(map, "block/conduit/short9");
+
         /* ITEMS */
         // item.armor.equip_turtle
         put(map, "mob/turtle/armor");
