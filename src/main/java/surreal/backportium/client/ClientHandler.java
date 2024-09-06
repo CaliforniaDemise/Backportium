@@ -74,6 +74,7 @@ public class ClientHandler {
         TextureMap map = event.getMap();
         map.registerSprite(new ResourceLocation("entity/conduit/wind"));
         map.registerSprite(new ResourceLocation("entity/conduit/wind_vertical"));
+        map.registerSprite(new ResourceLocation("particle/nautilus"));
     }
 
     // Trident

@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockPrismarine;
 import net.minecraft.block.BlockSeaLantern;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,11 +16,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import surreal.backportium.client.particle.ParticleConduit;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.MutBlockPos;
 import surreal.backportium.util.WorldHelper;
@@ -27,6 +30,7 @@ import surreal.backportium.util.WorldHelper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 public class TileConduit extends TileEntity implements ITickable {
 
@@ -54,6 +58,7 @@ public class TileConduit extends TileEntity implements ITickable {
         if (world.isRemote) {
             if (this.animTick == 0) this.animTick = this.world.rand.nextInt(10000);
             animTick++;
+            if (this.power > 0) this.spawnParticles();
         }
 
         if (!world.isRemote && updateTick == 0) {
@@ -151,6 +156,72 @@ public class TileConduit extends TileEntity implements ITickable {
             }
         }
         return true;
+    }
+
+    // Kind of like coundBlocks but for spawning particles
+    protected void spawnParticles() {
+        Random random = this.world.rand;
+        MutBlockPos mutPos = new MutBlockPos();
+        Vec3d conduitPos = new Vec3d(this.pos.getX() + 0.5D, this.pos.getY() + 0.5D, this.pos.getZ() + 0.5D);
+
+        for (int i = -2; i < 3; i++) {
+            if (this.isBlock(this.world, mutPos.setPos(this.pos, i, 0, -2)))
+                this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+            if (this.isBlock(this.world, mutPos.setPos(this.pos, i, 0, 2)))
+                this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+            if (i != 0) {
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, 0, i, -2)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, 0, i, 2)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, -2, i, 0)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, 2, i, 0)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+            }
+
+            if (Math.abs(i) != 2) {
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, -2, 0, i)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, 2, 0, i)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, 0, -2, i)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+                if (this.isBlock(this.world, mutPos.setPos(this.pos, 0, 2, i)))
+                    this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+                if (i != 0) {
+                    if (this.isBlock(this.world, mutPos.setPos(this.pos, i, -2, 0)))
+                        this.spawnParticleFromBlock(random, mutPos, conduitPos);
+
+                    if (this.isBlock(this.world, mutPos.setPos(this.pos, i, 2, 0)))
+                        this.spawnParticleFromBlock(random, mutPos, conduitPos);
+                }
+            }
+        }
+    }
+
+    private void spawnParticleFromBlock(Random random, BlockPos pos, Vec3d conduitPos) {
+        if (random.nextInt(32) != 0) return;
+        for (int i = 0; i < random.nextInt(3); i++) {
+            double x = pos.getX() + (random.nextDouble() - 0.5D);
+            double y = pos.getY();
+            double z = pos.getZ() + (random.nextDouble() - 0.5D);
+            float size = world.rand.nextFloat() * 0.9F;
+            ParticleConduit conduit = new ParticleConduit(this.world, x, y, z, size, conduitPos);
+            Minecraft.getMinecraft().effectRenderer.addEffect(conduit);
+        }
     }
 
     protected int countBlocks() {

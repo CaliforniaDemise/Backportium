@@ -90,6 +90,8 @@ public class Textures {
 
         put(map, "models/armor/turtle_layer_1");
 
+        put(map, "particle/nautilus");
+
         AssetMoverAPI.fromMinecraft("1.20.1", map);
     }
 
