@@ -1,32 +1,37 @@
 package surreal.backportium.entity.v1_13;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import surreal.backportium.api.enums.ModCreatureAttributes;
 import surreal.backportium.enchantment.ModEnchantments;
+import surreal.backportium.entity.AbstractEntityArrow;
 import surreal.backportium.item.ModItems;
-import surreal.backportium.sound.ModSounds;
 
 import javax.annotation.Nonnull;
 
-public class EntityTrident extends EntityArrow {
+public class EntityTrident extends AbstractEntityArrow {
 
-    protected NBTTagCompound stackTag; // We're throwing the item. Not using the item to throw things like Bow and Arrow
-
-    private boolean moveLoyalty; // If it moves because of loyalty
-
+    // Stack Details
     private int damage;
+    protected NBTTagCompound tag; // We're throwing the item. Not using the item to throw things like Bow and Arrow
 
-    private int impalingLvl = 0;
-    private int loyaltyLvl = 0;
+    // Enchantments
+    private int loyaltyLvl = -1;
+    private int impalingLvl = -1;
+
+    // Loyalty
+    private boolean moveLoyalty; // If it moves because of loyalty
 
     public EntityTrident(World worldIn) {
         super(worldIn);
@@ -38,60 +43,65 @@ public class EntityTrident extends EntityArrow {
 
     public EntityTrident(World worldIn, EntityLivingBase shooter, ItemStack stack) {
         super(worldIn, shooter);
-        this.stackTag = stack.getTagCompound();
+        this.tag = stack.getTagCompound();
+        if (this.tag == null) this.tag = new NBTTagCompound();
         this.damage = stack.getItemDamage();
+        initEnchLevels();
     }
 
     @Override
     public void onUpdate() {
         super.onUpdate();
         if (this.moveLoyalty) {
-            this.inGround = false;
-            float speed = 0.25F;
-            if (this.shootingEntity.posX < this.posX) {
-                this.motionX = -speed;
-            } else if (this.shootingEntity.posX > this.posX) {
-                this.motionX = speed;
+            if (!this.world.isRemote) {
+                double yEntity = this.shootingEntity.posY + this.shootingEntity.getEyeHeight() - 0.25D;
+                this.prevRotationPitch = 180F;
+                this.rotationPitch = 180F;
+                double speed = 0.15D + loyaltyLvl * 0.05D;
+                double x = this.shootingEntity.posX - this.posX;
+                double y = yEntity - this.posY;
+                double z = this.shootingEntity.posZ - this.posZ;
+                this.motionX = x * speed;
+                this.motionY = y * speed;
+                this.motionZ = z * speed;
+                double size = 0.25F;
+                if (check(this.shootingEntity.posX, this.posX, size) && check(yEntity, this.posY, size) && check(this.shootingEntity.posZ, this.posZ, size)) {
+                    EntityItem arrowStack = new EntityItem(this.world, this.posX, this.posY, this.posZ, this.getArrowStack());
+                    arrowStack.setNoPickupDelay();
+                    arrowStack.setNoDespawn();
+                    this.setDead();
+                }
             }
-
-            if (this.shootingEntity.posZ < this.posZ) {
-                this.motionZ = -speed;
-            } else if (this.shootingEntity.posZ > this.posZ) {
-                this.motionZ = speed;
-            }
-
-            if (this.shootingEntity.posY < this.posY) {
-                this.motionY = -speed;
-            } else if (this.shootingEntity.posY > this.posY) {
-                this.motionY = speed;
-            }
-        } else if (this.loyaltyLvl > 0 && this.inGround) {
+        }
+        else if (this.loyaltyLvl > 0 && this.inGround) {
             this.moveLoyalty = true;
+            // Set block air.
+            this.inGround = false;
+            this.ticksInGround = 0;
+            this.inTile = Blocks.AIR;
+            this.xTile = -1;
+            this.yTile = -1;
+            this.zTile = -1;
+            this.inData = 0;
         }
     }
 
-    @Override
-    protected void doBlockCollisions() {
-        if (!moveLoyalty) super.doBlockCollisions();
+    // TODO Maybe add it to WorldHelper
+    private boolean check(double pos, double pos2, double size) {
+        return pos2 >= pos - size && pos2 <= pos + size;
     }
-
-    //    @Nullable
-//    @Override
-//    public EntityItem entityDropItem(ItemStack stack, float offsetY) {
-//        if (stack.getItemDamage())
-//    }
 
     @Nonnull
     @Override
     protected ItemStack getArrowStack() {
-        ItemStack stack = new ItemStack(ModItems.TRIDENT, 1, damage);
-        stack.setTagCompound(stackTag);
+        ItemStack stack = new ItemStack(ModItems.TRIDENT, 1, this.damage);
+        if (!this.tag.isEmpty()) stack.setTagCompound(this.tag);
         return stack;
     }
 
     @Override
     protected void arrowHit(@Nonnull EntityLivingBase living) {
-        if (loyaltyLvl == 0) {
+        if (this.loyaltyLvl == 0) {
             this.motionX *= -0.01F;
             this.motionY = 0F;
             this.motionZ *= -0.01F;
@@ -106,32 +116,20 @@ public class EntityTrident extends EntityArrow {
     @Override
     public void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        if (stackTag == null) stackTag = new NBTTagCompound();
-        compound.setTag("stackTag", stackTag);
+        compound.setInteger("damage", this.damage);
+        compound.setTag("tag", this.tag);
     }
 
     @Override
     public void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
         super.readEntityFromNBT(compound);
-        stackTag = compound.getCompoundTag("stackTag");
-    }
-
-    // @Override
-    protected float getHitDamage(Entity entity, float original) {
-        if (!(entity instanceof EntityLivingBase)) return 9;
-        EntityLivingBase living = (EntityLivingBase) entity;
-
-        initEnchLevels();
-
-        float add = 0;
-
-        if (living.getCreatureAttribute() == ModCreatureAttributes.AQUATIC) add += 2.5F * impalingLvl;
-
-        return 9 + add;
+        this.damage = compound.getInteger("damage");
+        this.tag = compound.getCompoundTag("tag");
     }
 
     private void initEnchLevels() {
-        NBTTagList list = stackTag == null ? null : stackTag.getTagList("ench", Constants.NBT.TAG_COMPOUND);
+        if (this.impalingLvl >= 0) return;
+        NBTTagList list = this.tag == null ? null : this.tag.getTagList("ench", Constants.NBT.TAG_COMPOUND);
         if (list != null) {
             int impaling = Enchantment.getEnchantmentID(ModEnchantments.IMPALING);
             int loyalty = Enchantment.getEnchantmentID(ModEnchantments.LOYALTY);
@@ -148,25 +146,52 @@ public class EntityTrident extends EntityArrow {
                 }
             }
         }
+
+        if (this.impalingLvl == -1) this.impalingLvl = 0;
+        if (this.loyaltyLvl == -1) this.loyaltyLvl = 0;
     }
 
-    // @Override
-    protected boolean shouldDieAfterHit(Entity hitEntity) {
+    @Override
+    public float getHitDamage(Entity entity, float original) {
+        if (!(entity instanceof EntityLivingBase)) return 9;
+        EntityLivingBase living = (EntityLivingBase) entity;
+        float add = 0;
+        if (living.getCreatureAttribute() == ModCreatureAttributes.AQUATIC) add += 2.5F * impalingLvl;
+        return 9 + add;
+    }
+
+    @Override
+    public boolean shouldDieAfterHit(Entity hitEntity) {
         return false;
     }
 
-    // @Override
-    protected float getSpeedChangeInWater() {
+    @Override
+    public boolean shouldHitEntity(Entity entity) {
+        return !this.moveLoyalty || this.shootingEntity != entity;
+    }
+
+    @Override
+    public boolean shouldHitBlock(BlockPos pos, IBlockState state) {
+        return !this.moveLoyalty;
+    }
+
+    @Override
+    protected void doBlockCollisions() {
+        if (!this.moveLoyalty) super.doBlockCollisions();
+    }
+
+    @Override
+    public float getSpeedChangeInWater() {
         return 1.0F;
     }
 
-    // @Override
-    protected SoundEvent getEntityHitSound() {
-        return ModSounds.ITEM_TRIDENT_HIT;
+    @Override
+    public SoundEvent getEntityHitSound(Entity entity) {
+        return super.getEntityHitSound(entity);
     }
 
-    // @Override
-    protected SoundEvent getBlockHitSound() {
-        return ModSounds.ITEM_TRIDENT_HIT_GROUND;
+    @Override
+    public SoundEvent getBlockHitSound(BlockPos pos, IBlockState state) {
+        return super.getBlockHitSound(pos, state);
     }
 }

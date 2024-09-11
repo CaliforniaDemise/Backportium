@@ -20,7 +20,7 @@ public class BPTransformer implements IClassTransformer {
 //            case "net.minecraft.block.BlockButton": return transformBlockButton(basicClass);
             // Trident
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(basicClass);
-            case "net.minecraft.entity.projectile.EntityArrow": return TridentTransformer.transformEntityArrow(basicClass);
+//            case "net.minecraft.entity.projectile.EntityArrow": return TridentTransformer.transformEntityArrow(basicClass);
             case "net.minecraft.util.DamageSource": return TridentTransformer.transformDamageSource(basicClass);
             case "net.minecraft.entity.EntityLivingBase": return TridentTransformer.transformEntityLivingBase(basicClass);
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);

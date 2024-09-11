@@ -88,7 +88,8 @@ public class ItemTrident extends ItemTEISR {
                 return;
             }
 
-            if (!worldIn.isRemote) {
+            if (!worldIn.isRemote && stack.getItemDamage() != stack.getMaxDamage() - 1) {
+                stack.damageItem(1, entityLiving);
                 EntityTrident trident = new EntityTrident(worldIn, entityLiving, stack);
                 trident.shoot(entityLiving, entityLiving.rotationPitch, entityLiving.rotationYaw, 0.0F, velocity * 3F, 1F);
 

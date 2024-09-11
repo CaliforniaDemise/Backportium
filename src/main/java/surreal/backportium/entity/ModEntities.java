@@ -33,7 +33,7 @@ public class ModEntities {
         builder.id(new ResourceLocation(Tags.MOD_ID, name), networkId++);
         builder.name(name);
         builder.factory(factory);
-        builder.tracker(80, 3, true);
+        builder.tracker(80, 1, true);
         return builder;
     }
 
