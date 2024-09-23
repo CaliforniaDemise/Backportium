@@ -4,9 +4,12 @@ import com.google.common.collect.Multimap;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.monster.EntityGuardian;
+import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -80,14 +83,12 @@ public class ItemTrident extends ItemTEISR {
 
         if (velocity > 0.3F) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
-
             if (riptide != 0 && RiptideHelper.canRiptide(worldIn, entityLiving)) {
                 RiptideHelper.handleRiptide(entityLiving, stack);
                 entityLiving.setPosition(entityLiving.posX, entityLiving.posY + 1.0D, entityLiving.posZ);
                 stack.damageItem(1, entityLiving);
                 return;
             }
-
             if (!worldIn.isRemote && stack.getItemDamage() != stack.getMaxDamage() - 1) {
                 stack.damageItem(1, entityLiving);
                 EntityTrident trident = new EntityTrident(worldIn, entityLiving, stack);
@@ -126,12 +127,22 @@ public class ItemTrident extends ItemTEISR {
         return action;
     }
 
+    @Override
+    @ParametersAreNonnullByDefault
+    public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+        int impaling = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.IMPALING, stack);
+        if (impaling > 0 && (entity instanceof EntityWaterMob || entity instanceof EntityGuardian)) {
+            float damageAdd = 2.5F * impaling;
+            entity.attackEntityFrom(DamageSource.causePlayerDamage(player), damageAdd);
+        }
+        return false;
+    }
+
     @Nonnull
     @Override
     @ParametersAreNonnullByDefault
     public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot equipmentSlot, ItemStack stack) {
         Multimap<String, AttributeModifier> map = super.getAttributeModifiers(equipmentSlot, stack);
-
         if (equipmentSlot == EntityEquipmentSlot.MAINHAND) {
             map.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon Modifier", 8F, 0));
             map.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon Modifier", -2.9F, 0));

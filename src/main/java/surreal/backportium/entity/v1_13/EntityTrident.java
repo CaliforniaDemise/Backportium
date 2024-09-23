@@ -5,6 +5,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityGuardian;
+import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,7 +15,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import surreal.backportium.api.enums.ModCreatureAttributes;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.AbstractEntityArrow;
 import surreal.backportium.item.ModItems;
@@ -153,10 +154,10 @@ public class EntityTrident extends AbstractEntityArrow {
 
     @Override
     public float getHitDamage(Entity entity, float original) {
-        if (!(entity instanceof EntityLivingBase)) return 9;
-        EntityLivingBase living = (EntityLivingBase) entity;
-        float add = 0;
-        if (living.getCreatureAttribute() == ModCreatureAttributes.AQUATIC) add += 2.5F * impalingLvl;
+        float add = 0F;
+        if (this.impalingLvl > 0 && (entity instanceof EntityWaterMob || entity instanceof EntityGuardian)) {
+            add += 2.5F * this.impalingLvl;
+        }
         return 9 + add;
     }
 

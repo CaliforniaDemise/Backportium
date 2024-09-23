@@ -106,10 +106,16 @@ public class BPHooks {
         boolean collided = entity.collidedHorizontally;
         List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, entity.getEntityBoundingBox(), EntityLivingBase::canBeCollidedWith);
         if (entities.size() > 1) {
+            ItemStack stack = entity.getActiveItemStack();
+            float add = 0F;
+            if (!stack.isEmpty()) {
+                int impaling = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.IMPALING, stack);
+                add += 2.5F * impaling;
+            }
             collided = true;
             EntityLivingBase e = entities.get(0);
             if (entity == e) e = entities.get(1);
-            e.attackEntityFrom(DamageSource.GENERIC, 8.0F);
+            e.attackEntityFrom(DamageSource.GENERIC, 8.0F + add);
         }
 
         if (collided) {
