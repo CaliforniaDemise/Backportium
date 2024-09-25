@@ -1,6 +1,7 @@
 package surreal.backportium.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import surreal.backportium.core.transformers.DebarkingTransformer;
 import surreal.backportium.core.transformers.FluidloggingTransformer;
 import surreal.backportium.core.transformers.PumpkinTransformer;
 import surreal.backportium.core.transformers.TridentTransformer;
@@ -16,6 +17,7 @@ public class BPTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (basicClass == null) return null;
+        if (transformedName.startsWith("surreal.backportium")) return basicClass;
         switch (transformedName) {
 //            case "net.minecraft.block.BlockButton": return transformBlockButton(basicClass);
             // Trident
@@ -39,10 +41,13 @@ public class BPTransformer implements IClassTransformer {
             // Fluidlogging
             case "net.minecraftforge.fluids.BlockFluidBase": return FluidloggingTransformer.transformBlockFluidBase(basicClass);
             case "net.minecraft.block.BlockLiquid": return FluidloggingTransformer.transformBlockLiquid(basicClass);
+
+            // Debarking
+            case "net.minecraft.block.BlockLog": return DebarkingTransformer.transformBlockLog(basicClass);
         }
+        if (checkBytes(basicClass, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
         return basicClass;
     }
-
 
     public static void classOut(String name, byte[] bytes) {
         File file = new File(BPPlugin.GAME_DIR, "classOut/" + name + ".class");
@@ -52,6 +57,21 @@ public class BPTransformer implements IClassTransformer {
             os.write(bytes);
         } catch (IOException ignored) {
         }
+    }
+
+    private static boolean checkBytes(byte[] basicClass, String name) {
+        for (int i = basicClass.length - 1; i >= 0; i--) {
+            byte b = basicClass[i];
+            int ii = i;
+            int g = name.length() - 1;
+            while (name.charAt(g) == (char) b) {
+                ii--;
+                b = basicClass[ii];
+                if (g == 0) return true;
+                g--;
+            }
+        }
+        return false;
     }
 
 

@@ -33,7 +33,7 @@ import surreal.backportium.potion.ModPotions;
 import surreal.backportium.recipe.ModRecipes;
 import surreal.backportium.sound.ModSounds;
 
-@Mod(modid = Tags.MOD_ID, name = "Backportium", version = Tags.MOD_VERSION)
+@Mod(modid = Tags.MOD_ID, name = "Backportium", version = Tags.MOD_VERSION, dependencies = "after:*")
 @SuppressWarnings("unused")
 public class Backportium {
 

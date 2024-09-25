@@ -1,5 +1,6 @@
 package surreal.backportium.item;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -16,11 +17,13 @@ import surreal.backportium.Tags;
 import surreal.backportium.api.client.model.ModelProvider;
 import surreal.backportium.api.enums.ModArmorMaterials;
 import surreal.backportium.api.item.OredictProvider;
+import surreal.backportium.core.BPHooks;
 import surreal.backportium.item.v1_13.ItemArmorTurtle;
 import surreal.backportium.item.v1_13.ItemTrident;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class ModItems {
@@ -57,6 +60,13 @@ public class ModItems {
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
+        for (Map.Entry<Block, Item> entry : BPHooks.DEBARKED_LOG_ITEMS.entrySet()) {
+            Block log = entry.getKey();
+            Item toReg = entry.getValue();
+            toReg.setRegistryName(Objects.requireNonNull(log.getRegistryName()));
+            toReg.setTranslationKey(log.getTranslationKey());
+            registry.register(toReg);
+        }
         ITEMS.forEach(registry::register);
     }
 

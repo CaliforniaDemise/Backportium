@@ -1,6 +1,7 @@
 package surreal.backportium.core;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
@@ -10,23 +11,24 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.registries.ForgeRegistry;
 import surreal.backportium.Backportium;
+import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
+import surreal.backportium.item.ItemBlockSub;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class BPHooks {
@@ -136,6 +138,21 @@ public class BPHooks {
     public static boolean BlockLiquid$renderSide(boolean original, IBlockAccess world, BlockPos pos, EnumFacing facing) {
         IBlockState state = world.getBlockState(pos.offset(facing));
         return original && !(state.getBlock() instanceof FluidLogged);
+    }
+
+    // Debarking
+    public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>();
+    public static final Map<Block, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
+    //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
+
+    // TODO Add checks for logs that extends non-abstract log classes and logs which uses setRegistryName on constructors.
+    public static void Debarking$registerBlock(Block block, Block log) {
+        DEBARKED_LOG_BLOCKS.put(log, block);
+        DEBARKED_LOG_ITEMS.put(block, new ItemBlockSub(block));
+    }
+
+    // TODO Create the item with same class instead of using normal ItemBlock
+    public static void Debarking$registerItem(Item logItem) {
     }
 
     // Button Placement

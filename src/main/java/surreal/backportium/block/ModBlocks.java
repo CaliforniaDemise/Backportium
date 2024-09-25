@@ -8,7 +8,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
 import surreal.backportium.api.enums.CoralType;
@@ -19,6 +21,7 @@ import surreal.backportium.block.plant.coral.BlockCoralBlock;
 import surreal.backportium.block.plant.coral.BlockCoralFan;
 import surreal.backportium.block.v1_13.BlockPumpkin;
 import surreal.backportium.block.v1_13.*;
+import surreal.backportium.core.BPHooks;
 import surreal.backportium.item.*;
 import surreal.backportium.item.v1_13.ItemBlockCoralFan;
 import surreal.backportium.item.v1_13.ItemBlockKelp;
@@ -27,6 +30,7 @@ import surreal.backportium.util.SupplierInput;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static surreal.backportium.api.enums.CoralType.*;
@@ -103,6 +107,12 @@ public class ModBlocks {
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
+        for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
+            Block log = entry.getKey();
+            Block toReg = entry.getValue();
+            toReg.setRegistryName(Tags.MOD_ID, Objects.requireNonNull(registry.getKey(log)).getPath() + "_debarked");
+            registry.register(toReg);
+        }
         BLOCKS.forEach(registry::register);
     }
 
