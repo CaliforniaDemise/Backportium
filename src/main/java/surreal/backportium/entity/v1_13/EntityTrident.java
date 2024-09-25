@@ -4,6 +4,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.passive.EntityWaterMob;
@@ -30,6 +31,7 @@ public class EntityTrident extends AbstractEntityArrow {
     // Enchantments
     private int loyaltyLvl = -1;
     private int impalingLvl = -1;
+    private int channelingLvl = -1;
 
     // Loyalty
     private boolean moveLoyalty; // If it moves because of loyalty
@@ -134,6 +136,7 @@ public class EntityTrident extends AbstractEntityArrow {
         if (list != null) {
             int impaling = Enchantment.getEnchantmentID(ModEnchantments.IMPALING);
             int loyalty = Enchantment.getEnchantmentID(ModEnchantments.LOYALTY);
+            int channeling = Enchantment.getEnchantmentID(ModEnchantments.CHANNELING);
 
             for (int i = 0; i < list.tagCount(); i++) {
                 NBTTagCompound enchCompound = list.getCompoundTagAt(i);
@@ -142,14 +145,19 @@ public class EntityTrident extends AbstractEntityArrow {
 
                 if (id == impaling) {
                     impalingLvl = lvl;
-                } else if (id == loyalty) {
+                }
+                else if (id == loyalty) {
                     this.loyaltyLvl = lvl;
+                }
+                else if (id == channeling) {
+                    this.channelingLvl = lvl;
                 }
             }
         }
 
         if (this.impalingLvl == -1) this.impalingLvl = 0;
         if (this.loyaltyLvl == -1) this.loyaltyLvl = 0;
+        if (this.channelingLvl == -1) this.channelingLvl = 0;
     }
 
     @Override
@@ -194,5 +202,12 @@ public class EntityTrident extends AbstractEntityArrow {
     @Override
     public SoundEvent getBlockHitSound(BlockPos pos, IBlockState state) {
         return super.getBlockHitSound(pos, state);
+    }
+
+    @Override
+    public void onHitEntity(Entity entity) {
+        if (!this.world.isRemote && this.channelingLvl > 0 && this.world.isThundering() && !entity.isInWater()) {
+            this.world.addWeatherEffect(new EntityLightningBolt(this.world, entity.posX, entity.posY, entity.posZ, false));
+        }
     }
 }

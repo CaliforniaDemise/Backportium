@@ -5,6 +5,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
+import surreal.backportium.enchantment.v1_13.EnchantmentChanneling;
 import surreal.backportium.enchantment.v1_13.EnchantmentImpaling;
 import surreal.backportium.enchantment.v1_13.EnchantmentLoyalty;
 import surreal.backportium.enchantment.v1_13.EnchantmentRiptide;
@@ -19,6 +20,7 @@ public class ModEnchantments {
     public static final Enchantment IMPALING = register(new EnchantmentImpaling(Enchantment.Rarity.RARE), "impaling");
     public static final Enchantment LOYALTY = register(new EnchantmentLoyalty(Enchantment.Rarity.RARE), "loyalty");
     public static final Enchantment RIPTIDE = register(new EnchantmentRiptide(Enchantment.Rarity.RARE), "riptide");
+    public static final Enchantment CHANNELING = register(new EnchantmentChanneling(Enchantment.Rarity.RARE), "channeling");
 
     private static Enchantment register(Enchantment enchantment, String name) {
         enchantment.setName(name).setRegistryName(Tags.MOD_ID, name);

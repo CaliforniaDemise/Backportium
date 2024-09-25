@@ -251,6 +251,7 @@ public abstract class AbstractEntityArrow extends EntityArrow {
                     }
                 }
 
+                this.onHitEntity(entity);
                 this.playSound(this.getEntityHitSound(entity), 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 
                 if (this.shouldDieAfterHit(entity)) {
@@ -332,4 +333,6 @@ public abstract class AbstractEntityArrow extends EntityArrow {
     public float getHitDamage(Entity entity, float damage) {
         return damage;
     }
+
+    public void onHitEntity(Entity entity) {}
 }

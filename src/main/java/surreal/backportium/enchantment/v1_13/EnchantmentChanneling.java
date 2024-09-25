@@ -8,19 +8,14 @@ import surreal.backportium.enchantment.ModEnchantments;
 
 import javax.annotation.Nonnull;
 
-public class EnchantmentRiptide extends EnchantmentDef {
+public class EnchantmentChanneling extends EnchantmentDef {
 
-    public EnchantmentRiptide(Rarity rarityIn) {
-        super(rarityIn, ModEnchantmentTypes.TRIDENT, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND });
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 3;
+    public EnchantmentChanneling(Rarity rarityIn) {
+        super(rarityIn, ModEnchantmentTypes.TRIDENT, new EntityEquipmentSlot[] { EntityEquipmentSlot.MAINHAND, EntityEquipmentSlot.OFFHAND });
     }
 
     @Override
     protected boolean canApplyTogether(@Nonnull Enchantment ench) {
-        return ench != ModEnchantments.LOYALTY && ench != ModEnchantments.CHANNELING;
+        return ench != ModEnchantments.RIPTIDE;
     }
 }
