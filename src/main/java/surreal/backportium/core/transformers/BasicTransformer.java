@@ -100,7 +100,6 @@ public abstract class BasicTransformer implements Opcodes {
         catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private static boolean isSuper(Class<?> cls, String superName) {

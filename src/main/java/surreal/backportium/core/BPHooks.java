@@ -142,7 +142,6 @@ public class BPHooks {
     public static final Map<Block, ItemBlock> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
     //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
 
-    // TODO Add checks for logs that extends non-abstract log classes.
     public static void Debarking$registerBlock(Block block, Block log) {
         DEBARKED_LOG_BLOCKS.put(log, block);
         DEBARKED_LOG_ITEMS.put(log, new ItemBlockDebarkedLog(block, log));

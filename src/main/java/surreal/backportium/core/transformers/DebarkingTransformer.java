@@ -5,6 +5,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
+import java.lang.reflect.Modifier;
 import java.util.Iterator;
 
 public class DebarkingTransformer extends BasicTransformer {
@@ -22,7 +23,7 @@ public class DebarkingTransformer extends BasicTransformer {
     // Non-abstract BlockLog extending aberrations
     public static byte[] transformBlockLogEx(byte[] basicClass) {
         ClassNode cls = read(basicClass);
-        if ((cls.access & ACC_ABSTRACT) != ACC_ABSTRACT && isSuper(cls, "net/minecraft/block/BlockLog")) {
+        if ((cls.access & ACC_ABSTRACT) != ACC_ABSTRACT && checkIfAbstract(cls) && isSuper(cls, "net/minecraft/block/BlockLog")) {
             for (MethodNode method : cls.methods) {
                 if (method.name.equals("<init>") && ((method.access & ACC_PUBLIC) == ACC_PUBLIC || (method.access & ACC_PROTECTED) == ACC_PROTECTED)) {
                     Int2IntMap map = getDescMap(method.desc);
@@ -78,6 +79,15 @@ public class DebarkingTransformer extends BasicTransformer {
             }
         }
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
+    }
+
+    private static boolean checkIfAbstract(ClassNode cls) {
+        try {
+            return Modifier.isAbstract(Class.forName(cls.superName.replace('/', '.')).getModifiers());
+        }
+        catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static String createDebarkedClass(ClassNode clsLog, String mDesc, Int2IntMap descMap) {
