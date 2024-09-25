@@ -4,6 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.ResourceLocation;
 import surreal.backportium.potion.PotionBasic;
+import surreal.backportium.tile.v1_13.TileConduit;
 
 import javax.annotation.Nonnull;
 
@@ -22,9 +23,11 @@ public class PotionConduitPower extends PotionBasic {
     }
 
     @Override
-    public void performEffect(@Nonnull EntityLivingBase entityLivingBaseIn, int amplifier) {
-        MobEffects.NIGHT_VISION.performEffect(entityLivingBaseIn, amplifier);
-        MobEffects.WATER_BREATHING.performEffect(entityLivingBaseIn, amplifier);
-        MobEffects.HASTE.performEffect(entityLivingBaseIn, amplifier);
+    public void performEffect(@Nonnull EntityLivingBase entity, int amplifier) {
+        if (TileConduit.shouldApplyToEntity(entity)) {
+            MobEffects.NIGHT_VISION.performEffect(entity, amplifier);
+            MobEffects.WATER_BREATHING.performEffect(entity, amplifier);
+            MobEffects.HASTE.performEffect(entity, amplifier);
+        }
     }
 }

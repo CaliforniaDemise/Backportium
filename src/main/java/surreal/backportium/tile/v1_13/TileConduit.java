@@ -343,8 +343,8 @@ public class TileConduit extends TileEntity implements ITickable {
         return this.power > 0 ? 16 + (16 * this.power) : 0;
     }
 
-    protected boolean shouldApplyToEntity(EntityLivingBase entity) {
-        return entity.isInWater() || this.world.isRainingAt(new BlockPos(entity));
+    public static boolean shouldApplyToEntity(EntityLivingBase entity) {
+        return entity.isInWater() || entity.world.isRainingAt(new BlockPos(entity));
     }
 
     protected boolean shouldAttack() {
