@@ -75,6 +75,9 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("entity/conduit/wind"));
         map.registerSprite(new ResourceLocation("entity/conduit/wind_vertical"));
         map.registerSprite(new ResourceLocation("particle/nautilus"));
+        map.registerSprite(new ResourceLocation("mob_effect/conduit_power"));
+        map.registerSprite(new ResourceLocation("mob_effect/dolphins_grace"));
+        map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
     }
 
     // Trident

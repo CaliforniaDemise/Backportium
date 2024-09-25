@@ -2,15 +2,18 @@ package surreal.backportium.potion.v1_13;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import surreal.backportium.potion.PotionBasic;
 
 import javax.annotation.Nonnull;
 
 public class PotionSlowFalling extends PotionBasic {
 
+    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/mob_effect/slow_falling.png");
+
     public PotionSlowFalling(boolean isBadEffectIn, int liquidColorIn) {
         super(isBadEffectIn, liquidColorIn);
-        setBeneficial();
+        this.setBeneficial();
     }
 
     @Override
@@ -25,7 +28,7 @@ public class PotionSlowFalling extends PotionBasic {
     }
 
     @Override
-    public boolean isReady(int duration, int amplifier) {
-        return true;
+    protected ResourceLocation getTextureLocation() {
+        return TEXTURE;
     }
 }

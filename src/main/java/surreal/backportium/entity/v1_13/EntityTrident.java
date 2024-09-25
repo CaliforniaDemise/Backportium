@@ -49,7 +49,7 @@ public class EntityTrident extends AbstractEntityArrow {
         this.tag = stack.getTagCompound();
         if (this.tag == null) this.tag = new NBTTagCompound();
         this.damage = stack.getItemDamage();
-        initEnchLevels();
+        this.initEnchLevels();
     }
 
     @Override
