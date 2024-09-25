@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -60,11 +61,9 @@ public class ModItems {
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        for (Map.Entry<Block, Item> entry : BPHooks.DEBARKED_LOG_ITEMS.entrySet()) {
-            Block log = entry.getKey();
-            Item toReg = entry.getValue();
-            toReg.setRegistryName(Objects.requireNonNull(log.getRegistryName()));
-            toReg.setTranslationKey(log.getTranslationKey());
+        for (Map.Entry<Block, ItemBlock> entry : BPHooks.DEBARKED_LOG_ITEMS.entrySet()) {
+            ItemBlock toReg = entry.getValue();
+            toReg.setRegistryName(Objects.requireNonNull(toReg.getBlock().getRegistryName()));
             registry.register(toReg);
         }
         ITEMS.forEach(registry::register);

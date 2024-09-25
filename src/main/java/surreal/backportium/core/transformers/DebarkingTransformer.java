@@ -75,7 +75,6 @@ public class DebarkingTransformer extends BasicTransformer {
 
         byte[] bytes = write(cls);
         loadNewClass(cls.name, bytes);
-
         return cls.name;
     }
 

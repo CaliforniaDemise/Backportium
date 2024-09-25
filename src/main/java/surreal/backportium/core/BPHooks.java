@@ -1,7 +1,6 @@
 package surreal.backportium.core;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
@@ -19,14 +18,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.registries.ForgeRegistry;
 import surreal.backportium.Backportium;
-import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
-import surreal.backportium.item.ItemBlockSub;
+import surreal.backportium.item.v1_13.ItemBlockDebarkedLog;
 
 import java.util.*;
 
@@ -142,13 +139,13 @@ public class BPHooks {
 
     // Debarking
     public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>();
-    public static final Map<Block, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
+    public static final Map<Block, ItemBlock> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
     //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
 
     // TODO Add checks for logs that extends non-abstract log classes and logs which uses setRegistryName on constructors.
     public static void Debarking$registerBlock(Block block, Block log) {
         DEBARKED_LOG_BLOCKS.put(log, block);
-        DEBARKED_LOG_ITEMS.put(block, new ItemBlockSub(block));
+        DEBARKED_LOG_ITEMS.put(log, new ItemBlockDebarkedLog(block, log));
     }
 
     // TODO Create the item with same class instead of using normal ItemBlock

@@ -1,3 +1,5 @@
 
 # Damage Sources
 death.attack.trident=%s died by Trident
+
+tile.backportium.debarked_log=Debarked %s
