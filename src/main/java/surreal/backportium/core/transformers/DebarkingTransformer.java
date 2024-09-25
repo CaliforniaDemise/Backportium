@@ -5,6 +5,8 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
+import java.util.Iterator;
+
 public class DebarkingTransformer extends BasicTransformer {
 
     public static byte[] transformBlockLog(byte[] basicClass) {
@@ -26,25 +28,51 @@ public class DebarkingTransformer extends BasicTransformer {
                     Int2IntMap map = getDescMap(method.desc);
                     String clsName = createDebarkedClass(cls, method.desc, map);
                     cls.visitInnerClass(clsName, cls.name, "Debarked", ACC_PUBLIC | ACC_STATIC);
-                    AbstractInsnNode node = method.instructions.getLast();
-                    while (node.getOpcode() != RETURN) node = node.getPrevious();
-                    InsnList list = new InsnList();
-                    list.add(new VarInsnNode(ALOAD, 0));
-                    list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "isDebarked", "()Z", false));
-                    LabelNode l_con = new LabelNode();
-                    list.add(new JumpInsnNode(IFNE, l_con));
-                    list.add(new TypeInsnNode(NEW, clsName));
-                    list.add(new InsnNode(DUP));
-                    if (!map.isEmpty()) {
-                        for (int i : map.keySet()) {
-                            list.add(new VarInsnNode(map.get(i), i));
+                    Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                    while (iterator.hasNext()) {
+                        AbstractInsnNode node = iterator.next();
+                        if (node.getOpcode() == INVOKEVIRTUAL) {
+                            MethodInsnNode mInsn = (MethodInsnNode) node;
+                            if (mInsn.name.equals("setRegistryName")) {
+                                String mDesc = mInsn.desc;
+                                StringBuilder builder = new StringBuilder();
+                                for (int i = 0; i < mDesc.length(); i++) {
+                                    char c = mDesc.charAt(i);
+                                    if (c == ')') {
+                                        builder.append("Lnet/minecraft/block/Block;Z"); // isDebarked
+                                    }
+                                    builder.append(c);
+                                }
+                                InsnList list = new InsnList();
+                                list.add(new VarInsnNode(ALOAD, 0));
+                                list.add(new VarInsnNode(ALOAD, 0));
+                                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "isDebarked", "()Z", false));
+                                list.add(hook("BlockLog$setRegistryName", builder.toString()));
+                                method.instructions.insertBefore(node, list);
+                                iterator.remove();
+                            }
+                        }
+                        else if (node.getOpcode() == RETURN) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "isDebarked", "()Z", false));
+                            LabelNode l_con = new LabelNode();
+                            list.add(new JumpInsnNode(IFNE, l_con));
+                            list.add(new TypeInsnNode(NEW, clsName));
+                            list.add(new InsnNode(DUP));
+                            if (!map.isEmpty()) {
+                                for (int i : map.keySet()) {
+                                    list.add(new VarInsnNode(map.get(i), i));
+                                }
+                            }
+                            list.add(new MethodInsnNode(INVOKESPECIAL, clsName, "<init>", method.desc, false));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(hook("Debarking$registerBlock", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V"));
+                            list.add(l_con);
+                            method.instructions.insertBefore(node, list);
+                            break;
                         }
                     }
-                    list.add(new MethodInsnNode(INVOKESPECIAL, clsName, "<init>", method.desc, false));
-                    list.add(new VarInsnNode(ALOAD, 0));
-                    list.add(hook("Debarking$registerBlock", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V"));
-                    list.add(l_con);
-                    method.instructions.insertBefore(node, list);
                     break;
                 }
             }

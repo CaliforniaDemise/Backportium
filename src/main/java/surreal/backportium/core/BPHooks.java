@@ -142,7 +142,7 @@ public class BPHooks {
     public static final Map<Block, ItemBlock> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
     //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
 
-    // TODO Add checks for logs that extends non-abstract log classes and logs which uses setRegistryName on constructors.
+    // TODO Add checks for logs that extends non-abstract log classes.
     public static void Debarking$registerBlock(Block block, Block log) {
         DEBARKED_LOG_BLOCKS.put(log, block);
         DEBARKED_LOG_ITEMS.put(log, new ItemBlockDebarkedLog(block, log));
@@ -150,6 +150,21 @@ public class BPHooks {
 
     // TODO Create the item with same class instead of using normal ItemBlock
     public static void Debarking$registerItem(Item logItem) {
+    }
+
+    public static Object BlockLog$setRegistryName(String location, Block block, boolean debarked) {
+        if (!debarked) {
+            return block.setRegistryName(location);
+        }
+        return block;
+    }
+
+    public static Object BlockLog$setRegistryName(ResourceLocation location, Block block, boolean debarked) {
+        return BlockLog$setRegistryName(location.toString(), block, debarked);
+    }
+
+    public static Object BlockLog$setRegistryName(String modId, String name, Block block, boolean debarked) {
+        return BlockLog$setRegistryName(new ResourceLocation(modId, name), block, debarked);
     }
 
     // Button Placement

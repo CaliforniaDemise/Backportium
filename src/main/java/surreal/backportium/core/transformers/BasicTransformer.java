@@ -7,6 +7,7 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -111,7 +112,7 @@ public abstract class BasicTransformer implements Opcodes {
 
     protected static void loadNewClass(String clsName, byte[] basicClass) {
         LaunchClassLoader loader = (LaunchClassLoader) DebarkingTransformer.class.getClassLoader();
-        File out = new File("backportium_classes");
+        File out = new File(".backportium_classes");
         Path path = Paths.get(out.getAbsolutePath(), clsName + ".jar");
         File f = path.toFile();
         f.getParentFile().mkdirs();
