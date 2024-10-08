@@ -5,18 +5,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.RenderSpecificHandEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
@@ -25,6 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import surreal.backportium.Backportium;
+import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.client.model.entity.ModelTrident;
@@ -33,6 +34,9 @@ import surreal.backportium.client.renderer.tile.TESRConduit;
 import surreal.backportium.client.resource.Models;
 import surreal.backportium.client.resource.Sounds;
 import surreal.backportium.client.resource.Textures;
+import surreal.backportium.client.textures.DebarkedSpriteSide;
+import surreal.backportium.client.textures.DebarkedSpriteTop;
+import surreal.backportium.client.textures.DebarkedSpriteTopDumb;
 import surreal.backportium.core.BPPlugin;
 import surreal.backportium.entity.v1_13.EntityTrident;
 import surreal.backportium.item.ModItems;
@@ -70,6 +74,40 @@ public class ClientHandler {
     }
 
     @SubscribeEvent
+    @SuppressWarnings("deprecation")
+    public static void modelBaked(ModelBakeEvent event) {
+        ModelManager manager = Minecraft.getMinecraft().modelManager;
+        BlockStateMapper mapper = manager.getBlockModelShapes().getBlockStateMapper();
+
+        try {
+//            IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column"));
+//            for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
+//                Block origLog = entry.getKey();
+//                Block debarkedLog = entry.getValue();
+//
+//                Map<IBlockState, ModelResourceLocation> modelVariants = mapper.getVariants(origLog);
+//
+//                for (Map.Entry<IBlockState, ModelResourceLocation> mEntry : modelVariants.entrySet()) {
+//                    IBlockState origState = mEntry.getKey();
+//                    ModelResourceLocation origModel = mEntry.getValue();
+//
+//                    IBlockState state = debarkedLog.getStateFromMeta(origLog.getMetaFromState(origState));
+//
+//
+//                }
+//            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String getValueName(Object obj) {
+        if (obj instanceof IStringSerializable) return ((IStringSerializable) obj).getName();
+        else return obj.toString();
+    }
+
+    @SubscribeEvent
     public static void registerTextures(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
         map.registerSprite(new ResourceLocation("entity/conduit/wind"));
@@ -78,6 +116,11 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("mob_effect/conduit_power"));
         map.registerSprite(new ResourceLocation("mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
+
+        map.setTextureEntry(new DebarkedSpriteTopDumb("backportium:blocks/log_debarked", new ResourceLocation("blocks/log_oak_top")));
+
+        map.setTextureEntry(new DebarkedSpriteSide("backportium:blocks/acacia_log_debarked", new ResourceLocation("blocks/log_acacia_top"), new ResourceLocation("blocks/log_acacia")));
+        map.setTextureEntry(new DebarkedSpriteTop("backportium:blocks/acacia_log_debarked_top", new ResourceLocation("blocks/log_acacia_top"), new ResourceLocation(Tags.MOD_ID, "blocks/log_debarked")));
     }
 
     // Trident

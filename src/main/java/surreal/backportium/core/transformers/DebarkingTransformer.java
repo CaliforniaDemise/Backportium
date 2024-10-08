@@ -81,6 +81,31 @@ public class DebarkingTransformer extends BasicTransformer {
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
+    public static byte[] transformModelBakery(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        cls.fields.forEach(field -> { if (field.name.equals("blockDefinitions")) { field.access ^= ACC_PRIVATE; field.access |= ACC_PUBLIC; } });
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformModelLoader(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("setupModelRegistry")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != ALOAD) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "blockDefinitions", "Ljava/util/Map;"));
+                list.add(hook("ModelBakery$log", "(Ljava/util/Map;)V"));
+                method.instructions.insertBefore(node, list);
+                break;
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
     private static boolean checkIfAbstract(ClassNode cls) {
         try {
             return Modifier.isAbstract(Class.forName(cls.superName.replace('/', '.')).getModifiers());

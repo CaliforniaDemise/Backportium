@@ -5,6 +5,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,6 +23,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import surreal.backportium.Backportium;
+import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
@@ -138,6 +143,7 @@ public class BPHooks {
     }
 
     // Debarking
+    // TODO change map to <debarkedLog, origLog>
     public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>();
     public static final Map<Block, ItemBlock> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
     //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
@@ -164,6 +170,29 @@ public class BPHooks {
 
     public static Object BlockLog$setRegistryName(String modId, String name, Block block, boolean debarked) {
         return BlockLog$setRegistryName(new ResourceLocation(modId, name), block, debarked);
+    }
+
+    public static void ModelBakery$log(Map<ResourceLocation, ModelBlockDefinition> map) {
+        for (Map.Entry<ResourceLocation, ModelBlockDefinition> entry : map.entrySet()) {
+            System.out.println(entry.getKey() + "   " + entry.getValue());
+        }
+    }
+
+    // TODO Implement debarked log blockstates and models.
+    public static ModelBlockDefinition ModelBakery$getModelBlockDefinition(ModelBakery bakery, BlockStateMapper mapper, Map<IBlockState, ModelResourceLocation> stateMap, Block log) {
+        ResourceLocation regName = Objects.requireNonNull(log.getRegistryName());
+        if (regName.getNamespace().equals(Tags.MOD_ID) && regName.getPath().endsWith("_debarked")) {
+            Block origLog = null;
+            for (Map.Entry<Block, Block> entry : DEBARKED_LOG_BLOCKS.entrySet()) {
+                if (entry.getValue().equals(log)) {
+                    origLog = entry.getKey();
+                    break;
+                }
+            }
+            if (origLog == null) return new ModelBlockDefinition(new ArrayList<>());
+            Set<ResourceLocation> origStateMap = mapper.getBlockstateLocations(origLog);
+        }
+        return null;
     }
 
     // Button Placement

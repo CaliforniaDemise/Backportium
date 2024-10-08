@@ -44,6 +44,8 @@ public class BPTransformer implements IClassTransformer {
 
             // Debarking
             case "net.minecraft.block.BlockLog": return DebarkingTransformer.transformBlockLog(basicClass);
+//            case "net.minecraftforge.client.model.ModelLoader": return DebarkingTransformer.transformModelLoader(basicClass);
+//            case "net.minecraft.client.renderer.block.model.ModelBakery": return DebarkingTransformer.transformModelBakery(basicClass);
         }
         if (checkBytes(basicClass, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
         return basicClass;
