@@ -28,7 +28,9 @@ import surreal.backportium.Backportium;
 import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
+import surreal.backportium.client.model.entity.ModelPhantom;
 import surreal.backportium.client.model.entity.ModelTrident;
+import surreal.backportium.client.renderer.entity.RenderPhantom;
 import surreal.backportium.client.renderer.entity.RenderTrident;
 import surreal.backportium.client.renderer.tile.TESRConduit;
 import surreal.backportium.client.resource.Models;
@@ -38,6 +40,7 @@ import surreal.backportium.client.textures.DebarkedSpriteSide;
 import surreal.backportium.client.textures.DebarkedSpriteTop;
 import surreal.backportium.client.textures.DebarkedSpriteTopDumb;
 import surreal.backportium.core.BPPlugin;
+import surreal.backportium.entity.v1_13.EntityPhantom;
 import surreal.backportium.entity.v1_13.EntityTrident;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.tile.v1_13.TileConduit;
@@ -65,6 +68,7 @@ public class ClientHandler {
 
     private static void registerEntityRenderers() {
         registerEntityRenderingHandler(EntityTrident.class, m -> new RenderTrident<>(m, new ModelTrident()));
+        registerEntityRenderingHandler(EntityPhantom.class, m -> new RenderPhantom(m, new ModelPhantom(), 0.6F));
     }
 
     @SubscribeEvent

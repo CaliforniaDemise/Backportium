@@ -87,6 +87,7 @@ public class Textures {
 //        put2(map, "entity/conduit/wind.png.mcmeta", "entity/conduit/wind.png.mcmeta");
         put(map, "entity/conduit/wind_vertical", "entity/conduit/wind_vertical");
 //        put2(map, "entity/conduit/wind_vertical.png.mcmeta", "entity/conduit/wind_vertical.png.mcmeta");
+        put(map, "entity/phantom", "entity/phantom");
 
         put(map, "mob_effect/conduit_power");
         put(map, "mob_effect/dolphins_grace");
