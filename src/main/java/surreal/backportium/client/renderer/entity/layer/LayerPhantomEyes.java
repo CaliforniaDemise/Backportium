@@ -22,18 +22,22 @@ public class LayerPhantomEyes<T extends EntityPhantom> implements LayerRenderer<
 
     @Override
     public void doRenderLayer(@Nonnull T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        GlStateManager.pushMatrix();
         this.render.bindTexture(PHANTOM_EYES_TEXTURE);
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-        GlStateManager.depthMask(!entitylivingbaseIn.isInvisible()); // DIFFERENCE: They don't close depth mask on newer versions, it's a bug https://bugs.mojang.com/browse/MC-219279
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 65536, 0);
         GlStateManager.disableLighting();
+        GlStateManager.depthMask(!entitylivingbaseIn.isInvisible());
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 65535.0F, 0.0F);
+        GlStateManager.enableLighting();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().entityRenderer.setupFogColor(true);
         this.render.getMainModel().render(entitylivingbaseIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-        GlStateManager.popMatrix();
+        Minecraft.getMinecraft().entityRenderer.setupFogColor(false);
+        this.render.setLightmap(entitylivingbaseIn);
+        GlStateManager.depthMask(true);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
     }
 
     @Override
