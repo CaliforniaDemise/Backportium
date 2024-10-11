@@ -19,6 +19,11 @@ public class RenderPhantom extends RenderLiving<EntityPhantom> {
         this.addLayer(new LayerPhantomEyes<>(this));
     }
 
+    @Override
+    public void doRender(EntityPhantom entity, double x, double y, double z, float entityYaw, float partialTicks) {
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+    }
+
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(@Nonnull EntityPhantom entity) {

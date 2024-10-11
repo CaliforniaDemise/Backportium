@@ -18,8 +18,8 @@ public class ModelPhantom extends ModelBase {
 		this.textureHeight = 64;
 
 		this.head = new ModelRenderer(this);
-		this.head.setRotationPoint(0.0F, 24.0F, 0.0F);
-		this.head.cubeList.add(new ModelBox(this.head, 0, 0, -3.5F, -3.0F, -8.0F, 7, 3, 5, 0.0F, false));
+		this.head.setRotationPoint(0.0F, 0.0F, 0.0F);
+		this.head.cubeList.add(new ModelBox(this.head, 0, 0, -3.5F, -0.5F, -5.0F, 7, 3, 5, 0.0F, false));
 
 		this.body = new ModelRenderer(this);
 		this.body.setRotationPoint(0.0F, 21.5F, -3.0F);
@@ -53,6 +53,7 @@ public class ModelPhantom extends ModelBase {
 		this.wing2_R.setRotationPoint(-6.0F, 0.0F, 0.0F);
 		this.wing2_R.cubeList.add(new ModelBox(this.wing2_R, 16, 24, -13.0F, 0.0F, -1.5F, 13, 1, 9, 0.0F, true));
 
+		this.body.addChild(this.head);
 		this.body.addChild(this.wing1_L);
 		this.body.addChild(this.wing1_R);
 		this.body.addChild(this.tail1);
@@ -60,7 +61,6 @@ public class ModelPhantom extends ModelBase {
 
 	@Override
 	public void render(@Nonnull Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-		this.head.render(f5);
 		this.body.render(f5);
 	}
 

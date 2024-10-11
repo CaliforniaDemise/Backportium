@@ -1,12 +1,12 @@
 package surreal.backportium.entity.v1_13;
 
-import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWaterFlying;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityFlyHelper;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import surreal.backportium.entity.EntityUndead;
 import surreal.backportium.entity.ModEntities;
@@ -23,8 +23,7 @@ public class EntityPhantom extends EntityUndead {
 
     @Override
     protected void initEntityAI() {
-        this.tasks.addTask(0, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(1, new EntityAIWanderAvoidWaterFlying(this, 0.7D));
+        this.tasks.addTask(0, new EntityAIWanderAvoidWaterFlying(this, 0.7D));
     }
 
     @Override
@@ -40,5 +39,25 @@ public class EntityPhantom extends EntityUndead {
     @Override
     protected ResourceLocation getLootTable() {
         return ModEntities.LOOT_PHANTOM;
+    }
+
+    // ParticleSuspendedTown
+    @Override
+    public void onLivingUpdate() {
+        super.onLivingUpdate();
+        if (world.isRemote && !this.isInvisible()) {
+            Minecraft mc = Minecraft.getMinecraft();
+            float parTicks = mc.isGamePaused() ? 0.0F : Minecraft.getMinecraft().getRenderPartialTicks();
+            float rot = MathHelper.sin((this.ticksExisted + parTicks) / 8.0F) * 0.5F;
+            float rotY = MathHelper.sin(-rot) + 0.15F;
+            float rotX = MathHelper.cos(-rot) + 0.35F;
+            float rotZ = rotX;
+            float yaw = this.prevRotationYaw + (this.rotationYaw - this.prevRotationYaw) * parTicks;
+            yaw *= 0.017453292F;
+            rotX *= MathHelper.cos(yaw);
+            rotZ *= MathHelper.sin(yaw);
+            this.world.spawnParticle(EnumParticleTypes.SUSPENDED_DEPTH, this.posX + rotX, this.posY + rotY, this.posZ + rotZ, 0, 0, 0);
+            this.world.spawnParticle(EnumParticleTypes.SUSPENDED_DEPTH, this.posX - rotX, this.posY + rotY, this.posZ - rotZ, 0, 0, 0);
+        }
     }
 }
