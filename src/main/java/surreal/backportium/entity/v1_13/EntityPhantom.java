@@ -2,8 +2,10 @@ package surreal.backportium.entity.v1_13;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWaterFlying;
 import net.minecraft.entity.ai.EntityFlyHelper;
+import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -23,7 +25,8 @@ public class EntityPhantom extends EntityUndead {
 
     @Override
     protected void initEntityAI() {
-        this.tasks.addTask(0, new EntityAIWanderAvoidWaterFlying(this, 0.7D));
+        this.tasks.addTask(0, new EntityAIAvoidEntity<>(this, EntityOcelot.class, 16.0F, 1.0D, 1.0D));
+        this.tasks.addTask(1, new EntityAIWanderAvoidWaterFlying(this, 1.0D));
     }
 
     @Override
@@ -31,7 +34,7 @@ public class EntityPhantom extends EntityUndead {
         super.applyEntityAttributes();
         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
-        this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(0.7D);
+        this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(1.0D);
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.7D);
     }
 
@@ -59,5 +62,10 @@ public class EntityPhantom extends EntityUndead {
             this.world.spawnParticle(EnumParticleTypes.SUSPENDED_DEPTH, this.posX + rotX, this.posY + rotY, this.posZ + rotZ, 0, 0, 0);
             this.world.spawnParticle(EnumParticleTypes.SUSPENDED_DEPTH, this.posX - rotX, this.posY + rotY, this.posZ - rotZ, 0, 0, 0);
         }
+    }
+
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
     }
 }
