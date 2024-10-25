@@ -1,14 +1,16 @@
 package surreal.backportium.core;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
+import net.minecraft.client.renderer.block.statemap.IStateMapper;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -24,16 +26,22 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import surreal.backportium.Backportium;
 import surreal.backportium.Tags;
+import surreal.backportium.api.block.DebarkedLog;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v1_13.ItemBlockDebarkedLog;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 @SuppressWarnings("unused")
 public class BPHooks {
+
+    public static void debugPrint(Object obj) {
+        System.out.println(obj);
+    }
 
     // PumpkinTransformer
     public static Block BlockStem$getCrop(Block original) {
@@ -47,7 +55,6 @@ public class BPHooks {
                 worldIn.setBlockState(blockpos, ModBlocks.UNCARVED_PUMPKIN.getDefaultState(), 2);
             }
         }
-
         return true;
     }
 
@@ -143,8 +150,7 @@ public class BPHooks {
     }
 
     // Debarking
-    // TODO change map to <debarkedLog, origLog>
-    public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>();
+    public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>(); // originalLog, debarkedLog
     public static final Map<Block, ItemBlock> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
     //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
 
@@ -153,23 +159,88 @@ public class BPHooks {
         DEBARKED_LOG_ITEMS.put(log, new ItemBlockDebarkedLog(block, log));
     }
 
+    public static void Debarking$registerBlockStateMapper(BlockStateMapper mapper, Block origLog, IStateMapper mapperIface) {
+        if (Debarking$isOriginal(origLog)) {
+            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
+            if (debarkedLog == null) return;
+            Map<IBlockState, ModelResourceLocation> m = mapperIface.putStateModelLocations(origLog);
+            mapper.registerBlockStateMapper(debarkedLog, new StateMapperBase() {
+                @Nonnull
+                @Override
+                @SuppressWarnings("deprecation")
+                protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+                    IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
+                    ModelResourceLocation origLoc = m.get(origState);
+                    return new ModelResourceLocation(new ResourceLocation(Tags.MOD_ID, origLoc.getPath() + "_debarked"), origLoc.getVariant());
+                }
+            });
+        }
+    }
+
+    // Load it to loadVariantList this.model.put value line
+    public static ModelBlock Debarking$registerModelBlock(ModelBlock original, ResourceLocation originalLoc, Map<ResourceLocation, ModelBlock> models) {
+        ResourceLocation debarkedLoc = originalLoc instanceof ModelResourceLocation ? new ModelResourceLocation(new ResourceLocation(Tags.MOD_ID, originalLoc.getPath() + "_debarked"), ((ModelResourceLocation) originalLoc).getVariant()) : new ResourceLocation(Tags.MOD_ID, originalLoc.getPath() + "_debarked");
+        ModelBlock debarkedModel = models.get(debarkedLoc);
+        if (debarkedModel != null) return original;
+        Map<String, String> textures = new Object2ObjectOpenHashMap<>();
+        for (String key : original.textures.keySet()) {
+            textures.put(key, original.textures.get(key) + "_debarked");
+        }
+        debarkedModel = new ModelBlock(original.getParentLocation(), original.getElements(), textures, original.isAmbientOcclusion(), original.isGui3d(), original.getAllTransforms(), original.getOverrides());
+        models.put(debarkedLoc, debarkedModel);
+        return original;
+    }
+
+    public static void Debarking$registerModelBlockDefinition(BlockStateMapper mapper, Block origLog, ResourceLocation location, Map<ModelResourceLocation, VariantList> variants, Map<String, VariantList> mapVariants, Map<ResourceLocation, ModelBlockDefinition> blockDefinitions) {
+        if (Debarking$isOriginal(origLog)) {
+            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
+            Map<String, VariantList> debarkedVariantList = createDebarkedVariantList(mapVariants);
+            ModelBlockDefinition definition = new ModelBlockDefinition(debarkedVariantList, null);
+            Map<IBlockState, ModelResourceLocation> stateVariants= mapper.getVariants(debarkedLog);
+            for (Map.Entry<IBlockState, ModelResourceLocation> entry : stateVariants.entrySet()) {
+                ModelResourceLocation modelresourcelocation = entry.getValue();
+                if (location.equals(modelresourcelocation)) {
+                    variants.put(modelresourcelocation, definition.getVariant(modelresourcelocation.getVariant()));
+                }
+            }
+        }
+    }
+
+    private static Map<String, VariantList> createDebarkedVariantList(Map<String, VariantList> mapVariants) {
+        Map<String, VariantList> map = new Object2ObjectOpenHashMap<>();
+        for (Map.Entry<String, VariantList> entry : mapVariants.entrySet()) {
+            VariantList variants = entry.getValue();
+            List<Variant> list = new ArrayList<>(variants.getVariantList().size());
+            for (Variant variant : variants.getVariantList()) {
+                list.add(new Variant(variant.getModelLocation(), variant.getRotation(), variant.isUvLock(), variant.getWeight()));
+            }
+            VariantList dList = new VariantList(list);
+            map.put(entry.getKey(), dList);
+        }
+        return map;
+    }
+
+    public static boolean Debarking$isOriginal(Block block) {
+        return block instanceof BlockLog && !(block instanceof DebarkedLog);
+    }
+
     // TODO Create the item with same class instead of using normal ItemBlock
     public static void Debarking$registerItem(Item logItem) {
     }
 
-    public static Object BlockLog$setRegistryName(String location, Block block, boolean debarked) {
-        if (!debarked) {
+    public static Object BlockLog$setRegistryName(String location, Block block) {
+        if (!(block instanceof DebarkedLog)) {
             return block.setRegistryName(location);
         }
         return block;
     }
 
-    public static Object BlockLog$setRegistryName(ResourceLocation location, Block block, boolean debarked) {
-        return BlockLog$setRegistryName(location.toString(), block, debarked);
+    public static Object BlockLog$setRegistryName(ResourceLocation location, Block block) {
+        return BlockLog$setRegistryName(location.toString(), block);
     }
 
-    public static Object BlockLog$setRegistryName(String modId, String name, Block block, boolean debarked) {
-        return BlockLog$setRegistryName(new ResourceLocation(modId, name), block, debarked);
+    public static Object BlockLog$setRegistryName(String modId, String name, Block block) {
+        return BlockLog$setRegistryName(new ResourceLocation(modId, name), block);
     }
 
     public static void ModelBakery$log(Map<ResourceLocation, ModelBlockDefinition> map) {
@@ -178,22 +249,30 @@ public class BPHooks {
         }
     }
 
-    // TODO Implement debarked log blockstates and models.
-    public static ModelBlockDefinition ModelBakery$getModelBlockDefinition(ModelBakery bakery, BlockStateMapper mapper, Map<IBlockState, ModelResourceLocation> stateMap, Block log) {
-        ResourceLocation regName = Objects.requireNonNull(log.getRegistryName());
-        if (regName.getNamespace().equals(Tags.MOD_ID) && regName.getPath().endsWith("_debarked")) {
-            Block origLog = null;
-            for (Map.Entry<Block, Block> entry : DEBARKED_LOG_BLOCKS.entrySet()) {
-                if (entry.getValue().equals(log)) {
-                    origLog = entry.getKey();
-                    break;
-                }
-            }
-            if (origLog == null) return new ModelBlockDefinition(new ArrayList<>());
-            Set<ResourceLocation> origStateMap = mapper.getBlockstateLocations(origLog);
+    public static void ModelBakery$registerModelBlockDefinition(Map<ResourceLocation, ModelBlockDefinition> blockDefinitions, BlockStateMapper mapper, Block block, ResourceLocation location) {
+        if (Debarking$isOriginal(block)) {
+            ResourceLocation modelLoc = new ResourceLocation(location.getNamespace(), "blockstates/" + location.getPath() + ".json"); // for blockDefinitions
+            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(block);
+
         }
-        return null;
     }
+
+    // TODO Implement debarked log blockstates and models.
+//    public static ModelBlockDefinition ModelBakery$getModelBlockDefinition(ModelBakery bakery, BlockStateMapper mapper, Map<IBlockState, ModelResourceLocation> stateMap, Block log) {
+//        ResourceLocation regName = Objects.requireNonNull(log.getRegistryName());
+//        if (regName.getNamespace().equals(Tags.MOD_ID) && regName.getPath().endsWith("_debarked")) {
+//            Block origLog = null;
+//            for (Map.Entry<Block, Block> entry : DEBARKED_LOG_BLOCKS.entrySet()) {
+//                if (entry.getValue().equals(log)) {
+//                    origLog = entry.getKey();
+//                    break;
+//                }
+//            }
+//            if (origLog == null) return new ModelBlockDefinition(new ArrayList<>());
+//            Set<ResourceLocation> origStateMap = mapper.getBlockstateLocations(origLog);
+//        }
+//        return null;
+//    }
 
     // Button Placement
     public static IBlockState button$getStateFromMeta(Block block, int meta) {

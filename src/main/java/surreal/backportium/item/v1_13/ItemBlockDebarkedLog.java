@@ -1,15 +1,20 @@
 package surreal.backportium.item.v1_13;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.model.ModelLoader;
+import surreal.backportium.api.client.model.ModelProvider;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
-public class ItemBlockDebarkedLog extends ItemBlock {
+public class ItemBlockDebarkedLog extends ItemBlock implements ModelProvider {
 
     private final Block origLog;
 
@@ -38,6 +43,15 @@ public class ItemBlockDebarkedLog extends ItemBlock {
     @Override
     public String getItemStackDisplayName(@Nonnull ItemStack stack) {
         return I18n.format("tile.backportium.debarked_log", super.getItemStackDisplayName(stack));
+    }
+
+    @Override
+    public void registerModels() {
+        for (IBlockState state : this.block.getBlockState().getValidStates()) {
+            String variantIn = RandomHelper.getVariantFromState(state);
+            int meta = state.getBlock().getMetaFromState(state);
+            ModelLoader.setCustomModelResourceLocation(this, meta, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), variantIn));
+        }
     }
 
     private Item getOrigItem() {

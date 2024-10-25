@@ -108,10 +108,10 @@ public class ModBlocks {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
-            Block log = entry.getKey();
-            Block toReg = entry.getValue();
-            toReg.setRegistryName(Tags.MOD_ID, Objects.requireNonNull(registry.getKey(log)).getPath() + "_debarked");
-            registry.register(toReg);
+            Block debarked = entry.getValue();
+            Block nonDebarked = entry.getKey();
+            debarked.setRegistryName(Tags.MOD_ID, Objects.requireNonNull(nonDebarked.getRegistryName()).getPath() + "_debarked");
+            registry.register(debarked);
         }
         BLOCKS.forEach(registry::register);
     }

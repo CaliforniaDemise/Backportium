@@ -88,6 +88,7 @@ public class ModItems {
                 setModelLocation(item, 0, "inventory");
             }
         });
+        BPHooks.DEBARKED_LOG_ITEMS.values().forEach(i -> ((ModelProvider) i).registerModels());
     }
 
     @SideOnly(Side.CLIENT)
