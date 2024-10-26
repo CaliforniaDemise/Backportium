@@ -2,24 +2,30 @@ package surreal.backportium.recipe;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.PotionHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.commons.lang3.tuple.Pair;
 import surreal.backportium.Tags;
+import surreal.backportium.core.BPHooks;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.RandomHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static net.minecraft.init.Blocks.*;
 import static net.minecraft.init.Items.GLOWSTONE_DUST;
@@ -56,8 +62,42 @@ public class ModRecipes {
         {
             ItemStack driedKelp = new ItemStack(DRIED_KELP);
             packingUnpackingRecipe(new ItemStack(DRIED_KELP_BLOCK), new ItemStack(DRIED_KELP));
-
             GameRegistry.addSmelting(RandomHelper.getItemFromBlock(KELP), driedKelp, 0.1F);
+        }
+
+        { // TODO Make it work with CensoredASM fix.
+            List<Pair<ItemStack, ItemStack>> craftingList = new ArrayList<>(); // input, output
+            List<ItemStack> furnaceRecipeList = new ArrayList<>();
+            for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
+                Block keyBlock = Block.getBlockFromItem(entry.getKey().getItem());
+                if (keyBlock != AIR) {
+                    ItemBlock debarkedLog = BPHooks.DEBARKED_LOG_ITEMS.get(keyBlock);
+                    if (debarkedLog != null) {
+                        furnaceRecipeList.add(entry.getKey());
+                    }
+                }
+            }
+            for (IRecipe recipe : ForgeRegistries.RECIPES) {
+                if (recipe.canFit(1, 1) && !recipe.getIngredients().isEmpty()) {
+                    Ingredient ingredient = recipe.getIngredients().get(0);
+                    if (!(ingredient instanceof OreIngredient)) {
+                        for (ItemStack s : ingredient.getMatchingStacks()) {
+                            if (!(s.getItem() instanceof ItemBlock)) continue;
+                            Block block = Block.getBlockFromItem(s.getItem());
+                            if (BPHooks.DEBARKED_LOG_ITEMS.get(block) != null) {
+                                craftingList.add(Pair.of(s, recipe.getRecipeOutput()));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            ResourceLocation planks = new ResourceLocation("planks");
+            for (Pair<ItemStack, ItemStack> pair : craftingList) {
+                ResourceLocation recipeLoc = new ResourceLocation(pair.getValue().getItem().getRegistryName() + "_" + pair.getValue().getMetadata());
+                GameRegistry.addShapedRecipe(recipeLoc, planks, pair.getValue(), "A", 'A', new ItemStack(BPHooks.DEBARKED_LOG_ITEMS.get(Block.getBlockFromItem(pair.getKey().getItem())), 1, pair.getKey().getMetadata()));
+            }
+            furnaceRecipeList.forEach(input -> FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(BPHooks.DEBARKED_LOG_ITEMS.get(Block.getBlockFromItem(input.getItem())), 1, input.getMetadata()), FurnaceRecipes.instance().getSmeltingList().get(input), FurnaceRecipes.instance().getSmeltingExperience(FurnaceRecipes.instance().getSmeltingList().get(input))));
         }
 
         {

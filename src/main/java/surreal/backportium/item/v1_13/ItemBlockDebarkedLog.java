@@ -8,13 +8,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.oredict.OreDictionary;
 import surreal.backportium.api.client.model.ModelProvider;
+import surreal.backportium.api.item.OredictProvider;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class ItemBlockDebarkedLog extends ItemBlock implements ModelProvider {
+public class ItemBlockDebarkedLog extends ItemBlock implements ModelProvider, OredictProvider {
 
     private final Block origLog;
 
@@ -52,6 +54,11 @@ public class ItemBlockDebarkedLog extends ItemBlock implements ModelProvider {
             int meta = state.getBlock().getMetaFromState(state);
             ModelLoader.setCustomModelResourceLocation(this, meta, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), variantIn));
         }
+    }
+
+    @Override
+    public void registerOreEntries() {
+        OreDictionary.registerOre("logWood", this);
     }
 
     private Item getOrigItem() {

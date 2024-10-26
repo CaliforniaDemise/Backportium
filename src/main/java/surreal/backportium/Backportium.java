@@ -13,6 +13,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
@@ -80,4 +81,5 @@ public class Backportium {
     @SubscribeEvent public void isPotionApplicable(PotionEvent.PotionApplicableEvent event) { EventHandler.isPotionApplicable(event); }
     @SubscribeEvent public void applyBonemeal(BonemealEvent event) { EventHandler.applyBonemeal(event); }
     @SubscribeEvent public void playNoteBlock(NoteBlockEvent.Play event) { EventHandler.playNoteBlock(event); }
+    @SubscribeEvent public void rightClickBlock(PlayerInteractEvent.RightClickBlock event) { EventHandler.rightClickBlock(event); }
 }

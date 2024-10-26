@@ -78,6 +78,7 @@ public class ModItems {
                 provider.registerOreEntries();
             }
         }
+        BPHooks.DEBARKED_LOG_ITEMS.values().forEach(i -> ((OredictProvider) i).registerOreEntries());
     }
 
     @SideOnly(Side.CLIENT)

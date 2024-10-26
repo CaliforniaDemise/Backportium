@@ -1,19 +1,24 @@
 package surreal.backportium;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityShulker;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import surreal.backportium.block.ModBlocks;
+import surreal.backportium.core.BPHooks;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.WorldHelper;
 
@@ -39,6 +44,29 @@ public class EventHandler {
         IBlockState downState = world.getBlockState(downPos);
         if (downState.getMaterial() == Material.CORAL) {
             event.setInstrument(NoteBlockEvent.Instrument.BASSDRUM);
+        }
+    }
+
+    public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        World world = event.getWorld();
+        BlockPos pos = event.getPos();
+
+        ItemStack stack = event.getItemStack();
+
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
+
+        EntityPlayer player = event.getEntityPlayer();
+
+        if (BPHooks.Debarking$isOriginal(block) && stack.getItem().getHarvestLevel(stack, "axe", player, state) > -1) {
+            if (!world.isRemote) {
+                Block debarkedLog = BPHooks.DEBARKED_LOG_BLOCKS.get(block);
+                world.setBlockState(pos, debarkedLog.getStateFromMeta(block.getMetaFromState(state)));
+            }
+            player.swingArm(event.getHand());
+            event.setUseItem(Event.Result.ALLOW);
+            event.setResult(Event.Result.ALLOW);
+            event.setCanceled(true);
         }
     }
 
