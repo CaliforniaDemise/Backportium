@@ -58,9 +58,11 @@ public class EventHandler {
 
         EntityPlayer player = event.getEntityPlayer();
 
-        if (BPHooks.Debarking$isOriginal(block) && stack.getItem().getHarvestLevel(stack, "axe", player, state) > -1) {
+        if (BPHooks.Debarking$isOriginal(block)) {
+            Block debarkedLog = BPHooks.DEBARKED_LOG_BLOCKS.get(block);
+            if (debarkedLog == null) return;
+            if (stack.getItem().getHarvestLevel(stack, "axe", player, state) <= -1) return;
             if (!world.isRemote) {
-                Block debarkedLog = BPHooks.DEBARKED_LOG_BLOCKS.get(block);
                 world.setBlockState(pos, debarkedLog.getStateFromMeta(block.getMetaFromState(state)));
             }
             player.swingArm(event.getHand());
