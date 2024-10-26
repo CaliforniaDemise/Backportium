@@ -14,6 +14,8 @@ repositories {
 }
 
 dependencies {
+    runtimeOnly "com.cleanroommc:strip-latest-forge-requirements:1.0"
+
     if (project.use_assetmover) implementation "com.cleanroommc:assetmover:2.5"
     else compileOnly "com.cleanroommc:assetmover:2.5"
 
