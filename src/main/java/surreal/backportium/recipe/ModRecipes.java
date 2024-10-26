@@ -97,7 +97,11 @@ public class ModRecipes {
                 ResourceLocation recipeLoc = new ResourceLocation(pair.getValue().getItem().getRegistryName() + "_" + pair.getValue().getMetadata());
                 GameRegistry.addShapedRecipe(recipeLoc, planks, pair.getValue(), "A", 'A', new ItemStack(BPHooks.DEBARKED_LOG_ITEMS.get(Block.getBlockFromItem(pair.getKey().getItem())), 1, pair.getKey().getMetadata()));
             }
-            furnaceRecipeList.forEach(input -> FurnaceRecipes.instance().addSmeltingRecipe(new ItemStack(BPHooks.DEBARKED_LOG_ITEMS.get(Block.getBlockFromItem(input.getItem())), 1, input.getMetadata()), FurnaceRecipes.instance().getSmeltingList().get(input), FurnaceRecipes.instance().getSmeltingExperience(FurnaceRecipes.instance().getSmeltingList().get(input))));
+            furnaceRecipeList.forEach(input -> {
+                FurnaceRecipes f = FurnaceRecipes.instance();
+                ItemStack out = f.getSmeltingList().get(input);
+                f.addSmeltingRecipe(new ItemStack(BPHooks.DEBARKED_LOG_ITEMS.get(Block.getBlockFromItem(input.getItem())), 1, input.getMetadata()), out, f.getSmeltingExperience(out));
+            });
         }
 
         {
