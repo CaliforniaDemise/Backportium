@@ -1,6 +1,7 @@
 package surreal.backportium.item.v1_13;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.I18n;
@@ -52,7 +53,9 @@ public class ItemBlockDebarkedLog extends ItemBlock implements ModelProvider, Or
         for (IBlockState state : this.block.getBlockState().getValidStates()) {
             String variantIn = RandomHelper.getVariantFromState(state);
             int meta = state.getBlock().getMetaFromState(state);
-            ModelLoader.setCustomModelResourceLocation(this, meta, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), variantIn));
+            if (state.getValue(BlockLog.LOG_AXIS) == BlockLog.EnumAxis.Y) {
+                ModelLoader.setCustomModelResourceLocation(this, meta, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), variantIn));
+            }
         }
     }
 

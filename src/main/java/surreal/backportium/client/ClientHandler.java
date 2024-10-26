@@ -125,7 +125,7 @@ public class ClientHandler {
                             IBlockState debarkedState = entry.getValue().getStateFromMeta(meta);
                             BlockLog.EnumAxis axis = debarkedState.getValue(BlockLog.LOG_AXIS);
                             if (axis == BlockLog.EnumAxis.Y) {
-                                event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), debarkedModel.bake(debarkedModel.getDefaultState(), DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                                event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), debarkedModel.bake(debarkedModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
                             }
                             ModelRotation rotation = ModelRotation.X0_Y0;
                             switch (axis) {
