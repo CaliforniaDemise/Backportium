@@ -94,7 +94,7 @@ public class ModRecipes {
             }
             ResourceLocation planks = new ResourceLocation("planks");
             for (Pair<ItemStack, ItemStack> pair : craftingList) {
-                ResourceLocation recipeLoc = new ResourceLocation(pair.getValue().getItem().getRegistryName() + "_" + pair.getValue().getMetadata());
+                ResourceLocation recipeLoc = new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(pair.getValue().getItem().getRegistryName()).getPath() + "_" + pair.getValue().getMetadata());
                 GameRegistry.addShapedRecipe(recipeLoc, planks, pair.getValue(), "A", 'A', new ItemStack(BPHooks.DEBARKED_LOG_ITEMS.get(Block.getBlockFromItem(pair.getKey().getItem())), 1, pair.getKey().getMetadata()));
             }
             furnaceRecipeList.forEach(input -> {
