@@ -1,23 +1,90 @@
 package surreal.backportium.core.transformers;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import org.apache.commons.io.IOUtils;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
-import java.lang.reflect.Modifier;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class DebarkingTransformer extends BasicTransformer {
 
+    private static final int
+            UTF8 = 1,
+            INTEGER = 3,
+            FLOAT = 4,
+            LONG = 5,
+            DOUBLE = 6,
+            CLASS = 7,
+            STRING = 8,
+            FIELD_REF = 9,
+            METHOD_REF = 10,
+            IFACE_METHOD_REF = 11,
+            NAME_AND_TYPE = 12,
+            METHOD_HANDLE = 15,
+            METHOD_TYPE = 16,
+            INVOKE_DYNAMIC = 18;
+
+    public static boolean checkLogs(byte[] cls, String transformedName, String superName) {
+        int poolCount = ((cls[9] & 0xFF) | (cls[8] & 0xFF) << 8) - 1;
+        int[] constants = new int[poolCount]; // Byte location of constants
+        int index = 10;
+        for (int i = 0; i < poolCount; i++) {
+            constants[i] = index;
+            if (cls[index] == DOUBLE || cls[index] == LONG) {
+                i++;
+                constants[i] = index;
+            }
+            index = nextConstant(cls, index);
+        }
+        int accessFlags = ((cls[index + 1] & 0xFF) | (cls[index] & 0xFF) << 8);
+        if ((accessFlags & 0x0200) == 0x0200) return false; // interface check
+        int classConstant = ((cls[index + 3] & 0xFF) | (cls[index + 2] & 0xFF) << 8);
+        classConstant = constants[classConstant - 1];
+        classConstant = ((cls[classConstant + 2] & 0xFF) | (cls[classConstant + 1] & 0xFF) << 8);
+        String clsName = fromUtf8Const(cls, constants[classConstant - 1]);
+        if (clsName.endsWith("$Debarked")) return false;
+        int superConstant = ((cls[index + 5] & 0xFF) | (cls[index + 4] & 0xFF) << 8); // superclass' position on constants array
+        superConstant = constants[superConstant - 1]; // superclass' position on cls array
+        superConstant = ((cls[superConstant + 2] & 0xFF) | (cls[superConstant + 1] & 0xFF) << 8); // superclass' utf8's position
+        String str = fromUtf8Const(cls, constants[superConstant - 1]);
+        if (str.equals(superName)) return true;
+        else {
+            if (str.equals("java/lang/Object")) return false;
+            try {
+                InputStream stream = DebarkingTransformer.class.getClassLoader().getResourceAsStream(str + ".class");
+                if (stream == null) {
+                    System.err.println("Could not find class named " + str.replace("/", "."));
+                    return false;
+                }
+                byte[] bytes = IOUtils.toByteArray(stream);
+                stream.close();
+                return checkLogs(bytes, transformedName, superName);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     // Non-abstract BlockLog extending aberrations
     public static byte[] transformBlockLogEx(byte[] basicClass) {
         ClassNode cls = read(basicClass);
-        if ((cls.access & ACC_ABSTRACT) != ACC_ABSTRACT && checkIfAbstract(cls) && isSuper(cls, "net/minecraft/block/BlockLog")) {
+        if ((cls.access & ACC_ABSTRACT) != ACC_ABSTRACT) {
+            boolean found = false;
             for (MethodNode method : cls.methods) {
-                if (method.name.equals("<init>") && ((method.access & ACC_PUBLIC) == ACC_PUBLIC || (method.access & ACC_PROTECTED) == ACC_PROTECTED)) {
+                if (method.name.equals("<init>")) {
+                    if ((method.access & ACC_PRIVATE) == ACC_PRIVATE) {
+                        method.access ^= ACC_PRIVATE;
+                        method.access |= ACC_PUBLIC;
+                    }
+                    found = true;
                     Int2IntMap map = getDescMap(method.desc);
                     String debarkedDesc;
                     {
@@ -77,10 +144,31 @@ public class DebarkingTransformer extends BasicTransformer {
                             break;
                         }
                     }
-                    break;
+                }
+            }
+            if (!found) {
+                String clsName = createDebarkedClass(cls, "()V", "(Lnet/minecraft/block/Block;)V", null);
+                { // <init>
+                    MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+                    m.visitVarInsn(ALOAD, 0);
+                    m.visitMethodInsn(INVOKESPECIAL, cls.name, "<init>", "()V", false);
+                    m.visitVarInsn(ALOAD, 0);
+                    m.visitTypeInsn(INSTANCEOF, "surreal/backportium/api/block/DebarkedLog");
+                    Label l_con = new Label();
+                    m.visitJumpInsn(IFNE, l_con);
+                    m.visitTypeInsn(NEW, clsName);
+                    m.visitInsn(DUP);
+                    m.visitVarInsn(ALOAD, 0);
+                    m.visitMethodInsn(INVOKESPECIAL, clsName, "<init>", "(Lnet/minecraft/block/Block;)V", false);
+                    m.visitVarInsn(ALOAD, 0);
+                    m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$registerBlock", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V", false);
+                    m.visitLabel(l_con);
+                    m.visitFrame(F_SAME, 0, null, 0, null);
+                    m.visitInsn(RETURN);
                 }
             }
         }
+        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
@@ -102,41 +190,37 @@ public class DebarkingTransformer extends BasicTransformer {
         return write(cls);
     }
 
-    /*
-    Register ModelBlock to Map<ResourceLocation, ModelBlock> models
-    Register VariantList to Map<ModelResourceLocation, VariantList> variants
-    Register ModelBlockDefinition Map<ResourceLocation, ModelBlockDefinition> blockDefinitions
-    */
-
-    public static byte[] transformModelLoaderRegistry(byte[] basicClass) {
-        ClassNode cls = read(basicClass);
-        for (MethodNode method : cls.methods) {
-            if (method.name.equals("registerVariant")) {
-                AbstractInsnNode node = method.instructions.getFirst();
-                InsnList list = new InsnList();
-
-                method.instructions.insertBefore(node, list);
-                break;
-            }
+    private static String fromUtf8Const(byte[] cls, int start) {
+        int size = cls[start + 1] + cls[start + 2] - 1;
+        start += 3;
+        StringBuilder builder = new StringBuilder();
+        while (size > -1) {
+            builder.insert(0, (char) cls[start + size]);
+            size--;
         }
-        return write(cls);
+        return builder.toString();
     }
 
-//    public static byte[] transformVanillaLoader(byte[] basicClass) {
-//        ClassNode cls = read(basicClass);
-//        for (MethodNode method : cls.methods) {
-//            if (method.name.equals("loadModel")) {
-//
-//            }
-//        }
-//    }
-
-    private static boolean checkIfAbstract(ClassNode cls) {
-        try {
-            return Modifier.isAbstract(Class.forName(cls.superName.replace('/', '.')).getModifiers());
-        }
-        catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+    // Return index to jump
+    // index is always the start of the constant
+    private static int nextConstant(byte[] cls, int index) {
+        int type = cls[index];
+        switch (type) {
+            case UTF8: return index + 3 + (((cls[index + 2] & 0xFF) | (cls[index + 1] & 0xFF) << 8));
+            case INTEGER:
+            case FLOAT: return index + 5;
+            case LONG:
+            case DOUBLE: return index + 9;
+            case CLASS:
+            case STRING: return index + 3;
+            case FIELD_REF:
+            case METHOD_REF:
+            case IFACE_METHOD_REF:
+            case NAME_AND_TYPE: return index + 5;
+            case METHOD_HANDLE: return index + 4;
+            case METHOD_TYPE: return index + 3;
+            case INVOKE_DYNAMIC: return index + 5;
+            default: return index + 3;
         }
     }
 
@@ -151,7 +235,8 @@ public class DebarkingTransformer extends BasicTransformer {
         { // <init>
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "<init>", mDesc, null, null);
             m.visitVarInsn(ALOAD, 0);
-            if (!descMap.isEmpty()) {
+            boolean hasValues = descMap != null && !descMap.isEmpty();
+            if (hasValues) {
                 int count = 0;
                 for (int i : descMap.keySet()) {
                     count++;
@@ -161,7 +246,7 @@ public class DebarkingTransformer extends BasicTransformer {
             }
             m.visitMethodInsn(INVOKESPECIAL, clsLog.name, "<init>", origMDesc, false);
             m.visitVarInsn(ALOAD, 0);
-            m.visitVarInsn(ALOAD, descMap.size() + 1);
+            m.visitVarInsn(ALOAD, (hasValues ? descMap.size() : 0) + 1);
             m.visitFieldInsn(PUTFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
             m.visitInsn(RETURN);
         }

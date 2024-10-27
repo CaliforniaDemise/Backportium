@@ -18,11 +18,10 @@ public class BPTransformer implements IClassTransformer {
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (basicClass == null) return null;
         if (transformedName.startsWith("surreal.backportium")) return basicClass;
+        if (transformedName.startsWith("it.unimi") || transformedName.startsWith("com.google") || transformedName.startsWith("com.ibm") || transformedName.startsWith("com.paulscode")) return basicClass;
         switch (transformedName) {
-//            case "net.minecraft.block.BlockButton": return transformBlockButton(basicClass);
             // Trident
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(basicClass);
-//            case "net.minecraft.entity.projectile.EntityArrow": return TridentTransformer.transformEntityArrow(basicClass);
             case "net.minecraft.util.DamageSource": return TridentTransformer.transformDamageSource(basicClass);
             case "net.minecraft.entity.EntityLivingBase": return TridentTransformer.transformEntityLivingBase(basicClass);
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);
@@ -43,13 +42,9 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockLiquid": return FluidloggingTransformer.transformBlockLiquid(basicClass);
 
             // Debarking
-//            case "net.minecraft.block.BlockLog": return DebarkingTransformer.transformBlockLog(basicClass);
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return DebarkingTransformer.transformBlockStateMapper(basicClass);
-//            case "net.minecraftforge.client.model.ModelLoaderRegistry": return DebarkingTransformer.transformModelLoaderRegistry(basicClass);
-//            case "net.minecraft.client.renderer.block.model.ModelBakery": return DebarkingTransformer.transformModelBakery(basicClass);
-//            case "net.minecraftforge.client.model.ModelLoader": return DebarkingTransformer.transformModelLoader(basicClass);
         }
-        if (checkBytes(basicClass, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
+        if (!transformedName.startsWith("net.minecraftforge") && DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
         return basicClass;
     }
 
@@ -77,64 +72,4 @@ public class BPTransformer implements IClassTransformer {
         }
         return false;
     }
-
-
-//    private byte[] transformBlockButton(byte[] basicClass) {
-//        ClassReader reader = new ClassReader(basicClass);
-//        ClassNode cls = new ClassNode();
-//        reader.accept(cls, 0);
-//
-//        cls.superName = "net/minecraft/block/BlockHorizontal";
-//
-//        { // FACE property
-//            cls.visitField(ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "FACE", "Lnet/minecraft/block/properties/PropertyEnum;", null, null);
-//        }
-//
-//        for (MethodNode method : cls.methods) {
-//            if (method.name.equals("<init>")) {
-//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-//
-//                int i = 0;
-//
-//                while (iterator.hasNext()) {
-//                    AbstractInsnNode node = iterator.next();
-//                    if (node.getOpcode() == GETSTATIC) {
-//                        if (i == 1) {
-//                            InsnList list = new InsnList();
-//                            list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/block/BlockButton", "FACE", "Lnet/minecraft/block/properties/PropertyEnum;"));
-//                            list.add(new FieldInsnNode(GETSTATIC, "surreal/backportium/api/enums/ButtonFace", "WALL", "Lsurreal/backportium/enums/ButtonFace;"));
-//                            list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", "withProperty", "(Lnet/minecraft/block/properties/IProperty;Ljava/lang/Comparable;)Lnet/minecraft/block/state/IBlockState;", true));
-//                            method.instructions.insertBefore(node, list);
-//                            break;
-//                        }
-//                        i++;
-//                    }
-//                }
-//            }
-//            else if (method.name.equals("<clinit>")) {
-//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-//
-//                while (iterator.hasNext()) {
-//                    AbstractInsnNode node = iterator.next();
-//                    if (node.getOpcode() == RETURN) {
-//                        InsnList list = new InsnList();
-//                        list.add(new LdcInsnNode("face"));
-//                        list.add(new LdcInsnNode(Type.getType("Lsurreal/backportium/api/enums/ButtonFace;")));
-//                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/properties/PropertyEnum", "create", "(Ljava/lang/String;Ljava/lang/Class;)Lnet/minecraft/block/properties/PropertyEnum;", false));
-//                        list.add(new FieldInsnNode(PUTSTATIC, "net/minecraft/block/BlockButton", "FACE", "Lnet/minecraft/block/properties/PropertyEnum;"));
-//                        method.instructions.insertBefore(node, list);
-//                    }
-//                }
-//            }
-//        }
-//
-//        classOut(cls.name, basicClass);
-//
-//        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-//        cls.accept(writer);
-//
-//        classOut(cls.name + "_changed", writer.toByteArray());
-//
-//        return basicClass;
-//    }
 }
