@@ -175,7 +175,25 @@ public class DebarkingTransformer extends BasicTransformer {
                 }
             }
         }
+        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
+    }
+
+    public static byte[] transformItemBlock(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("<init>")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(hook("Debarking$registerItem", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/ItemBlock;)V"));
+                method.instructions.insertBefore(node, list);
+                break;
+            }
+        }
+        return write(cls);
     }
 
     public static byte[] transformItemBlockEx(byte[] basicClass) {
@@ -183,17 +201,7 @@ public class DebarkingTransformer extends BasicTransformer {
         boolean didSomething = false;
         String methodName = getName("getItemStackDisplayName", "func_77653_i");
         for (MethodNode method : cls.methods) {
-            if (method.name.equals("<init>")) {
-                AbstractInsnNode node = method.instructions.getLast();
-                while (node.getOpcode() != RETURN) node = node.getPrevious();
-                InsnList list = new InsnList();
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("block", "field_150939_a"), "Lnet/minecraft/block/Block;"));
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(hook("Debarking$registerItem", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/ItemBlock;)V"));
-                method.instructions.insertBefore(node, list);
-            }
-            else if (method.name.equals(methodName)) {
+            if (method.name.equals(methodName)) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != ARETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
@@ -249,7 +257,8 @@ public class DebarkingTransformer extends BasicTransformer {
                 list.add(new FieldInsnNode(GETSTATIC, cls.name, getName("REGISTRY", "field_150901_e"), "Lnet/minecraft/util/registry/RegistryNamespaced;"));
                 list.add(new FieldInsnNode(GETSTATIC, cls.name, getName("BLOCK_TO_ITEM", "field_179220_a"), "Ljava/util/Map;"));
                 list.add(new VarInsnNode(ALOAD, 0));
-                list.add(hook("Debarking$tryRegisteringDebarkedLogVanilla", "(Lnet/minecraft/util/registry/RegistryNamespaced;Ljava/util/Map;Lnet/minecraft/block/Block;)V"));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(hook("Debarking$tryRegisteringDebarkedLogVanilla", "(Lnet/minecraft/util/registry/RegistryNamespaced;Ljava/util/Map;Lnet/minecraft/block/Block;Lnet/minecraft/item/Item;)V"));
                 method.instructions.insertBefore(node, list);
                 break;
             }
@@ -265,36 +274,36 @@ public class DebarkingTransformer extends BasicTransformer {
      **/
     public static byte[] transformForgeRegistry(byte[] basicClass) {
         ClassNode cls = read(basicClass);
-        for (MethodNode method : cls.methods) {
-            if (method.name.equals("register")) {
-                AbstractInsnNode node = method.instructions.getFirst();
-                InsnList list = new InsnList();
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
-                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/block/Block;")));
-                LabelNode l_con = new LabelNode();
-                list.add(new JumpInsnNode(IF_ACMPNE, l_con));
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/block/Block"));
-                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)V"));
-                list.add(l_con);
-                list.add(new FrameNode(F_SAME, 0, null, 0, null));
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
-                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/item/Item;")));
-                LabelNode l_con1 = new LabelNode();
-                list.add(new JumpInsnNode(IF_ACMPNE, l_con1));
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/item/Item"));
-                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/item/Item;)V"));
-                list.add(l_con1);
-                list.add(new FrameNode(F_SAME, 0, null, 0, null));
-                method.instructions.insertBefore(node, list);
-            }
-        }
-        writeClass(cls);
+//        for (MethodNode method : cls.methods) {
+//            if (method.name.equals("register")) {
+//                AbstractInsnNode node = method.instructions.getFirst();
+//                InsnList list = new InsnList();
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
+//                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/block/Block;")));
+//                LabelNode l_con = new LabelNode();
+//                list.add(new JumpInsnNode(IF_ACMPNE, l_con));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 1));
+//                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/block/Block"));
+//                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)V"));
+//                list.add(l_con);
+//                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
+//                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/item/Item;")));
+//                LabelNode l_con1 = new LabelNode();
+//                list.add(new JumpInsnNode(IF_ACMPNE, l_con1));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 1));
+//                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/item/Item"));
+//                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/item/Item;)V"));
+//                list.add(l_con1);
+//                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+//                method.instructions.insertBefore(node, list);
+//            }
+//        }
+//        writeClass(cls);
         return write(cls);
     }
 

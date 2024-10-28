@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
@@ -75,6 +76,7 @@ public class Backportium {
     @SubscribeEvent public void registerPotions(RegistryEvent.Register<Potion> event) { ModPotions.registerPotions(event); }
     @SubscribeEvent public void registerPotionTypes(RegistryEvent.Register<PotionType> event) { ModPotions.registerPotionTypes(event); }
     @SubscribeEvent public void registerRecipes(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerRecipes(event); }
+    @SubscribeEvent(priority = EventPriority.LOW) public void registerRecipesLate(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerLateRecipes(event); }
     @SubscribeEvent public void registerSounds(RegistryEvent.Register<SoundEvent> event) { ModSounds.registerSounds(event); }
 
     // In-Game Events

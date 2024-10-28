@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -156,17 +157,15 @@ public class BPHooks {
 
     // Debarking
     public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>(); // originalLog, debarkedLog
-    public static final Map<Block, ItemBlock> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
-    //    public static final Map<Item, Item> DEBARKED_LOG_ITEMS = new LinkedHashMap<>();
+    public static final List<ItemBlock> DEBARKED_LOG_ITEMS = new ArrayList<>(); // debarkedLogItem
 
     public static void Debarking$registerBlock(Block block, Block log) {
         DEBARKED_LOG_BLOCKS.put(log, block);
-//        DEBARKED_LOG_ITEMS.put(log, new ItemBlockDebarkedLog(block, log));
     }
 
     public static void Debarking$registerItem(Block block, ItemBlock itemBlock) {
         if (block instanceof DebarkedLog) {
-            DEBARKED_LOG_ITEMS.put(((DebarkedLog) block).getOriginal(), itemBlock);
+            DEBARKED_LOG_ITEMS.add(itemBlock);
         }
     }
 
@@ -249,14 +248,10 @@ public class BPHooks {
         }
     }
 
-    public static void Debarking$tryRegisteringDebarkedLogVanilla(RegistryNamespaced<ResourceLocation, Item> registry, Map<Block, Item> blockToItem, Block origLog) {
+    public static void Debarking$tryRegisteringDebarkedLogVanilla(RegistryNamespaced<ResourceLocation, Item> registry, Map<Block, Item> blockToItem, Block origLog, Item origItem) {
         if (Debarking$isOriginal(origLog)) {
             Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-            ItemBlock debarkedLogItem = DEBARKED_LOG_ITEMS.get(origLog);
-            if (debarkedLogItem == null) {
-                debarkedLogItem = new ItemBlockDebarkedLog(debarkedLog, origLog);
-                DEBARKED_LOG_ITEMS.put(origLog, debarkedLogItem);
-            }
+            ItemBlockDebarkedLog debarkedLogItem = new ItemBlockDebarkedLog(debarkedLog, origLog);
             debarkedLogItem.setRegistryName(Objects.requireNonNull(debarkedLog.getRegistryName()));
             registry.register(Block.getIdFromBlock(debarkedLog), Block.REGISTRY.getNameForObject(debarkedLog), debarkedLogItem);
             blockToItem.put(debarkedLog, debarkedLogItem);
@@ -264,7 +259,10 @@ public class BPHooks {
     }
 
     public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
-        if (Debarking$isOriginal(origLog)) {
+        if (origLog instanceof DebarkedLog) {
+           DEBARKED_LOG_BLOCKS.put(((DebarkedLog) origLog).getOriginal(), origLog);
+        }
+        else if (Debarking$isOriginal(origLog) && !DEBARKED_LOG_BLOCKS.containsKey(origLog)) {
             Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
             if (debarkedLog == null) {
                 System.out.println("Debarked log is null for " + origLog.getRegistryName());
@@ -281,22 +279,31 @@ public class BPHooks {
     }
 
     public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Item> registry, Item item) {
-        if (!(item instanceof ItemBlock)) return;
-        Block origLog = ((ItemBlock) item).getBlock();
-        if (Debarking$isOriginal(origLog)) {
-            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-            ItemBlock debarkedLogItem = DEBARKED_LOG_ITEMS.get(origLog);
-            if (debarkedLogItem == null) {
-                return;
-            }
-            if (debarkedLogItem.getRegistryName() == null) {
-                debarkedLogItem.setRegistryName(origLog.getRegistryName() + "_debarked");
-                registry.register(debarkedLogItem);
-            }
-            else if (!registry.containsValue(debarkedLogItem)) {
-                registry.register(debarkedLogItem);
-            }
-        }
+//        if (!(item instanceof ItemBlock)) return;
+//        Block origLog = ((ItemBlock) item).getBlock();
+//        if (origLog instanceof DebarkedLog) {
+//            DEBARKED_LOG_ITEMS.put(((DebarkedLog) origLog).getOriginal(), (ItemBlock) item);
+//        }
+//        else if (Debarking$isOriginal(origLog) && !DEBARKED_LOG_ITEMS.containsKey(origLog)) {
+//            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
+//            if (debarkedLog == null) {
+//                System.out.println("vfvwvfewfvewfvewfewfvew " + origLog.getRegistryName());
+//                return;
+//            }
+//            ItemBlock debarkedLogItem = DEBARKED_LOG_ITEMS.get(origLog);
+//            if (debarkedLogItem == null) {
+//                debarkedLogItem = new ItemBlockDebarkedLog(debarkedLog, origLog);
+//                DEBARKED_LOG_ITEMS.put(origLog, debarkedLogItem);
+//                return;
+//            }
+//            if (debarkedLogItem.getRegistryName() == null) {
+//                debarkedLogItem.setRegistryName(origLog.getRegistryName() + "_debarked");
+//                registry.register(debarkedLogItem);
+//            }
+//            else if (!registry.containsValue(debarkedLogItem)) {
+//                registry.register(debarkedLogItem);
+//            }
+//        }
     }
 
     public static boolean Debarking$isOriginal(Block block) {

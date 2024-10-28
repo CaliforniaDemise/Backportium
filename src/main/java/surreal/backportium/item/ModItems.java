@@ -80,7 +80,7 @@ public class ModItems {
                 provider.registerOreEntries();
             }
         }
-        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS.values()) {
+        for (Item itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
             OreDictionary.registerOre("logWood", new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
         }
     }
@@ -93,7 +93,7 @@ public class ModItems {
                 setModelLocation(item, 0, "inventory");
             }
         });
-        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS.values()) {
+        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
             for (IBlockState state : itemBlock.getBlock().getBlockState().getValidStates()) {
                 String variantIn = RandomHelper.getVariantFromState(state);
                 int meta = state.getBlock().getMetaFromState(state);
