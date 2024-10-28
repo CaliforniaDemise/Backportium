@@ -1,20 +1,27 @@
 package surreal.backportium.item;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelManager;
+import net.minecraft.block.BlockLog;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
 import surreal.backportium.api.client.model.ModelProvider;
@@ -23,10 +30,10 @@ import surreal.backportium.api.item.OredictProvider;
 import surreal.backportium.core.BPHooks;
 import surreal.backportium.item.v1_13.ItemArmorTurtle;
 import surreal.backportium.item.v1_13.ItemTrident;
+import surreal.backportium.util.RandomHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class ModItems {
@@ -63,11 +70,6 @@ public class ModItems {
 
     public static void registerItems(RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        for (Map.Entry<Block, ItemBlock> entry : BPHooks.DEBARKED_LOG_ITEMS.entrySet()) {
-            ItemBlock toReg = entry.getValue();
-            toReg.setRegistryName(Objects.requireNonNull(toReg.getBlock().getRegistryName()));
-            registry.register(toReg);
-        }
         ITEMS.forEach(registry::register);
     }
 
@@ -78,7 +80,9 @@ public class ModItems {
                 provider.registerOreEntries();
             }
         }
-        BPHooks.DEBARKED_LOG_ITEMS.values().forEach(i -> ((OredictProvider) i).registerOreEntries());
+        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS.values()) {
+            OreDictionary.registerOre("logWood", new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -89,7 +93,15 @@ public class ModItems {
                 setModelLocation(item, 0, "inventory");
             }
         });
-        BPHooks.DEBARKED_LOG_ITEMS.values().forEach(i -> ((ModelProvider) i).registerModels());
+        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS.values()) {
+            for (IBlockState state : itemBlock.getBlock().getBlockState().getValidStates()) {
+                String variantIn = RandomHelper.getVariantFromState(state);
+                int meta = state.getBlock().getMetaFromState(state);
+                if (state.getValue(BlockLog.LOG_AXIS) == BlockLog.EnumAxis.Y) {
+                    ModelLoader.setCustomModelResourceLocation(itemBlock, meta, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
+                }
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)

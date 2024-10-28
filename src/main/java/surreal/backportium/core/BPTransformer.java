@@ -43,8 +43,14 @@ public class BPTransformer implements IClassTransformer {
 
             // Debarking
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return DebarkingTransformer.transformBlockStateMapper(basicClass);
+            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
+            case "net.minecraft.block.Block": return DebarkingTransformer.transformBlock(basicClass);
+            case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
         }
-        if (!transformedName.startsWith("net.minecraftforge") && DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
+        if (!transformedName.startsWith("net.minecraftforge")) {
+            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
+            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/item/ItemBlock")) return DebarkingTransformer.transformItemBlockEx(basicClass);
+        }
         return basicClass;
     }
 

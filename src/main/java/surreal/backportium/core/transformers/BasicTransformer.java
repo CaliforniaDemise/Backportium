@@ -1,7 +1,7 @@
 package surreal.backportium.core.transformers;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.objectweb.asm.ClassReader;
@@ -60,14 +60,13 @@ public abstract class BasicTransformer implements Opcodes {
         return cls.methods.get(cls.methods.size() - 1);
     }
 
-    protected static Int2IntMap getDescMap(String desc) {
-        Int2IntMap map = new Int2IntOpenHashMap();
+    protected static IntList getDescList(String desc) {
+        IntList list = new IntArrayList();
         boolean inPar = false;
         int parType = -1;
-        int parCount = 1;
         for (int i = 1; i < desc.length(); i++) {
             char c = desc.charAt(i);
-            if (c == ')') return map;
+            if (c == ')') return list;
             if (!inPar) {
                 if (c == 'L') {
                     parType = ALOAD;
@@ -75,18 +74,20 @@ public abstract class BasicTransformer implements Opcodes {
                 }
                 else {
                     switch (c) {
+                        case 'Z':
                         case 'I': parType = ILOAD; break;
                         case 'F': parType = FLOAD; break;
                         case 'D': parType = DLOAD; break;
                         case 'J': parType = LLOAD; break;
                     }
                 }
-                parCount++;
             }
             else if (c == ';') inPar = false;
-            map.put(parCount, parType);
+            if (!inPar) {
+                list.add(parType);
+            }
         }
-        return map;
+        return list;
     }
 
     protected static boolean isSuper(ClassNode cls, String superName) {

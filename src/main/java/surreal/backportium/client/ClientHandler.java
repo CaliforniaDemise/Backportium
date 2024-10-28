@@ -1,6 +1,7 @@
 package surreal.backportium.client;
 
 import com.google.common.collect.ImmutableMap;
+import forestry.arboriculture.models.WoodModelLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
@@ -115,8 +116,7 @@ public class ClientHandler {
                             {
                                 ImmutableMap.Builder<String, String> textureMapBuilder = new ImmutableMap.Builder<>();
                                 for (Map.Entry<String, String> texEntry : origModelBlock.textures.entrySet()) {
-                                    String ass = texEntry.getValue().contains(":") ? texEntry.getValue().split(":")[1] : texEntry.getValue();
-                                    textureMapBuilder.put(texEntry.getKey(), Tags.MOD_ID + ":" + ass + "_debarked");
+                                    textureMapBuilder.put(texEntry.getKey(), texEntry.getValue() + "_debarked");
                                 }
                                 map = textureMapBuilder.build();
                             }
@@ -157,6 +157,7 @@ public class ClientHandler {
         ResourceLocation debarkedSprite = new ResourceLocation(Tags.MOD_ID, "blocks/log_debarked");
 
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
+            boolean vanilla = Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("minecraft");
             Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
             try {
                 for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
@@ -174,9 +175,13 @@ public class ClientHandler {
                             if (end == null || side == null) {
                                 continue;
                             }
+                            if (vanilla) {
+                                side = "minecraft:" + side;
+                                end = "minecraft:" + end;
+                            }
                             ResourceLocation endSprite = new ResourceLocation(end);
-                            map.setTextureEntry(new DebarkedSpriteSide("backportium:" + side + "_debarked", endSprite, new ResourceLocation(side)));
-                            map.setTextureEntry(new DebarkedSpriteTop("backportium:" + end + "_debarked", endSprite, debarkedSprite));
+                            map.setTextureEntry(new DebarkedSpriteSide(side + "_debarked", endSprite, new ResourceLocation(side)));
+                            map.setTextureEntry(new DebarkedSpriteTop(end + "_debarked", endSprite, debarkedSprite));
                         }
                     }
                 }
