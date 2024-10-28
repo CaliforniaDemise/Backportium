@@ -47,10 +47,12 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.Block": return DebarkingTransformer.transformBlock(basicClass);
             case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
             case "net.minecraft.item.ItemBlock": return DebarkingTransformer.transformItemBlock(basicClass);
+            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
         }
         if (!transformedName.startsWith("net.minecraftforge")) {
-            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog")) return DebarkingTransformer.transformBlockLogEx(basicClass);
-            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/item/ItemBlock")) return DebarkingTransformer.transformItemBlockEx(basicClass);
+            boolean bewitchmentCheck = transformedName.equals("com.bewitchment.common.block.util.ModBlockPillar"); // Some mods like Bewitchment likes to create logs without extending BlockLog
+            if (bewitchmentCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog", false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
+            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/item/ItemBlock", false)) return DebarkingTransformer.transformItemBlockEx(basicClass);
         }
         return basicClass;
     }

@@ -10,9 +10,7 @@ import org.objectweb.asm.tree.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class DebarkingTransformer extends BasicTransformer {
 
@@ -32,7 +30,7 @@ public class DebarkingTransformer extends BasicTransformer {
             METHOD_TYPE = 16,
             INVOKE_DYNAMIC = 18;
 
-    public static boolean checkLogs(byte[] cls, String transformedName, String superName) {
+    public static boolean checkLogs(byte[] cls, String transformedName, String superName, boolean isSuperClass) {
         int poolCount = ((cls[9] & 0xFF) | (cls[8] & 0xFF) << 8) - 1;
         int[] constants = new int[poolCount]; // Byte location of constants
         int index = 10;
@@ -46,6 +44,7 @@ public class DebarkingTransformer extends BasicTransformer {
         }
         int accessFlags = ((cls[index + 1] & 0xFF) | (cls[index] & 0xFF) << 8);
         if ((accessFlags & 0x0200) == 0x0200) return false; // interface check
+//        if (isSuperClass && (accessFlags & 0x0400) != 0x0400) DO_NOT_TRANSFORM.add(transformedName);
         int classConstant = ((cls[index + 3] & 0xFF) | (cls[index + 2] & 0xFF) << 8);
         classConstant = constants[classConstant - 1];
         classConstant = ((cls[classConstant + 2] & 0xFF) | (cls[classConstant + 1] & 0xFF) << 8);
@@ -66,7 +65,7 @@ public class DebarkingTransformer extends BasicTransformer {
                 }
                 byte[] bytes = IOUtils.toByteArray(stream);
                 stream.close();
-                return checkLogs(bytes, transformedName, superName);
+                return checkLogs(bytes, transformedName, superName, true);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -77,59 +76,45 @@ public class DebarkingTransformer extends BasicTransformer {
     // Non-abstract BlockLog extending aberrations
     public static byte[] transformBlockLogEx(byte[] basicClass) {
         ClassNode cls = read(basicClass);
+        MethodNode initMethod = null;
+        boolean createsBlockState = false;
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("<init>")) {
+                initMethod = method;
+            }
+            else if (method.name.equals(getName("createBlockState", "func_180661_e"))) {
+                createsBlockState = true;
+                break;
+            }
+        }
+        boolean dumbCheck = cls.name.equals("com/bewitchment/common/block/util/ModBlockPillar");
         if ((cls.access & ACC_ABSTRACT) != ACC_ABSTRACT) {
             if ((cls.access & ACC_FINAL) == ACC_FINAL) cls.access ^= ACC_FINAL;
-            boolean found = false;
-            for (MethodNode method : cls.methods) {
-                if (method.name.equals("<init>")) {
-                    if ((method.access & ACC_PRIVATE) == ACC_PRIVATE) {
-                        method.access ^= ACC_PRIVATE;
-                        method.access |= ACC_PUBLIC;
+            if (createsBlockState || dumbCheck) {
+                if (initMethod != null) {
+                    if ((initMethod.access & ACC_PRIVATE) == ACC_PRIVATE) {
+                        initMethod.access ^= ACC_PRIVATE;
+                        initMethod.access |= ACC_PUBLIC;
                     }
-                    found = true;
-                    IntList map = getDescList(method.desc);
+                    IntList map = getDescList(initMethod.desc);
                     String debarkedDesc;
                     {
                         StringBuilder builder = new StringBuilder();
-                        for (int i = 0; i < method.desc.length(); i++) {
-                            char c = method.desc.charAt(i);
-                            if (c == ')') {
+                        for (int i = 0; i < initMethod.desc.length(); i++) {
+                            char c = initMethod.desc.charAt(i);
+                            builder.append(c);
+                            if (c == '(') {
                                 builder.append("Lnet/minecraft/block/Block;");
                             }
-                            builder.append(c);
                         }
                         debarkedDesc = builder.toString();
                     }
-                    String clsName = createDebarkedClass(cls, method.desc, debarkedDesc, map);
+                    String clsName = createDebarkedClass(cls, initMethod.desc, debarkedDesc, map);
                     cls.visitInnerClass(clsName, cls.name, "Debarked", ACC_PUBLIC | ACC_STATIC);
-                    Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                    Iterator<AbstractInsnNode> iterator = initMethod.instructions.iterator();
                     while (iterator.hasNext()) {
                         AbstractInsnNode node = iterator.next();
-                        if (node.getOpcode() == INVOKEVIRTUAL) {
-                            MethodInsnNode mInsn = (MethodInsnNode) node;
-                            if (mInsn.name.equals("setRegistryName")) {
-                                String mDesc = mInsn.desc;
-                                StringBuilder builder = new StringBuilder();
-                                for (int i = 0; i < mDesc.length(); i++) {
-                                    char c = mDesc.charAt(i);
-                                    if (c == ')') {
-                                        builder.append("Lnet/minecraft/block/Block;");
-                                    }
-                                    builder.append(c);
-                                    if (c == '(') {
-                                        if (!mInsn.owner.equals(cls.name)) {
-                                            builder.append("Lnet/minecraft/item/Item;");
-                                        }
-                                    }
-                                }
-                                InsnList list = new InsnList();
-                                list.add(new VarInsnNode(ALOAD, 0));
-                                list.add(hook("BlockLog$setRegistryName", builder.toString()));
-                                method.instructions.insertBefore(node, list);
-                                iterator.remove();
-                            }
-                        }
-                        else if (node.getOpcode() == RETURN) {
+                        if (node.getOpcode() == RETURN) {
                             InsnList list = new InsnList();
                             list.add(new VarInsnNode(ALOAD, 0));
                             list.add(new TypeInsnNode(INSTANCEOF, "surreal/backportium/api/block/DebarkedLog"));
@@ -137,44 +122,74 @@ public class DebarkingTransformer extends BasicTransformer {
                             list.add(new JumpInsnNode(IFNE, l_con));
                             list.add(new TypeInsnNode(NEW, clsName));
                             list.add(new InsnNode(DUP));
+                            list.add(new VarInsnNode(ALOAD, 0));
                             if (!map.isEmpty()) {
-                                for (int i = 0; i < map.size(); i++) {
+                                for (int i = 0; i < map.size() - 1; i++) {
                                     list.add(new VarInsnNode(map.getInt(i), i + 1));
                                 }
                             }
-                            list.add(new VarInsnNode(ALOAD, 0));
                             list.add(new MethodInsnNode(INVOKESPECIAL, clsName, "<init>", debarkedDesc, false));
                             list.add(new VarInsnNode(ALOAD, 0));
                             list.add(hook("Debarking$registerBlock", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V"));
                             list.add(l_con);
-                            method.instructions.insertBefore(node, list);
+                            initMethod.instructions.insertBefore(node, list);
                             break;
                         }
                     }
                 }
-            }
-            if (!found) {
-                String clsName = createDebarkedClass(cls, "()V", "(Lnet/minecraft/block/Block;)V", null);
-                { // <init>
-                    MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-                    m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESPECIAL, cls.name, "<init>", "()V", false);
-                    m.visitVarInsn(ALOAD, 0);
-                    m.visitTypeInsn(INSTANCEOF, "surreal/backportium/api/block/DebarkedLog");
-                    Label l_con = new Label();
-                    m.visitJumpInsn(IFNE, l_con);
-                    m.visitTypeInsn(NEW, clsName);
-                    m.visitInsn(DUP);
-                    m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESPECIAL, clsName, "<init>", "(Lnet/minecraft/block/Block;)V", false);
-                    m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$registerBlock", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V", false);
-                    m.visitLabel(l_con);
-                    m.visitFrame(F_SAME, 0, null, 0, null);
-                    m.visitInsn(RETURN);
+                else {
+                    String clsName = createDebarkedClass(cls, "()V", "(Lnet/minecraft/block/Block;)V", null);
+                    { // <init>
+                        MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitMethodInsn(INVOKESPECIAL, cls.name, "<init>", "()V", false);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitTypeInsn(INSTANCEOF, "surreal/backportium/api/block/DebarkedLog");
+                        Label l_con = new Label();
+                        m.visitJumpInsn(IFNE, l_con);
+                        m.visitTypeInsn(NEW, clsName);
+                        m.visitInsn(DUP);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitMethodInsn(INVOKESPECIAL, clsName, "<init>", "(Lnet/minecraft/block/Block;)V", false);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$registerBlock", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V", false);
+                        m.visitLabel(l_con);
+                        m.visitFrame(F_SAME, 0, null, 0, null);
+                        m.visitInsn(RETURN);
+                    }
                 }
             }
         }
+//        if (initMethod != null) {
+//            Iterator<AbstractInsnNode> iterator = initMethod.instructions.iterator();
+//            while (iterator.hasNext()) {
+//                AbstractInsnNode node = iterator.next();
+//                if (node.getOpcode() == INVOKEVIRTUAL) {
+//                    MethodInsnNode mInsn = (MethodInsnNode) node;
+//                    if (mInsn.name.equals("setRegistryName")) {
+//                        String mDesc = mInsn.desc;
+//                        StringBuilder builder = new StringBuilder();
+//                        for (int i = 0; i < mDesc.length(); i++) {
+//                            char c = mDesc.charAt(i);
+//                            if (c == ')') {
+//                                builder.append("Lnet/minecraft/block/Block;");
+//                            }
+//                            builder.append(c);
+//                            if (c == '(') {
+//                                if (!mInsn.owner.equals(cls.name)) {
+//                                    builder.append("Lnet/minecraft/item/Item;");
+//                                }
+//                            }
+//                        }
+//                        InsnList list = new InsnList();
+//                        list.add(new VarInsnNode(ALOAD, 0));
+//                        list.add(hook("BlockLog$setRegistryName", builder.toString()));
+//                        initMethod.instructions.insertBefore(node, list);
+//                        iterator.remove();
+//                    }
+//                }
+//            }
+//        }
         writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
@@ -274,21 +289,21 @@ public class DebarkingTransformer extends BasicTransformer {
      **/
     public static byte[] transformForgeRegistry(byte[] basicClass) {
         ClassNode cls = read(basicClass);
-//        for (MethodNode method : cls.methods) {
-//            if (method.name.equals("register")) {
-//                AbstractInsnNode node = method.instructions.getFirst();
-//                InsnList list = new InsnList();
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
-//                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/block/Block;")));
-//                LabelNode l_con = new LabelNode();
-//                list.add(new JumpInsnNode(IF_ACMPNE, l_con));
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new VarInsnNode(ALOAD, 1));
-//                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/block/Block"));
-//                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)V"));
-//                list.add(l_con);
-//                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("register")) {
+                AbstractInsnNode node = method.instructions.getFirst();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
+                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/block/Block;")));
+                LabelNode l_con = new LabelNode();
+                list.add(new JumpInsnNode(IF_ACMPNE, l_con));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/block/Block"));
+                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)V"));
+                list.add(l_con);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
 //                list.add(new VarInsnNode(ALOAD, 0));
 //                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
 //                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/item/Item;")));
@@ -300,10 +315,25 @@ public class DebarkingTransformer extends BasicTransformer {
 //                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/item/Item;)V"));
 //                list.add(l_con1);
 //                list.add(new FrameNode(F_SAME, 0, null, 0, null));
-//                method.instructions.insertBefore(node, list);
-//            }
-//        }
+                method.instructions.insertBefore(node, list);
+            }
+        }
 //        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformForgeRegistryEntry$Impl(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("setRegistryName")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != ALOAD || ((VarInsnNode) node).var != 1) node = node.getPrevious();
+                method.instructions.insertBefore(node, new VarInsnNode(ALOAD, 0));
+                method.instructions.insert(node, hook("Debarking$setRegistryNameDeep", "(Lnet/minecraftforge/registries/IForgeRegistryEntry$Impl;Ljava/lang/String;)Ljava/lang/String;"));
+                break;
+            }
+        }
+        writeClass(cls);
         return write(cls);
     }
 
@@ -372,13 +402,13 @@ public class DebarkingTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             boolean hasValues = descMap != null && !descMap.isEmpty();
             if (hasValues) {
-                for (int i = 0; i < descMap.size(); i++) {
+                for (int i = 1; i < descMap.size(); i++) {
                     m.visitVarInsn(descMap.get(i), i + 1);
                 }
             }
             m.visitMethodInsn(INVOKESPECIAL, clsLog.name, "<init>", origMDesc, false);
             m.visitVarInsn(ALOAD, 0);
-            m.visitVarInsn(ALOAD, (hasValues ? descMap.size() : 0) + 1);
+            m.visitVarInsn(ALOAD, 1);
             m.visitFieldInsn(PUTFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
             m.visitInsn(RETURN);
         }
@@ -393,25 +423,4 @@ public class DebarkingTransformer extends BasicTransformer {
         loadNewClass(cls.name, bytes);
         return cls.name;
     }
-
-//    public static byte[] transformBlockLogExtends(byte[] basicClass) {
-//    }
-
-//    public static byte[] transformForgeRegistry(byte[] basicClass) {
-//        ClassNode cls = read(basicClass);
-//        for (MethodNode method : cls.methods) {
-//            if (method.name.equals("register")) {
-//                AbstractInsnNode node = method.instructions.getLast();
-//                while (node.getOpcode() != RETURN) node = node.getPrevious();
-//                InsnList list = new InsnList();
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
-//                list.add(new VarInsnNode(ALOAD, 1));
-//                list.add(hook("ForgeRegistry$registerDebarked", "(Lnet/minecraftforge/registries/ForgeRegistry;Ljava/lang/Class;Ljava/lang/Object;)V"));
-//                break;
-//            }
-//        }
-//        return write(cls);
-//    }
 }
