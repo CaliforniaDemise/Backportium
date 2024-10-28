@@ -51,7 +51,8 @@ public class BPTransformer implements IClassTransformer {
         }
         if (!transformedName.startsWith("net.minecraftforge")) {
             boolean bewitchmentCheck = transformedName.equals("com.bewitchment.common.block.util.ModBlockPillar"); // Some mods like Bewitchment likes to create logs without extending BlockLog
-            if (bewitchmentCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog", false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
+            boolean techrebornCheck = transformedName.equals("techreborn.blocks.BlockRubberLog");
+            if (bewitchmentCheck || techrebornCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog", false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
             if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/item/ItemBlock", false)) return DebarkingTransformer.transformItemBlockEx(basicClass);
         }
         return basicClass;

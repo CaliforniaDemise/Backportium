@@ -97,19 +97,18 @@ public class ModItems {
         for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
             IProperty<?> property = itemBlock.getBlock().getBlockState().getProperty("axis");
             Object y = null;
-            if (property == null) {
-                System.out.println("Could not find property 'axis' on block " + itemBlock.getBlock().getRegistryName());
-                continue;
-            }
-            if (property.getValueClass() == EnumFacing.Axis.class) y = EnumFacing.Axis.Y;
-            else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
-            else {
-                System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + itemBlock.getBlock().getRegistryName());
+            if (property != null) {
+                if (property.getValueClass() == EnumFacing.Axis.class) y = EnumFacing.Axis.Y;
+                else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
+                else System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + itemBlock.getBlock().getRegistryName());
             }
             for (IBlockState state : itemBlock.getBlock().getBlockState().getValidStates()) {
                 String variantIn = RandomHelper.getVariantFromState(state);
                 int meta = state.getBlock().getMetaFromState(state);
-                if (state.getValue(property) == y) {
+                if (property == null) {
+                    ModelLoader.setCustomModelResourceLocation(itemBlock, meta, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
+                }
+                else if (state.getValue(property) == y) {
                     ModelLoader.setCustomModelResourceLocation(itemBlock, meta, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
                 }
             }

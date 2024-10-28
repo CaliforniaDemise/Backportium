@@ -304,17 +304,17 @@ public class DebarkingTransformer extends BasicTransformer {
                 list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)V"));
                 list.add(l_con);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
-//                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/item/Item;")));
-//                LabelNode l_con1 = new LabelNode();
-//                list.add(new JumpInsnNode(IF_ACMPNE, l_con1));
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new VarInsnNode(ALOAD, 1));
-//                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/item/Item"));
-//                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/item/Item;)V"));
-//                list.add(l_con1);
-//                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "superType", "Ljava/lang/Class;"));
+                list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/item/Item;")));
+                LabelNode l_con1 = new LabelNode();
+                list.add(new JumpInsnNode(IF_ACMPNE, l_con1));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/item/Item"));
+                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/item/Item;)V"));
+                list.add(l_con1);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 method.instructions.insertBefore(node, list);
             }
         }
@@ -393,7 +393,7 @@ public class DebarkingTransformer extends BasicTransformer {
         ClassNode cls = new ClassNode();
         List<String> interfaces = new ArrayList<>(clsLog.interfaces == null ? 1 : cls.interfaces.size() + 1);
         interfaces.add("surreal/backportium/api/block/DebarkedLog");
-        cls.visit(V1_8, ACC_PUBLIC | ACC_STATIC, clsLog.name + "$Debarked", null, clsLog.name, interfaces.toArray(new String[0]));
+        cls.visit(V1_8, ACC_PUBLIC | ACC_STATIC, "backportium/" + clsLog.name + "$Debarked", null, clsLog.name, interfaces.toArray(new String[0]));
         { // origLog
             cls.visitField(ACC_PUBLIC | ACC_FINAL, "origLog", "Lnet/minecraft/block/Block;", null, null);
         }

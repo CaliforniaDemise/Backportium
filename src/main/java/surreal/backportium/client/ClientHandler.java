@@ -102,22 +102,20 @@ public class ClientHandler {
             for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
                 IProperty<?> property = entry.getValue().getBlockState().getProperty("axis");
                 Object x = null, y = null, z = null;
-                if (property == null) {
-                    System.out.println("Could not find property 'axis' on block " + entry.getValue().getRegistryName());
-                    continue;
-                }
-                if (property.getValueClass() == EnumFacing.Axis.class) {
-                    x = EnumFacing.Axis.X;
-                    y = EnumFacing.Axis.Y;
-                    z = EnumFacing.Axis.Z;
-                }
-                else if (property.getValueClass() == BlockLog.EnumAxis.class) {
-                    x = BlockLog.EnumAxis.X;
-                    y = BlockLog.EnumAxis.Y;
-                    z = BlockLog.EnumAxis.Z;
-                }
-                else {
-                    System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + entry.getValue().getRegistryName());
+                if (property != null) {
+                    if (property.getValueClass() == EnumFacing.Axis.class) {
+                        x = EnumFacing.Axis.X;
+                        y = EnumFacing.Axis.Y;
+                        z = EnumFacing.Axis.Z;
+                    }
+                    else if (property.getValueClass() == BlockLog.EnumAxis.class) {
+                        x = BlockLog.EnumAxis.X;
+                        y = BlockLog.EnumAxis.Y;
+                        z = BlockLog.EnumAxis.Z;
+                    }
+                    else {
+                        System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + entry.getValue().getRegistryName());
+                    }
                 }
                 Map<IBlockState, ModelResourceLocation> modelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
                 Map<IBlockState, ModelResourceLocation> dModelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(entry.getValue());
@@ -181,15 +179,20 @@ public class ClientHandler {
                             int meta = entry.getKey().getMetaFromState(entry1.getKey());
                             IBlockState debarkedState = entry.getValue().getStateFromMeta(meta);
 
-                            if (debarkedState.getValue(property) == y) {
-                                IBakedModel m = debarkedModel.bake(debarkedModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
-                                event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), "normal"), m);
+                            IBakedModel m = debarkedModel.bake(debarkedModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+                            event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), "normal"), m);
+                            if (property != null) {
+                                if (debarkedState.getValue(property) == y) {
+                                    event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
+                                }
+                                ModelRotation rotation = ModelRotation.X0_Y0;
+                                if (debarkedState.getValue(property) == x) rotation = ModelRotation.X90_Y90;
+                                else if (debarkedState.getValue(property) == z) rotation = ModelRotation.X90_Y0;
+                                event.getModelRegistry().putObject(dModelLocations.get(debarkedState), debarkedModel.bake(rotation, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                            }
+                            else {
                                 event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
                             }
-                            ModelRotation rotation = ModelRotation.X0_Y0;
-                            if (debarkedState.getValue(property) == x) rotation = ModelRotation.X90_Y90;
-                            else if (debarkedState.getValue(property) == z) rotation = ModelRotation.X90_Y0;
-                            event.getModelRegistry().putObject(dModelLocations.get(debarkedState), debarkedModel.bake(rotation, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
                         }
                     }
                 }

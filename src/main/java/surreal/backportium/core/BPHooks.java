@@ -270,6 +270,15 @@ public class BPHooks {
     }
 
     public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Item> registry, Item item) {
+        if (!(item instanceof ItemBlock)) return;
+        Block origLog = ((ItemBlock) item).getBlock();
+        Block debLog = DEBARKED_LOG_BLOCKS.get(origLog);
+        if (debLog != null) {
+            for (ItemBlock itemBlock : DEBARKED_LOG_ITEMS) {
+                if (itemBlock.getBlock() == debLog) return;
+            }
+            registry.register(new ItemBlockDebarkedLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
+        }
 //        if (!(item instanceof ItemBlock)) return;
 //        Block origLog = ((ItemBlock) item).getBlock();
 //        if (origLog instanceof DebarkedLog) {
