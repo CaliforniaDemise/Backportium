@@ -80,10 +80,7 @@ public class DebarkedSpriteSide extends SpriteDef {
             // adapt luma
             // the range is from ~92 to ~98 on the leftmost side, turning into the log top range on the 1/4th
             // we also want to make the middle color less sensitive
-            float offset = Math.abs(7.5f - (ix * 15f / (float) (baseTex.getIconWidth() - 1))) - 2.5f;
-            if (offset < 0f) offset = 0f;
-            offset = 1f - (offset / 5f);
-            offset = (float) Math.pow(offset, 0.65);
+            float offset = 1F;
             float minL = gcrLeft[0] * (1 - offset) + (gcrMiddle[0] * 0.75f + gcrMiddle[1] * 0.25f) * offset;
             float maxL = gcrLeft[1] * (1 - offset) + (gcrMiddle[1] * 0.75f + gcrMiddle[0] * 0.25f) * offset;
 
