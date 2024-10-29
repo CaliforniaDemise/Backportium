@@ -59,10 +59,7 @@ public class DebarkingTransformer extends BasicTransformer {
             if (str.equals("java/lang/Object")) return false;
             try {
                 InputStream stream = DebarkingTransformer.class.getClassLoader().getResourceAsStream(str + ".class");
-                if (stream == null) {
-                    System.err.println("Could not find class named " + str.replace("/", "."));
-                    return false;
-                }
+                if (stream == null) return false;
                 byte[] bytes = IOUtils.toByteArray(stream);
                 stream.close();
                 return checkLogs(bytes, transformedName, superName, true);
@@ -124,7 +121,7 @@ public class DebarkingTransformer extends BasicTransformer {
                             list.add(new InsnNode(DUP));
                             list.add(new VarInsnNode(ALOAD, 0));
                             if (!map.isEmpty()) {
-                                for (int i = 0; i < map.size() - 1; i++) {
+                                for (int i = 0; i < map.size(); i++) {
                                     list.add(new VarInsnNode(map.getInt(i), i + 1));
                                 }
                             }
@@ -402,8 +399,8 @@ public class DebarkingTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             boolean hasValues = descMap != null && !descMap.isEmpty();
             if (hasValues) {
-                for (int i = 1; i < descMap.size(); i++) {
-                    m.visitVarInsn(descMap.get(i), i + 1);
+                for (int i = 0; i < descMap.size(); i++) {
+                    m.visitVarInsn(descMap.get(i), i + 2);
                 }
             }
             m.visitMethodInsn(INVOKESPECIAL, clsLog.name, "<init>", origMDesc, false);

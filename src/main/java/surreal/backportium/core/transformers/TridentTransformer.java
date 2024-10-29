@@ -15,37 +15,33 @@ public class TridentTransformer extends BasicTransformer {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("setRotationAngles", "func_78087_a"))) {
-                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-                while (iterator.hasNext()) {
-                    AbstractInsnNode node = iterator.next();
-                    if (node.getOpcode() == RETURN) {
-                        String modelBiped = "net/minecraft/client/model/ModelBiped";
+                AbstractInsnNode node = method.instructions.getLast();
+                if (node.getOpcode() == RETURN) {
+                    String modelBiped = "net/minecraft/client/model/ModelBiped";
 
-                        InsnList list = new InsnList();
-                        list.add(new VarInsnNode(ALOAD, 0));
+                    InsnList list = new InsnList();
+                    list.add(new VarInsnNode(ALOAD, 0));
 
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(new VarInsnNode(ALOAD, 7));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                    list.add(new VarInsnNode(ALOAD, 0));
+                    list.add(new VarInsnNode(ALOAD, 7));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
 
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(new VarInsnNode(ALOAD, 7));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
+                    list.add(new VarInsnNode(ALOAD, 0));
+                    list.add(new VarInsnNode(ALOAD, 0));
+                    list.add(new VarInsnNode(ALOAD, 7));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
 
-                        list.add(new VarInsnNode(FLOAD, 1));
-                        list.add(new VarInsnNode(FLOAD, 2));
-                        list.add(new VarInsnNode(FLOAD, 3));
-                        list.add(new VarInsnNode(FLOAD, 4));
-                        list.add(new VarInsnNode(FLOAD, 5));
-                        list.add(new VarInsnNode(FLOAD, 6));
-                        list.add(new VarInsnNode(ALOAD, 7));
-                        list.add(hook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
+                    list.add(new VarInsnNode(FLOAD, 1));
+                    list.add(new VarInsnNode(FLOAD, 2));
+                    list.add(new VarInsnNode(FLOAD, 3));
+                    list.add(new VarInsnNode(FLOAD, 4));
+                    list.add(new VarInsnNode(FLOAD, 5));
+                    list.add(new VarInsnNode(FLOAD, 6));
+                    list.add(new VarInsnNode(ALOAD, 7));
+                    list.add(hook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
 
-                        method.instructions.insertBefore(node, list);
-                        break;
-                    }
+                    method.instructions.insertBefore(node, list);
                 }
                 break;
             }
@@ -54,97 +50,6 @@ public class TridentTransformer extends BasicTransformer {
         return write(cls);
     }
 
-    /* The transformers here *most* definitely isn't needed.
-     * I guess I can reimplement it instead of extending arrow entity,
-     * but I'm too lazy, so instead I will instead pretend extending is justified.
-     **/
-//    public static byte[] transformEntityArrow(byte[] basicClass) {
-//        ClassNode cls = read(basicClass);
-//        String hitSound = getName("ENTITY_ARROW_HIT", "field_187731_t");
-//        for (MethodNode method : cls.methods) {
-//            if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
-//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-//                while (iterator.hasNext()) {
-//                    AbstractInsnNode node = iterator.next();
-//                    if (node instanceof LdcInsnNode && Objects.equals(((LdcInsnNode) node).cst, new Float("0.6"))) {
-//                        node = node.getNext();
-//                        method.instructions.remove(node.getPrevious());
-//                        InsnList list = new InsnList();
-//                        list.add(new VarInsnNode(ALOAD, 0));
-//                        list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "getSpeedChangeInWater", "()F", false));
-//                        method.instructions.insertBefore(node, list);
-//                        break;
-//                    }
-//                }
-//            } else if (method.name.equals(getName("onHit", "func_184549_a"))) {
-//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-//                int i = 0;
-//                while (iterator.hasNext()) {
-//                    AbstractInsnNode node = iterator.next();
-//                    if (node.getOpcode() == I2F) {
-//                        method.instructions.insertBefore(node.getPrevious(), new VarInsnNode(ALOAD, 0));
-//                        method.instructions.insertBefore(node.getPrevious(), new VarInsnNode(ALOAD, 2));
-//                        method.instructions.insert(node, new MethodInsnNode(INVOKEVIRTUAL, cls.name, "getHitDamage", "(Lnet/minecraft/entity/Entity;F)F", false));
-//                    } else if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals(hitSound)) {
-//                        node = node.getNext();
-//                        method.instructions.remove(node.getPrevious());
-//                        InsnList list = new InsnList();
-//                        list.add(new VarInsnNode(ALOAD, 0));
-//                        String name = i == 1 ? "getBlockHitSound" : "getEntityHitSound";
-//                        list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, name, "()Lnet/minecraft/util/SoundEvent;", false));
-//                        method.instructions.insertBefore(node, list);
-//                        i++;
-//                        if (i == 2) {
-//                            break;
-//                        }
-//                    } else if (node.getOpcode() == INSTANCEOF && ((TypeInsnNode) node).desc.equals("net/minecraft/entity/monster/EntityEnderman")) {
-//                        method.instructions.insertBefore(node.getPrevious(), new VarInsnNode(ALOAD, 0));
-//                        node = node.getNext();
-//                        method.instructions.remove(node.getPrevious());
-//                        ((JumpInsnNode) node).setOpcode(IFEQ);
-//                        method.instructions.insertBefore(node, new MethodInsnNode(INVOKEVIRTUAL, cls.name, "shouldDieAfterHit", "(Lnet/minecraft/entity/Entity;)Z", false));
-//                    }
-//                }
-//                break;
-//            }
-//        }
-//        { // shouldDieAfterHit
-//            MethodVisitor m_shouldDie = cls.visitMethod(ACC_PROTECTED, "shouldDieAfterHit", "(Lnet/minecraft/entity/Entity;)Z", null, null);
-//            Label l_con = new Label();
-//            m_shouldDie.visitVarInsn(ALOAD, 1);
-//            m_shouldDie.visitTypeInsn(INSTANCEOF, "net/minecraft/entity/monster/EntityEnderman");
-//            m_shouldDie.visitJumpInsn(IFEQ, l_con);
-//            m_shouldDie.visitLabel(new Label());
-//            m_shouldDie.visitInsn(ICONST_0);
-//            m_shouldDie.visitInsn(IRETURN);
-//            m_shouldDie.visitLabel(l_con);
-//            m_shouldDie.visitFrame(F_SAME, 0, null, 0, null);
-//            m_shouldDie.visitInsn(ICONST_1);
-//            m_shouldDie.visitInsn(IRETURN);
-//        }
-//        { // getSpeedChangeInWater
-//            MethodVisitor m_speedChange = cls.visitMethod(ACC_PROTECTED, "getSpeedChangeInWater", "()F", null, null);
-//            m_speedChange.visitLdcInsn(0.6F);
-//            m_speedChange.visitInsn(FRETURN);
-//        }
-//        { // getEntityHitSound
-//            MethodVisitor m_hitSound = cls.visitMethod(ACC_PROTECTED, "getEntityHitSound", "()Lnet/minecraft/util/SoundEvent;", null, null);
-//            m_hitSound.visitFieldInsn(GETSTATIC, "net/minecraft/init/SoundEvents", hitSound, "Lnet/minecraft/util/SoundEvent;");
-//            m_hitSound.visitInsn(ARETURN);
-//        }
-//        { // getBlockHitSound
-//            MethodVisitor m_hitSound = cls.visitMethod(ACC_PROTECTED, "getBlockHitSound", "()Lnet/minecraft/util/SoundEvent;", null, null);
-//            m_hitSound.visitFieldInsn(GETSTATIC, "net/minecraft/init/SoundEvents", hitSound, "Lnet/minecraft/util/SoundEvent;");
-//            m_hitSound.visitInsn(ARETURN);
-//        }
-//        { // getHitDamage
-//            MethodVisitor m_hitDamage = cls.visitMethod(ACC_PROTECTED, "getHitDamage", "(Lnet/minecraft/entity/Entity;F)F", null, null);
-//            m_hitDamage.visitVarInsn(FLOAD, 2);
-//            m_hitDamage.visitInsn(FRETURN);
-//        }
-//        return write(cls);
-//    }
-//
     // Trident damage source handling
     public static byte[] transformDamageSource(byte[] basicClass) {
         ClassNode cls = read(basicClass);
