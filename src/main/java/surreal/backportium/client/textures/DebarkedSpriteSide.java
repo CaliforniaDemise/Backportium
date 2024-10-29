@@ -92,14 +92,14 @@ public class DebarkedSpriteSide extends SpriteDef {
                 int ip = iy * baseTex.getIconWidth() + ix;
                 int pixel = templateInput[ip];
                 float[] fromInt = UCWColorSpaceUtils.fromInt(pixel);
-                if (lastPixel != -1) {
-                    float[] lastInt = UCWColorSpaceUtils.fromInt(lastPixel);
-                    float change = 0.2F;
-                    if (!this.insideScope(this.highestChange(fromInt), this.highestChange(lastInt), change)) {
-                        templateData[ip] = pixel;
-                        continue;
-                    }
-                }
+//                if (lastPixel != -1) {
+//                    float[] lastInt = UCWColorSpaceUtils.fromInt(lastPixel);
+//                    float change = 0.2F;
+//                    if (!this.insideScope(this.highestChange(fromInt), this.highestChange(lastInt), change)) {
+//                        templateData[ip] = pixel;
+//                        continue;
+//                    }
+//                }
                 float[] lab = UCWColorSpaceUtils.XYZtoLAB(UCWColorSpaceUtils.sRGBtoXYZ(fromInt));
                 float lum = (float) Math.pow(lab[0] / 100f, 2.2F) * 100f;
                 // luma is in the gcrSide range
