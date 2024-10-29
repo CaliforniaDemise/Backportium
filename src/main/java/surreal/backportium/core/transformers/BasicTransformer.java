@@ -68,7 +68,7 @@ public abstract class BasicTransformer implements Opcodes {
             char c = desc.charAt(i);
             if (c == ')') return list;
             if (!inPar) {
-                if (c == 'L') {
+                if (c == 'L' || c == '[') {
                     parType = ALOAD;
                     inPar = true;
                 }
@@ -87,6 +87,7 @@ public abstract class BasicTransformer implements Opcodes {
                 list.add(parType);
             }
         }
+        System.out.println(desc + "  to  " + list);
         return list;
     }
 
