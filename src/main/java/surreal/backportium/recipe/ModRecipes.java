@@ -103,7 +103,7 @@ public class ModRecipes {
 
             // Normal turtle master implementation
             PotionHelper.addMix(ModPotions.TURTLE_MASTER_TYPE, redstoneIng, ModPotions.LONG_TURTLE_MASTER_TYPE);
-            PotionHelper.addMix(ModPotions.STRONG_TURTLE_MASTER_TYPE, GLOWSTONE_DUST, ModPotions.STRONG_TURTLE_MASTER_TYPE);
+            PotionHelper.addMix(ModPotions.TURTLE_MASTER_TYPE, GLOWSTONE_DUST, ModPotions.STRONG_TURTLE_MASTER_TYPE);
         }
     }
 
