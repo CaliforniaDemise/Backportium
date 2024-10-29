@@ -217,47 +217,43 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
 
-        map.setTextureEntry(new DebarkedSpriteTopDumb("backportium:blocks/log_debarked", new ResourceLocation("blocks/log_oak_top")));
-        ResourceLocation debarkedSprite = new ResourceLocation(Tags.MOD_ID, "blocks/log_debarked");
-
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
             Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
             try {
                 for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
-                    List<String> ass = null;
-                    {
-                        ResourceLocation loc = modelLocations.get(entry1.getKey());
-                        ResourceLocation bsLoc = new ResourceLocation(loc.getNamespace(), "blockstates/" + loc.getPath() + ".json");
-                        IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(bsLoc);
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
-                        ModelBlockDefinition definition = BlockStateLoader.load(reader, bsLoc, vanillaGson);
-                        for (VariantList list : definition.getMultipartVariants()) {
-                            for (Variant variant : list.getVariantList()) {
-                                String varStr = variant.toString();
-                                if (varStr.startsWith("TexturedVariant")) {
-                                    ass = new ArrayList<>(2);
-                                    StringBuilder builder = new StringBuilder();
-                                    for (int i = 17; i < varStr.length(); i++) {
-                                        char c = varStr.charAt(i);
-                                        if (c == ' ') {
-                                            if (varStr.charAt(i + 1) != '=' && varStr.charAt(i - 1) != '=') {
-                                                ass.add(builder.toString());
-                                                builder = new StringBuilder();
-                                            }
-                                            continue;
-                                        }
-                                        builder.append(c);
-                                        if (i == varStr.length() - 1) {
+                    IModel oModel = ModelLoaderRegistry.getModel(entry1.getValue());
+                    int i = 0;
+                    for (ResourceLocation loc : oModel.getDependencies()) {
+                        List<String> ass = null;
+                        {
+                            ResourceLocation stateLoc = entry1.getValue();
+                            ResourceLocation bsLoc = new ResourceLocation(stateLoc.getNamespace(), "blockstates/" + stateLoc.getPath() + ".json");
+                            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(bsLoc);
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+                            ModelBlockDefinition definition = BlockStateLoader.load(reader, bsLoc, vanillaGson);
+                            VariantList list = definition.getVariant(entry1.getValue().getVariant());
+                            Variant variant = list.getVariantList().get(i);
+                            String varStr = variant.toString();
+                            if (varStr.startsWith("TexturedVariant")) {
+                                ass = new ArrayList<>(2);
+                                StringBuilder builder = new StringBuilder();
+                                for (int a = 17; a < varStr.length(); a++) {
+                                    char c = varStr.charAt(a);
+                                    if (c == ' ') {
+                                        if (varStr.charAt(a + 1) != '=' && varStr.charAt(a - 1) != '=') {
                                             ass.add(builder.toString());
+                                            builder = new StringBuilder();
                                         }
+                                        continue;
+                                    }
+                                    builder.append(c);
+                                    if (a == varStr.length() - 1) {
+                                        ass.add(builder.toString());
                                     }
                                 }
                             }
+                            reader.close();
                         }
-                        reader.close();
-                    }
-                    IModel oModel = ModelLoaderRegistry.getModel(entry1.getValue());
-                    for (ResourceLocation loc : oModel.getDependencies()) {
                         IModel origModel = ModelLoaderRegistry.getModel(loc);
                         Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
                         if (origModelBlockOpt.isPresent()) {
@@ -281,11 +277,29 @@ public class ClientHandler {
                                 continue;
                             }
                             ResourceLocation endSprite = new ResourceLocation(end);
-                            map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
+                            ResourceLocation debarkedSprite = new ResourceLocation(endSprite + "_debarked_template");
+
+                            { // TODO Change how this works
+                                String texLoc = debarkedSprite.toString();
+                                if (map.getTextureExtry(texLoc) == null) {
+                                    map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
+                                }
+                            }
+
+                            {
+                                String location = endSprite + "_debarked";
+                                if (map.getTextureExtry(location) == null) {
+                                    map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
+                                }
+                            }
                             for (String sprite : otherSprites) {
-                                map.setTextureEntry(new DebarkedSpriteSide(new ResourceLocation(sprite + "_debarked").toString(), endSprite, new ResourceLocation(sprite)));
+                                String location = new ResourceLocation(sprite + "_debarked").toString();
+                                if (map.getTextureExtry(location) == null) {
+                                    map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, new ResourceLocation(sprite)));
+                                }
                             }
                         }
+                        i++;
                     }
                 }
             }
