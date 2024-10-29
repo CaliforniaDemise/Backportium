@@ -54,7 +54,7 @@ public class BPTransformer implements IClassTransformer {
             boolean techrebornCheck = transformedName.equals("techreborn.blocks.BlockRubberLog");
             boolean thaumcraftCheck = transformedName.equals("thaumcraft.common.blocks.world.plants.BlockLogsTC");
             if (bewitchmentCheck || techrebornCheck || thaumcraftCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/block/BlockLog", false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
-            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/item/ItemBlock", false)) return DebarkingTransformer.transformItemBlockEx(basicClass);
+//            if (DebarkingTransformer.checkLogs(basicClass, transformedName, "net/minecraft/item/ItemBlock", false)) return DebarkingTransformer.transformItemBlockEx(basicClass);
         }
         return basicClass;
     }

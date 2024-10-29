@@ -204,6 +204,15 @@ public class DebarkingTransformer extends BasicTransformer {
                 break;
             }
         }
+        { // getItemStackDisplayName
+            MethodVisitor m = cls.visitMethod(ACC_PUBLIC, getName("getItemStackDisplayName", "func_77653_i"), "(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitVarInsn(ALOAD, 1);
+            m.visitMethodInsn(INVOKESPECIAL, cls.superName, getName("getItemStackDisplayName", "func_77653_i"), "(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
+            m.visitVarInsn(ALOAD, 1);
+            m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$getItemStackDisplayName", "(Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
+            m.visitInsn(ARETURN);
+        }
         return write(cls);
     }
 
