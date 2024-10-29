@@ -91,7 +91,7 @@ jar {
             }
         }
         if (project.use_access_transformer.toBoolean()) {
-            attribute_map['FMLAT'] = project.archives_base_name + '_at.cfg'
+            attribute_map['FMLAT'] = project.mod_id + '_at.cfg'
         }
         attributes(attribute_map)
     }
