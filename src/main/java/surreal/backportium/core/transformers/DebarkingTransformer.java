@@ -30,7 +30,7 @@ public class DebarkingTransformer extends BasicTransformer {
             METHOD_TYPE = 16,
             INVOKE_DYNAMIC = 18;
 
-    public static boolean checkLogs(byte[] cls, String transformedName, String superName, boolean isSuperClass) {
+    public static boolean checkLogs(byte[] cls, String transformedName, String[] superName, boolean isSuperClass) {
         int poolCount = ((cls[9] & 0xFF) | (cls[8] & 0xFF) << 8) - 1;
         int[] constants = new int[poolCount]; // Byte location of constants
         int index = 10;
@@ -54,19 +54,19 @@ public class DebarkingTransformer extends BasicTransformer {
         superConstant = constants[superConstant - 1]; // superclass' position on cls array
         superConstant = ((cls[superConstant + 2] & 0xFF) | (cls[superConstant + 1] & 0xFF) << 8); // superclass' utf8's position
         String str = fromUtf8Const(cls, constants[superConstant - 1]);
-        if (str.equals(superName)) return true;
-        else {
-            if (str.equals("java/lang/Object")) return false;
-            try {
-                InputStream stream = DebarkingTransformer.class.getClassLoader().getResourceAsStream(str + ".class");
-                if (stream == null) return false;
-                byte[] bytes = IOUtils.toByteArray(stream);
-                stream.close();
-                return checkLogs(bytes, transformedName, superName, true);
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        for (String s : superName) {
+            if (str.equals(s)) return true;
+        }
+        if (str.equals("java/lang/Object")) return false;
+        try {
+            InputStream stream = DebarkingTransformer.class.getClassLoader().getResourceAsStream(str + ".class");
+            if (stream == null) return false;
+            byte[] bytes = IOUtils.toByteArray(stream);
+            stream.close();
+            return checkLogs(bytes, transformedName, superName, true);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
