@@ -190,7 +190,7 @@ public class ClientHandler {
                                     event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
                                 }
                                 ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
-                                event.getModelRegistry().putObject(new ModelResourceLocation(new ResourceLocation(modelLoc.getNamespace(), modelLoc.getPath()), entry1.getValue().getVariant()), debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                                event.getModelRegistry().putObject(modelLoc, debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
                             }
                             else {
                                 ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
