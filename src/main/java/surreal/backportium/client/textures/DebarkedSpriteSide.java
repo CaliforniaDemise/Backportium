@@ -87,22 +87,33 @@ public class DebarkedSpriteSide extends SpriteDef {
             minL /= 100f;
             maxL /= 100f;
 
+            int lastPixel = -1;
             for (int iy = 0; iy < baseTex.getIconHeight(); iy++) {
                 int ip = iy * baseTex.getIconWidth() + ix;
                 int pixel = templateInput[ip];
-                float[] lab = UCWColorSpaceUtils.XYZtoLAB(UCWColorSpaceUtils.sRGBtoXYZ(UCWColorSpaceUtils.fromInt(pixel)));
-                float lum = (float) Math.pow(lab[0] / 100f, 2.2) * 100f;
+                float[] fromInt = UCWColorSpaceUtils.fromInt(pixel);
+                if (lastPixel != -1) {
+                    float[] lastInt = UCWColorSpaceUtils.fromInt(lastPixel);
+                    float change = 0.2F;
+                    if (!this.insideScope(this.highestChange(fromInt), this.highestChange(lastInt), change)) {
+                        templateData[ip] = pixel;
+                        continue;
+                    }
+                }
+                float[] lab = UCWColorSpaceUtils.XYZtoLAB(UCWColorSpaceUtils.sRGBtoXYZ(fromInt));
+                float lum = (float) Math.pow(lab[0] / 100f, 2.2F) * 100f;
                 // luma is in the gcrSide range
                 lum = ((lum - gcrSide[0]) / (gcrSide[1] - gcrSide[0]));
                 // luma is in the 0..1 range
                 lum = (lum * (maxL - minL)) + minL;
                 // luma is in the minL..maxL range (still 0..1)
-                lum = (float) Math.pow(lum, 1 / 2.2) * 100f;
+                lum = (float) Math.pow(lum, 1 / 2.2F) * 100f;
                 // luma is now proper, i think?
                 lab[0] = lum;
                 lab[1] = gcrMiddle[2];
                 lab[2] = gcrMiddle[3];
                 templateData[ip] = UCWColorSpaceUtils.asInt(UCWColorSpaceUtils.XYZtosRGB(UCWColorSpaceUtils.LABtoXYZ(lab))) | 0xFF000000;
+                lastPixel = pixel;
             }
         }
 
@@ -111,5 +122,20 @@ public class DebarkedSpriteSide extends SpriteDef {
         addFrameTextureData(templateData);
 
         return false;
+    }
+
+    private float highestChange(float[] floats) {
+        float highestFloat = floats[0];
+        float smallestFloat = floats[0];
+        for (int i = 1; i < floats.length; i++) {
+            float f = floats[i];
+            if (highestFloat < f) highestFloat = f;
+            if (smallestFloat > f) smallestFloat = f;
+        }
+        return highestFloat - smallestFloat;
+    }
+
+    private boolean insideScope(float v1, float v2, float val) {
+        return v1 < v2 + val && v1 > v2 - val;
     }
 }

@@ -63,6 +63,7 @@ public class EventHandler {
             if (debarkedLog != null) {
                 if (stack.getItem().getHarvestLevel(stack, "axe", player, state) <= -1) return;
                 if (!world.isRemote) {
+                    // TODO Huh? It returns state with different metadata from the one given, I don't know how does it work.
                     world.setBlockState(pos, debarkedLog.getStateFromMeta(block.getMetaFromState(state)));
                 }
                 player.swingArm(event.getHand());
