@@ -1,8 +1,6 @@
 package surreal.backportium.item;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -11,7 +9,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -104,30 +102,14 @@ public class ModItems {
             }
         });
         for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
-            IProperty<?> property = itemBlock.getBlock().getBlockState().getProperty("axis");
-            Object y = null;
-            if (property != null) {
-                if (property.getValueClass() == EnumFacing.Axis.class) y = EnumFacing.Axis.Y;
-                else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
-                else {
-                    System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + itemBlock.getBlock().getRegistryName());
-                    continue;
-                }
-            }
-            for (IBlockState state : itemBlock.getBlock().getBlockState().getValidStates()) {
-                int meta = state.getBlock().getMetaFromState(state);
-                if (property == null) {
-                    String variantIn = RandomHelper.getVariantFromState(state);
-                    ModelLoader.setCustomModelResourceLocation(itemBlock, meta, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
-                }
-                else if (state.getValue(property) == y) {
-                    String variantIn = RandomHelper.getVariantFromState(state);
-                    ModelResourceLocation modelLoc = new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn);
-                    if (meta != 0) {
-                        ModelLoader.setCustomModelResourceLocation(itemBlock, meta, modelLoc);
-                    }
-                    ModelLoader.setCustomModelResourceLocation(itemBlock, 0, modelLoc);
-                }
+            NonNullList<ItemStack> list = NonNullList.create();
+            itemBlock.getSubItems(CreativeTabs.SEARCH, list);
+            for (ItemStack stack : list) {
+                int metadata = stack.getMetadata();
+                System.out.println("Test test: " + itemBlock.getRegistryName() + " " + metadata);
+                IBlockState state = itemBlock.getBlock().getStateFromMeta(metadata);
+                String variantIn = RandomHelper.getVariantFromState(state);
+                ModelLoader.setCustomModelResourceLocation(itemBlock, metadata, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
             }
         }
     }
