@@ -60,6 +60,14 @@ public class RandomHelper {
         return builder.toString();
     }
 
+    public static <T extends Comparable<T>> IBlockState copyState(IBlockState from, Block to) {
+        IBlockState state = to.getDefaultState();
+        for (IProperty<?> property : from.getPropertyKeys()) {
+            state = state.withProperty((IProperty<T>) property, (T) from.getValue(property));
+        }
+        return state;
+    }
+
     // Game doesn't care about special item blocks (might be a bug on Forge's part too.
     @Nonnull
     public static Item getItemFromBlock(Block block) {
