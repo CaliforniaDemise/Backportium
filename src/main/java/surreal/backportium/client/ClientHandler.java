@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
@@ -98,7 +99,6 @@ public class ClientHandler {
     @SubscribeEvent
     public static void bakeModels(ModelBakeEvent event) {
         try {
-            IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column"));
             for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
                 IProperty<?> property = entry.getValue().getBlockState().getProperty("axis");
                 Object x = null, y = null, z = null;
@@ -121,40 +121,41 @@ public class ClientHandler {
                 Map<IBlockState, ModelResourceLocation> dModelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(entry.getValue());
 
                 for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
-                    List<String> ass = null;
-                    {
-                        ResourceLocation loc = modelLocations.get(entry1.getKey());
-                        ResourceLocation bsLoc = new ResourceLocation(loc.getNamespace(), "blockstates/" + loc.getPath() + ".json");
-                        IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(bsLoc);
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
-                        ModelBlockDefinition definition = BlockStateLoader.load(reader, bsLoc, vanillaGson);
-                        for (VariantList list : definition.getMultipartVariants()) {
-                            for (Variant variant : list.getVariantList()) {
-                                String varStr = variant.toString();
-                                if (varStr.startsWith("TexturedVariant")) {
-                                    ass = new ArrayList<>(2);
-                                    StringBuilder builder = new StringBuilder();
-                                    for (int i = 17; i < varStr.length(); i++) {
-                                        char c = varStr.charAt(i);
-                                        if (c == ' ') {
-                                            if (varStr.charAt(i + 1) != '=' && varStr.charAt(i - 1) != '=') {
-                                                ass.add(builder.toString());
-                                                builder = new StringBuilder();
-                                            }
-                                            continue;
-                                        }
-                                        builder.append(c);
-                                        if (i == varStr.length() - 1) {
+                    IModel oModel = ModelLoaderRegistry.getModel(entry1.getValue());
+                    int i = 0;
+                    for (ResourceLocation loc : oModel.getDependencies()) {
+                        List<String> ass = null;
+                        IModelState state;
+                        {
+                            ResourceLocation stateLoc = entry1.getValue();
+                            ResourceLocation bsLoc = new ResourceLocation(stateLoc.getNamespace(), "blockstates/" + stateLoc.getPath() + ".json");
+                            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(bsLoc);
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+                            ModelBlockDefinition definition = BlockStateLoader.load(reader, bsLoc, vanillaGson);
+                            VariantList list = definition.getVariant(entry1.getValue().getVariant());
+                            Variant variant = list.getVariantList().get(i);
+                            state = variant.getState();
+                            String varStr = variant.toString();
+                            if (varStr.startsWith("TexturedVariant")) {
+                                ass = new ArrayList<>(2);
+                                StringBuilder builder = new StringBuilder();
+                                for (int a = 17; a < varStr.length(); a++) {
+                                    char c = varStr.charAt(a);
+                                    if (c == ' ') {
+                                        if (varStr.charAt(a + 1) != '=' && varStr.charAt(a - 1) != '=') {
                                             ass.add(builder.toString());
+                                            builder = new StringBuilder();
                                         }
+                                        continue;
+                                    }
+                                    builder.append(c);
+                                    if (a == varStr.length() - 1) {
+                                        ass.add(builder.toString());
                                     }
                                 }
                             }
+                            reader.close();
                         }
-                        reader.close();
-                    }
-                    IModel oModel = ModelLoaderRegistry.getModel(entry1.getValue());
-                    for (ResourceLocation loc : oModel.getDependencies()) {
                         IModel origModel = ModelLoaderRegistry.getModel(loc);
                         Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
                         if (origModelBlockOpt.isPresent()) {
@@ -164,7 +165,11 @@ public class ClientHandler {
                                 ImmutableMap.Builder<String, String> textureMapBuilder = new ImmutableMap.Builder<>();
                                 if (ass == null) {
                                     for (Map.Entry<String, String> texEntry : origModelBlock.textures.entrySet()) {
-                                        textureMapBuilder.put(texEntry.getKey(), texEntry.getValue() + "_debarked");
+                                        String key = texEntry.getKey();
+                                        if (key.equals("end") || key.equals("side")) {
+                                            textureMapBuilder.put(key, texEntry.getValue() + "_debarked");
+                                        }
+                                        else textureMapBuilder.put(key, texEntry.getValue());
                                     }
                                 }
                                 else {
@@ -178,22 +183,21 @@ public class ClientHandler {
                             IModel debarkedModel = origModel.retexture(map);
                             int meta = entry.getKey().getMetaFromState(entry1.getKey());
                             IBlockState debarkedState = entry.getValue().getStateFromMeta(meta);
-
-                            IBakedModel m = debarkedModel.bake(debarkedModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+                            IBakedModel m = debarkedModel.bake(state, DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
                             event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), "normal"), m);
                             if (property != null) {
                                 if (debarkedState.getValue(property) == y) {
                                     event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
                                 }
-                                ModelRotation rotation = ModelRotation.X0_Y0;
-                                if (debarkedState.getValue(property) == x) rotation = ModelRotation.X90_Y90;
-                                else if (debarkedState.getValue(property) == z) rotation = ModelRotation.X90_Y0;
-                                event.getModelRegistry().putObject(dModelLocations.get(debarkedState), debarkedModel.bake(rotation, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                                ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
+                                event.getModelRegistry().putObject(new ModelResourceLocation(new ResourceLocation(modelLoc.getNamespace(), modelLoc.getPath()), entry1.getValue().getVariant()), debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
                             }
                             else {
-                                event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
+                                ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
+                                event.getModelRegistry().putObject(new ModelResourceLocation(new ResourceLocation(modelLoc.getNamespace(), modelLoc.getPath()), entry1.getValue().getVariant()), debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
                             }
                         }
+                        i++;
                     }
                 }
             }
@@ -217,7 +221,6 @@ public class ClientHandler {
         ResourceLocation debarkedSprite = new ResourceLocation(Tags.MOD_ID, "blocks/log_debarked");
 
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
-            boolean vanilla = Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("minecraft");
             Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
             try {
                 for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
@@ -259,30 +262,29 @@ public class ClientHandler {
                         Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
                         if (origModelBlockOpt.isPresent()) {
                             ModelBlock origModelBlock = origModelBlockOpt.get();
-                            String end = null, side = null;
+                            String end = null;
+                            List<String> otherSprites = new ArrayList<>(1);
                             if (ass == null) {
                                 for (Map.Entry<String, String> texEntry : origModelBlock.textures.entrySet()) {
                                     if (texEntry.getKey().equals("end")) end = texEntry.getValue();
-                                    else if (texEntry.getKey().equals("side")) side = texEntry.getValue();
+                                    else otherSprites.add(texEntry.getValue());
                                 }
                             }
                             else {
                                 for (String assType : ass) {
                                     String[] split = assType.split("=");
                                     if (split[0].equals("end")) end = split[1];
-                                    else if (split[0].equals("side")) side = split[1];
+                                    else otherSprites.add(split[1]);
                                 }
                             }
-                            if (end == null || side == null) {
+                            if (end == null) {
                                 continue;
                             }
-                            if (vanilla) {
-                                side = "minecraft:" + side;
-                                end = "minecraft:" + end;
-                            }
                             ResourceLocation endSprite = new ResourceLocation(end);
-                            map.setTextureEntry(new DebarkedSpriteSide(side + "_debarked", endSprite, new ResourceLocation(side)));
-                            map.setTextureEntry(new DebarkedSpriteTop(end + "_debarked", endSprite, debarkedSprite));
+                            map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
+                            for (String sprite : otherSprites) {
+                                map.setTextureEntry(new DebarkedSpriteSide(new ResourceLocation(sprite + "_debarked").toString(), endSprite, new ResourceLocation(sprite)));
+                            }
                         }
                     }
                 }
