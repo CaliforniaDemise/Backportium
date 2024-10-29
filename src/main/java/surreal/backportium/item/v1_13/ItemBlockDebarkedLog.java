@@ -61,12 +61,6 @@ public class ItemBlockDebarkedLog extends ItemBlock {
         return this.getOrigItem().getTranslationKey(stack);
     }
 
-    @Nonnull
-    @Override
-    public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-        return I18n.translateToLocalFormatted("tile.backportium.debarked_log", super.getItemStackDisplayName(stack));
-    }
-
     private Item getOrigItem() {
         return RandomHelper.getItemFromBlock(this.origLog);
     }
