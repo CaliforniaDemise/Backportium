@@ -1,22 +1,18 @@
 package surreal.backportium.item;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -25,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
+import surreal.backportium.api.block.DebarkedLog;
 import surreal.backportium.api.client.model.ModelProvider;
 import surreal.backportium.api.enums.ModArmorMaterials;
 import surreal.backportium.api.item.OredictProvider;
@@ -81,8 +78,13 @@ public class ModItems {
                 provider.registerOreEntries();
             }
         }
-        for (Item itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
-            OreDictionary.registerOre("logWood", new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
+        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
+            Block origLog = ((DebarkedLog) itemBlock.getBlock()).getOriginal();
+            Item origItem = Item.getItemFromBlock(origLog);
+            int[] ids = OreDictionary.getOreIDs(new ItemStack(origItem, 1, OreDictionary.WILDCARD_VALUE));
+            for (int i : ids) {
+                OreDictionary.registerOre(OreDictionary.getOreName(i), new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
+            }
         }
     }
 
