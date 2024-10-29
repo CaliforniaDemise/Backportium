@@ -37,6 +37,7 @@ import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v1_13.ItemBlockDebarkedLog;
+import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -257,20 +258,28 @@ public class BPHooks {
         }
     }
 
-    public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
+    // TODO Use ForgeRegistry#add instead of hooks
+    public static boolean Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
+        if (origLog instanceof DebarkedLog && registry.containsValue(origLog)) {
+            return false;
+        }
         Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-        if (debarkedLog == null) return;
+        if (debarkedLog == null) return true;
         if (debarkedLog.getRegistryName() == null) {
             debarkedLog.setRegistryName(Objects.requireNonNull(origLog.getRegistryName()));
+        }
+        if (!registry.containsValue(debarkedLog)) {
             registry.register(debarkedLog);
         }
-        else if (!registry.containsValue(debarkedLog)) {
-            registry.register(debarkedLog);
-        }
+        return true;
     }
 
+    // TODO Use ForgeRegistry#add instead of hooks
     public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Item> registry, Item item) {
         if (!(item instanceof ItemBlock)) return;
+        if (((ItemBlock) item).getBlock() instanceof DebarkedLog && registry.containsValue(item)) {
+            return;
+        }
         Block origLog = ((ItemBlock) item).getBlock();
         Block debLog = DEBARKED_LOG_BLOCKS.get(origLog);
         if (debLog != null) {
@@ -279,31 +288,15 @@ public class BPHooks {
             }
             registry.register(new ItemBlockDebarkedLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
         }
-//        if (!(item instanceof ItemBlock)) return;
-//        Block origLog = ((ItemBlock) item).getBlock();
-//        if (origLog instanceof DebarkedLog) {
-//            DEBARKED_LOG_ITEMS.put(((DebarkedLog) origLog).getOriginal(), (ItemBlock) item);
-//        }
-//        else if (Debarking$isOriginal(origLog) && !DEBARKED_LOG_ITEMS.containsKey(origLog)) {
-//            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-//            if (debarkedLog == null) {
-//                System.out.println("vfvwvfewfvewfvewfewfvew " + origLog.getRegistryName());
-//                return;
-//            }
-//            ItemBlock debarkedLogItem = DEBARKED_LOG_ITEMS.get(origLog);
-//            if (debarkedLogItem == null) {
-//                debarkedLogItem = new ItemBlockDebarkedLog(debarkedLog, origLog);
-//                DEBARKED_LOG_ITEMS.put(origLog, debarkedLogItem);
-//                return;
-//            }
-//            if (debarkedLogItem.getRegistryName() == null) {
-//                debarkedLogItem.setRegistryName(origLog.getRegistryName() + "_debarked");
-//                registry.register(debarkedLogItem);
-//            }
-//            else if (!registry.containsValue(debarkedLogItem)) {
-//                registry.register(debarkedLogItem);
-//            }
-//        }
+    }
+
+    public static int Debarking$getMetaFromState(Block debarkedLog, Block origLog, IBlockState state) {
+        return origLog.getMetaFromState(RandomHelper.copyState(state, origLog));
+    }
+
+    public static IBlockState Debarking$getStateFromMeta(Block debarkedLog, Block origLog, int meta) {
+        IBlockState ass = origLog.getStateFromMeta(meta);
+        return RandomHelper.copyState(ass, debarkedLog);
     }
 
     public static boolean Debarking$isOriginal(Block block) {

@@ -81,7 +81,6 @@ public class DebarkingTransformer extends BasicTransformer {
             }
             else if (method.name.equals(getName("createBlockState", "func_180661_e"))) {
                 createsBlockState = true;
-                break;
             }
         }
         boolean dumbCheck = cls.name.equals("com/bewitchment/common/block/util/ModBlockPillar");
@@ -106,7 +105,7 @@ public class DebarkingTransformer extends BasicTransformer {
                         }
                         debarkedDesc = builder.toString();
                     }
-                    String clsName = createDebarkedClass(cls, initMethod.desc, debarkedDesc, map);
+                    String clsName = createDebarkedClass(cls, initMethod.desc, debarkedDesc, map, createsBlockState);
                     cls.visitInnerClass(clsName, cls.name, "Debarked", ACC_PUBLIC | ACC_STATIC);
                     Iterator<AbstractInsnNode> iterator = initMethod.instructions.iterator();
                     while (iterator.hasNext()) {
@@ -135,7 +134,7 @@ public class DebarkingTransformer extends BasicTransformer {
                     }
                 }
                 else {
-                    String clsName = createDebarkedClass(cls, "()V", "(Lnet/minecraft/block/Block;)V", null);
+                    String clsName = createDebarkedClass(cls, "()V", "(Lnet/minecraft/block/Block;)V", null, createsBlockState);
                     { // <init>
                         MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
                         m.visitVarInsn(ALOAD, 0);
@@ -298,7 +297,9 @@ public class DebarkingTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/block/Block"));
-                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)V"));
+                list.add(hook("Debarking$tryRegisteringDebarkedLog", "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/block/Block;)Z"));
+                list.add(new JumpInsnNode(IFNE, l_con));
+                list.add(new InsnNode(RETURN));
                 list.add(l_con);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 list.add(new VarInsnNode(ALOAD, 0));
@@ -386,7 +387,7 @@ public class DebarkingTransformer extends BasicTransformer {
         }
     }
 
-    private static String createDebarkedClass(ClassNode clsLog, String origMDesc, String mDesc, IntList descMap) {
+    private static String createDebarkedClass(ClassNode clsLog, String origMDesc, String mDesc, IntList descMap, boolean hasBlockState) {
         ClassNode cls = new ClassNode();
         List<String> interfaces = new ArrayList<>(clsLog.interfaces == null ? 1 : cls.interfaces.size() + 1);
         interfaces.add("surreal/backportium/api/block/DebarkedLog");
@@ -414,6 +415,46 @@ public class DebarkingTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitFieldInsn(GETFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
             m.visitInsn(ARETURN);
+        }
+        if (hasBlockState) {
+            { // getMetaFromState
+                MethodVisitor m = cls.visitMethod(ACC_PUBLIC, getName("getMetaFromState", "func_176201_c"), "(Lnet/minecraft/block/state/IBlockState;)I", null, null);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
+                Label l_con = new Label();
+                m.visitJumpInsn(IFNULL, l_con);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
+                m.visitVarInsn(ALOAD, 1);
+                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I", false);
+                m.visitInsn(IRETURN);
+                m.visitLabel(l_con);
+                m.visitFrame(F_SAME, 0, null, 0, null);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitVarInsn(ALOAD, 1);
+                m.visitMethodInsn(INVOKESPECIAL, cls.superName, getName("getMetaFromState", "func_176201_c"), "(Lnet/minecraft/block/state/IBlockState;)I", false);
+                m.visitInsn(IRETURN);
+            }
+            { // getStateFromMeta
+                MethodVisitor m = cls.visitMethod(ACC_PUBLIC, getName("getStateFromMeta", "func_176203_a"), "(I)Lnet/minecraft/block/state/IBlockState;", null, null);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
+                Label l_con = new Label();
+                m.visitJumpInsn(IFNULL, l_con);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, "origLog", "Lnet/minecraft/block/Block;");
+                m.visitVarInsn(ILOAD, 1);
+                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;", false);
+                m.visitInsn(ARETURN);
+                m.visitLabel(l_con);
+                m.visitFrame(F_SAME, 0, null, 0, null);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitVarInsn(ILOAD, 1);
+                m.visitMethodInsn(INVOKESPECIAL, cls.superName, getName("getStateFromMeta", "func_176203_a"), "(I)Lnet/minecraft/block/state/IBlockState;", false);
+                m.visitInsn(ARETURN);
+            }
         }
         writeClass(cls);
         byte[] bytes = write(cls);
