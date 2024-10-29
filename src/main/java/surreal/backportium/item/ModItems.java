@@ -82,6 +82,7 @@ public class ModItems {
             Block origLog = ((DebarkedLog) itemBlock.getBlock()).getOriginal();
             Item origItem = Item.getItemFromBlock(origLog);
             int[] ids = OreDictionary.getOreIDs(new ItemStack(origItem, 1, OreDictionary.WILDCARD_VALUE));
+            if (ids.length == 0) ids = OreDictionary.getOreIDs(new ItemStack(origItem));
             for (int i : ids) {
                 OreDictionary.registerOre(OreDictionary.getOreName(i), new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
             }
@@ -102,16 +103,24 @@ public class ModItems {
             if (property != null) {
                 if (property.getValueClass() == EnumFacing.Axis.class) y = EnumFacing.Axis.Y;
                 else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
-                else System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + itemBlock.getBlock().getRegistryName());
+                else {
+                    System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + itemBlock.getBlock().getRegistryName());
+                    continue;
+                }
             }
             for (IBlockState state : itemBlock.getBlock().getBlockState().getValidStates()) {
-                String variantIn = RandomHelper.getVariantFromState(state);
                 int meta = state.getBlock().getMetaFromState(state);
                 if (property == null) {
+                    String variantIn = RandomHelper.getVariantFromState(state);
                     ModelLoader.setCustomModelResourceLocation(itemBlock, meta, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
                 }
                 else if (state.getValue(property) == y) {
-                    ModelLoader.setCustomModelResourceLocation(itemBlock, meta, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
+                    String variantIn = RandomHelper.getVariantFromState(state);
+                    ModelResourceLocation modelLoc = new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn);
+                    if (meta != 0) {
+                        ModelLoader.setCustomModelResourceLocation(itemBlock, meta, modelLoc);
+                    }
+                    ModelLoader.setCustomModelResourceLocation(itemBlock, 0, modelLoc);
                 }
             }
         }
