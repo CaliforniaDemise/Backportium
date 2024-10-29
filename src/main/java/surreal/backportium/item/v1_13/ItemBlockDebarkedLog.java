@@ -6,7 +6,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.translation.I18n;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;
@@ -53,6 +52,12 @@ public class ItemBlockDebarkedLog extends ItemBlock {
     @Override
     public int getMetadata(int damage) {
         return this.getOrigItem().getMetadata(damage);
+    }
+
+    @Nonnull
+    @Override
+    public String getTranslationKey() {
+        return this.getOrigItem().getTranslationKey();
     }
 
     @Nonnull

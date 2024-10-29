@@ -82,7 +82,13 @@ public class ModItems {
             Block origLog = ((DebarkedLog) itemBlock.getBlock()).getOriginal();
             Item origItem = Item.getItemFromBlock(origLog);
             int[] ids = OreDictionary.getOreIDs(new ItemStack(origItem, 1, OreDictionary.WILDCARD_VALUE));
-            if (ids.length == 0) ids = OreDictionary.getOreIDs(new ItemStack(origItem));
+            if (ids.length == 0) {
+                ids = OreDictionary.getOreIDs(new ItemStack(origItem));
+                if (ids.length == 0) {
+                    OreDictionary.registerOre("logWood", new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
+                    continue;
+                }
+            }
             for (int i : ids) {
                 OreDictionary.registerOre(OreDictionary.getOreName(i), new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
             }
