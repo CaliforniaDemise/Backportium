@@ -2,11 +2,9 @@ package surreal.backportium.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
-import forestry.api.arboriculture.EnumForestryWoodType;
+import forestry.api.arboriculture.EnumVanillaWoodType;
 import forestry.api.arboriculture.IWoodType;
-import forestry.arboriculture.blocks.BlockArbLog;
 import forestry.arboriculture.blocks.BlockForestryLog;
-import forestry.arboriculture.blocks.PropertyWoodType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.IProperty;
@@ -114,11 +112,13 @@ public class ClientHandler {
         for (Map.Entry<IBlockState, ModelResourceLocation> entry : modelLocations.entrySet()) {
             IBlockState state = entry.getKey();
             IWoodType type = ((BlockForestryLog<?>) origLog).getWoodType(origLog.getMetaFromState(state));
+            String barkTexture = type.getBarkTexture().contains(":") ? type.getBarkTexture() : "minecraft:" + type.getBarkTexture();
+            String heartTexture = type.getHeartTexture().contains(":") ? type.getHeartTexture() : "minecraft:" + type.getHeartTexture();
             ImmutableMap<String, String> textureMap;
             {
                 ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
-                builder.put("side", type.getBarkTexture() + "_debarked");
-                builder.put("end", type.getHeartTexture() + "_debarked");
+                builder.put("side", barkTexture + "_debarked");
+                builder.put("end", heartTexture + "_debarked");
                 textureMap = builder.build();
             }
             IModel inModel = model.retexture(textureMap);
@@ -139,9 +139,9 @@ public class ClientHandler {
         TextureMap map = event.getMap();
         for (IBlockState state : origLog.getBlockState().getValidStates()) {
             IWoodType type = ((BlockForestryLog<?>) origLog).getWoodType(origLog.getMetaFromState(state));
+            if (type instanceof EnumVanillaWoodType) return;
             ResourceLocation endSprite = new ResourceLocation(type.getHeartTexture());
             ResourceLocation debarkedSprite = new ResourceLocation(type.getHeartTexture() + "_debarked_template");
-
             { // TODO Change how this works
                 String texLoc = debarkedSprite.toString();
                 if (map.getTextureExtry(texLoc) == null) {
@@ -297,10 +297,6 @@ public class ClientHandler {
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
             if (hasForestry && entry.getKey() instanceof BlockForestryLog<?>) {
                 registerForestryTextures(event, entry.getKey(), entry.getValue());
-                continue;
-            }
-            if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("forestry")) {
-                if (entry.getKey() instanceof BlockArbLog) registerForestryTextures(event, entry.getKey(), entry.getValue());
                 continue;
             }
             Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());

@@ -1,11 +1,21 @@
 package surreal.backportium.item.v1_13;
 
+import binnie.extratrees.wood.EnumETLog;
+import binnie.extratrees.wood.EnumShrubLog;
+import binnie.extratrees.wood.WoodManager;
+import forestry.api.arboriculture.EnumForestryWoodType;
+import forestry.api.arboriculture.EnumVanillaWoodType;
+import forestry.api.arboriculture.IWoodType;
+import forestry.arboriculture.IWoodTyped;
+import forestry.arboriculture.WoodHelper;
+import forestry.arboriculture.blocks.BlockForestryLog;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.translation.I18n;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;
@@ -13,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 public class ItemBlockDebarkedLog extends ItemBlock {
 
-    private final Block origLog;
+    protected final Block origLog;
 
     public ItemBlockDebarkedLog(Block block, Block origLog) {
         super(block);
@@ -66,7 +76,30 @@ public class ItemBlockDebarkedLog extends ItemBlock {
         return this.getOrigItem().getTranslationKey(stack);
     }
 
-    private Item getOrigItem() {
+    protected Item getOrigItem() {
         return RandomHelper.getItemFromBlock(this.origLog);
+    }
+
+    public static class ItemBlockDebarkedForestryLog extends ItemBlockDebarkedLog {
+
+        public ItemBlockDebarkedForestryLog(Block block, Block origLog) {
+            super(block, origLog);
+        }
+
+        @Nonnull
+        @Override
+        public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+            IWoodType type = this.getWoodType(stack);
+            IWoodTyped typed = (BlockForestryLog<?>) this.origLog;
+            String displayName = null;
+            if (type instanceof EnumVanillaWoodType || type instanceof EnumForestryWoodType) displayName = WoodHelper.getDisplayName(typed, type);
+            else if (type instanceof EnumETLog || type instanceof EnumShrubLog) displayName = WoodManager.getDisplayName(typed, type);
+            if (displayName == null) displayName = "FORESTRY_NULL";
+            return I18n.translateToLocalFormatted("tile.backportium.debarked_log", displayName);
+        }
+
+        protected IWoodType getWoodType(ItemStack stack) {
+            return ((BlockForestryLog<?>) this.origLog).getWoodType(stack.getMetadata());
+        }
     }
 }

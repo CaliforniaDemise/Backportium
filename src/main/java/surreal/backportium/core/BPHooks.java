@@ -1,5 +1,6 @@
 package surreal.backportium.core;
 
+import forestry.arboriculture.blocks.BlockForestryLog;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
@@ -27,6 +28,7 @@ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import surreal.backportium.Backportium;
@@ -286,7 +288,11 @@ public class BPHooks {
             for (ItemBlock itemBlock : DEBARKED_LOG_ITEMS) {
                 if (itemBlock.getBlock() == debLog) return;
             }
-            registry.register(new ItemBlockDebarkedLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
+            boolean forestryLoaded = Loader.isModLoaded("forestry");
+            if (forestryLoaded && origLog instanceof BlockForestryLog) {
+                registry.register(new ItemBlockDebarkedLog.ItemBlockDebarkedForestryLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
+            }
+            else registry.register(new ItemBlockDebarkedLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
         }
     }
 
