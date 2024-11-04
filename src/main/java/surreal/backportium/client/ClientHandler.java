@@ -5,6 +5,7 @@ import com.google.gson.*;
 import forestry.api.arboriculture.EnumForestryWoodType;
 import forestry.api.arboriculture.IWoodType;
 import forestry.arboriculture.blocks.BlockArbLog;
+import forestry.arboriculture.blocks.BlockForestryLog;
 import forestry.arboriculture.blocks.PropertyWoodType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
@@ -27,6 +28,7 @@ import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -107,12 +109,11 @@ public class ClientHandler {
         catch (Exception e) {
             throw  new RuntimeException("Problem occurred while trying to get cube_column block model.", e);
         }
-        PropertyWoodType<EnumForestryWoodType> property = ((BlockArbLog) origLog).getVariant();
         Map<IBlockState, ModelResourceLocation> modelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(origLog);
         Map<IBlockState, ModelResourceLocation> dModelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(debarkedLog);
         for (Map.Entry<IBlockState, ModelResourceLocation> entry : modelLocations.entrySet()) {
             IBlockState state = entry.getKey();
-            IWoodType type = state.getValue(property);
+            IWoodType type = ((BlockForestryLog<?>) origLog).getWoodType(origLog.getMetaFromState(state));
             ImmutableMap<String, String> textureMap;
             {
                 ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
@@ -136,9 +137,8 @@ public class ClientHandler {
 
     private static void registerForestryTextures(TextureStitchEvent.Pre event, Block origLog, Block debarkedLog) {
         TextureMap map = event.getMap();
-        PropertyWoodType<EnumForestryWoodType> property = ((BlockArbLog) origLog).getVariant();
         for (IBlockState state : origLog.getBlockState().getValidStates()) {
-            IWoodType type = state.getValue(property);
+            IWoodType type = ((BlockForestryLog<?>) origLog).getWoodType(origLog.getMetaFromState(state));
             ResourceLocation endSprite = new ResourceLocation(type.getHeartTexture());
             ResourceLocation debarkedSprite = new ResourceLocation(type.getHeartTexture() + "_debarked_template");
 
@@ -166,9 +166,10 @@ public class ClientHandler {
 
     @SubscribeEvent
     public static void bakeModels(ModelBakeEvent event) {
+        boolean hasForestry = Loader.isModLoaded("forestry");
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
-            if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("forestry")) {
-                if (entry.getKey() instanceof BlockArbLog) bakeForestryModels(event, entry.getKey(), entry.getValue());
+            if (hasForestry && entry.getKey() instanceof BlockForestryLog<?>) {
+                bakeForestryModels(event, entry.getKey(), entry.getValue());
                 continue;
             }
             IProperty<?> property = entry.getValue().getBlockState().getProperty("axis");
@@ -292,7 +293,12 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
 
+        boolean hasForestry = Loader.isModLoaded("forestry");
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
+            if (hasForestry && entry.getKey() instanceof BlockForestryLog<?>) {
+                registerForestryTextures(event, entry.getKey(), entry.getValue());
+                continue;
+            }
             if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("forestry")) {
                 if (entry.getKey() instanceof BlockArbLog) registerForestryTextures(event, entry.getKey(), entry.getValue());
                 continue;
