@@ -2,6 +2,10 @@ package surreal.backportium.client;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.*;
+import forestry.api.arboriculture.EnumForestryWoodType;
+import forestry.api.arboriculture.IWoodType;
+import forestry.arboriculture.blocks.BlockArbLog;
+import forestry.arboriculture.blocks.PropertyWoodType;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.properties.IProperty;
@@ -30,7 +34,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import surreal.backportium.Backportium;
-import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.client.model.entity.ModelPhantom;
@@ -96,29 +99,89 @@ public class ClientHandler {
         else return obj.toString();
     }
 
+    private static void bakeForestryModels(ModelBakeEvent event, Block origLog, Block debarkedLog) {
+        IModel model;
+        try {
+            model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column"));
+        }
+        catch (Exception e) {
+            throw  new RuntimeException("Problem occurred while trying to get cube_column block model.", e);
+        }
+        PropertyWoodType<EnumForestryWoodType> property = ((BlockArbLog) origLog).getVariant();
+        Map<IBlockState, ModelResourceLocation> modelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(origLog);
+        Map<IBlockState, ModelResourceLocation> dModelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(debarkedLog);
+        for (Map.Entry<IBlockState, ModelResourceLocation> entry : modelLocations.entrySet()) {
+            IBlockState state = entry.getKey();
+            IWoodType type = state.getValue(property);
+            ImmutableMap<String, String> textureMap;
+            {
+                ImmutableMap.Builder<String, String> builder = new ImmutableMap.Builder<>();
+                builder.put("side", type.getBarkTexture() + "_debarked");
+                builder.put("end", type.getHeartTexture() + "_debarked");
+                textureMap = builder.build();
+            }
+            IModel inModel = model.retexture(textureMap);
+            IBlockState debarkedState = RandomHelper.copyState(state, debarkedLog);
+            BlockLog.EnumAxis axis = debarkedState.getValue(BlockLog.LOG_AXIS);
+            IModelState modelState = ModelRotation.X0_Y0;
+            switch (axis) {
+                case X: modelState = ModelRotation.X90_Y90; break;
+                case Z: modelState = ModelRotation.X90_Y0; break;
+            }
+            IBakedModel bakedModel = inModel.bake(modelState, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
+            event.getModelRegistry().putObject(dModelLocations.get(debarkedState), bakedModel);
+            event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(debarkedLog.getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), bakedModel);
+        }
+    }
+
+    private static void registerForestryTextures(TextureStitchEvent.Pre event, Block origLog, Block debarkedLog) {
+        TextureMap map = event.getMap();
+        PropertyWoodType<EnumForestryWoodType> property = ((BlockArbLog) origLog).getVariant();
+        for (IBlockState state : origLog.getBlockState().getValidStates()) {
+            IWoodType type = state.getValue(property);
+            ResourceLocation endSprite = new ResourceLocation(type.getHeartTexture());
+            ResourceLocation debarkedSprite = new ResourceLocation(type.getHeartTexture() + "_debarked_template");
+
+            { // TODO Change how this works
+                String texLoc = debarkedSprite.toString();
+                if (map.getTextureExtry(texLoc) == null) {
+                    map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
+                }
+            }
+
+            {
+                String location = endSprite + "_debarked";
+                if (map.getTextureExtry(location) == null) {
+                    map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
+                }
+            }
+            {
+                String location = type.getBarkTexture() + "_debarked";
+                if (map.getTextureExtry(location) == null) {
+                    map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, new ResourceLocation(type.getBarkTexture())));
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public static void bakeModels(ModelBakeEvent event) {
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
+            if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("forestry")) {
+                if (entry.getKey() instanceof BlockArbLog) bakeForestryModels(event, entry.getKey(), entry.getValue());
+                continue;
+            }
             IProperty<?> property = entry.getValue().getBlockState().getProperty("axis");
-            Object x = null, y = null, z = null;
+            Object y = null;
             if (property != null) {
-                if (property.getValueClass() == EnumFacing.Axis.class) {
-                    x = EnumFacing.Axis.X;
-                    y = EnumFacing.Axis.Y;
-                    z = EnumFacing.Axis.Z;
-                }
-                else if (property.getValueClass() == BlockLog.EnumAxis.class) {
-                    x = BlockLog.EnumAxis.X;
-                    y = BlockLog.EnumAxis.Y;
-                    z = BlockLog.EnumAxis.Z;
-                }
+                if (property.getValueClass() == EnumFacing.Axis.class) y = EnumFacing.Axis.Y;
+                else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
                 else {
                     System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + entry.getValue().getRegistryName());
                 }
             }
             Map<IBlockState, ModelResourceLocation> modelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
             Map<IBlockState, ModelResourceLocation> dModelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(entry.getValue());
-
             for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
                 IModel oModel;
                 try {
@@ -232,6 +295,10 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
 
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
+            if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("forestry")) {
+                if (entry.getKey() instanceof BlockArbLog) registerForestryTextures(event, entry.getKey(), entry.getValue());
+                continue;
+            }
             Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
             try {
                 for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
