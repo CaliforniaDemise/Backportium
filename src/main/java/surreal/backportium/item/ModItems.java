@@ -106,7 +106,6 @@ public class ModItems {
             itemBlock.getSubItems(CreativeTabs.SEARCH, list);
             for (ItemStack stack : list) {
                 int metadata = stack.getMetadata();
-                System.out.println("Test test: " + itemBlock.getRegistryName() + " " + metadata);
                 IBlockState state = itemBlock.getBlock().getStateFromMeta(metadata);
                 String variantIn = RandomHelper.getVariantFromState(state);
                 ModelLoader.setCustomModelResourceLocation(itemBlock, metadata, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));

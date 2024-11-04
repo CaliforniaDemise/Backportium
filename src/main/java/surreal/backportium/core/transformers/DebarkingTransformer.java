@@ -84,9 +84,13 @@ public class DebarkingTransformer extends BasicTransformer {
             }
         }
         boolean dumbCheck = cls.name.equals("com/bewitchment/common/block/util/ModBlockPillar");
+        boolean dumbestCheck = cls.name.equals("forestry/arboriculture/blocks/BlockArbLog$1");
         if ((cls.access & ACC_ABSTRACT) != ACC_ABSTRACT) {
+            if ((cls.access & ACC_PRIVATE) == ACC_PRIVATE) cls.access ^= ACC_PRIVATE;
+            else if ((cls.access & ACC_PROTECTED) == ACC_PROTECTED) cls.access ^= ACC_PROTECTED;
+            cls.access |= ACC_PUBLIC;
             if ((cls.access & ACC_FINAL) == ACC_FINAL) cls.access ^= ACC_FINAL;
-            if (createsBlockState || dumbCheck) {
+            if (createsBlockState || dumbCheck || dumbestCheck) {
                 if (initMethod != null) {
                     if ((initMethod.access & ACC_PRIVATE) == ACC_PRIVATE) {
                         initMethod.access ^= ACC_PRIVATE;
@@ -400,7 +404,9 @@ public class DebarkingTransformer extends BasicTransformer {
         ClassNode cls = new ClassNode();
         List<String> interfaces = new ArrayList<>(clsLog.interfaces == null ? 1 : cls.interfaces.size() + 1);
         interfaces.add("surreal/backportium/api/block/DebarkedLog");
-        cls.visit(V1_8, ACC_PUBLIC | ACC_STATIC, "backportium/" + clsLog.name + "$Debarked", null, clsLog.name, interfaces.toArray(new String[0]));
+        String name = clsLog.name + "$Debarked";
+        if (!clsLog.name.contains("$")) name = "backportium/" + name;
+        cls.visit(V1_8, ACC_PUBLIC | ACC_STATIC, name, null, clsLog.name, interfaces.toArray(new String[0]));
         { // origLog
             cls.visitField(ACC_PUBLIC | ACC_FINAL, "origLog", "Lnet/minecraft/block/Block;", null, null);
         }
