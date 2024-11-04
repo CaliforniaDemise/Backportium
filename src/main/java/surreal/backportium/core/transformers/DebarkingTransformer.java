@@ -31,6 +31,8 @@ public class DebarkingTransformer extends BasicTransformer {
             INVOKE_DYNAMIC = 18;
 
     public static boolean checkLogs(byte[] cls, String transformedName, String[] superName, boolean isSuperClass) {
+        if (transformedName.startsWith("com.sirsquidly.oe")) return false;
+        if (transformedName.startsWith("com.globbypotato.rockhounding")) return false;
         int poolCount = ((cls[9] & 0xFF) | (cls[8] & 0xFF) << 8) - 1;
         int[] constants = new int[poolCount]; // Byte location of constants
         int index = 10;
