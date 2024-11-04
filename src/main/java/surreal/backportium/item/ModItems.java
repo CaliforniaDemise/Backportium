@@ -1,6 +1,8 @@
 package surreal.backportium.item;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLog;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -9,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -107,6 +110,15 @@ public class ModItems {
             for (ItemStack stack : list) {
                 int metadata = stack.getMetadata();
                 IBlockState state = itemBlock.getBlock().getStateFromMeta(metadata);
+                IProperty<?> property = itemBlock.getBlock().getBlockState().getProperty("axis");
+                if (property != null) {
+                    if (property.getValueClass() == EnumFacing.Axis.class) {
+                        state = state.withProperty((IProperty<EnumFacing.Axis>) property, EnumFacing.Axis.Y);
+                    }
+                    else if (property.getValueClass() == BlockLog.EnumAxis.class) {
+                        state = state.withProperty((IProperty<BlockLog.EnumAxis>) property, BlockLog.EnumAxis.Y);
+                    }
+                }
                 String variantIn = RandomHelper.getVariantFromState(state);
                 ModelLoader.setCustomModelResourceLocation(itemBlock, metadata, new ModelResourceLocation(Objects.requireNonNull(itemBlock.getBlock().getRegistryName()), variantIn));
             }

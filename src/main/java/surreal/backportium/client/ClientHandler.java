@@ -198,16 +198,17 @@ public class ClientHandler {
                             map = textureMapBuilder.build();
                         }
                         IModel debarkedModel = origModel.retexture(map);
-                        int meta = entry.getKey().getMetaFromState(entry1.getKey());
-                        IBlockState debarkedState = entry.getValue().getStateFromMeta(meta);
-                        IBakedModel m = debarkedModel.bake(state, DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+                        IBlockState debarkedState = RandomHelper.copyState(entry1.getKey(), entry.getValue());
+                        IBakedModel m = debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
                         event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), "normal"), m);
                         if (property != null) {
                             if (debarkedState.getValue(property) == y) {
                                 event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
                             }
-                            ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
-                            event.getModelRegistry().putObject(modelLoc, debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                            else {
+                                ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
+                                event.getModelRegistry().putObject(modelLoc, debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                            }
                         }
                         else {
                             ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
