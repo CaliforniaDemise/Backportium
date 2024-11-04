@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.core.BPHooks;
 import surreal.backportium.potion.ModPotions;
+import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.WorldHelper;
 
 import java.util.Random;
@@ -63,8 +64,7 @@ public class EventHandler {
             if (debarkedLog != null) {
                 if (stack.getItem().getHarvestLevel(stack, "axe", player, state) <= -1) return;
                 if (!world.isRemote) {
-                    // TODO Huh? It returns state with different metadata from the one given, I don't know how does it work.
-                    world.setBlockState(pos, debarkedLog.getStateFromMeta(block.getMetaFromState(state)));
+                    world.setBlockState(pos, RandomHelper.copyState(state, debarkedLog));
                 }
                 player.swingArm(event.getHand());
                 event.setUseItem(Event.Result.ALLOW);
