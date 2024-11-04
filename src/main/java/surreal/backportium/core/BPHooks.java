@@ -187,7 +187,7 @@ public class BPHooks {
                 protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
                     IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
                     ModelResourceLocation origLoc = m.get(origState);
-                    return new ModelResourceLocation(new ResourceLocation(Tags.MOD_ID, origLoc.getPath() + "_debarked"), origLoc.getVariant());
+                    return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_debarked"), origLoc.getVariant());
                 }
             });
         }
