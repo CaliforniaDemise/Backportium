@@ -31,10 +31,9 @@ public class BPTransformer implements IClassTransformer {
 
             // Pumpkin
             case "net.minecraft.block.BlockPane":
-            case "net.minecraft.block.BlockWall":
-                return PumpkinTransformer.transformBlockFenceLike(basicClass);
+            case "net.minecraft.block.BlockWall": return PumpkinTransformer.transformBlockFenceLike(basicClass);
             case "net.minecraft.block.BlockStem": return PumpkinTransformer.transformBlockStem(basicClass);
-//            case "net.minecraft.stats.StatList":return PumpkinTransformer.transformStatList(basicClass); TODO Find a way without loading ModBlocks early
+            case "net.minecraft.stats.StatList": return PumpkinTransformer.transformStatList(basicClass);
             case "net.minecraft.world.gen.feature.WorldGenPumpkin": return PumpkinTransformer.transformWorldGenPumpkin(basicClass);
 
             // Fluidlogging

@@ -25,7 +25,6 @@ public class PumpkinTransformer extends BasicTransformer {
                 break;
             }
         }
-
         return write(cls);
     }
 
@@ -53,8 +52,8 @@ public class PumpkinTransformer extends BasicTransformer {
                     if (node.getOpcode() == INVOKESTATIC) {
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 0));
-                        ;
-                        list.add(getUncarvedPumpkin());
+                        list.add(new LdcInsnNode("backportium:pumpkin"));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/Block", getName("getBlockFromName", "func_149684_b"), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
                         list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", getName("PUMPKIN", "field_150423_aK"), "Lnet/minecraft/block/Block;"));
                         list.add(new VarInsnNode(ILOAD, 1));
                         list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("mergeStatBases", "func_151180_a"), "([Lnet/minecraft/stats/StatBase;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Z)V", false));
@@ -64,14 +63,12 @@ public class PumpkinTransformer extends BasicTransformer {
                 }
             }
         }
-
         return write(cls);
     }
 
     public static byte[] transformWorldGenPumpkin(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         String mName = getName("generate", "func_180709_b");
-
         Iterator<MethodNode> iterator = cls.methods.iterator();
         while (iterator.hasNext()) {
             MethodNode m = iterator.next();
@@ -80,7 +77,6 @@ public class PumpkinTransformer extends BasicTransformer {
                 break;
             }
         }
-
         {
             MethodVisitor m_generate = cls.visitMethod(ACC_PUBLIC, mName, "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", null, null);
             m_generate.visitVarInsn(ALOAD, 1);
@@ -89,7 +85,6 @@ public class PumpkinTransformer extends BasicTransformer {
             m_generate.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "WorldGenPumpkin$generate", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", false);
             m_generate.visitInsn(IRETURN);
         }
-
         return write(cls);
     }
 
