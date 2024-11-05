@@ -261,6 +261,7 @@ public class BPHooks {
     }
 
     // TODO Use ForgeRegistry#add instead of hooks
+    // TODO Mod might be adding multiple instances of debarked block and item, check and find ways if some of them actually are
     public static boolean Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
         if (origLog instanceof DebarkedLog && registry.containsValue(origLog)) {
             return false;
@@ -270,6 +271,7 @@ public class BPHooks {
         if (debarkedLog.getRegistryName() == null) {
             debarkedLog.setRegistryName(Objects.requireNonNull(origLog.getRegistryName()));
         }
+        // TODO Copy over variables
         if (!registry.containsValue(debarkedLog)) {
             registry.register(debarkedLog);
         }
