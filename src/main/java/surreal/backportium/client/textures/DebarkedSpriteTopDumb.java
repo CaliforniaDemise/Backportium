@@ -40,7 +40,7 @@ public class DebarkedSpriteTopDumb extends SpriteDef {
         BufferedImage baseImage = null;
         try {
             List<IResource> baseResource = manager.getAllResources(new ResourceLocation(this.base.getNamespace(), "textures/" + this.base.getPath() + ".png"));
-            if (baseResource.size() > 0) {
+            if (!baseResource.isEmpty()) {
                 try (InputStream stream = baseResource.get(0).getInputStream()) {
                     baseImage = TextureUtil.readBufferedImage(stream);
                 }

@@ -44,6 +44,7 @@ import surreal.backportium.client.renderer.tile.TESRConduit;
 import surreal.backportium.client.resource.Models;
 import surreal.backportium.client.resource.Sounds;
 import surreal.backportium.client.resource.Textures;
+import surreal.backportium.client.textures.AnimatedSpriteStill;
 import surreal.backportium.client.textures.DebarkedSpriteSide;
 import surreal.backportium.client.textures.DebarkedSpriteTop;
 import surreal.backportium.client.textures.DebarkedSpriteTopDumb;
@@ -292,6 +293,10 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("mob_effect/conduit_power"));
         map.registerSprite(new ResourceLocation("mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
+
+        {
+            map.setTextureEntry(new AnimatedSpriteStill(new ResourceLocation("blocks/seagrass"), "minecraft:items/seagrass"));
+        }
 
         boolean hasForestry = Loader.isModLoaded("forestry");
         for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
