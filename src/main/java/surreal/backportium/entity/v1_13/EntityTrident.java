@@ -12,6 +12,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -92,6 +94,11 @@ public class EntityTrident extends AbstractEntityArrow {
     // TODO Maybe add it to WorldHelper
     private boolean check(double pos, double pos2, double size) {
         return pos2 >= pos - size && pos2 <= pos + size;
+    }
+
+    @Override
+    public DamageSource getDamageSource() {
+        return new EntityDamageSourceIndirect("trident", this, this.shootingEntity == null ? this : this.shootingEntity);
     }
 
     @Nonnull

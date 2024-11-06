@@ -39,6 +39,7 @@ import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v1_13.ItemBlockDebarkedLog;
+import surreal.backportium.item.v1_13.ItemTrident;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;
@@ -145,6 +146,14 @@ public class BPHooks {
         }
 
         return true;
+    }
+
+    public static DamageSource EntityPlayer$getDamageSource(EntityPlayer player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if (stack.getItem() instanceof ItemTrident) {
+            return new EntityDamageSource("trident", player);
+        }
+        return DamageSource.causePlayerDamage(player);
     }
 
     // Fluidlogging

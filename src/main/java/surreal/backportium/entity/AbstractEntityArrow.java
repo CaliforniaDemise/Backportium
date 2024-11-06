@@ -206,14 +206,7 @@ public abstract class AbstractEntityArrow extends EntityArrow {
                 i += this.rand.nextInt(i / 2 + 2);
             }
 
-            DamageSource damagesource;
-
-            if (this.shootingEntity == null) {
-                damagesource = DamageSource.causeArrowDamage(this, this);
-            }
-            else {
-                damagesource = DamageSource.causeArrowDamage(this, this.shootingEntity);
-            }
+            DamageSource damagesource = this.getDamageSource();
 
             if (this.isBurning() && !(entity instanceof EntityEnderman)) {
                 entity.setFire(5);
@@ -303,6 +296,15 @@ public abstract class AbstractEntityArrow extends EntityArrow {
                     this.inTile.onEntityCollision(this.world, blockpos, iblockstate, this);
                 }
             }
+        }
+    }
+
+    public DamageSource getDamageSource() {
+        if (this.shootingEntity == null) {
+            return DamageSource.causeArrowDamage(this, this);
+        }
+        else {
+            return DamageSource.causeArrowDamage(this, this.shootingEntity);
         }
     }
 

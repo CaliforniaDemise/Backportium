@@ -22,7 +22,6 @@ public class BPTransformer implements IClassTransformer {
         switch (transformedName) {
             // Trident
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(basicClass);
-            case "net.minecraft.util.DamageSource": return TridentTransformer.transformDamageSource(basicClass);
             case "net.minecraft.entity.EntityLivingBase": return TridentTransformer.transformEntityLivingBase(basicClass);
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);

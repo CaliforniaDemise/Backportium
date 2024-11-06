@@ -1,5 +1,7 @@
 
 # Damage Sources
-death.attack.trident=%s died by Trident
+death.attack.trident=%1$s was impaled by %2$s
+death.attack.trident.item=%1$s was impaled by %2$s using %3$s
 
+# Blocks
 tile.backportium.debarked_log=Debarked %s

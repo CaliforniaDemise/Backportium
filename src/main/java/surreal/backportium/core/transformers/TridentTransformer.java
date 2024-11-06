@@ -1,12 +1,10 @@
 package surreal.backportium.core.transformers;
 
 import org.objectweb.asm.FieldVisitor;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
-import java.util.Objects;
 
 public class TridentTransformer extends BasicTransformer {
 
@@ -47,53 +45,6 @@ public class TridentTransformer extends BasicTransformer {
             }
         }
 
-        return write(cls);
-    }
-
-    // Trident damage source handling
-    public static byte[] transformDamageSource(byte[] basicClass) {
-        ClassNode cls = read(basicClass);
-        for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("causeArrowDamage", "func_76353_a"))) {
-                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-
-                AbstractInsnNode node = iterator.next();
-                InsnList list = new InsnList();
-
-                // Create the string
-                list.add(new InsnNode(ACONST_NULL));
-                list.add(new VarInsnNode(ASTORE, 2));
-
-                // Check if entity is trident
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new TypeInsnNode(INSTANCEOF, "surreal/backportium/entity/v1_13/EntityTrident"));
-                LabelNode l_elsecon = new LabelNode();
-                list.add(new JumpInsnNode(IFEQ, l_elsecon));
-                list.add(new LabelNode());
-                list.add(new LdcInsnNode("trident"));
-                list.add(new VarInsnNode(ASTORE, 2));
-                LabelNode l_con = new LabelNode();
-                list.add(new JumpInsnNode(GOTO, l_con));
-                list.add(l_elsecon);
-                list.add(new FrameNode(F_SAME, 0, null, 0, null));
-                list.add(new LdcInsnNode("arrow"));
-                list.add(new VarInsnNode(ASTORE, 2));
-                list.add(l_con);
-                list.add(new FrameNode(F_APPEND, 1, new Object[]{"java/lang/String"}, 0, null));
-                method.instructions.insertBefore(node, list);
-
-                while (iterator.hasNext()) {
-                    node = iterator.next();
-                    if (node instanceof LdcInsnNode && ((LdcInsnNode) node).cst.equals("arrow")) {
-                        method.instructions.insert(node, new VarInsnNode(ALOAD, 2));
-                        iterator.remove();
-                        break;
-                    }
-                }
-
-                break;
-            }
-        }
         return write(cls);
     }
 
@@ -354,6 +305,17 @@ public class TridentTransformer extends BasicTransformer {
                         list.add(l_con);
                         list.add(new FrameNode(F_SAME, 0, null, 0, null));
                         method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+            }
+            else if (method.name.equals(getName("attackTargetEntityWithCurrentItem", "func_71059_n"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKESTATIC && ((MethodInsnNode) node).name.equals(getName("causePlayerDamage", "func_76365_a"))) {
+                        method.instructions.insertBefore(node, hook("EntityPlayer$getDamageSource", "(Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/util/DamageSource;"));
+                        iterator.remove();
                         break;
                     }
                 }
