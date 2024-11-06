@@ -6,13 +6,14 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.util.ResourceLocation;
+import surreal.backportium.Tags;
 import surreal.backportium.entity.v1_13.EntityPhantom;
 
 import javax.annotation.Nonnull;
 
 public class LayerPhantomEyes<T extends EntityPhantom> implements LayerRenderer<T> {
 
-    private static final ResourceLocation PHANTOM_EYES_TEXTURE = new ResourceLocation("textures/entity/phantom_eyes.png");
+    private static final ResourceLocation PHANTOM_EYES_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/phantom_eyes.png");
 
     private final RenderLiving<T> render;
 

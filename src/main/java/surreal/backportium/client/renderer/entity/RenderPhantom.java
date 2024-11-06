@@ -4,6 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import surreal.backportium.Tags;
 import surreal.backportium.client.renderer.entity.layer.LayerPhantomEyes;
 import surreal.backportium.entity.v1_13.EntityPhantom;
 
@@ -12,7 +13,7 @@ import javax.annotation.Nullable;
 
 public class RenderPhantom extends RenderLiving<EntityPhantom> {
 
-    private static final ResourceLocation PHANTOM_TEXTURE = new ResourceLocation("textures/entity/phantom.png");
+    private static final ResourceLocation PHANTOM_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/phantom.png");
 
     public RenderPhantom(RenderManager manager, ModelBase model, float shadowsizeIn) {
         super(manager, model, shadowsizeIn);

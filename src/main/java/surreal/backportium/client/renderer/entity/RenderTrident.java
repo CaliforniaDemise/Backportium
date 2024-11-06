@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import surreal.backportium.Tags;
 import surreal.backportium.entity.v1_13.EntityTrident;
 
 import javax.annotation.Nonnull;
@@ -12,7 +13,7 @@ import javax.annotation.Nullable;
 
 public class RenderTrident<T extends EntityTrident> extends Render<T> {
 
-    protected static final ResourceLocation TRIDENT_TEXTURE = new ResourceLocation("textures/entity/trident.png");
+    protected static final ResourceLocation TRIDENT_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/trident.png");
 
     protected final ModelBase trident;
 
