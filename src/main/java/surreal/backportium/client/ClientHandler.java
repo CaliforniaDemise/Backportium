@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import surreal.backportium.Backportium;
+import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.client.model.entity.ModelPhantom;
@@ -295,7 +296,7 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
 
         {
-            map.setTextureEntry(new AnimatedSpriteStill(new ResourceLocation("blocks/seagrass"), "minecraft:items/seagrass"));
+            map.setTextureEntry(new AnimatedSpriteStill(new ResourceLocation(Tags.MOD_ID, "blocks/seagrass"), Tags.MOD_ID + ":items/seagrass"));
         }
 
         boolean hasForestry = Loader.isModLoaded("forestry");

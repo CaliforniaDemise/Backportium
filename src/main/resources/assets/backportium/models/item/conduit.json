@@ -1,7 +1,7 @@
 {
   "parent": "builtin/entity",
   "textures": {
-    "particle": "blocks/conduit"
+    "particle": "backportium:blocks/conduit"
   },
   "display": {
     "gui": {

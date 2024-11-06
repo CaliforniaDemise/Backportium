@@ -2,7 +2,7 @@
     "parent": "builtin/entity",
     "gui_light": "front",
     "textures": {
-        "particle": "items/trident"
+        "particle": "backportium:items/trident"
     },
     "display": {
         "thirdperson_righthand": {

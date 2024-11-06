@@ -3,7 +3,7 @@
   "defaults": {
     "model": "cube_all",
     "textures": {
-      "all": "blocks/blue_ice"
+      "all": "backportium:blocks/blue_ice"
     }
   },
   "variants": {

@@ -1,18 +1,18 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "template_seagrass"
+    "model": "backportium:template_seagrass"
   },
   "variants": {
     "half": {
       "upper": {
         "textures": {
-          "texture": "blocks/tall_seagrass_top"
+          "texture": "backportium:blocks/tall_seagrass_top"
         }
       },
       "lower": {
         "textures": {
-          "texture": "blocks/tall_seagrass_bottom"
+          "texture": "backportium:blocks/tall_seagrass_bottom"
         }
       }
     }

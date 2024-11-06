@@ -3,7 +3,7 @@
   "defaults": {
     "model": "block",
     "textures": {
-      "particle": "blocks/conduit"
+      "particle": "backportium:blocks/conduit"
     }
   },
   "variants": {

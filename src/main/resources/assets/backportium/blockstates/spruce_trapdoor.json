@@ -3,7 +3,7 @@
   "defaults": {
     "model": "trapdoor_bottom",
     "textures": {
-      "texture": "blocks/spruce_trapdoor"
+      "texture": "backportium:blocks/spruce_trapdoor"
     }
   },
   "variants": {

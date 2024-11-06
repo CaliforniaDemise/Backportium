@@ -7,12 +7,12 @@
     "half": {
       "upper": {
         "textures": {
-          "cross": "blocks/kelp"
+          "cross": "backportium:blocks/kelp"
         }
       },
       "lower": {
         "textures": {
-          "cross": "blocks/kelp_plant"
+          "cross": "backportium:blocks/kelp_plant"
         }
       }
     }

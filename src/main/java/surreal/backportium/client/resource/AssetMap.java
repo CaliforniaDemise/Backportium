@@ -6,6 +6,6 @@ public class AssetMap extends Object2ObjectOpenHashMap<String, String> {
 
     @Override
     public String put(String s, String s2) {
-        return super.put("assets/minecraft/" + s, "assets/minecraft/" + s2);
+        return super.put("assets/minecraft/" + s, "assets/backportium/" + s2);
     }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "items/turtle_egg"
+    "layer0": "backportium:items/turtle_egg"
   }
 }

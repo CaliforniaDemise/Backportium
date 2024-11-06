@@ -2,18 +2,18 @@
   "forge_marker": 1,
   "defaults": {
     "textures": {
-      "all": "blocks/sea_pickle",
-      "particle": "blocks/sea_pickle"
+      "all": "backportium:blocks/sea_pickle",
+      "particle": "backportium:blocks/sea_pickle"
     }
   },
   "variants": {
-    "alive=true,amount=0": { "model": "sea_pickle" },
-    "alive=true,amount=1": { "model": "two_sea_pickles" },
-    "alive=true,amount=2": { "model": "three_sea_pickles" },
-    "alive=true,amount=3": { "model": "four_sea_pickles" },
-    "alive=false,amount=0": { "model": "dead_sea_pickle" },
-    "alive=false,amount=1": { "model": "two_dead_sea_pickles" },
-    "alive=false,amount=2": { "model": "three_dead_sea_pickles" },
-    "alive=false,amount=3": { "model": "four_dead_sea_pickles" }
+    "alive=true,amount=0": { "model": "backportium:sea_pickle" },
+    "alive=true,amount=1": { "model": "backportium:two_sea_pickles" },
+    "alive=true,amount=2": { "model": "backportium:three_sea_pickles" },
+    "alive=true,amount=3": { "model": "backportium:four_sea_pickles" },
+    "alive=false,amount=0": { "model": "backportium:dead_sea_pickle" },
+    "alive=false,amount=1": { "model": "backportium:two_dead_sea_pickles" },
+    "alive=false,amount=2": { "model": "backportium:three_dead_sea_pickles" },
+    "alive=false,amount=3": { "model": "backportium:four_dead_sea_pickles" }
   }
 }

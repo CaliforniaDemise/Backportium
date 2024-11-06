@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import surreal.backportium.Tags;
 import surreal.backportium.client.model.tile.ModelConduit;
 import surreal.backportium.tile.v1_13.TileConduit;
 
@@ -18,14 +19,14 @@ import javax.annotation.Nonnull;
 
 public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
 
-    private static final ResourceLocation SHELL_TEXTURE = new ResourceLocation("textures/entity/conduit/base.png");
-    private static final ResourceLocation CAGE_TEXTURE = new ResourceLocation("textures/entity/conduit/cage.png");
+    private static final ResourceLocation SHELL_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/conduit/base.png");
+    private static final ResourceLocation CAGE_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/conduit/cage.png");
 
-    private static final ResourceLocation CLOSED_EYE_TEXTURE = new ResourceLocation("textures/entity/conduit/closed_eye.png");
-    private static final ResourceLocation OPEN_EYE_TEXTURE = new ResourceLocation("textures/entity/conduit/open_eye.png");
+    private static final ResourceLocation CLOSED_EYE_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/conduit/closed_eye.png");
+    private static final ResourceLocation OPEN_EYE_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/conduit/open_eye.png");
 
-    private static final String WIND_TEXTURE = "minecraft:entity/conduit/wind";
-    private static final String WIND_VERTICAL_TEXTURE = "minecraft:entity/conduit/wind_vertical";
+    private static final String WIND_TEXTURE = Tags.MOD_ID + ":entity/conduit/wind";
+    private static final String WIND_VERTICAL_TEXTURE = Tags.MOD_ID + ":entity/conduit/wind_vertical";
 
     private final ModelConduit SHELL = new ModelConduit.Shell();
     private final ModelConduit CAGE = new ModelConduit.Cage();

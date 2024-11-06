@@ -1,7 +1,7 @@
 {
     "parent": "builtin/entity",
     "textures": {
-        "particle": "items/trident"
+        "particle": "backportium:items/trident"
     },
     "display": {
         "thirdperson_righthand": {
