@@ -37,25 +37,24 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockLiquid": return FluidloggingTransformer.transformBlockLiquid(basicClass);
 
             // Debarking
-//            case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return DebarkingTransformer.transformBlockStateMapper(basicClass);
-//            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
-//            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
-//            case "net.minecraft.block.Block": return DebarkingTransformer.transformBlock(basicClass);
-//            case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
-//            case "net.minecraft.item.ItemBlock": return DebarkingTransformer.transformItemBlock(basicClass);
+            case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return DebarkingTransformer.transformBlockStateMapper(basicClass);
+            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
+            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
+            case "net.minecraft.block.Block": return DebarkingTransformer.transformBlock(basicClass);
+            case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
+            case "net.minecraft.item.ItemBlock": return DebarkingTransformer.transformItemBlock(basicClass);
 
             // For The Game Players
             case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);
         }
-        // Don't want to think about it right now.
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs
-//        if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {
-//            boolean bewitchmentCheck = transformedName.equals("com.bewitchment.common.block.util.ModBlockPillar"); // Some mods like Bewitchment likes to create logs without extending BlockLog
-//            boolean techrebornCheck = transformedName.equals("techreborn.blocks.BlockRubberLog");
-//            boolean thaumcraftCheck = transformedName.equals("thaumcraft.common.blocks.world.plants.BlockLogsTC");
-//            String[] toCheck = new String[] { "net/minecraft/block/BlockLog", "com/progwml6/natura/common/block/BlockEnumLog" };
-//            if (bewitchmentCheck || techrebornCheck || thaumcraftCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, toCheck, false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
-//        }
+        if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {
+            boolean bewitchmentCheck = transformedName.equals("com.bewitchment.common.block.util.ModBlockPillar"); // Some mods like Bewitchment likes to create logs without extending BlockLog
+            boolean techrebornCheck = transformedName.equals("techreborn.blocks.BlockRubberLog");
+            boolean thaumcraftCheck = transformedName.equals("thaumcraft.common.blocks.world.plants.BlockLogsTC");
+            String[] toCheck = new String[] { "net/minecraft/block/BlockLog", "com/progwml6/natura/common/block/BlockEnumLog" };
+            if (bewitchmentCheck || techrebornCheck || thaumcraftCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, toCheck, false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
+        }
         return basicClass;
     }
 

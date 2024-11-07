@@ -58,6 +58,7 @@ import surreal.backportium.tile.v1_13.TileConduit;
 import surreal.backportium.util.RandomHelper;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -181,6 +182,7 @@ public class ClientHandler {
                 else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
                 else {
                     System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + entry.getValue().getRegistryName());
+                    continue;
                 }
             }
             Map<IBlockState, ModelResourceLocation> modelLocations = event.getModelManager().getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
@@ -191,7 +193,8 @@ public class ClientHandler {
                     oModel = ModelLoaderRegistry.getModel(entry1.getValue());
                 }
                 catch (Exception e) {
-                    throw new RuntimeException("An error occurred while getting oModel of " + entry1.getKey() + " (" + entry1.getValue() + ")", e);
+                    continue;
+//                    throw new RuntimeException("An error occurred while getting oModel of " + entry1.getKey() + " (" + entry1.getValue() + ")", e);
                 }
                 int i = 0;
                 for (ResourceLocation loc : oModel.getDependencies()) {
@@ -230,7 +233,8 @@ public class ClientHandler {
                             reader.close();
                         }
                         catch (Exception e) {
-                            throw new RuntimeException("Exception while loading resource " + bsLoc, e);
+                            continue;
+//                            throw new RuntimeException("Exception while loading resource " + bsLoc, e);
                         }
                     }
                     IModel origModel;
@@ -238,7 +242,8 @@ public class ClientHandler {
                         origModel = ModelLoaderRegistry.getModel(loc);
                     }
                     catch (Exception e) {
-                        throw  new RuntimeException("Exception while getting origModel (" + loc + ")", e);
+                        continue;
+//                        throw  new RuntimeException("Exception while getting origModel (" + loc + ")", e);
                     }
                     Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
                     if (origModelBlockOpt.isPresent()) {
@@ -306,92 +311,106 @@ public class ClientHandler {
                 continue;
             }
             Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(entry.getKey());
-            try {
-                for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
-                    IModel oModel = ModelLoaderRegistry.getModel(entry1.getValue());
-                    int i = 0;
-                    for (ResourceLocation loc : oModel.getDependencies()) {
-                        List<String> ass = null;
-                        {
-                            ResourceLocation stateLoc = entry1.getValue();
-                            ResourceLocation bsLoc = new ResourceLocation(stateLoc.getNamespace(), "blockstates/" + stateLoc.getPath() + ".json");
-                            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(bsLoc);
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
-                            ModelBlockDefinition definition = BlockStateLoader.load(reader, bsLoc, vanillaGson);
-                            VariantList list = definition.getVariant(entry1.getValue().getVariant());
-                            Variant variant = list.getVariantList().get(i);
-                            String varStr = variant.toString();
-                            if (varStr.startsWith("TexturedVariant")) {
-                                ass = new ArrayList<>(2);
-                                StringBuilder builder = new StringBuilder();
-                                for (int a = 17; a < varStr.length(); a++) {
-                                    char c = varStr.charAt(a);
-                                    if (c == ' ') {
-                                        if (varStr.charAt(a + 1) != '=' && varStr.charAt(a - 1) != '=') {
-                                            ass.add(builder.toString());
-                                            builder = new StringBuilder();
-                                        }
-                                        continue;
-                                    }
-                                    builder.append(c);
-                                    if (a == varStr.length() - 1) {
-                                        ass.add(builder.toString());
-                                    }
-                                }
-                            }
-                            reader.close();
-                        }
-                        IModel origModel = ModelLoaderRegistry.getModel(loc);
-                        Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
-                        if (origModelBlockOpt.isPresent()) {
-                            ModelBlock origModelBlock = origModelBlockOpt.get();
-                            String end = null;
-                            List<String> otherSprites = new ArrayList<>(1);
-                            if (ass == null) {
-                                for (Map.Entry<String, String> texEntry : origModelBlock.textures.entrySet()) {
-                                    if (texEntry.getKey().equals("end")) end = texEntry.getValue();
-                                    else otherSprites.add(texEntry.getValue());
-                                }
-                            }
-                            else {
-                                for (String assType : ass) {
-                                    String[] split = assType.split("=");
-                                    if (split[0].equals("end")) end = split[1];
-                                    else otherSprites.add(split[1]);
-                                }
-                            }
-                            if (end == null) {
-                                continue;
-                            }
-                            ResourceLocation endSprite = new ResourceLocation(end);
-                            ResourceLocation debarkedSprite = new ResourceLocation(endSprite + "_debarked_template");
-
-                            { // TODO Change how this works
-                                String texLoc = debarkedSprite.toString();
-                                if (map.getTextureExtry(texLoc) == null) {
-                                    map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
-                                }
-                            }
-
-                            {
-                                String location = endSprite + "_debarked";
-                                if (map.getTextureExtry(location) == null) {
-                                    map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
-                                }
-                            }
-                            for (String sprite : otherSprites) {
-                                String location = new ResourceLocation(sprite + "_debarked").toString();
-                                if (map.getTextureExtry(location) == null) {
-                                    map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, new ResourceLocation(sprite)));
-                                }
-                            }
-                        }
-                        i++;
-                    }
+            for (Map.Entry<IBlockState, ModelResourceLocation> entry1 : modelLocations.entrySet()) {
+                IModel oModel;
+                try {
+                    oModel = ModelLoaderRegistry.getModel(entry1.getValue());
                 }
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
+                catch (Exception e) {
+                    continue;
+                    // throw new RuntimeException(e);
+                }
+                int i = 0;
+                for (ResourceLocation loc : oModel.getDependencies()) {
+                    List<String> ass = null;
+                    try {
+                        ResourceLocation stateLoc = entry1.getValue();
+                        ResourceLocation bsLoc = new ResourceLocation(stateLoc.getNamespace(), "blockstates/" + stateLoc.getPath() + ".json");
+                        IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(bsLoc);
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()));
+                        ModelBlockDefinition definition = BlockStateLoader.load(reader, bsLoc, vanillaGson);
+                        if (!definition.hasVariant(entry1.getValue().getVariant())) continue; // Throws an exception. We should throw errors.
+                        VariantList list = definition.getVariant(entry1.getValue().getVariant());
+                        Variant variant = list.getVariantList().get(i);
+                        String varStr = variant.toString();
+                        if (varStr.startsWith("TexturedVariant")) {
+                            ass = new ArrayList<>(2);
+                            StringBuilder builder = new StringBuilder();
+                            for (int a = 17; a < varStr.length(); a++) {
+                                char c = varStr.charAt(a);
+                                if (c == ' ') {
+                                    if (varStr.charAt(a + 1) != '=' && varStr.charAt(a - 1) != '=') {
+                                        ass.add(builder.toString());
+                                        builder = new StringBuilder();
+                                    }
+                                    continue;
+                                }
+                                builder.append(c);
+                                if (a == varStr.length() - 1) {
+                                    ass.add(builder.toString());
+                                }
+                            }
+                        }
+                        reader.close();
+                    }
+                    catch (Exception e) {
+                        continue;
+                        // throw new RuntimeException(e);
+                    }
+                    IModel origModel;
+                    try {
+                        origModel = ModelLoaderRegistry.getModel(loc);
+                    }
+                    catch (Exception e) {
+                        continue;
+                        // throw new RuntimeException(e);
+                    }
+                    Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
+                    if (origModelBlockOpt.isPresent()) {
+                        ModelBlock origModelBlock = origModelBlockOpt.get();
+                        String end = null;
+                        List<String> otherSprites = new ArrayList<>(1);
+                        if (ass == null) {
+                            for (Map.Entry<String, String> texEntry : origModelBlock.textures.entrySet()) {
+                                if (texEntry.getKey().equals("end")) end = texEntry.getValue();
+                                else otherSprites.add(texEntry.getValue());
+                            }
+                        }
+                        else {
+                            for (String assType : ass) {
+                                String[] split = assType.split("=");
+                                if (split[0].equals("end")) end = split[1];
+                                else otherSprites.add(split[1]);
+                            }
+                        }
+                        if (end == null) {
+                            continue;
+                        }
+                        ResourceLocation endSprite = new ResourceLocation(end);
+                        ResourceLocation debarkedSprite = new ResourceLocation(endSprite + "_debarked_template");
+
+                        { // TODO Change how this works
+                            String texLoc = debarkedSprite.toString();
+                            if (map.getTextureExtry(texLoc) == null) {
+                                map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
+                            }
+                        }
+
+                        {
+                            String location = endSprite + "_debarked";
+                            if (map.getTextureExtry(location) == null) {
+                                map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
+                            }
+                        }
+                        for (String sprite : otherSprites) {
+                            String location = new ResourceLocation(sprite + "_debarked").toString();
+                            if (map.getTextureExtry(location) == null) {
+                                map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, new ResourceLocation(sprite)));
+                            }
+                        }
+                    }
+                    i++;
+                }
             }
         }
     }
