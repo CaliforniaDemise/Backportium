@@ -22,7 +22,6 @@ public class IntentionalTransformerDesign extends BasicTransformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 }
