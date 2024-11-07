@@ -39,10 +39,10 @@ public class BPTransformer implements IClassTransformer {
             // Debarking
 //            case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return DebarkingTransformer.transformBlockStateMapper(basicClass);
 //            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
+//            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
 //            case "net.minecraft.block.Block": return DebarkingTransformer.transformBlock(basicClass);
 //            case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
 //            case "net.minecraft.item.ItemBlock": return DebarkingTransformer.transformItemBlock(basicClass);
-//            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
 
             // For The Game Players
             case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);

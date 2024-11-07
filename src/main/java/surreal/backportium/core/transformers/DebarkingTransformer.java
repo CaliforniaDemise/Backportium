@@ -53,10 +53,6 @@ public class DebarkingTransformer extends BasicTransformer {
         }
         int accessFlags = ((cls[index + 1] & 0xFF) | (cls[index] & 0xFF) << 8);
         if ((accessFlags & 0x0200) == 0x0200) return false; // interface check
-//        int classConstant = ((cls[index + 3] & 0xFF) | (cls[index + 2] & 0xFF) << 8);
-//        classConstant = constants[classConstant - 1];
-//        classConstant = ((cls[classConstant + 2] & 0xFF) | (cls[classConstant + 1] & 0xFF) << 8);
-//        String clsName = fromUtf8Const(cls, constants[classConstant - 1]);
         int superConstant = ((cls[index + 5] & 0xFF) | (cls[index + 4] & 0xFF) << 8); // superclass' position on constants array
         superConstant = constants[superConstant - 1]; // superclass' position on cls array
         superConstant = ((cls[superConstant + 2] & 0xFF) | (cls[superConstant + 1] & 0xFF) << 8); // superclass' utf8's position
@@ -219,36 +215,6 @@ public class DebarkingTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$getItemStackDisplayName", "(Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
             m.visitInsn(ARETURN);
-        }
-        return write(cls);
-    }
-
-    public static byte[] transformItemBlockEx(byte[] basicClass) {
-        ClassNode cls = read(basicClass);
-        boolean didSomething = false;
-        String methodName = getName("getItemStackDisplayName", "func_77653_i");
-        for (MethodNode method : cls.methods) {
-            if (method.name.equals(methodName)) {
-                AbstractInsnNode node = method.instructions.getLast();
-                while (node.getOpcode() != ARETURN) node = node.getPrevious();
-                InsnList list = new InsnList();
-                list.add(new VarInsnNode(ALOAD, 1));
-                list.add(hook("Debarking$getItemStackDisplayName", "(Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Ljava/lang/String;"));
-                method.instructions.insertBefore(node, list);
-                didSomething = true;
-                break;
-            }
-        }
-        if (!didSomething) {
-            { // <init>
-                MethodVisitor m = cls.visitMethod(ACC_PUBLIC, methodName, "(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", null, null);
-                m.visitVarInsn(ALOAD, 0);
-                m.visitVarInsn(ALOAD, 1);
-                m.visitMethodInsn(INVOKESPECIAL, cls.superName, methodName, "(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
-                m.visitVarInsn(ALOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Debarking$getItemStackDisplayName", "(Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
-                m.visitInsn(ARETURN);
-            }
         }
         return write(cls);
     }
