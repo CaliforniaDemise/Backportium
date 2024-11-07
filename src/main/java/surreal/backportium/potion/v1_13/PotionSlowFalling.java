@@ -19,12 +19,15 @@ public class PotionSlowFalling extends PotionBasic {
 
     @Override
     public void performEffect(@Nonnull EntityLivingBase entity, int amplifier) {
-        if (entity.motionY < 0F) {
+        if (entity.motionY < 0.065F) {
             if (entity instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) entity;
                 if (player.capabilities.isFlying) return;
             }
-            entity.motionY += 0.065F;
+            double motion = 0.065F * (amplifier + 1);
+            if (entity.isInLava()) motion /= 8;
+            if (entity.isInWater()) motion /= 4;
+            entity.motionY += motion;
         }
     }
 
