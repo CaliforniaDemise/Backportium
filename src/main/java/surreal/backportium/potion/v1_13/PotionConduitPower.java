@@ -3,6 +3,7 @@ package surreal.backportium.potion.v1_13;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.ResourceLocation;
+import surreal.backportium.Tags;
 import surreal.backportium.potion.PotionBasic;
 import surreal.backportium.tile.v1_13.TileConduit;
 
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public class PotionConduitPower extends PotionBasic {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/mob_effect/conduit_power.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/mob_effect/conduit_power.png");
 
     public PotionConduitPower(boolean isBadEffectIn, int liquidColorIn) {
         super(isBadEffectIn, liquidColorIn);

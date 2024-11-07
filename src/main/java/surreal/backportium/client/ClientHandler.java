@@ -58,7 +58,6 @@ import surreal.backportium.tile.v1_13.TileConduit;
 import surreal.backportium.util.RandomHelper;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -293,12 +292,12 @@ public class ClientHandler {
     @SubscribeEvent
     public static void registerTextures(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();
-        map.registerSprite(new ResourceLocation("entity/conduit/wind"));
-        map.registerSprite(new ResourceLocation("entity/conduit/wind_vertical"));
-        map.registerSprite(new ResourceLocation("particle/nautilus"));
-        map.registerSprite(new ResourceLocation("mob_effect/conduit_power"));
-        map.registerSprite(new ResourceLocation("mob_effect/dolphins_grace"));
-        map.registerSprite(new ResourceLocation("mob_effect/slow_falling"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "entity/conduit/wind"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "entity/conduit/wind_vertical"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "particle/nautilus"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/conduit_power"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/dolphins_grace"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/slow_falling"));
 
         {
             map.setTextureEntry(new AnimatedSpriteStill(new ResourceLocation(Tags.MOD_ID, "blocks/seagrass"), Tags.MOD_ID + ":items/seagrass"));

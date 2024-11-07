@@ -5,10 +5,11 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import surreal.backportium.Tags;
 
 public class ParticleConduit extends Particle {
 
-    protected static final TextureAtlasSprite CONDUIT_PARTICLE = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:particle/nautilus");
+    protected static final TextureAtlasSprite CONDUIT_PARTICLE = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(Tags.MOD_ID + ":particle/nautilus");
     private final Vec3d conduitPos;
 
     public ParticleConduit(World worldIn, double posXIn, double posYIn, double posZIn, float size, Vec3d pos) {
