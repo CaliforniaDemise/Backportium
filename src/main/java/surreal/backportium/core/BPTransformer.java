@@ -1,10 +1,7 @@
 package surreal.backportium.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import surreal.backportium.core.transformers.DebarkingTransformer;
-import surreal.backportium.core.transformers.FluidloggingTransformer;
-import surreal.backportium.core.transformers.PumpkinTransformer;
-import surreal.backportium.core.transformers.TridentTransformer;
+import surreal.backportium.core.transformers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,6 +43,9 @@ public class BPTransformer implements IClassTransformer {
 //            case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
 //            case "net.minecraft.item.ItemBlock": return DebarkingTransformer.transformItemBlock(basicClass);
 //            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
+
+            // For The Game Players
+            case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);
         }
         // Don't want to think about it right now.
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs

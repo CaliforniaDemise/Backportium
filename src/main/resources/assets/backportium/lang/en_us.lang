@@ -3,5 +3,7 @@
 death.attack.trident=%1$s was impaled by %2$s
 death.attack.trident.item=%1$s was impaled by %2$s using %3$s
 
+death.attack.explosion_intentional=%1$s was killed by [Intentional Game Design]
+
 # Blocks
 tile.backportium.debarked_log=Debarked %s
