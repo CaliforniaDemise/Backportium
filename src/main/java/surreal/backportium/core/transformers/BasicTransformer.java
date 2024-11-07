@@ -111,7 +111,7 @@ public abstract class BasicTransformer implements Opcodes {
     }
 
     protected static void loadNewClass(String clsName, byte[] basicClass) {
-        LaunchClassLoader loader = (LaunchClassLoader) DebarkingTransformer.class.getClassLoader();
+        LaunchClassLoader loader = (LaunchClassLoader) BasicTransformer.class.getClassLoader();
         File out = new File(".backportium_classes");
         Path path = Paths.get(out.getAbsolutePath(), clsName + ".jar");
         File f = path.toFile();
