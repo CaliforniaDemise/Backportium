@@ -41,7 +41,7 @@ public class DebarkingTransformer extends BasicTransformer {
             INVOKE_DYNAMIC = 18;
 
     public static boolean checkLogs(byte[] cls, String transformedName, String[] superName, boolean isSuperClass) {
-        // Mods that already have stripped/debarked logs
+        // Mods that already have stripped / debarked logs
         if (transformedName.startsWith("com.sirsquidly.oe")) return false;
         if (transformedName.startsWith("com.globbypotato.rockhounding")) return false;
 
@@ -59,7 +59,6 @@ public class DebarkingTransformer extends BasicTransformer {
                 if (transformedName.startsWith("forestry.")) return false;
                 if (transformedName.startsWith("com.progwml6.natura.")) return false;
                 if (transformedName.startsWith("vibrantjourneys.")) return false;
-//                if (transformedName.startsWith("com.globbypotato.rockhounding")) return false;
                 if (transformedName.startsWith("rustic.")) return false;
                 if (transformedName.startsWith("net.dries007.tfc.")) return false;
                 if (transformedName.startsWith("prospector.traverse.")) return false;
