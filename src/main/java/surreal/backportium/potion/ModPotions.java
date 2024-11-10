@@ -24,9 +24,9 @@ public class ModPotions {
     public static final PotionType SLOW_FALLING_TYPE = register(new PotionType(new PotionEffect(SLOW_FALLING, 1800, 0)), "slow_falling");
     public static final PotionType LONG_SLOW_FALLING_TYPE = register(new PotionType(new PotionEffect(SLOW_FALLING, 4800, 0)), "long_slow_falling");
 
-    public static final PotionType TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 3), new PotionEffect(MobEffects.STRENGTH, 1200, 3)), "turtle_master");
-    public static final PotionType LONG_TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 3600, 3), new PotionEffect(MobEffects.STRENGTH, 3600, 3)), "long_turtle_master");
-    public static final PotionType STRONG_TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 5), new PotionEffect(MobEffects.STRENGTH, 1200, 4)), "strong_turtle_master");
+    public static final PotionType TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 3), new PotionEffect(MobEffects.STRENGTH, 1200, 2)), "turtle_master");
+    public static final PotionType LONG_TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 3600, 3), new PotionEffect(MobEffects.STRENGTH, 3600, 2)), "long_turtle_master");
+    public static final PotionType STRONG_TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 5), new PotionEffect(MobEffects.STRENGTH, 1200, 3)), "strong_turtle_master");
 
     public static <T extends Potion> T register(T potion, String name) {
         potion.setPotionName(name).setRegistryName(Tags.MOD_ID, name);
