@@ -10,6 +10,7 @@ import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
@@ -78,6 +79,9 @@ public class Backportium {
     @SubscribeEvent public void registerRecipes(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerRecipes(event); }
     @SubscribeEvent(priority = EventPriority.LOW) public void registerRecipesLate(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerLateRecipes(event); }
     @SubscribeEvent public void registerSounds(RegistryEvent.Register<SoundEvent> event) { ModSounds.registerSounds(event); }
+
+    // Load Events
+    @SubscribeEvent public void loadLootTables(LootTableLoadEvent event) { EventHandler.loadLootTables(event); }
 
     // In-Game Events
     @SubscribeEvent public void isPotionApplicable(PotionEvent.PotionApplicableEvent event) { EventHandler.isPotionApplicable(event); }

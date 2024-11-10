@@ -11,21 +11,34 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.loot.*;
+import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.core.BPHooks;
+import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.WorldHelper;
 
+import java.util.Objects;
 import java.util.Random;
 
 public class EventHandler {
+
+    public static void loadLootTables(LootTableLoadEvent event) {
+        if (event.getName().equals(LootTableList.GAMEPLAY_FISHING_TREASURE)) {
+            LootTable table = event.getTable();
+            LootPool mainPool = table.getPool("main");
+            mainPool.addEntry(new LootEntryItem(ModItems.NAUTILUS_SHELL, 1, 0, new LootFunction[0], new LootCondition[0], Objects.requireNonNull(ModItems.NAUTILUS_SHELL.getRegistryName()).toString()));
+        }
+    }
 
     public static void isPotionApplicable(PotionEvent.PotionApplicableEvent event) {
         PotionEffect effect = event.getPotionEffect();
