@@ -82,6 +82,7 @@ public class ModItems {
         for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
             Block origLog = ((DebarkedLog) itemBlock.getBlock()).getOriginal();
             Item origItem = Item.getItemFromBlock(origLog);
+            OreDictionary.registerOre("logStripped", itemBlock);
             int[] ids = OreDictionary.getOreIDs(new ItemStack(origItem, 1, OreDictionary.WILDCARD_VALUE));
             if (ids.length == 0) {
                 ids = OreDictionary.getOreIDs(new ItemStack(origItem));
