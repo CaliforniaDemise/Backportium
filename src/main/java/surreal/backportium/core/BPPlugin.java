@@ -1,6 +1,7 @@
 package surreal.backportium.core;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
 import surreal.backportium.Tags;
 
 import javax.annotation.Nullable;
@@ -57,17 +58,10 @@ public class BPPlugin implements IFMLLoadingPlugin {
     }
 
     public static void searchForModsDir(File gameDir) {
-        try {
-            Stream<Path> paths = Files.walk(new File(gameDir, "mods").toPath());
-            paths.forEach(p -> {
-                File file = p.toFile();
-                if (file.getName().startsWith("Debark-")) DEBARK = true; // Asies Debark
-                else if (file.getName().startsWith("Debarked Logs-")) DEBARKED_LOGS = true; // BeetoGuys Debarked Logs
-            });
-            paths.close();
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Exception occurred while reading ./mods/");
+        List<File> mods = LibraryManager.gatherLegacyCanidates(gameDir);
+        for (File file : mods) {
+            if (file.getName().startsWith("Debark-")) DEBARK = true; // Asies Debark
+            else if (file.getName().startsWith("Debarked Logs-")) DEBARKED_LOGS = true; // BeetoGuys Debarked Logs
         }
     }
 }
