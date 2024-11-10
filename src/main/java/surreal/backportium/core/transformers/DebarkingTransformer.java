@@ -189,7 +189,6 @@ public class DebarkingTransformer extends BasicTransformer {
 //                }
 //            }
 //        }
-        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
@@ -298,7 +297,6 @@ public class DebarkingTransformer extends BasicTransformer {
                 method.instructions.insertBefore(node, list);
             }
         }
-//        writeClass(cls);
         return write(cls);
     }
 
@@ -313,7 +311,6 @@ public class DebarkingTransformer extends BasicTransformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -440,7 +437,6 @@ public class DebarkingTransformer extends BasicTransformer {
                 m.visitInsn(ARETURN);
             }
         }
-        writeClass(cls);
         byte[] bytes = write(cls);
         loadNewClass(cls.name, bytes);
         return cls.name;
