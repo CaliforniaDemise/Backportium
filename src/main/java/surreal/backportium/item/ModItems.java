@@ -62,7 +62,7 @@ public class ModItems {
     }
 
     public static <T extends Item> T register(T item, ResourceLocation name) {
-        item.setRegistryName(name).setTranslationKey(name.getPath());
+        item.setRegistryName(name).setTranslationKey(name.getNamespace() + "." + name.getPath());
         ITEMS.add(item);
         return item;
     }

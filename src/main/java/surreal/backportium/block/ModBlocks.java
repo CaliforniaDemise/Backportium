@@ -20,6 +20,7 @@ import surreal.backportium.block.plant.coral.BlockCoralFan;
 import surreal.backportium.block.v1_13.BlockPumpkin;
 import surreal.backportium.block.v1_13.*;
 import surreal.backportium.item.*;
+import surreal.backportium.item.v1_13.ItemBlockCoral;
 import surreal.backportium.item.v1_13.ItemBlockCoralFan;
 import surreal.backportium.item.v1_13.ItemBlockKelp;
 import surreal.backportium.tile.v1_13.TileConduit;
@@ -42,6 +43,7 @@ public class ModBlocks {
     private static final SupplierInput<Block, Item> BASIC_ITEM_TEISR = ItemBlockTEISR::new;
     private static final SupplierInput<Block, Item> BASIC_CLUSTERED_ITEM = ItemBlockClustered::new;
     private static final SupplierInput<Block, Item> BASIC_KELP_ITEM = ItemBlockKelp::new;
+    private static final SupplierInput<Block, Item> BASIC_CORAL_ITEM = ItemBlockCoral::new;
     private static final SupplierInput<Block, Item> BASIC_FAN_ITEM = ItemBlockCoralFan::new;
     private static final SupplierInput<Block, Item> BASIC_SLAB_ITEM = block -> {
         assert block instanceof BlockSlabDef;
@@ -59,8 +61,8 @@ public class ModBlocks {
     public static final BlockPlantDouble SEAGRASS_DOUBLE = register(new BlockDoubleSeagrass(Material.GRASS), null, "seagrass_double");
     public static final BlockPlantWater SEAGRASS = register(new BlockPlantWater(Material.GRASS, Material.GRASS.getMaterialMapColor(), SEAGRASS_DOUBLE), BASIC_ITEM, "seagrass");
     public static final BlockTurtleEgg TURTLE_EGG = register(new BlockTurtleEgg(Material.SPONGE, Material.SPONGE.getMaterialMapColor()), BASIC_CLUSTERED_ITEM, "turtle_egg");
-    public static final BlockCoral CORAL = register(new BlockCoralImpl(Material.CORAL), BASIC_ITEM_SUBTYPE, "coral");
-    public static final BlockCoralBlock CORAL_BLOCK = register(new BlockCoralBlockImpl(Material.CORAL), BASIC_ITEM_SUBTYPE, "coral_block");
+    public static final BlockCoral CORAL = register(new BlockCoralImpl(Material.CORAL), BASIC_CORAL_ITEM, "coral");
+    public static final BlockCoralBlock CORAL_BLOCK = register(new BlockCoralBlockImpl(Material.CORAL), BASIC_CORAL_ITEM, "coral_block");
     public static final BlockCoralFan TUBE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, TUBE), BASIC_FAN_ITEM, "tube_coral_fan");
     public static final BlockCoralFan BRAIN_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, BRAIN), BASIC_FAN_ITEM, "brain_coral_fan");
     public static final BlockCoralFan BUBBLE_CORAL_FAN = register(new BlockCoralFanImpl(Material.CORAL, BUBBLE), BASIC_FAN_ITEM, "bubble_coral_fan");
@@ -103,14 +105,6 @@ public class ModBlocks {
 
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
-//        for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
-//            Block debarked = entry.getValue();
-//            Block nonDebarked = entry.getKey();
-//            if (debarked.getRegistryName() == null) {
-//                debarked.setRegistryName(Tags.MOD_ID, Objects.requireNonNull(nonDebarked.getRegistryName()).getPath() + "_debarked");
-//            }
-//            registry.register(debarked);
-//        }
         BLOCKS.forEach(registry::register);
     }
 
@@ -119,7 +113,7 @@ public class ModBlocks {
     }
 
     private static <T extends Block> T register(T block, SupplierInput<Block, Item> handleItem, String name) {
-        block.setRegistryName(Tags.MOD_ID, name).setTranslationKey(name);
+        block.setRegistryName(Tags.MOD_ID, name).setTranslationKey(Tags.MOD_ID + "." + name);
         BLOCKS.add(block);
         if (handleItem != null) {
             Item itemBlock = handleItem.get(block);

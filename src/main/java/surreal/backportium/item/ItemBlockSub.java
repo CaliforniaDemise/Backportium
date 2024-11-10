@@ -4,10 +4,12 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import surreal.backportium.api.client.model.ModelProvider;
 import surreal.backportium.util.RandomHelper;
 
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
@@ -23,6 +25,13 @@ public class ItemBlockSub extends ItemBlock implements ModelProvider {
     @Override
     public int getMetadata(int damage) {
         return damage;
+    }
+
+    // TODO Find a way for better creating translation keys
+    @Nonnull
+    @Override
+    public String getTranslationKey(@Nonnull ItemStack stack) {
+        return super.getTranslationKey(stack) + "." + this.getMetadata(stack.getMetadata());
     }
 
     @Override

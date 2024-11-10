@@ -1,3 +1,88 @@
+# Blocks
+tile.backportium.blue_ice.name=Blue Ice
+tile.backportium.dried_kelp_block.name=Dried Kelp Block
+tile.backportium.smooth_sandstone.0.name=Smooth Sandstone
+tile.backportium.smooth_sandstone.1.name=Red Smooth Sandstone
+tile.backportium.smooth_quartz.name=Smooth Quartz
+tile.backportium.smooth_sandstone_stairs.name=Smooth Sandstone Stairs
+tile.backportium.smooth_red_sandstone_stairs.name=Red Smooth Sandstone Stairs
+tile.backportium.smooth_quartz_stairs.name=Smooth Quartz Stairs
+tile.backportium.smooth_stone.name=Smooth Stone
+tile.backportium.smooth_sandstone_slab.default.name=Smooth Sandstone Slab
+tile.backportium.smooth_sandstone_slab.red.name=Red Smooth Sandstone Slab
+tile.backportium.smooth_quartz_slab.name=Smooth Quartz Slab
+tile.backportium.smooth_stone_slab.name=Smooth Stone Slab
+tile.backportium.pumpkin.name=Pumpkin
+tile.backportium.prismarine_slab.rough.name=Prismarine Slab
+tile.backportium.prismarine_slab.bricks.name=Prismarine Bricks Slab
+tile.backportium.prismarine_slab.dark.name=Dark Prismarine Slab
+tile.backportium.prismarine_stairs.name=Prismarine Stairs
+tile.backportium.prismarine_bricks_stairs.name=Prismarine Bricks Stairs
+tile.backportium.dark_prismarine_stairs.name=Dark Prismarine Stairs
+tile.backportium.conduit.name=Conduit
+tile.backportium.kelp.name=Kelp
+tile.backportium.sea_pickle.name=Sea Pickle
+tile.backportium.seagrass.name=Seagrass
+tile.backportium.turtle_egg.name=Turtle Egg
+tile.backportium.spruce_trapdoor.name=Spruce Trapdoor
+tile.backportium.birch_trapdoor.name=Birch Trapdoor
+tile.backportium.jungle_trapdoor.name=Jungle Trapdoor
+tile.backportium.acacia_trapdoor.name=Acacia Trapdoor
+tile.backportium.dark_oak_trapdoor.name=Dark Oak Trapdoor
+tile.backportium.spruce_plate.name=Spruce Pressure Plate
+tile.backportium.birch_plate.name=Birch Pressure Plate
+tile.backportium.jungle_plate.name=Jungle Pressure Plate
+tile.backportium.acacia_plate.name=Acacia Pressure Plate
+tile.backportium.dark_oak_plate.name=Dark Oak Pressure Plate
+tile.backportium.spruce_button.name=Spruce Button
+tile.backportium.birch_button.name=Birch Button
+tile.backportium.jungle_button.name=Jungle Button
+tile.backportium.acacia_button.name=Acacia Button
+tile.backportium.dark_oak_button.name=Dark Oak Button
+
+tile.backportium.debarked_log=Debarked %s
+
+tile.backportium.coral.tube.name=Tube Coral
+tile.backportium.coral.brain.name=Brain Coral
+tile.backportium.coral.bubble.name=Bubble Coral
+tile.backportium.coral.fire.name=Fire Coral
+tile.backportium.coral.horn.name=Horn Coral
+tile.backportium.coral.dead.tube.name=Dead Tube Coral
+tile.backportium.coral.dead.brain.name=Dead Brain Coral
+tile.backportium.coral.dead.bubble.name=Dead Bubble Coral
+tile.backportium.coral.dead.fire.name=Dead Fire Coral
+tile.backportium.coral.dead.horn.name=Dead Horn Coral
+
+tile.backportium.coral_block.tube.name=Tube Coral Block
+tile.backportium.coral_block.brain.name=Brain Coral Block
+tile.backportium.coral_block.bubble.name=Bubble Coral Block
+tile.backportium.coral_block.fire.name=Fire Coral Block
+tile.backportium.coral_block.horn.name=Horn Coral Block
+tile.backportium.coral_block.dead.tube.name=Dead Tube Coral Block
+tile.backportium.coral_block.dead.brain.name=Dead Brain Coral Block
+tile.backportium.coral_block.dead.bubble.name=Dead Bubble Coral Block
+tile.backportium.coral_block.dead.fire.name=Dead Fire Coral Block
+tile.backportium.coral_block.dead.horn.name=Dead Horn Coral Block
+
+tile.backportium.tube_coral_fan.name=Tube Coral Fan
+tile.backportium.brain_coral_fan.name=Brain Coral Fan
+tile.backportium.bubble_coral_fan.name=Bubble Coral Fan
+tile.backportium.fire_coral_fan.name=Fire Coral Fan
+tile.backportium.horn_coral_fan.name=Horn Coral Fan
+tile.backportium.tube_coral_fan.dead.name=Dead Tube Coral Fan
+tile.backportium.brain_coral_fan.dead.name=Dead Brain Coral Fan
+tile.backportium.bubble_coral_fan.dead.name=Dead Bubble Coral Fan
+tile.backportium.fire_coral_fan.dead.name=Dead Fire Coral Fan
+tile.backportium.horn_coral_fan.dead.name=Dead Horn Coral Fan
+
+# Items
+item.backportium.dried_kelp.name=Dried Kelp
+item.backportium.sea_heart.name=Sea Heart
+item.backportium.nautilus_shell.name=Nautilus Shell
+item.backportium.phantom_membrane.name=Phantom Membrane
+item.backportium.scute.name=Scute
+item.backportium.trident.name=Trident
+item.backportium.turtle_helmet.name=Turtle Helmet
 
 # Damage Sources
 death.attack.trident=%1$s was impaled by %2$s
@@ -5,5 +90,39 @@ death.attack.trident.item=%1$s was impaled by %2$s using %3$s
 
 death.attack.explosion_intentional=%1$s was killed by [Intentional Game Design]
 
-# Blocks
-tile.backportium.debarked_log=Debarked %s
+# Enchantments
+enchantment.impaling=Impaling
+enchantment.loyalty=Loyalty
+enchantment.riptide=Riptide
+enchantment.channeling=Channeling
+
+# Potions
+potion.potency.2=III
+potion.potency.3=IV
+potion.potency.4=V
+potion.potency.5=VI
+
+potion.slow_falling=Slow Falling
+potion.conduit_power=Conduit Power
+
+potion.effect.slow_falling=Potion of Slow Falling
+potion.effect.long_slow_falling=Potion of Slow Falling
+tipped_arrow.effect.long_slow_falling=Arrow of Slow Falling
+tipped_arrow.effect.long_slow_falling=Arrow of Slow Falling
+splash_potion.effect.slow_falling=Splash Potion of Slow Falling
+splash_potion.effect.long_slow_falling=Splash Potion of Slow Falling
+lingering_potion.effect.slow_falling=Lingering Potion of Slow Falling
+lingering_potion.effect.long_slow_falling=Lingering Potion of Slow Falling
+
+potion.effect.turtle_master=Potion of Turtle Master
+potion.effect.strong_turtle_master=Potion of Turtle Master
+potion.effect.long_turtle_master=Potion of Turtle Master
+tipped_arrow.effect.turtle_master=Arrow of Turtle Master
+tipped_arrow.effect.strong_turtle_master=Arrow of Turtle Master
+tipped_arrow.effect.long_turtle_master=Arrow of Turtle Master
+splash_potion.effect.turtle_master=Splash Potion of Turtle Master
+splash_potion.effect.strong_turtle_master=Splash Potion of Turtle Master
+splash_potion.effect.long_turtle_master=Splash Potion of Turtle Master
+lingering_potion.effect.turtle_master=Lingering Potion of Turtle Master
+lingering_potion.effect.strong_turtle_master=Lingering Potion of Turtle Master
+lingering_potion.effect.long_turtle_master=Lingering Potion of Turtle Master

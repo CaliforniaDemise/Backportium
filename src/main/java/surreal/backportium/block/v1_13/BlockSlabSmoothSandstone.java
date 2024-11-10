@@ -40,7 +40,7 @@ public class BlockSlabSmoothSandstone extends BlockSlabDef {
     @Override
     public String getTranslationKey(int meta) {
         BlockSand.EnumType type = BlockSand.EnumType.byMetadata(meta);
-        return "smooth_sandstone." + type.getTranslationKey() + ".slab";
+        return "tile.backportium.smooth_sandstone_slab." + type.getTranslationKey();
     }
 
     @Override
