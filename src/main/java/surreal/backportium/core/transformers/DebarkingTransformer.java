@@ -12,6 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static surreal.backportium.core.BPPlugin.DEBARK;
+import static surreal.backportium.core.BPPlugin.DEBARKED_LOGS;
+import static surreal.backportium.core.BPPlugin.FUTUREMC;
+
 public class DebarkingTransformer extends BasicTransformer {
 
     private static final Set<String> DO_NOT_TRANSFORM = new HashSet<>();
@@ -37,8 +41,34 @@ public class DebarkingTransformer extends BasicTransformer {
             INVOKE_DYNAMIC = 18;
 
     public static boolean checkLogs(byte[] cls, String transformedName, String[] superName, boolean isSuperClass) {
+        // Mods that already have stripped/debarked logs
         if (transformedName.startsWith("com.sirsquidly.oe")) return false;
         if (transformedName.startsWith("com.globbypotato.rockhounding")) return false;
+
+        // For mods like Debark, FutureMC and Debarked Logs
+        if (!shouldRegisterVanillaLogs()) {
+            if (transformedName.startsWith("net.minecraft.")) return false;
+            if (DEBARK) {
+                if (transformedName.startsWith("pl.asie.debark")) return false;
+                if (transformedName.startsWith("com.gildedgames.the_aether.")) return false;
+                if (transformedName.startsWith("com.teammetallurgy.atum.")) return false;
+                if (transformedName.startsWith("com.bewitchment.")) return false;
+                if (transformedName.startsWith("binnie.extratrees.")) return false;
+                if (transformedName.startsWith("biomesoplenty.")) return false;
+                if (transformedName.startsWith("jaredbgreat.climaticbiome.")) return false;
+                if (transformedName.startsWith("forestry.")) return false;
+                if (transformedName.startsWith("com.progwml6.natura.")) return false;
+                if (transformedName.startsWith("vibrantjourneys.")) return false;
+//                if (transformedName.startsWith("com.globbypotato.rockhounding")) return false;
+                if (transformedName.startsWith("rustic.")) return false;
+                if (transformedName.startsWith("net.dries007.tfc.")) return false;
+                if (transformedName.startsWith("prospector.traverse.")) return false;
+                if (transformedName.startsWith("twilightforest.")) return false;
+            }
+            if (DEBARKED_LOGS && transformedName.startsWith("debarking.")) return false;
+            if (FUTUREMC && transformedName.startsWith("thedarkcolour.futuremc.")) return false;
+        }
+
         if (DO_NOT_TRANSFORM.contains(transformedName)) return false;
         int poolCount = ((cls[9] & 0xFF) | (cls[8] & 0xFF) << 8) - 1;
         int[] constants = new int[poolCount]; // Byte location of constants
@@ -159,36 +189,6 @@ public class DebarkingTransformer extends BasicTransformer {
                 }
             }
         }
-//        if (initMethod != null) {
-//            Iterator<AbstractInsnNode> iterator = initMethod.instructions.iterator();
-//            while (iterator.hasNext()) {
-//                AbstractInsnNode node = iterator.next();
-//                if (node.getOpcode() == INVOKEVIRTUAL) {
-//                    MethodInsnNode mInsn = (MethodInsnNode) node;
-//                    if (mInsn.name.equals("setRegistryName")) {
-//                        String mDesc = mInsn.desc;
-//                        StringBuilder builder = new StringBuilder();
-//                        for (int i = 0; i < mDesc.length(); i++) {
-//                            char c = mDesc.charAt(i);
-//                            if (c == ')') {
-//                                builder.append("Lnet/minecraft/block/Block;");
-//                            }
-//                            builder.append(c);
-//                            if (c == '(') {
-//                                if (!mInsn.owner.equals(cls.name)) {
-//                                    builder.append("Lnet/minecraft/item/Item;");
-//                                }
-//                            }
-//                        }
-//                        InsnList list = new InsnList();
-//                        list.add(new VarInsnNode(ALOAD, 0));
-//                        list.add(hook("BlockLog$setRegistryName", builder.toString()));
-//                        initMethod.instructions.insertBefore(node, list);
-//                        iterator.remove();
-//                    }
-//                }
-//            }
-//        }
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
@@ -222,6 +222,7 @@ public class DebarkingTransformer extends BasicTransformer {
      * For registering vanilla debarked logs.
      **/
     public static byte[] transformBlock(byte[] basicClass) {
+        if (!shouldRegisterVanillaLogs()) return basicClass;
         ClassNode cls = read(basicClass);
         for (int i = cls.methods.size() - 1; i >= 0; i--) {
             MethodNode method = cls.methods.get(i);
@@ -240,6 +241,7 @@ public class DebarkingTransformer extends BasicTransformer {
     }
 
     public static byte[] transformItem(byte[] basicClass) {
+        if (!shouldRegisterVanillaLogs()) return basicClass;
         ClassNode cls = read(basicClass);
         for (int i = cls.methods.size() - 1; i >= 0; i--) {
             MethodNode method = cls.methods.get(i);
@@ -440,5 +442,9 @@ public class DebarkingTransformer extends BasicTransformer {
         byte[] bytes = write(cls);
         loadNewClass(cls.name, bytes);
         return cls.name;
+    }
+
+    private static boolean shouldRegisterVanillaLogs() {
+        return !DEBARK && !DEBARKED_LOGS && !FUTUREMC;
     }
 }
