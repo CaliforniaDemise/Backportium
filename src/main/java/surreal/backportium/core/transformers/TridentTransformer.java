@@ -14,33 +14,32 @@ public class TridentTransformer extends BasicTransformer {
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("setRotationAngles", "func_78087_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
-                if (node.getOpcode() == RETURN) {
-                    String modelBiped = "net/minecraft/client/model/ModelBiped";
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                String modelBiped = "net/minecraft/client/model/ModelBiped";
 
-                    InsnList list = new InsnList();
-                    list.add(new VarInsnNode(ALOAD, 0));
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
 
-                    list.add(new VarInsnNode(ALOAD, 0));
-                    list.add(new VarInsnNode(ALOAD, 7));
-                    list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 7));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
 
-                    list.add(new VarInsnNode(ALOAD, 0));
-                    list.add(new VarInsnNode(ALOAD, 0));
-                    list.add(new VarInsnNode(ALOAD, 7));
-                    list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-                    list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 7));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
 
-                    list.add(new VarInsnNode(FLOAD, 1));
-                    list.add(new VarInsnNode(FLOAD, 2));
-                    list.add(new VarInsnNode(FLOAD, 3));
-                    list.add(new VarInsnNode(FLOAD, 4));
-                    list.add(new VarInsnNode(FLOAD, 5));
-                    list.add(new VarInsnNode(FLOAD, 6));
-                    list.add(new VarInsnNode(ALOAD, 7));
-                    list.add(hook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
+                list.add(new VarInsnNode(FLOAD, 1));
+                list.add(new VarInsnNode(FLOAD, 2));
+                list.add(new VarInsnNode(FLOAD, 3));
+                list.add(new VarInsnNode(FLOAD, 4));
+                list.add(new VarInsnNode(FLOAD, 5));
+                list.add(new VarInsnNode(FLOAD, 6));
+                list.add(new VarInsnNode(ALOAD, 7));
+                list.add(hook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
 
-                    method.instructions.insertBefore(node, list);
-                }
+                method.instructions.insertBefore(node, list);
                 break;
             }
         }

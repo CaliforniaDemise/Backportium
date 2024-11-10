@@ -75,10 +75,9 @@ public class BPHooks {
             ItemStack activeStack = living.getActiveItemStack();
 
             handSide = activeHand == EnumHand.MAIN_HAND ? living.getPrimaryHand() : living.getPrimaryHand().opposite();
-
             if (activeStack.getItemUseAction() == Backportium.SPEAR && living.isHandActive()) {
                 int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, activeStack);
-                if (riptide != 0 && !RiptideHelper.canRiptide(living.world, living)) return;
+                if (riptide == 0 || !RiptideHelper.canRiptide(living.world, living)) return;
 
                 if (handSide == EnumHandSide.RIGHT) {
                     model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX * 0.5F - ((float) Math.PI);
