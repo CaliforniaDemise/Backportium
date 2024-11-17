@@ -62,10 +62,16 @@ public class EntityTrident extends AbstractEntityArrow {
                 double yEntity = this.shootingEntity.posY + this.shootingEntity.getEyeHeight() - 0.25D;
                 this.prevRotationPitch = 180F;
                 this.rotationPitch = 180F;
-                double speed = 0.15D + loyaltyLvl * 0.05D;
+                double speed = 0.5D + loyaltyLvl * 0.05D;
                 double x = this.shootingEntity.posX - this.posX;
                 double y = yEntity - this.posY;
                 double z = this.shootingEntity.posZ - this.posZ;
+                double dotSqrt = Math.sqrt(x * x + y * y + z * z);
+                if (dotSqrt != 0.0D) {
+                    x /= dotSqrt;
+                    y /= dotSqrt;
+                    z /= dotSqrt;
+                }
                 this.motionX = x * speed;
                 this.motionY = y * speed;
                 this.motionZ = z * speed;
@@ -78,7 +84,7 @@ public class EntityTrident extends AbstractEntityArrow {
                 }
             }
         }
-        else if (this.loyaltyLvl > 0 && this.inGround) {
+        else if (this.loyaltyLvl > 0 && this.inGround && this.ticksInGround == 20.0F / this.loyaltyLvl) {
             this.moveLoyalty = true;
             // Set block air.
             this.inGround = false;
