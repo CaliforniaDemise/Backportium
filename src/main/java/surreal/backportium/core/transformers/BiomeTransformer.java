@@ -61,7 +61,6 @@ public class BiomeTransformer extends BasicTransformer {
 //                break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 }
