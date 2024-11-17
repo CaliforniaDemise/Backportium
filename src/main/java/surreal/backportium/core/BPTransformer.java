@@ -46,6 +46,9 @@ public class BPTransformer implements IClassTransformer {
 
             // For The Game Players
             case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);
+
+            // Biomes
+            case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);
         }
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

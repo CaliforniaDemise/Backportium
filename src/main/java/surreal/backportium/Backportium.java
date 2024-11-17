@@ -8,6 +8,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.LootTableLoadEvent;
@@ -35,6 +36,7 @@ import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.recipe.ModRecipes;
 import surreal.backportium.sound.ModSounds;
+import surreal.backportium.world.biome.ModBiomes;
 
 @Mod(modid = Tags.MOD_ID, name = "Backportium", version = Tags.MOD_VERSION, dependencies = "after:*")
 @SuppressWarnings("unused")
@@ -79,6 +81,7 @@ public class Backportium {
     @SubscribeEvent public void registerRecipes(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerRecipes(event); }
     @SubscribeEvent(priority = EventPriority.LOW) public void registerRecipesLate(RegistryEvent.Register<IRecipe> event) { ModRecipes.registerLateRecipes(event); }
     @SubscribeEvent public void registerSounds(RegistryEvent.Register<SoundEvent> event) { ModSounds.registerSounds(event); }
+    @SubscribeEvent public void registerBiomes(RegistryEvent.Register<Biome> event) { ModBiomes.registerBiomes(event); }
 
     // Load Events
     @SubscribeEvent public void loadLootTables(LootTableLoadEvent event) { EventHandler.loadLootTables(event); }
