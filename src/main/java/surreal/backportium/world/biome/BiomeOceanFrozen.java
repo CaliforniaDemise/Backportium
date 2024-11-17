@@ -19,15 +19,6 @@ public class BiomeOceanFrozen extends BiomeOcean {
     protected static final WorldGenIceberg ICEBERG_PACKED = new WorldGenIceberg(false, Blocks.PACKED_ICE.getDefaultState());
     protected static final WorldGenIceberg ICEBERG_BLUE = new WorldGenIceberg(false, ModBlocks.BLUE_ICE.getDefaultState());
 
-    public static void generate(World world, Random random, BlockPos pos) {
-        if (!world.isRemote) {
-            if (world.rand.nextBoolean()) {
-                ICEBERG_BLUE.generate(world, random, pos);
-            }
-            else ICEBERG_PACKED.generate(world, random, pos);
-        }
-    }
-
     private static final NoiseGeneratorSimplex FROZEN_NOISE = new NoiseGeneratorSimplex(new Random(3456L));
     private static NoiseGeneratorDoublePerlin ICEBERG_SURFACE_NOISE = null;
     private static NoiseGeneratorDoublePerlin ICEBERG_PILLAR_NOISE = null;
