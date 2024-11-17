@@ -17,7 +17,7 @@ public class ModBiomes {
 
     private static final List<Biome> BIOMES = new ArrayList<>();
 
-    public static final BiomeOceanFrozen FROZEN_OCEAN = register(new BiomeOceanFrozen(new Biome.BiomeProperties("Frozen Ocean 2").setBaseHeight(-1.0F).setHeightVariation(0.1F).setTemperature(0.0F).setRainfall(0.5F).setSnowEnabled()), "frozen_ocean");
+    public static final BiomeOceanFrozen FROZEN_OCEAN = register(new BiomeOceanFrozen(new Biome.BiomeProperties("Frozen Ocean").setBaseHeight(-1.0F).setHeightVariation(0.1F).setTemperature(0.0F).setRainfall(0.5F).setSnowEnabled()), "frozen_ocean");
     public static final BiomeOceanFrozen DEEP_FROZEN_OCEAN = register(new BiomeOceanFrozen(new Biome.BiomeProperties("Deep Frozen Ocean").setBaseHeight(-1.8F).setHeightVariation(0.1F).setRainfall(0.5F).setSnowEnabled()), "deep_frozen_ocean");
 
     public static <T extends Biome> T register(T biome, String name) {
