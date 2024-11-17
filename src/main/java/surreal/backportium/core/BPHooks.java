@@ -70,15 +70,12 @@ public class BPHooks {
     public static void ModelBiped$setRotationAngles(ModelBiped model, EnumHandSide handSide, ModelRenderer mainHandModel, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
         if (entityIn instanceof EntityLivingBase) {
             EntityLivingBase living = (EntityLivingBase) entityIn;
-
             EnumHand activeHand = living.getActiveHand();
             ItemStack activeStack = living.getActiveItemStack();
-
             handSide = activeHand == EnumHand.MAIN_HAND ? living.getPrimaryHand() : living.getPrimaryHand().opposite();
             if (activeStack.getItemUseAction() == Backportium.SPEAR && living.isHandActive()) {
                 int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, activeStack);
-                if (riptide == 0 || !RiptideHelper.canRiptide(living.world, living)) return;
-
+                if (riptide != 0 && !RiptideHelper.canRiptide(living.world, living)) return;
                 if (handSide == EnumHandSide.RIGHT) {
                     model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX * 0.5F - ((float) Math.PI);
                     model.bipedRightArm.rotateAngleZ = model.bipedRightArm.rotateAngleZ - 0.15F; // Attention to detail mode
