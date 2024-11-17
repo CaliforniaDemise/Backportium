@@ -4,11 +4,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeOcean;
+import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import surreal.backportium.block.ModBlocks;
+import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
 import surreal.backportium.world.gen.WorldGenIceberg;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Objects;
 import java.util.Random;
 
 public class BiomeOceanFrozen extends BiomeOcean {
@@ -26,6 +29,9 @@ public class BiomeOceanFrozen extends BiomeOcean {
     }
 
     private static final NoiseGeneratorSimplex FROZEN_NOISE = new NoiseGeneratorSimplex(new Random(3456L));
+    private static NoiseGeneratorDoublePerlin ICEBERG_SURFACE_NOISE = null;
+    private static NoiseGeneratorDoublePerlin ICEBERG_PILLAR_NOISE = null;
+    private static NoiseGeneratorDoublePerlin ICEBERG_PILLAR_ROOF_NOISE = null;
 
     public BiomeOceanFrozen(BiomeProperties properties) {
         super(properties);
@@ -50,13 +56,59 @@ public class BiomeOceanFrozen extends BiomeOcean {
     @Override
     @ParametersAreNonnullByDefault
     public void decorate(World worldIn, Random rand, BlockPos pos) {
-        if (rand.nextInt(4) == 0) {
+        if (rand.nextInt(16) == 0) {
             if (rand.nextInt(200) == 0) ICEBERG_BLUE.generate(worldIn, rand, pos);
             else ICEBERG_PACKED.generate(worldIn, rand, pos);
         }
         super.decorate(worldIn, rand, pos);
     }
 
+    // @Override
+    public void generateTerrain(World worldIn, Random rand, ChunkPrimer primer, BlockPos.MutableBlockPos pos, int x, int z, double noiseVal) {
+        if (ICEBERG_PILLAR_NOISE == null) ICEBERG_PILLAR_NOISE = new NoiseGeneratorDoublePerlin(new Random(rand.nextLong()), -6, 4);
+        if (ICEBERG_PILLAR_ROOF_NOISE == null) ICEBERG_PILLAR_ROOF_NOISE = new NoiseGeneratorDoublePerlin(new Random(rand.nextLong()), -3, 1);
+        if (ICEBERG_SURFACE_NOISE == null) ICEBERG_SURFACE_NOISE = new NoiseGeneratorDoublePerlin(new Random(rand.nextLong()), -6, 3);
+        double e = Math.min(Math.abs(ICEBERG_SURFACE_NOISE.getValue(x, z) * 8.25D), ICEBERG_PILLAR_NOISE.getValue((double) x * 1.28D, (double) z * 1.28D) * 15.0D);
+        if (e > 1.8D) {
+            double h = Math.abs(ICEBERG_PILLAR_ROOF_NOISE.getValue((double) x * 1.17D, (double) z * 1.17D) * 1.5D);
+            double i = Math.min(e * e * 1.2, Math.ceil(h * 40.0) + 14.0);
+            if (this.getTemperature(pos.setPos(x, worldIn.getSeaLevel(), z)) < 0.15F) i -= 2.0D;
+            double j;
+            if (i > 2.0) {
+                j = (double) worldIn.getSeaLevel() - i - 7.0;
+                i += worldIn.getSeaLevel();
+            } else {
+                i = 0.0;
+                j = 0.0;
+            }
+            double k = i;
+            Random random;
+            {
+                long l = Objects.hash(x, z);
+                long m = l ^ worldIn.getSeed();
+                random = new Random(m);
+            }
+            int l = 2 + random.nextInt(4);
+            int m = worldIn.getSeaLevel() + 18 + random.nextInt(10);
+            int n = 0;
+
+            x &= 15;
+            z &= 15;
+            for (int o = Math.max(m, (int) i + 1); o >= j; o--) {
+                if (primer.getBlockState(x, o, z).getBlock() == Blocks.AIR && o < (int) k && random.nextDouble() > 0.01
+                        || primer.getBlockState(x, o, z).getBlock() == Blocks.WATER && o > (int) j && o < worldIn.getSeaLevel() && j != 0.0 && random.nextDouble() > 0.15) {
+                    if (n <= l && o > m) {
+                        primer.setBlockState(x, o, z, Blocks.SNOW.getDefaultState());
+                        n++;
+                    } else {
+                        primer.setBlockState(x, o, z, Blocks.PACKED_ICE.getDefaultState());
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO Handle this properly
     // @Override
     public float getTheTemperature(BlockPos pos) {
         double frozenVal = 0.0D;
