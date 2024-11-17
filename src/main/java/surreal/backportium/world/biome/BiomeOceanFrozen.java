@@ -3,6 +3,7 @@ package surreal.backportium.world.biome;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeOcean;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
@@ -10,6 +11,7 @@ import surreal.backportium.block.ModBlocks;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
 import surreal.backportium.world.gen.WorldGenIceberg;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.Random;
@@ -44,6 +46,12 @@ public class BiomeOceanFrozen extends BiomeOcean {
         return 0x3938C9;
     }
 
+    @Nonnull
+    @Override
+    public BiomeDecorator createBiomeDecorator() {
+        return new BiomeDecoratorOceanFrozen();
+    }
+
     @Override
     @ParametersAreNonnullByDefault
     public void decorate(World worldIn, Random rand, BlockPos pos) {
@@ -55,6 +63,7 @@ public class BiomeOceanFrozen extends BiomeOcean {
     }
 
     // @Override
+    @SuppressWarnings("unused")
     public void generateTerrain(World worldIn, Random rand, ChunkPrimer primer, BlockPos.MutableBlockPos pos, int x, int z, double noiseVal) {
         if (ICEBERG_PILLAR_NOISE == null) ICEBERG_PILLAR_NOISE = new NoiseGeneratorDoublePerlin(new Random(rand.nextLong()), -6, 4);
         if (ICEBERG_PILLAR_ROOF_NOISE == null) ICEBERG_PILLAR_ROOF_NOISE = new NoiseGeneratorDoublePerlin(new Random(rand.nextLong()), -3, 1);
@@ -101,6 +110,7 @@ public class BiomeOceanFrozen extends BiomeOcean {
 
     // TODO Handle this properly
     // @Override
+    @SuppressWarnings("unused")
     public float getTheTemperature(BlockPos pos) {
         double frozenVal = 0.0D;
         double folVal = GRASS_COLOR_NOISE.getValue((double) pos.getX() * 0.2, (double) pos.getZ() * 0.2D);
