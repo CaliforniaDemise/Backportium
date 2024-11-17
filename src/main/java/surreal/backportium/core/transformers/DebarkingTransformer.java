@@ -334,7 +334,7 @@ public class DebarkingTransformer extends BasicTransformer {
     }
 
     private static String fromUtf8Const(byte[] cls, int start) {
-        int size = cls[start + 1] + cls[start + 2] - 1;
+        int size = ((cls[start + 2] & 0xFF) | (cls[start + 1] & 0xFF) << 8) - 1;
         start += 3;
         StringBuilder builder = new StringBuilder();
         while (size > -1) {
