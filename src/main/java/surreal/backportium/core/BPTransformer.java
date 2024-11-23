@@ -49,6 +49,12 @@ public class BPTransformer implements IClassTransformer {
 
             // Biomes
             case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);
+
+            // Bubble Column
+            case "net.minecraft.entity.projectile.EntityThrowable": return BubbleColumnTransformer.transformEntityThrowable(basicClass);
+
+            // Random Fixes
+            case "net.minecraft.block.BlockGrass": return FixTransformer.transformBlockGrass(basicClass);
         }
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

@@ -53,6 +53,7 @@ public class ModBlocks {
 
     // 1.13
     public static final BlockBlueIce BLUE_ICE = register(new BlockBlueIce(), BASIC_ITEM, "blue_ice");
+    public static final BlockBubbleColumn BUBBLE_COLUMN = register(new BlockBubbleColumn(), null, "bubble_column");
     public static final BlockPumpkin UNCARVED_PUMPKIN = register(new BlockPumpkin(), BASIC_ITEM, "pumpkin");
     public static final BlockConduit CONDUIT = register(new BlockConduit(), BASIC_ITEM_TEISR, "conduit");
     public static final BlockKelp KELP = register(new BlockKelp(), BASIC_KELP_ITEM, "kelp");
