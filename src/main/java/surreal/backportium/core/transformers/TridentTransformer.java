@@ -1,5 +1,6 @@
 package surreal.backportium.core.transformers;
 
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
@@ -15,20 +16,19 @@ public class TridentTransformer extends BasicTransformer {
             if (method.name.equals(getName("setRotationAngles", "func_78087_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != RETURN) node = node.getPrevious();
-                String modelBiped = "net/minecraft/client/model/ModelBiped";
 
                 InsnList list = new InsnList();
                 list.add(new VarInsnNode(ALOAD, 0));
 
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 7));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
 
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 7));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
 
                 list.add(new VarInsnNode(FLOAD, 1));
                 list.add(new VarInsnNode(FLOAD, 2));
@@ -43,8 +43,7 @@ public class TridentTransformer extends BasicTransformer {
                 break;
             }
         }
-
-        return write(cls);
+        return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // Cursed stack map
     }
 
     // Add values to living entity to track if it's in riptide effect or not
