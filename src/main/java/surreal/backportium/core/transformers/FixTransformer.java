@@ -13,7 +13,7 @@ public class FixTransformer extends BasicTransformer {
     public static byte[] transformBlockGrass(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("updateTick", ""))) {
+            if (method.name.equals(getName("updateTick", "func_180650_b"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -21,17 +21,17 @@ public class FixTransformer extends BasicTransformer {
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 1));
                         list.add(new VarInsnNode(ALOAD, 2));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", ""), "()Lnet/minecraft/util/math/BlockPos;", false));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", ""), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlocKState;", false));
-                        list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", ""), "()Lnet/minecraft/block/material/Material;", true));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/material/Material", getName("isLiquid", ""), "()Z", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlocKState;", false));
+                        list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_149688_o"), "()Lnet/minecraft/block/material/Material;", true));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/material/Material", getName("isLiquid", "func_76224_d"), "()Z", false));
                         LabelNode l_con = new LabelNode();
                         list.add(new JumpInsnNode(IFEQ, l_con));
                         list.add(new VarInsnNode(ALOAD, 1));
                         list.add(new VarInsnNode(ALOAD, 2));
-                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", getName("DIRT", ""), "Lnet/minecraft/block/Block;"));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getDefaultState", ""), "()Lnet/minecraft/block/state/IBlockState;", false));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", ""), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", getName("DIRT", "field_150346_d"), "Lnet/minecraft/block/Block;"));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getDefaultState", "func_176223_P"), "()Lnet/minecraft/block/state/IBlockState;", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false));
                         list.add(new InsnNode(RETURN));
                         list.add(l_con);
                         list.add(new FrameNode(F_SAME, 0, null, 0, null));
@@ -45,8 +45,8 @@ public class FixTransformer extends BasicTransformer {
                 LabelNode l_con = ((JumpInsnNode) node).label;
                 InsnList list = new InsnList();
                 list.add(new VarInsnNode(ALOAD, 7));
-                list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", ""), "()Lnet/minecraft/block/material/Material;", true));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/material/Material", getName("isLiquid", ""), "()Z", false));
+                list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_149688_o"), "()Lnet/minecraft/block/material/Material;", true));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/material/Material", getName("isLiquid", "func_76224_d"), "()Z", false));
                 list.add(new JumpInsnNode(IFNE, l_con));
                 method.instructions.insert(node, list);
                 break;
