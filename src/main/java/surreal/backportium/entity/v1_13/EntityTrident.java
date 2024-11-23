@@ -18,13 +18,19 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.AbstractEntityArrow;
 import surreal.backportium.item.ModItems;
+import surreal.backportium.network.NetworkHandler;
+import surreal.backportium.network.PacketItemEnchanted;
 
 import javax.annotation.Nonnull;
 
 public class EntityTrident extends AbstractEntityArrow {
+
+    private boolean initialized = false;
 
     // Stack Details
     private int damage;
@@ -37,6 +43,9 @@ public class EntityTrident extends AbstractEntityArrow {
 
     // Loyalty
     private boolean moveLoyalty; // If it moves because of loyalty
+
+    @SideOnly(Side.CLIENT)
+    private boolean enchanted; // Packet from server
 
     public EntityTrident(World worldIn) {
         super(worldIn);
@@ -56,6 +65,14 @@ public class EntityTrident extends AbstractEntityArrow {
 
     @Override
     public void onUpdate() {
+        if (!this.initialized) {
+            if (!world.isRemote) {
+                if (this.isEnchanted()) {
+                    NetworkHandler.INSTANCE.sendToAll(new PacketItemEnchanted(this.getUniqueID(), true));
+                }
+            }
+            this.initialized = true;
+        }
         super.onUpdate();
         if (this.moveLoyalty) {
             if (!this.world.isRemote) {
@@ -95,6 +112,20 @@ public class EntityTrident extends AbstractEntityArrow {
             this.zTile = -1;
             this.inData = 0;
         }
+    }
+
+    public boolean isEnchanted() {
+        return this.impalingLvl > 0 || this.channelingLvl > 0 || this.loyaltyLvl > 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean hasEffect() {
+        return this.enchanted;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void setEnchanted(boolean enchanted) {
+        this.enchanted = enchanted;
     }
 
     // TODO Maybe add it to WorldHelper

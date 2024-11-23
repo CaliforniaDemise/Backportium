@@ -33,6 +33,7 @@ import surreal.backportium.command.debug.CommandGenerate;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.ModEntities;
 import surreal.backportium.item.ModItems;
+import surreal.backportium.network.NetworkHandler;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.recipe.ModRecipes;
 import surreal.backportium.sound.ModSounds;
@@ -54,6 +55,7 @@ public class Backportium {
     public void preInit(FMLPreInitializationEvent event) {
         ModBlocks.registerTiles();
         ModArmorMaterials.register();
+        NetworkHandler.init();
         ClientHandler.preInit(event);
     }
 
