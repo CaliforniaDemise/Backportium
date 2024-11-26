@@ -19,7 +19,7 @@ public class BPTransformer implements IClassTransformer {
         switch (transformedName) {
             // Trident
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(basicClass);
-            case "net.minecraft.entity.EntityLivingBase": return TridentTransformer.transformEntityLivingBase(basicClass);
+            case "net.minecraft.entity.EntityLivingBase": return BreathingTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(basicClass));
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(basicClass);
@@ -59,6 +59,9 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockGrass":
             case "net.minecraft.block.BlockMycelium": return FixTransformer.transformBlockGrass(basicClass);
             case "net.minecraft.network.NetHandlerPlayServer": return FixTransformer.transformNetHandlerPlayServer(basicClass);
+
+            // Breathing
+            case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
         }
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

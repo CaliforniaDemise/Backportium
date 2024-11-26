@@ -44,8 +44,9 @@ public class TridentTransformer extends BasicTransformer {
         return write(cls);
     }
 
+    // TODO Use capabilities instead
     // Add values to living entity to track if it's in riptide effect or not
-    public static byte[] transformEntityLivingBase(byte[] basicClass) {
+    public static ClassNode transformEntityLivingBase(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // If entity is in riptide
             FieldVisitor visitor = cls.visitField(ACC_PROTECTED, "inRiptide", "Z", null, false);
@@ -196,7 +197,7 @@ public class TridentTransformer extends BasicTransformer {
             m_getRiptideTime.visitFieldInsn(GETFIELD, cls.name, "riptideTime", "I");
             m_getRiptideTime.visitInsn(IRETURN);
         }
-        return write(cls);
+        return cls;
     }
 
     // Add riptide effect to entities
