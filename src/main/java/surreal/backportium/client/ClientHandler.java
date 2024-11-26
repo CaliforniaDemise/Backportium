@@ -13,6 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
@@ -21,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeColorHelper;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.MinecraftForge;
@@ -29,6 +31,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
@@ -37,6 +40,7 @@ import surreal.backportium.Backportium;
 import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
+import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.model.entity.ModelPhantom;
 import surreal.backportium.client.model.entity.ModelTrident;
 import surreal.backportium.client.renderer.entity.RenderPhantom;
@@ -72,7 +76,6 @@ public class ClientHandler {
     public static void construction(FMLConstructionEvent event) {
         if (FMLLaunchHandler.side() == Side.CLIENT) {
             MinecraftForge.EVENT_BUS.register(ClientHandler.class);
-
             Models.initModels();
             Textures.initTextures();
             Sounds.initSounds();
@@ -85,6 +88,12 @@ public class ClientHandler {
         }
     }
 
+    public static void init(FMLInitializationEvent event) {
+        if (FMLLaunchHandler.side() == Side.CLIENT) {
+            ModBlocks.registerStateMappers(Minecraft.getMinecraft().modelManager.getBlockModelShapes());
+        }
+    }
+
     private static void registerEntityRenderers() {
         registerEntityRenderingHandler(EntityTrident.class, m -> new RenderTrident<>(m, new ModelTrident()));
         registerEntityRenderingHandler(EntityPhantom.class, m -> new RenderPhantom(m, new ModelPhantom(), 0.6F));
@@ -94,6 +103,12 @@ public class ClientHandler {
     public static void registerModels(ModelRegistryEvent event) {
         ModItems.registerModels(event);
         ClientRegistry.bindTileEntitySpecialRenderer(TileConduit.class, new TESRConduit());
+    }
+
+    @SubscribeEvent
+    public static void colorBlocks(ColorHandlerEvent.Block event) {
+        BlockColors colors = event.getBlockColors();
+        colors.registerBlockColorHandler((state, worldIn, pos, tintIndex) -> worldIn != null && pos != null ? BiomeColorHelper.getWaterColorAtPos(worldIn, pos) : -1, ModBlocks.BUBBLE_COLUMN);
     }
 
     private static String getValueName(Object obj) {

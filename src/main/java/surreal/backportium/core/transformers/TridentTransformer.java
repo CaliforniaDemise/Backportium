@@ -1,6 +1,5 @@
 package surreal.backportium.core.transformers;
 
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
@@ -41,35 +40,6 @@ public class TridentTransformer extends BasicTransformer {
                     }
                 }
             }
-//            if (method.name.equals(getName("setRotationAngles", "func_78087_a"))) {
-//                AbstractInsnNode node = method.instructions.getLast();
-//                while (node.getOpcode() != RETURN) node = node.getPrevious();
-//
-//                InsnList list = new InsnList();
-//                list.add(new VarInsnNode(ALOAD, 0));
-//
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new VarInsnNode(ALOAD, 7));
-//                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-//
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new VarInsnNode(ALOAD, 0));
-//                list.add(new VarInsnNode(ALOAD, 7));
-//                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-//                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
-//
-//                list.add(new VarInsnNode(FLOAD, 1));
-//                list.add(new VarInsnNode(FLOAD, 2));
-//                list.add(new VarInsnNode(FLOAD, 3));
-//                list.add(new VarInsnNode(FLOAD, 4));
-//                list.add(new VarInsnNode(FLOAD, 5));
-//                list.add(new VarInsnNode(FLOAD, 6));
-//                list.add(new VarInsnNode(ALOAD, 7));
-//                list.add(hook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
-//
-//                method.instructions.insertBefore(node, list);
-//                break;
-//            }
         }
         return write(cls);
     }

@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.particle.ParticleBubbleColumnUp;
 import surreal.backportium.client.particle.ParticleCurrentDown;
+import surreal.backportium.entity.v1_13.EntityTrident;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -53,10 +55,15 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
         if (entityIn instanceof EntityBoat) {
             // TODO Handle rocking... With POSE??!?!?!?
         }
-        else {
+        else if (!(entityIn instanceof EntityTrident)) {
             if (upState.getBlock() == Blocks.AIR) {
                 if (downwards) entityIn.motionY = Math.max(-0.9, entityIn.motionY - 0.03D);
                 else entityIn.motionY = Math.min(1.8D, entityIn.motionY + 0.1D);
+            }
+            else {
+                if (!downwards) entityIn.motionY = Math.min(0.7D, entityIn.motionY + 0.06D);
+                else entityIn.motionY = Math.max(-0.3D, entityIn.motionY - 0.03D);
+                entityIn.fallDistance = 0.0F;
             }
         }
 //        IBubbleColumnInteractable bubbleEntity = (IBubbleColumnInteractable)entityIn;
@@ -82,6 +89,7 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
         return self.getValue(LEVEL) == 0;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(IBlockState stateIn, @Nonnull World worldIn, BlockPos pos, @Nonnull Random rand) {
         double d0 = pos.getX();
@@ -96,6 +104,8 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
         }
     }
 
+    @Override
+    @ParametersAreNonnullByDefault
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if (!this.isValidPosition(worldIn, pos)) {
             worldIn.setBlockState(pos, Blocks.WATER.getDefaultState());
@@ -122,26 +132,31 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
         else return block == Blocks.SOUL_SAND;
     }
 
+    @Override
     @ParametersAreNonnullByDefault
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos.down()));
     }
 
+    @Override
     @ParametersAreNonnullByDefault
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos));
     }
 
     @Nonnull
+    @Override
     public IBlockState getStateFromMeta(int meta) {
         return this.getDefaultState().withProperty(LEVEL, 0).withProperty(DRAG, (meta & 1) == 1);
     }
 
+    @Override
     public int tickRate(@Nonnull World worldIn) {
         return 5;
     }
 
+    @Override
     public int getMetaFromState(IBlockState state) {
         return state.getValue(DRAG) ? 1 : 0;
     }

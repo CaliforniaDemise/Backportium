@@ -3,12 +3,16 @@ package surreal.backportium.block;
 import net.minecraft.block.*;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import surreal.backportium.Tags;
 import surreal.backportium.api.enums.CoralType;
@@ -111,6 +115,11 @@ public class ModBlocks {
 
     public static void registerTiles() {
         GameRegistry.registerTileEntity(TileConduit.class, Objects.requireNonNull(CONDUIT.getRegistryName()));
+    }
+
+    @SideOnly(Side.CLIENT)
+    public static void registerStateMappers(BlockModelShapes shapes) {
+        shapes.registerBlockWithStateMapper(BUBBLE_COLUMN, new StateMap.Builder().ignore(BlockBubbleColumn.DRAG, BlockBubbleColumn.LEVEL).build());
     }
 
     private static <T extends Block> T register(T block, SupplierInput<Block, Item> handleItem, String name) {
