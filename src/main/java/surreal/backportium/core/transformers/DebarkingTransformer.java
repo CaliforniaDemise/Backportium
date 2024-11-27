@@ -22,6 +22,7 @@ public class DebarkingTransformer extends BasicTransformer {
 
     static {
         DO_NOT_TRANSFORM.add("com.bewitchment.common.block.util.ModBlockLog");
+        DO_NOT_TRANSFORM.add("org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog");
     }
 
     private static final int
@@ -108,6 +109,8 @@ public class DebarkingTransformer extends BasicTransformer {
         MethodNode initMethod = null;
         boolean createsBlockState = false;
         for (MethodNode method : cls.methods) {
+            if ((method.access & ACC_PRIVATE) == ACC_PRIVATE) method.access ^= ACC_PRIVATE;
+            if ((method.access & ACC_PUBLIC) != ACC_PUBLIC) method.access |= ACC_PROTECTED;
             if (method.name.equals("<init>")) {
                 initMethod = method;
             }
@@ -372,7 +375,7 @@ public class DebarkingTransformer extends BasicTransformer {
         List<String> interfaces = new ArrayList<>(clsLog.interfaces == null ? 1 : cls.interfaces.size() + 1);
         interfaces.add("surreal/backportium/api/block/DebarkedLog");
         String name = clsLog.name + "$Debarked";
-        if (!clsLog.name.contains("$")) name = "backportium/" + name;
+        name = "backportium/debarked/" + name;
         cls.visit(V1_8, ACC_PUBLIC | ACC_STATIC, name, null, clsLog.name, interfaces.toArray(new String[0]));
         { // origLog
             cls.visitField(ACC_PUBLIC | ACC_FINAL, "origLog", "Lnet/minecraft/block/Block;", null, null);

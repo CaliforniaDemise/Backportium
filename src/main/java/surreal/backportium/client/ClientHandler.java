@@ -270,6 +270,7 @@ public class ClientHandler {
                                     String key = texEntry.getKey();
                                     if (key.equals("end") || key.equals("side")) {
                                         textureMapBuilder.put(key, texEntry.getValue() + "_debarked");
+                                        System.out.println(texEntry.getValue());
                                     }
                                     else textureMapBuilder.put(key, texEntry.getValue());
                                 }
@@ -285,13 +286,27 @@ public class ClientHandler {
                         IModel debarkedModel = origModel.retexture(map);
                         IBlockState debarkedState = RandomHelper.copyState(entry1.getKey(), entry.getValue());
                         IBakedModel m = debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
+                        if (Objects.requireNonNull(debarkedState.getBlock().getRegistryName()).getNamespace().equals("evilcraft")) { // Don't question it
+                            try {
+                                IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column"));
+                                ImmutableMap.Builder<String, String> p = new ImmutableMap.Builder<>();
+                                p.put("end", "evilcraft:blocks/undead_log_top_debarked");
+                                p.put("side", "evilcraft:blocks/undead_log_debarked");
+                                m = model.retexture(p.build()).bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
+
+                            } catch (Exception ignored) {}
+                        }
                         event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), "normal"), m);
                         if (property != null) {
                             if (debarkedState.getValue(property) == y) {
                                 event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(entry.getValue().getRegistryName()), RandomHelper.getVariantFromState(debarkedState)), m);
+                                ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
+                                event.getModelRegistry().putObject(modelLoc, m);
                             }
-                            ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
-                            event.getModelRegistry().putObject(modelLoc, debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                            else {
+                                ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
+                                event.getModelRegistry().putObject(modelLoc, debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
+                            }
                         }
                         else {
                             ModelResourceLocation modelLoc = dModelLocations.get(debarkedState);
