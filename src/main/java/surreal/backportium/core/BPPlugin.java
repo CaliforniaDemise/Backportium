@@ -6,16 +6,13 @@ import surreal.backportium.Tags;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @IFMLLoadingPlugin.Name(Tags.MOD_ID)
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(-100)
+@IFMLLoadingPlugin.TransformerExclusions({ "backportium.debarked.", "surreal.backportium.core." })
 public class BPPlugin implements IFMLLoadingPlugin {
 
     public static boolean FLUIDLOGGED;
