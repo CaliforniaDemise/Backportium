@@ -1,13 +1,23 @@
 package surreal.backportium;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDispenser;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Enchantments;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
@@ -32,6 +42,7 @@ import surreal.backportium.client.ClientHandler;
 import surreal.backportium.command.debug.CommandGenerate;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.ModEntities;
+import surreal.backportium.entity.v1_13.EntityTrident;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.network.NetworkHandler;
 import surreal.backportium.potion.ModPotions;
@@ -62,6 +73,7 @@ public class Backportium {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         ModItems.registerOres();
+        registerDispenseBehaviours();
     }
 
     @Mod.EventHandler
@@ -71,6 +83,27 @@ public class Backportium {
             // Imagine, it's too bad that I added a check. So, it only works in the dev environment.
             event.registerServerCommand(new CommandGenerate());
         }
+    }
+
+    public static void registerDispenseBehaviours() {
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(ModItems.TRIDENT, ((source, stack) -> {
+            World world = source.getWorld();
+            IBlockState state = source.getBlockState();
+            int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
+            if (riptide != 0 || stack.getItemDamage() == stack.getMaxDamage() - 1) return stack;
+            EnumFacing facing = source.getBlockState().getValue(BlockDispenser.FACING);
+            int infinity = EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack);
+            EntityTrident trident = new EntityTrident(world, source.getX() + facing.getXOffset(), source.getY() + facing.getYOffset(), source.getZ() + facing.getZOffset(), stack);
+            trident.shoot(facing.getXOffset(), facing.getYOffset(), facing.getZOffset(), 0.9F, 0.25F);
+            world.playSound(null, source.getX(), source.getY(), source.getZ(), ModSounds.ITEM_TRIDENT_THROW, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            world.spawnEntity(trident);
+            if (infinity != 0) {
+                trident.pickupStatus = EntityArrow.PickupStatus.CREATIVE_ONLY;
+                stack.attemptDamageItem(1, world.rand, null);
+            }
+            else trident.pickupStatus = EntityArrow.PickupStatus.ALLOWED;
+            return ItemStack.EMPTY;
+        }));
     }
 
     // Registry Events

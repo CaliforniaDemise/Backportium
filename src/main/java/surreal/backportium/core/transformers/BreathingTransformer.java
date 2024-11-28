@@ -13,7 +13,6 @@ public class BreathingTransformer extends BasicTransformer {
     public static byte[] transformEntityLivingBase(ClassNode cls) {
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("onEntityUpdate", "func_70030_z"))) {
-                boolean check = false;
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -21,8 +20,6 @@ public class BreathingTransformer extends BasicTransformer {
                         InsnList list = new InsnList();
                         {
                             AbstractInsnNode node2 = node;
-//                            while (node2.getOpcode() != IFEQ) node2 = node2.getPrevious();
-//                            node2 = node2.getNext().getNext();
                             LabelNode l_con2 = null;
                             while (node2.getOpcode() != ALOAD) {
                                 if (l_con2 == null && node2.getOpcode() == GOTO) {

@@ -51,8 +51,12 @@ public class EntityTrident extends AbstractEntityArrow {
         super(worldIn);
     }
 
-    public EntityTrident(World worldIn, double x, double y, double z) {
+    public EntityTrident(World worldIn, double x, double y, double z, ItemStack stack) {
         super(worldIn, x, y, z);
+        this.tag = stack.getTagCompound();
+        if (this.tag == null) this.tag = new NBTTagCompound();
+        this.damage = stack.getItemDamage();
+        this.initEnchLevels();
     }
 
     public EntityTrident(World worldIn, EntityLivingBase shooter, ItemStack stack) {
@@ -101,7 +105,7 @@ public class EntityTrident extends AbstractEntityArrow {
                 }
             }
         }
-        else if (this.loyaltyLvl > 0 && this.inGround && this.ticksInGround == 20.0F / this.loyaltyLvl) {
+        else if (this.shootingEntity != null && this.loyaltyLvl > 0 && this.inGround && this.ticksInGround == 20.0F / this.loyaltyLvl) {
             this.moveLoyalty = true;
             // Set block air.
             this.inGround = false;
