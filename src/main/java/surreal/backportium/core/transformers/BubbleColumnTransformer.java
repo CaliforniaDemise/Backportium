@@ -97,7 +97,7 @@ public class BubbleColumnTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 3);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false);
-            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_149688_o"), "()Lnet/minecraft/block/material/Material;", true);
+            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_185904_a"), "()Lnet/minecraft/block/material/Material;", true);
             m.visitFieldInsn(GETSTATIC, "net/minecraft/block/material/Material", getName("WATER", "field_151586_h"), "Lnet/minecraft/block/material/Material;");
             Label l_con = new Label();
             m.visitJumpInsn(IF_ACMPNE, l_con);
@@ -172,7 +172,7 @@ public class BubbleColumnTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 3);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false);
-            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_149688_o"), "()Lnet/minecraft/block/material/Material;", true);
+            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_185904_a"), "()Lnet/minecraft/block/material/Material;", true);
             m.visitFieldInsn(GETSTATIC, "net/minecraft/block/material/Material", getName("WATER", "field_151586_h"), "Lnet/minecraft/block/material/Material;");
             Label l_con = new Label();
             m.visitJumpInsn(IF_ACMPNE, l_con);

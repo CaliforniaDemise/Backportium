@@ -43,7 +43,7 @@ public class FixTransformer extends BasicTransformer {
                         list.add(new VarInsnNode(ALOAD, 2));
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false));
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false));
-                        list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_149688_o"), "()Lnet/minecraft/block/material/Material;", true));
+                        list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_185904_a"), "()Lnet/minecraft/block/material/Material;", true));
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/material/Material", getName("isLiquid", "func_76224_d"), "()Z", false));
                         LabelNode l_con = new LabelNode();
                         list.add(new JumpInsnNode(IFEQ, l_con));
@@ -68,7 +68,7 @@ public class FixTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 2));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false));
-                list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_149688_o"), "()Lnet/minecraft/block/material/Material;", true));
+                list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_185904_a"), "()Lnet/minecraft/block/material/Material;", true));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/material/Material", getName("isLiquid", "func_76224_d"), "()Z", false));
                 list.add(new JumpInsnNode(IFNE, l_con));
                 method.instructions.insert(node, list);

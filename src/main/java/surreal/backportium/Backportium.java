@@ -62,7 +62,6 @@ public class Backportium {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         ModItems.registerOres();
-        ClientHandler.init(event);
     }
 
     @Mod.EventHandler

@@ -88,12 +88,6 @@ public class ClientHandler {
         }
     }
 
-    public static void init(FMLInitializationEvent event) {
-        if (FMLLaunchHandler.side() == Side.CLIENT) {
-            ModBlocks.registerStateMappers(Minecraft.getMinecraft().modelManager.getBlockModelShapes());
-        }
-    }
-
     private static void registerEntityRenderers() {
         registerEntityRenderingHandler(EntityTrident.class, m -> new RenderTrident<>(m, new ModelTrident()));
         registerEntityRenderingHandler(EntityPhantom.class, m -> new RenderPhantom(m, new ModelPhantom(), 0.6F));
@@ -102,6 +96,7 @@ public class ClientHandler {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
         ModItems.registerModels(event);
+        ModBlocks.registerStateMappers();
         ClientRegistry.bindTileEntitySpecialRenderer(TileConduit.class, new TESRConduit());
     }
 
@@ -270,7 +265,6 @@ public class ClientHandler {
                                     String key = texEntry.getKey();
                                     if (key.equals("end") || key.equals("side")) {
                                         textureMapBuilder.put(key, texEntry.getValue() + "_debarked");
-                                        System.out.println(texEntry.getValue());
                                     }
                                     else textureMapBuilder.put(key, texEntry.getValue());
                                 }
@@ -286,7 +280,7 @@ public class ClientHandler {
                         IModel debarkedModel = origModel.retexture(map);
                         IBlockState debarkedState = RandomHelper.copyState(entry1.getKey(), entry.getValue());
                         IBakedModel m = debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
-                        if (Objects.requireNonNull(debarkedState.getBlock().getRegistryName()).getNamespace().equals("evilcraft")) { // Don't question it
+                        if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("evilcraft")) { // Don't question it
                             try {
                                 IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column"));
                                 ImmutableMap.Builder<String, String> p = new ImmutableMap.Builder<>();
