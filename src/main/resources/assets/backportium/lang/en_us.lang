@@ -84,6 +84,21 @@ item.backportium.scute.name=Scute
 item.backportium.trident.name=Trident
 item.backportium.turtle_helmet.name=Turtle Helmet
 
+# Subtitles
+subtitles.block.pumpkin.carve=Shears carve
+subtitles.block.conduit.activate=Conduit activates
+subtitles.block.conduit.ambient=Conduit pulses
+subtitles.block.conduit.attack.target=Conduit attacks
+subtitles.block.conduit.deactivate=Conduit deactivates
+subtitles.item.armor.equip_turtle=Turtle Shell thunks
+subtitles.item.trident.hit=Trident stabs
+subtitles.item.trident.hit_ground=Trident vibrates
+subtitles.item.trident.return=Trident returns
+subtitles.item.trident.riptide=Trident zooms
+subtitles.item.trident.throw=Trident clangs
+subtitles.item.trident.thunder=Trident thunder cracks
+subtitles.entity.drowned.shoot=Drowned throws Trident
+
 # Damage Sources
 death.attack.trident=%1$s was impaled by %2$s
 death.attack.trident.item=%1$s was impaled by %2$s using %3$s
