@@ -19,6 +19,11 @@ public class ModSounds {
     public static final SoundEvent BLOCK_CONDUIT_AMBIENT_SHORT = register("block.conduit.ambient.short");
     public static final SoundEvent BLOCK_CONDUIT_ATTACK_TARGET = register("block.conduit.attack.target");
     public static final SoundEvent BLOCK_CONDUIT_DEACTIVATE = register("block.conduit.deactivate");
+    public static final SoundEvent BLOCK_BUBBLE_COLUMN_BUBBLE_POP = register("block.bubble_column.bubble_pop");
+    public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT = register("block.bubble_column.upwards_ambient");
+    public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE = register("block.bubble_column.upwards_inside");
+    public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT = register("block.bubble_column.whirlpool_ambient");
+    public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE = register("block.bubble_column.whirlpool_inside");
 
     public static final SoundEvent ITEM_ARMOR_EQUIP_TURTLE = register("item.armor.equip_turtle");
     public static final SoundEvent ITEM_TRIDENT_HIT = register("item.trident.hit");

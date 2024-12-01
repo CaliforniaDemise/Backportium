@@ -40,6 +40,31 @@ public class Sounds {
         put(map, "block/conduit/short8");
         put(map, "block/conduit/short9");
 
+        // block.bubble_column.bubble_pop
+        put(map, "block/bubble_column/bubble1");
+        put(map, "block/bubble_column/bubble2");
+        put(map, "block/bubble_column/bubble3");
+
+        // block.bubble_column.upwards_ambient
+        put(map, "block/bubble_column/upwards_ambient1");
+        put(map, "block/bubble_column/upwards_ambient2");
+        put(map, "block/bubble_column/upwards_ambient3");
+        put(map, "block/bubble_column/upwards_ambient4");
+        put(map, "block/bubble_column/upwards_ambient5");
+
+        // block.bubble_column.upwards_inside
+        put(map, "block/bubble_column/upwards_inside");
+
+        // block.bubble_column.whirlpool_ambient
+        put(map, "block/bubble_column/whirlpool_ambient1");
+        put(map, "block/bubble_column/whirlpool_ambient2");
+        put(map, "block/bubble_column/whirlpool_ambient3");
+        put(map, "block/bubble_column/whirlpool_ambient4");
+        put(map, "block/bubble_column/whirlpool_ambient5");
+
+        // block.bubble_column.whirlpool_inside
+        put(map, "block/bubble_column/whirlpool_inside");
+
         /* ITEMS */
         // item.armor.equip_turtle
         put(map, "mob/turtle/armor");
