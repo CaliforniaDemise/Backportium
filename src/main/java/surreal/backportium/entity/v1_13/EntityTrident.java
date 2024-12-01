@@ -25,6 +25,7 @@ import surreal.backportium.entity.AbstractEntityArrow;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.network.NetworkHandler;
 import surreal.backportium.network.PacketItemEnchanted;
+import surreal.backportium.sound.ModSounds;
 
 import javax.annotation.Nonnull;
 
@@ -244,12 +245,12 @@ public class EntityTrident extends AbstractEntityArrow {
 
     @Override
     public SoundEvent getEntityHitSound(Entity entity) {
-        return super.getEntityHitSound(entity);
+        return ModSounds.ITEM_TRIDENT_HIT;
     }
 
     @Override
     public SoundEvent getBlockHitSound(BlockPos pos, IBlockState state) {
-        return super.getBlockHitSound(pos, state);
+        return ModSounds.ITEM_TRIDENT_HIT_GROUND;
     }
 
     @Override
