@@ -319,6 +319,7 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "entity/conduit/wind"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "entity/conduit/wind_vertical"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "particle/nautilus"));
+        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "particle/bubble"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/conduit_power"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/slow_falling"));
