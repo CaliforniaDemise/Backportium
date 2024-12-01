@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -107,6 +108,7 @@ public class EntityTrident extends AbstractEntityArrow {
             }
         }
         else if (this.shootingEntity != null && this.loyaltyLvl > 0 && this.inGround && this.ticksInGround == 20.0F / this.loyaltyLvl) {
+            if (!world.isRemote) this.world.playSound(null, this.posX, this.posY, this.posZ, ModSounds.ITEM_TRIDENT_RETURN, SoundCategory.NEUTRAL, 8.0F, 1.0F);
             this.moveLoyalty = true;
             // Set block air.
             this.inGround = false;
@@ -256,6 +258,7 @@ public class EntityTrident extends AbstractEntityArrow {
     @Override
     public void onHitEntity(Entity entity) {
         if (!this.world.isRemote && this.channelingLvl > 0 && this.world.isThundering() && !entity.isInWater()) {
+            this.world.playSound(null, this.posX, this.posY, this.posZ, ModSounds.ITEM_TRIDENT_THUNDER, SoundCategory.NEUTRAL, 5.0F, 1.0F);
             this.world.addWeatherEffect(new EntityLightningBolt(this.world, entity.posX, entity.posY, entity.posZ, false));
         }
     }
