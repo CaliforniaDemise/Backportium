@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -24,6 +25,7 @@ import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.particle.ParticleBubbleColumnUp;
 import surreal.backportium.client.particle.ParticleCurrentDown;
 import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.sound.ModSounds;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -48,7 +50,7 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     }
 
     @Override
-    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+    public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, @Nonnull Entity entityIn) {
         IBlockState upState = worldIn.getBlockState(pos.up());
         boolean downwards = !state.getValue(DRAG);
         if (entityIn instanceof EntityBoat) {
@@ -136,12 +138,19 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos.down()));
+        if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
+            worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
+        }
     }
 
     @Override
     @ParametersAreNonnullByDefault
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos));
+        if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
+            worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
+            worldIn.playSound(null, pos.getX(), pos.getY() + 1, pos.getZ(), ModSounds.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, SoundCategory.BLOCKS, 0.1F, 1.0F);
+        }
     }
 
     @Nonnull
