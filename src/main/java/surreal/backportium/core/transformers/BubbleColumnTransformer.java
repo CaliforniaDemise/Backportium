@@ -1,5 +1,6 @@
 package surreal.backportium.core.transformers;
 
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
@@ -7,6 +8,31 @@ import org.objectweb.asm.tree.*;
 import java.util.Iterator;
 
 public class BubbleColumnTransformer extends BasicTransformer {
+
+    /**
+     * Handle ambient and going inside sounds
+     **/
+    public static byte[] transformEntityPlayerSP(ClassNode cls) {
+        { // inColumn |  0 - None / 1 - Upwards / 2 -
+            FieldVisitor inColum = cls.visitField(ACC_PROTECTED, "inColumn", "I", null, 0);
+            inColum.visitEnd();
+        }
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "inColumn", "I"));
+                list.add(hook("EntityPlayerSP$handleBubbleColumn", "(Lnet/minecraft/client/entity/EntityPlayerSP;I)I"));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "inColumn", "I"));
+                method.instructions.insertBefore(node, list);
+            }
+        }
+        return write(cls);
+    }
 
     /**
      * Make EntityThrowable raytrace liquid blocks.

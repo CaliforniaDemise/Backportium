@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -39,6 +40,7 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     public BlockBubbleColumn() {
         super(Material.WATER);
         this.setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, 0).withProperty(DRAG, false));
+        this.setTickRandomly(true);
     }
 
     @Nonnull
@@ -140,6 +142,19 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos.down()));
         if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
             worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
+        }
+    }
+
+    @Override
+    @ParametersAreNonnullByDefault
+    public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
+        if (!worldIn.isRemote) {
+            SoundEvent sound = getDrag(worldIn, pos) ? ModSounds.BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT : ModSounds.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT;
+            float volume = 0.12F;
+            float pitch = 0.9F;
+            if (worldIn.rand.nextBoolean()) volume += 0.12F;
+            if (worldIn.rand.nextBoolean()) pitch += 0.15F;
+            worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), sound, SoundCategory.BLOCKS, volume, pitch);
         }
     }
 

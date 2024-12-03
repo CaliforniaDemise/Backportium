@@ -4,6 +4,7 @@ import forestry.arboriculture.blocks.BlockForestryLog;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -35,9 +36,11 @@ import surreal.backportium.api.block.DebarkedLog;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
+import surreal.backportium.block.v1_13.BlockBubbleColumn;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v1_13.ItemBlockDebarkedLog;
 import surreal.backportium.item.v1_13.ItemTrident;
+import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.core.transformers.DebarkingTransformer;
 
@@ -329,6 +332,25 @@ public class BPHooks {
             }
         }
         return name;
+    }
+
+    // Bubble Column
+    public static int EntityPlayerSP$handleBubbleColumn(EntityPlayerSP entity, int i) {
+        World world = entity.world;
+        BlockPos pos = new BlockPos(entity).add(0, entity.getEyeHeight(), 0);
+        IBlockState state = world.getBlockState(pos);
+        if (state.getBlock() == ModBlocks.BUBBLE_COLUMN) {
+            boolean upwards = state.getValue(BlockBubbleColumn.DRAG);
+            if (upwards) {
+                if (i != 1) world.playSound(entity.posX, entity.posY, entity.posZ, ModSounds.BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE, SoundCategory.BLOCKS, 0.7F, 1.0F, false);
+                return 1;
+            }
+            else {
+                if (i != 2) world.playSound(entity.posX, entity.posY, entity.posZ, ModSounds.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE, SoundCategory.BLOCKS, 0.7F, 1.0F, false);
+                return 2;
+            }
+        }
+        return 0;
     }
 
     // Button Placement

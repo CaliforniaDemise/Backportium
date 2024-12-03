@@ -44,7 +44,6 @@ public class TridentTransformer extends BasicTransformer {
                 break;
             }
         }
-
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // Cursed frames
     }
 
@@ -326,7 +325,7 @@ public class TridentTransformer extends BasicTransformer {
         return write(cls);
     }
 
-    public static byte[] transformEntityPlayerSP(byte[] basicClass) {
+    public static ClassNode transformEntityPlayerSP(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("isSneaking", "func_70093_af"))) {
@@ -346,6 +345,6 @@ public class TridentTransformer extends BasicTransformer {
                 break;
             }
         }
-        return write(cls);
+        return cls;
     }
 }
