@@ -60,7 +60,7 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
         }
         else if (!(entityIn instanceof EntityTrident)) {
             if (upState.getBlock() == Blocks.AIR) {
-                if (downwards) entityIn.motionY = Math.max(-0.9, entityIn.motionY - 0.03D);
+                if (downwards) entityIn.motionY = Math.max(-0.9D, entityIn.motionY - 0.03D);
                 else entityIn.motionY = Math.min(1.8D, entityIn.motionY + 0.1D);
             }
             else {

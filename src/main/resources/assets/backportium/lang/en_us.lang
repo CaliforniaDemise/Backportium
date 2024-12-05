@@ -98,6 +98,11 @@ subtitles.item.trident.riptide=Trident zooms
 subtitles.item.trident.throw=Trident clangs
 subtitles.item.trident.thunder=Trident thunder cracks
 subtitles.entity.drowned.shoot=Drowned throws Trident
+block.bubble_column.bubble_pop=What's poppin'?
+block.bubble_column.upwards_ambient=Bubbles flow
+block.bubble_column.upwards_inside=Bubbles woosh
+block.bubble_column.whirlpool_ambient=Bubbles whirl
+block.bubble_column.whirlpool_inside=Bubbles zoom
 
 # Damage Sources
 death.attack.trident=%1$s was impaled by %2$s
