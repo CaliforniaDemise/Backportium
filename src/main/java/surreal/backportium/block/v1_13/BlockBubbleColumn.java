@@ -140,9 +140,9 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
         super.onBlockAdded(worldIn, pos, state);
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos.down()));
-        if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
-            worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
-        }
+//        if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
+//            worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
+//        }
     }
 
     @Override
@@ -162,10 +162,10 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     @ParametersAreNonnullByDefault
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         placeBubbleColumn(worldIn, pos.up(), getDrag(worldIn, pos));
-        if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
-            worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
-            worldIn.playSound(null, pos.getX(), pos.getY() + 1, pos.getZ(), ModSounds.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, SoundCategory.BLOCKS, 0.1F, 1.0F);
-        }
+//        if (!worldIn.isRemote && getDrag(worldIn, pos) && worldIn.isAirBlock(pos.up())) {
+//            worldIn.scheduleBlockUpdate(pos, this, 3 + worldIn.rand.nextInt(3), 0);
+//            worldIn.playSound(null, pos.getX(), pos.getY() + 1, pos.getZ(), ModSounds.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, SoundCategory.BLOCKS, 0.1F, 1.0F);
+//        }
     }
 
     @Nonnull
