@@ -88,10 +88,21 @@ public class BubbleColumnTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false);
+            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_185904_a"), "()Lnet/minecraft/block/material/Material;", true);
+            m.visitFieldInsn(GETSTATIC, "net/minecraft/block/material/Material", getName("WATER", "field_151586_h"), "Lnet/minecraft/block/material/Material;");
+            Label l_con = new Label();
+            m.visitJumpInsn(IF_ACMPNE, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitVarInsn(ALOAD, 1);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
             m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lsurreal/backportium/block/v1_13/BlockBubbleColumn;");
             m.visitInsn(ICONST_1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getStateFromMeta", "func_176203_a"), "(I)Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
+            m.visitInsn(RETURN);
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
             m.visitInsn(RETURN);
         }
         { // tickRate
@@ -164,9 +175,20 @@ public class BubbleColumnTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false);
+            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getMaterial", "func_185904_a"), "()Lnet/minecraft/block/material/Material;", true);
+            m.visitFieldInsn(GETSTATIC, "net/minecraft/block/material/Material", getName("WATER", "field_151586_h"), "Lnet/minecraft/block/material/Material;");
+            Label l_con = new Label();
+            m.visitJumpInsn(IF_ACMPNE, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitVarInsn(ALOAD, 1);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
             m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lsurreal/backportium/block/v1_13/BlockBubbleColumn;");
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getDefaultState", "func_176223_P"), "()Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
+            m.visitInsn(RETURN);
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
             m.visitInsn(RETURN);
         }
         { // tickRate
