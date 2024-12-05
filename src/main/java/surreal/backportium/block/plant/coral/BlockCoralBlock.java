@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import surreal.backportium.api.enums.CoralType;
 import surreal.backportium.block.BlockDef;
@@ -36,6 +37,13 @@ public class BlockCoralBlock extends BlockDef {
         super(blockMaterialIn, blockMapColorIn);
         this.setHardness(1.5F).setResistance(6F);
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+    }
+
+    @Nonnull
+    @Override
+    @ParametersAreNonnullByDefault
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(this, 1, this.getMetaFromState(state));
     }
 
     @Nonnull

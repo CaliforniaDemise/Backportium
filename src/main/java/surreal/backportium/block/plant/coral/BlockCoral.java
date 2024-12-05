@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import surreal.backportium.api.block.FluidLogged;
@@ -41,6 +42,13 @@ public class BlockCoral extends BlockBush implements FluidLogged {
     public BlockCoral(Material material, MapColor mapColor) {
         super(material, mapColor);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
+    }
+
+    @Nonnull
+    @Override
+    @ParametersAreNonnullByDefault
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return new ItemStack(this, 1, this.getMetaFromState(state));
     }
 
     @Nonnull
