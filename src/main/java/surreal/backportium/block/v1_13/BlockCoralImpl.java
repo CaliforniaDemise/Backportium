@@ -22,7 +22,7 @@ public class BlockCoralImpl extends BlockCoral {
 
     public BlockCoralImpl(Material material, MapColor mapColor) {
         super(material, mapColor);
-        this.setDefaultState(getDefaultState().withProperty(VARIANT, CoralType.TUBE).withProperty(ALIVE, true));
+        this.setDefaultState(getDefaultState().withProperty(VARIANT, CoralType.TUBE));
     }
 
     @Override

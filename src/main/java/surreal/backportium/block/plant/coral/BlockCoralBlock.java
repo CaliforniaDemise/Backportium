@@ -24,7 +24,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
 @SuppressWarnings("deprecation")
-public class BlockCoralBlock extends BlockDef {
+public abstract class BlockCoralBlock extends BlockDef {
 
     protected static final PropertyEnum<CoralType> VARIANT = BlockCoral.VARIANT;
     protected static final PropertyBool ALIVE = BlockCoral.ALIVE;
@@ -37,6 +37,7 @@ public class BlockCoralBlock extends BlockDef {
         super(blockMaterialIn, blockMapColorIn);
         this.setHardness(1.5F).setResistance(6F);
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+        this.setDefaultState(this.getDefaultState().withProperty(ALIVE, true));
     }
 
     @Nonnull

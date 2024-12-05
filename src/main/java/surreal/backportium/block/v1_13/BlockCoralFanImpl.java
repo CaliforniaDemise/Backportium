@@ -30,7 +30,6 @@ public class BlockCoralFanImpl extends BlockCoralFan {
     public BlockCoralFanImpl(Material material, MapColor mapColor, CoralType type) {
         super(material, mapColor);
         this.type = type;
-        this.setDefaultState(getDefaultState().withProperty(FACING, EnumFacing.UP).withProperty(ALIVE, true));
     }
 
     @Nonnull
@@ -56,7 +55,7 @@ public class BlockCoralFanImpl extends BlockCoralFan {
     @Nonnull
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta & 6)).withProperty(ALIVE, (meta & 8) != 8);
+        return getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta & 7)).withProperty(ALIVE, (meta & 8) != 8);
     }
 
     @Nonnull

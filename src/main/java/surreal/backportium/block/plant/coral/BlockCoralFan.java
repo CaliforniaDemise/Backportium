@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @SuppressWarnings("deprecation")
-public class BlockCoralFan extends BlockCoral {
+public abstract class BlockCoralFan extends BlockCoral {
 
     protected static final PropertyDirection FACING = BlockDirectional.FACING;
 
@@ -33,7 +33,7 @@ public class BlockCoralFan extends BlockCoral {
 
     public BlockCoralFan(Material material, MapColor mapColor) {
         super(material, mapColor);
-        this.setDefaultState(getDefaultState().withProperty(FACING, EnumFacing.UP));
+        this.setDefaultState(this.getDefaultState().withProperty(FACING, EnumFacing.UP)); // ALIVE, FACING
     }
 
     @Nonnull
@@ -48,18 +48,14 @@ public class BlockCoralFan extends BlockCoral {
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         EnumFacing facing = state.getValue(FACING);
         switch (facing) {
+            case DOWN: return DOWN_AABB;
+            case WEST: return WEST_AABB;
+            case EAST: return EAST_AABB;
+            case NORTH: return NORTH_AABB;
+            case SOUTH: return SOUTH_AABB;
+            case UP:
             default:
                 return UP_AABB;
-            case DOWN:
-                return DOWN_AABB;
-            case WEST:
-                return WEST_AABB;
-            case EAST:
-                return EAST_AABB;
-            case NORTH:
-                return NORTH_AABB;
-            case SOUTH:
-                return SOUTH_AABB;
         }
     }
 

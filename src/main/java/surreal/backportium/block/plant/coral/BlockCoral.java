@@ -28,7 +28,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
 @SuppressWarnings("deprecation")
-public class BlockCoral extends BlockBush implements FluidLogged {
+public abstract class BlockCoral extends BlockBush implements FluidLogged {
 
     public static final PropertyEnum<CoralType> VARIANT = PropertyEnum.create("variant", CoralType.class);
     public static final PropertyBool ALIVE = BlockSeaPickle.ALIVE;
@@ -42,6 +42,7 @@ public class BlockCoral extends BlockBush implements FluidLogged {
     public BlockCoral(Material material, MapColor mapColor) {
         super(material, mapColor);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
+        this.setDefaultState(this.getDefaultState().withProperty(ALIVE, true));
     }
 
     @Nonnull
