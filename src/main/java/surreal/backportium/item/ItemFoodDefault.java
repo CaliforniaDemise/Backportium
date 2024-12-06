@@ -15,7 +15,7 @@ public class ItemFoodDefault extends ItemFood {
     }
 
     public ItemFoodDefault(int amount, int eatingTime, boolean isWolfFood) {
-        this(eatingTime, amount, 0, isWolfFood);
+        this(amount, 0.6F, eatingTime, isWolfFood);
     }
 
     public ItemFoodDefault(int amount, float saturation, boolean isWolfFood) {
