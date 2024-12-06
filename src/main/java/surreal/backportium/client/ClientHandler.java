@@ -276,13 +276,24 @@ public class ClientHandler {
                         IModel debarkedModel = origModel.retexture(map);
                         IBlockState debarkedState = RandomHelper.copyState(entry1.getKey(), entry.getValue());
                         IBakedModel m = debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
-                        if (Objects.requireNonNull(entry.getKey().getRegistryName()).getNamespace().equals("evilcraft")) { // Don't question it
+                        ResourceLocation location = Objects.requireNonNull(entry.getKey().getRegistryName());
+                        if (location.getNamespace().equals("evilcraft")) { // Don't question it
                             try {
                                 IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column"));
                                 ImmutableMap.Builder<String, String> p = new ImmutableMap.Builder<>();
                                 p.put("end", "evilcraft:blocks/undead_log_top_debarked");
                                 p.put("side", "evilcraft:blocks/undead_log_debarked");
                                 m = model.retexture(p.build()).bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
+
+                            } catch (Exception ignored) {}
+                        }
+                        else if (location.getNamespace().equals("mm") && location.getPath().equals("full_swamp_log")) {
+                            try {
+                                IModel model = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all"));
+                                ImmutableMap.Builder<String, String> p = new ImmutableMap.Builder<>();
+                                p.put("all", "mm:blocks/swamp_bark_debarked");
+                                debarkedModel = model.retexture(p.build());
+                                m = debarkedModel.bake(state, DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter());
 
                             } catch (Exception ignored) {}
                         }
