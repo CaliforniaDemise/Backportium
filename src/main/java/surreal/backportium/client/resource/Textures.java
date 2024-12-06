@@ -98,6 +98,8 @@ public class Textures {
 
         put(map, "particle/nautilus");
 
+        put(map, "misc/enchanted_glint_entity", "misc/enchanted_entity_glint");
+
         AssetMoverAPI.fromMinecraft("1.20.1", map);
     }
 

@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 
 public class RenderTrident<T extends EntityTrident> extends Render<T> {
 
-    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation(Tags.MOD_ID, "textures/misc/enchanted_entity_glint.png");
     protected static final ResourceLocation TRIDENT_TEXTURE = new ResourceLocation(Tags.MOD_ID, "textures/entity/trident.png");
 
     protected final ModelBase trident;
@@ -72,16 +72,17 @@ public class RenderTrident<T extends EntityTrident> extends Render<T> {
         this.bindTexture(RES_ITEM_GLINT);
         GlStateManager.matrixMode(5890);
         GlStateManager.pushMatrix();
-        GlStateManager.scale(0.48F, 0.48F, 0.48F);
-        float f = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
+        float size = 1.0F;
+        GlStateManager.scale(size, size, size);
+        float f = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F;
         GlStateManager.translate(f, 0.0F, 0.0F);
         GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.color(r, g, b, a);
         this.trident.render(entity, 0, 0, 0, 0, 0, 0.06F);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
-        GlStateManager.scale(0.48F, 0.48F, 0.48F);
-        float f1 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
+        GlStateManager.scale(size, size, size);
+        float f1 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F;
         GlStateManager.translate(-f1, 0.0F, 0.0F);
         GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
         GlStateManager.color(r, g, b, a);
