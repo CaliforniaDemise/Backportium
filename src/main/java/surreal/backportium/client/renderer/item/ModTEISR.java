@@ -7,16 +7,19 @@ import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.renderer.entity.RenderTrident;
 import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.item.ItemBlockTEISR;
 import surreal.backportium.item.v1_13.ItemTrident;
 import surreal.backportium.tile.v1_13.TileConduit;
 
 import javax.annotation.Nonnull;
 
+@SideOnly(Side.CLIENT)
 public class ModTEISR extends TileEntityItemStackRenderer {
 
     private static final ModTEISR INSTANCE = new ModTEISR();
@@ -40,8 +43,8 @@ public class ModTEISR extends TileEntityItemStackRenderer {
             }
         }
 
-        if (item instanceof ItemBlock) {
-            Block block = ((ItemBlock) item).getBlock();
+        if (item instanceof ItemBlockTEISR) {
+            Block block = ((ItemBlockTEISR) item).getBlock();
 
             if (block == ModBlocks.CONDUIT) {
                 TileEntitySpecialRenderer<TileConduit> tesr = TileEntityRendererDispatcher.instance.getRenderer(conduit);

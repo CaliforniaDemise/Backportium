@@ -38,7 +38,7 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(FLOAD, 5));
                 list.add(new VarInsnNode(FLOAD, 6));
                 list.add(new VarInsnNode(ALOAD, 7));
-                list.add(hook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
+                list.add(clientHook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
 
                 method.instructions.insertBefore(node, list);
                 break;
@@ -220,7 +220,7 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, livingBase, "getRiptideTickLeft", "()I", false));
                 list.add(new VarInsnNode(FLOAD, 4));
-                list.add(hook("RenderLivingBase$applyRotations", "(Lnet/minecraft/entity/EntityLivingBase;ZIF)V"));
+                list.add(clientHook("RenderLivingBase$applyRotations", "(Lnet/minecraft/entity/EntityLivingBase;ZIF)V"));
                 method.instructions.insertBefore(node, list);
                 break;
             }
@@ -247,7 +247,7 @@ public class TridentTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, player, "getRiptideTickLeft", "()I", false));
                 list.add(new VarInsnNode(FLOAD, 4));
-                list.add(hook("RenderPlayer$fixElytraRotations", "(Lnet/minecraft/entity/player/EntityPlayer;ZIF)V"));
+                list.add(clientHook("RenderPlayer$fixElytraRotations", "(Lnet/minecraft/entity/player/EntityPlayer;ZIF)V"));
                 method.instructions.insertBefore(node, list);
                 break;
             } else if (method.name.equals("<init>")) {

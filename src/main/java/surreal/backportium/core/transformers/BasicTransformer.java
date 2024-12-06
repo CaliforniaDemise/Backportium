@@ -20,6 +20,10 @@ import java.util.jar.JarOutputStream;
 
 public abstract class BasicTransformer implements Opcodes {
 
+    protected static MethodInsnNode clientHook(String name, String desc) {
+        return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks$Client", name, desc, false);
+    }
+
     protected static MethodInsnNode hook(String name, String desc) {
         return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks", name, desc, false);
     }

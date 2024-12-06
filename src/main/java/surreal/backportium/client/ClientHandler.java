@@ -31,11 +31,10 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.Backportium;
 import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
@@ -69,23 +68,20 @@ import java.util.*;
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
 @SuppressWarnings("unused")
+@SideOnly(Side.CLIENT)
 public class ClientHandler {
 
     private static final Gson vanillaGson;
 
     public static void construction(FMLConstructionEvent event) {
-        if (FMLLaunchHandler.side() == Side.CLIENT) {
-            MinecraftForge.EVENT_BUS.register(ClientHandler.class);
-            Models.initModels();
-            Textures.initTextures();
-            Sounds.initSounds();
-        }
+        MinecraftForge.EVENT_BUS.register(ClientHandler.class);
+        Models.initModels();
+        Textures.initTextures();
+        Sounds.initSounds();
     }
 
     public static void preInit(FMLPreInitializationEvent event) {
-        if (FMLLaunchHandler.side() == Side.CLIENT) {
-            registerEntityRenderers();
-        }
+        registerEntityRenderers();
     }
 
     private static void registerEntityRenderers() {

@@ -2,7 +2,6 @@ package surreal.backportium;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -59,7 +58,7 @@ public class Backportium {
     @Mod.EventHandler
     public void construction(FMLConstructionEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        ClientHandler.construction(event);
+        if (FMLLaunchHandler.side().isClient()) ClientHandler.construction(event);
     }
 
     @Mod.EventHandler
@@ -67,7 +66,7 @@ public class Backportium {
         ModBlocks.registerTiles();
         ModArmorMaterials.register();
         NetworkHandler.init();
-        ClientHandler.preInit(event);
+        if (FMLLaunchHandler.side().isClient()) ClientHandler.preInit(event);
     }
 
     @Mod.EventHandler

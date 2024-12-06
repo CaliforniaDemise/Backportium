@@ -26,7 +26,7 @@ public class BubbleColumnTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "inColumn", "I"));
-                list.add(hook("EntityPlayerSP$handleBubbleColumn", "(Lnet/minecraft/client/entity/EntityPlayerSP;I)I"));
+                list.add(clientHook("EntityPlayerSP$handleBubbleColumn", "(Lnet/minecraft/client/entity/EntityPlayerSP;I)I"));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "inColumn", "I"));
                 method.instructions.insertBefore(node, list);
             }

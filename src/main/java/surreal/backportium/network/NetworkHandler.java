@@ -11,6 +11,6 @@ public class NetworkHandler {
 
     public static void init() {
         // Server
-        INSTANCE.registerMessage(PacketItemEnchanted.class, PacketItemEnchanted.class, 0, Side.CLIENT);
+        INSTANCE.registerMessage(PacketItemEnchanted.Handler.class, PacketItemEnchanted.class, 0, Side.CLIENT);
     }
 }

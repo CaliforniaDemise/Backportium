@@ -328,7 +328,7 @@ public class DebarkingTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new VarInsnNode(ALOAD, 2));
-                list.add(hook("Debarking$registerBlockStateMapper", "(Lnet/minecraft/client/renderer/block/statemap/BlockStateMapper;Lnet/minecraft/block/Block;Lnet/minecraft/client/renderer/block/statemap/IStateMapper;)V"));
+                list.add(clientHook("Debarking$registerBlockStateMapper", "(Lnet/minecraft/client/renderer/block/statemap/BlockStateMapper;Lnet/minecraft/block/Block;Lnet/minecraft/client/renderer/block/statemap/IStateMapper;)V"));
                 method.instructions.insertBefore(node, list);
                 break;
             }

@@ -134,69 +134,45 @@ public class ModBlocks {
 
     public static Block getWoodTrapdoor(BlockPlanks.EnumType type) {
         switch (type) {
-            default:
-                return Blocks.TRAPDOOR;
-            case SPRUCE:
-                return SPRUCE_TRAPDOOR;
-            case BIRCH:
-                return BIRCH_TRAPDOOR;
-            case JUNGLE:
-                return JUNGLE_TRAPDOOR;
-            case ACACIA:
-                return ACACIA_TRAPDOOR;
-            case DARK_OAK:
-                return DARKOAK_TRAPDOOR;
+            case SPRUCE: return SPRUCE_TRAPDOOR;
+            case BIRCH: return BIRCH_TRAPDOOR;
+            case JUNGLE: return JUNGLE_TRAPDOOR;
+            case ACACIA: return ACACIA_TRAPDOOR;
+            case DARK_OAK: return DARKOAK_TRAPDOOR;
+            default: return Blocks.TRAPDOOR;
         }
     }
 
     public static Block getWoodPlate(BlockPlanks.EnumType type) {
         switch (type) {
-            default:
-                return Blocks.WOODEN_PRESSURE_PLATE;
-            case SPRUCE:
-                return SPRUCE_PLATE;
-            case BIRCH:
-                return BIRCH_PLATE;
-            case JUNGLE:
-                return JUNGLE_PLATE;
-            case ACACIA:
-                return ACACIA_PLATE;
-            case DARK_OAK:
-                return DARKOAK_PLATE;
+            case SPRUCE: return SPRUCE_PLATE;
+            case BIRCH: return BIRCH_PLATE;
+            case JUNGLE: return JUNGLE_PLATE;
+            case ACACIA: return ACACIA_PLATE;
+            case DARK_OAK: return DARKOAK_PLATE;
+            default: return Blocks.WOODEN_PRESSURE_PLATE;
         }
     }
 
     public static Block getWoodButton(BlockPlanks.EnumType type) {
         switch (type) {
-            default:
-                return Blocks.WOODEN_BUTTON;
-            case SPRUCE:
-                return SPRUCE_BUTTON;
-            case BIRCH:
-                return BIRCH_BUTTON;
-            case JUNGLE:
-                return JUNGLE_BUTTON;
-            case ACACIA:
-                return ACACIA_BUTTON;
-            case DARK_OAK:
-                return DARKOAK_BUTTON;
+            case SPRUCE: return SPRUCE_BUTTON;
+            case BIRCH: return BIRCH_BUTTON;
+            case JUNGLE: return JUNGLE_BUTTON;
+            case ACACIA: return ACACIA_BUTTON;
+            case DARK_OAK: return DARKOAK_BUTTON;
+            default: return Blocks.WOODEN_BUTTON;
         }
     }
 
     public static Block getCoralFan(CoralType type) {
         switch (type) {
-            default:
-                return Blocks.AIR;
-            case TUBE:
-                return TUBE_CORAL_FAN;
-            case BRAIN:
-                return BRAIN_CORAL_FAN;
-            case BUBBLE:
-                return BUBBLE_CORAL_FAN;
-            case FIRE:
-                return FIRE_CORAL_FAN;
-            case HORN:
-                return HORN_CORAL_FAN;
+            case TUBE: return TUBE_CORAL_FAN;
+            case BRAIN: return BRAIN_CORAL_FAN;
+            case BUBBLE: return BUBBLE_CORAL_FAN;
+            case FIRE: return FIRE_CORAL_FAN;
+            case HORN: return HORN_CORAL_FAN;
+            default: return Blocks.AIR;
         }
     }
 }
