@@ -35,17 +35,7 @@ import static surreal.backportium.item.ModItems.*;
 
 public class ModRecipes {
 
-    private static final List<IRecipe> RECIPES = new ArrayList<>();
-
-    public static <T extends IRecipe> T register(T recipe, String name) {
-        recipe.setRegistryName(new ResourceLocation(Tags.MOD_ID, name));
-        RECIPES.add(recipe);
-        return recipe;
-    }
-
     public static void registerRecipes(RegistryEvent.Register<IRecipe> event) {
-        IForgeRegistry<IRecipe> registry = event.getRegistry();
-        RECIPES.forEach(registry::register);
         registerRecipes();
     }
 

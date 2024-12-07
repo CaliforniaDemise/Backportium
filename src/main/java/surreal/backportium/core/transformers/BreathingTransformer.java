@@ -45,7 +45,7 @@ public class BreathingTransformer extends BasicTransformer {
                             list.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/util/math/BlockPos", "<init>", "(DDD)V", false));
                             list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false));
                             list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getBlock", "func_177230_c"), "()Lnet/minecraft/block/Block;", true));
-                            list.add(new FieldInsnNode(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lsurreal/backportium/block/v1_13/BlockBubbleColumn;"));
+                            list.add(new FieldInsnNode(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;"));
                             list.add(new JumpInsnNode(IF_ACMPNE, l_con));
                             list.add(new VarInsnNode(ALOAD, 0));
                             list.add(new VarInsnNode(ALOAD, 0));

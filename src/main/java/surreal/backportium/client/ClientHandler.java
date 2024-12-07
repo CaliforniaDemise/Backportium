@@ -91,9 +91,7 @@ public class ClientHandler {
 
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event) {
-        ModItems.registerModels(event);
         ModBlocks.registerStateMappers();
-        ClientRegistry.bindTileEntitySpecialRenderer(TileConduit.class, new TESRConduit());
     }
 
     @SubscribeEvent

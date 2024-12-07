@@ -96,7 +96,7 @@ public class BubbleColumnTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lsurreal/backportium/block/v1_13/BlockBubbleColumn;");
+            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;");
             m.visitInsn(ICONST_1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getStateFromMeta", "func_176203_a"), "(I)Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
@@ -183,7 +183,7 @@ public class BubbleColumnTransformer extends BasicTransformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lsurreal/backportium/block/v1_13/BlockBubbleColumn;");
+            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;");
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getDefaultState", "func_176223_P"), "()Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
             m.visitInsn(RETURN);

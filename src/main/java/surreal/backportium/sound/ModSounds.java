@@ -2,51 +2,77 @@ package surreal.backportium.sound;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Tags;
+import surreal.backportium.util.Registrar;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ModSounds extends Registrar<SoundEvent> {
 
-public class ModSounds {
+    @ObjectHolder("backportium:block.pumpkin.carve") public static final SoundEvent BLOCK_PUMPKIN_CARVE = null;
+    @ObjectHolder("backportium:block.conduit.activate") public static final SoundEvent BLOCK_CONDUIT_ACTIVATE = null;
+    @ObjectHolder("backportium:block.conduit.ambient") public static final SoundEvent BLOCK_CONDUIT_AMBIENT = null;
+    @ObjectHolder("backportium:block.conduit.ambient_short") public static final SoundEvent BLOCK_CONDUIT_AMBIENT_SHORT = null;
+    @ObjectHolder("backportium:block.conduit.attack_target") public static final SoundEvent BLOCK_CONDUIT_ATTACK_TARGET = null;
+    @ObjectHolder("backportium:block.conduit.deactivate") public static final SoundEvent BLOCK_CONDUIT_DEACTIVATE = null;
+    @ObjectHolder("backportium:block.bubble_column.bubble_pop") public static final SoundEvent BLOCK_BUBBLE_COLUMN_BUBBLE_POP = null;
+    @ObjectHolder("backportium:block.bubble_column.upwards_ambient") public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT = null;
+    @ObjectHolder("backportium:block.bubble_column.upwards_inside") public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE = null;
+    @ObjectHolder("backportium:block.bubble_column.whirlpool_ambient") public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT = null;
+    @ObjectHolder("backportium:block.bubble_column.whirlpool_inside") public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE = null;
 
-    private static final List<SoundEvent> SOUNDS = new ArrayList<>();
+    @ObjectHolder("backportium:item.armor.equip_turtle") public static final SoundEvent ITEM_ARMOR_EQUIP_TURTLE = null;
+    @ObjectHolder("backportium:item.trident.hit") public static final SoundEvent ITEM_TRIDENT_HIT = null;
+    @ObjectHolder("backportium:item.trident.hit_ground") public static final SoundEvent ITEM_TRIDENT_HIT_GROUND = null;
+    @ObjectHolder("backportium:item.trident.return") public static final SoundEvent ITEM_TRIDENT_RETURN = null;
+    @ObjectHolder("backportium:item.trident.riptide_1") public static final SoundEvent ITEM_TRIDENT_RIPTIDE_1 = null;
+    @ObjectHolder("backportium:item.trident.riptide_2") public static final SoundEvent ITEM_TRIDENT_RIPTIDE_2 = null;
+    @ObjectHolder("backportium:item.trident.riptide_3") public static final SoundEvent ITEM_TRIDENT_RIPTIDE_3 = null;
+    @ObjectHolder("backportium:item.trident.throw") public static final SoundEvent ITEM_TRIDENT_THROW = null;
+    @ObjectHolder("backportium:item.trident.thunder") public static final SoundEvent ITEM_TRIDENT_THUNDER = null;
 
-    public static final SoundEvent BLOCK_PUMPKIN_CARVE = register("block.pumpkin.carve");
-    public static final SoundEvent BLOCK_CONDUIT_ACTIVATE = register("block.conduit.activate");
-    public static final SoundEvent BLOCK_CONDUIT_AMBIENT = register("block.conduit.ambient");
-    public static final SoundEvent BLOCK_CONDUIT_AMBIENT_SHORT = register("block.conduit.ambient.short");
-    public static final SoundEvent BLOCK_CONDUIT_ATTACK_TARGET = register("block.conduit.attack.target");
-    public static final SoundEvent BLOCK_CONDUIT_DEACTIVATE = register("block.conduit.deactivate");
-    public static final SoundEvent BLOCK_BUBBLE_COLUMN_BUBBLE_POP = register("block.bubble_column.bubble_pop");
-    public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_AMBIENT = register("block.bubble_column.upwards_ambient");
-    public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE = register("block.bubble_column.upwards_inside");
-    public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT = register("block.bubble_column.whirlpool_ambient");
-    public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE = register("block.bubble_column.whirlpool_inside");
+    @ObjectHolder("backportium:entity.drowned.shoot") public static final SoundEvent ENTITY_DROWNED_SHOOT = null;
 
-    public static final SoundEvent ITEM_ARMOR_EQUIP_TURTLE = register("item.armor.equip_turtle");
-    public static final SoundEvent ITEM_TRIDENT_HIT = register("item.trident.hit");
-    public static final SoundEvent ITEM_TRIDENT_HIT_GROUND = register("item.trident.hit_ground");
-    public static final SoundEvent ITEM_TRIDENT_RETURN = register("item.trident.return");
-    public static final SoundEvent ITEM_TRIDENT_RIPTIDE_1 = register("item.trident.riptide_1");
-    public static final SoundEvent ITEM_TRIDENT_RIPTIDE_2 = register("item.trident.riptide_2");
-    public static final SoundEvent ITEM_TRIDENT_RIPTIDE_3 = register("item.trident.riptide_3");
-    public static final SoundEvent ITEM_TRIDENT_THROW = register("item.trident.throw");
-    public static final SoundEvent ITEM_TRIDENT_THUNDER = register("item.trident.thunder");
+    public ModSounds() {
+        super(16);
+        this.register();
+    }
 
-    public static final SoundEvent ENTITY_DROWNED_SHOOT = register("entity.drowned.shoot");
-
-    public static SoundEvent register(String name) {
+    private SoundEvent register(String name) {
         ResourceLocation location = new ResourceLocation(Tags.MOD_ID, name);
         SoundEvent event = new SoundEvent(location);
-        event.setRegistryName(location);
-        SOUNDS.add(event);
+        this.register(event, location);
         return event;
     }
 
-    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-        IForgeRegistry<SoundEvent> registry = event.getRegistry();
-        SOUNDS.forEach(registry::register);
+    @Override
+    protected SoundEvent register(@NotNull SoundEvent entry, @NotNull ResourceLocation location) {
+        return super.register(entry, location).setRegistryName(location);
+    }
+
+    private void register() {
+        this.register("block.pumpkin.carve");
+        this.register("block.conduit.activate");
+        this.register("block.conduit.ambient");
+        this.register("block.conduit.ambient.short");
+        this.register("block.conduit.attack.target");
+        this.register("block.conduit.deactivate");
+        this.register("block.bubble_column.bubble_pop");
+        this.register("block.bubble_column.upwards_ambient");
+        this.register("block.bubble_column.upwards_inside");
+        this.register("block.bubble_column.whirlpool_ambient");
+        this.register("block.bubble_column.whirlpool_inside");
+
+        this.register("item.armor.equip_turtle");
+        this.register("item.trident.hit");
+        this.register("item.trident.hit_ground");
+        this.register("item.trident.return");
+        this.register("item.trident.riptide_1");
+        this.register("item.trident.riptide_2");
+        this.register("item.trident.riptide_3");
+        this.register("item.trident.throw");
+        this.register("item.trident.thunder");
+
+        this.register("entity.drowned.shoot");
     }
 }

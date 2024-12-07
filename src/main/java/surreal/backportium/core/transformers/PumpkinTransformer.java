@@ -89,7 +89,7 @@ public class PumpkinTransformer extends BasicTransformer {
     }
 
     private static FieldInsnNode getUncarvedPumpkin() {
-        return new FieldInsnNode(GETSTATIC, "surreal/backportium/block/ModBlocks", "UNCARVED_PUMPKIN", "Lsurreal/backportium/block/v1_13/BlockPumpkin;");
+        return new FieldInsnNode(GETSTATIC, "surreal/backportium/block/ModBlocks", "UNCARVED_PUMPKIN", "Lnet/minecraft/block/Block;");
     }
 
     private static void transformBlockStem$apply(MethodNode method) {

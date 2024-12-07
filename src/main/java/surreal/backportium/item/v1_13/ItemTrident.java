@@ -45,9 +45,7 @@ public class ItemTrident extends ItemTEISR {
 
     public ItemTrident() {
         this.setCreativeTab(CreativeTabs.COMBAT);
-        this.setFull3D();
-        this.setMaxDamage(250);
-        addPropertyOverride(new ResourceLocation("throwing"), TRIDENT_MODE);
+        this.addPropertyOverride(new ResourceLocation("throwing"), TRIDENT_MODE);
     }
 
     @Override

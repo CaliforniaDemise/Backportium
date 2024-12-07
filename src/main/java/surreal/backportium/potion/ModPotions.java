@@ -4,49 +4,80 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.registries.IForgeRegistry;
-import surreal.backportium.Tags;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.potion.v1_13.PotionConduitPower;
 import surreal.backportium.potion.v1_13.PotionSlowFalling;
+import surreal.backportium.util.Registrar;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ModPotions extends Registrar<Potion> {
 
-public class ModPotions {
+    private final ModPotionTypes types = new ModPotionTypes(8);
 
-    private static final List<Potion> POTIONS = new ArrayList<>();
-    private static final List<PotionType> POTION_TYPES = new ArrayList<>();
+    @ObjectHolder("backportium:slow_falling") public static final PotionSlowFalling SLOW_FALLING = null;
+    @ObjectHolder("backportium:conduit_power") public static final PotionConduitPower CONDUIT_POWER = null;
 
-    public static final PotionSlowFalling SLOW_FALLING = register(new PotionSlowFalling(false, 0xF3CFB9), "slow_falling");
-    public static final PotionConduitPower CONDUIT_POWER = register(new PotionConduitPower(false, 0x1DC2D1), "conduit_power");
+    @ObjectHolder("backportium:slow_falling") public static final PotionType SLOW_FALLING_TYPE = null;
+    @ObjectHolder("backportium:long_slow_falling") public static final PotionType LONG_SLOW_FALLING_TYPE = null;
 
-    public static final PotionType SLOW_FALLING_TYPE = register(new PotionType(new PotionEffect(SLOW_FALLING, 1800, 0)), "slow_falling");
-    public static final PotionType LONG_SLOW_FALLING_TYPE = register(new PotionType(new PotionEffect(SLOW_FALLING, 4800, 0)), "long_slow_falling");
+    @ObjectHolder("backportium:turtle_master") public static final PotionType TURTLE_MASTER_TYPE = null;
+    @ObjectHolder("backportium:long_turtle_master") public static final PotionType LONG_TURTLE_MASTER_TYPE = null;
+    @ObjectHolder("backportium:strong_turtle_master") public static final PotionType STRONG_TURTLE_MASTER_TYPE = null;
 
-    public static final PotionType TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 3), new PotionEffect(MobEffects.STRENGTH, 1200, 2)), "turtle_master");
-    public static final PotionType LONG_TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 3600, 3), new PotionEffect(MobEffects.STRENGTH, 3600, 2)), "long_turtle_master");
-    public static final PotionType STRONG_TURTLE_MASTER_TYPE = register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 5), new PotionEffect(MobEffects.STRENGTH, 1200, 3)), "strong_turtle_master");
-
-    public static <T extends Potion> T register(T potion, String name) {
-        potion.setPotionName(name).setRegistryName(Tags.MOD_ID, name);
-        POTIONS.add(potion);
-        return potion;
+    public ModPotions() {
+        super(4);
+        this.register();
     }
 
-    public static <T extends PotionType> T register(T potionType, String name) {
-        potionType.setRegistryName(Tags.MOD_ID, name);
-        POTION_TYPES.add(potionType);
-        return potionType;
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        this.types.preInit(event);
     }
 
-    public static void registerPotions(RegistryEvent.Register<Potion> event) {
-        IForgeRegistry<Potion> registry = event.getRegistry();
-        POTIONS.forEach(registry::register);
+    @Override
+    public void init(FMLInitializationEvent event) {
+        this.types.init(event);
     }
 
-    public static void registerPotionTypes(RegistryEvent.Register<PotionType> event) {
-        IForgeRegistry<PotionType> registry = event.getRegistry();
-        POTION_TYPES.forEach(registry::register);
+    public void registerTypeEntries(RegistryEvent.Register<PotionType> event) {
+        this.types.registerEntries(event);
+    }
+
+    @Override
+    protected Potion register(@NotNull Potion entry, @NotNull ResourceLocation location) {
+        return super.register(entry, location).setRegistryName(location).setPotionName(location.getPath());
+    }
+
+    private void register() {
+        Potion slowFalling = this.register(new PotionSlowFalling(false, 0xF3CFB9), "slow_falling");
+        this.register(new PotionConduitPower(false, 0x1DC2D1), "conduit_power");
+
+        this.types.register(new PotionType(new PotionEffect(slowFalling, 1800, 0)), "slow_falling");
+        this.types.register(new PotionType(new PotionEffect(slowFalling, 4800, 0)), "long_slow_falling");
+
+        this.types.register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 3), new PotionEffect(MobEffects.STRENGTH, 1200, 2)), "turtle_master");
+        this.types.register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 3600, 3), new PotionEffect(MobEffects.STRENGTH, 3600, 2)), "long_turtle_master");
+        this.types.register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 5), new PotionEffect(MobEffects.STRENGTH, 1200, 3)), "strong_turtle_master");
+    }
+
+    protected static class ModPotionTypes extends Registrar<PotionType> {
+
+        public ModPotionTypes(int size) {
+            super(size);
+        }
+
+        @Override
+        protected PotionType register(@NotNull PotionType entry, @NotNull String path) {
+            return super.register(entry, path);
+        }
+
+        @Override
+        protected PotionType register(@NotNull PotionType entry, @NotNull ResourceLocation location) {
+            return super.register(entry, location).setRegistryName(location);
+        }
     }
 }

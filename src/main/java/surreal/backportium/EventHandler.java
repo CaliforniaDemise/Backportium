@@ -21,6 +21,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import surreal.backportium.block.ModBlocks;
+import surreal.backportium.block.plant.BlockPlant;
+import surreal.backportium.block.plant.BlockPlantDouble;
 import surreal.backportium.core.BPHooks;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
@@ -109,12 +111,12 @@ public class EventHandler {
                         if (check.getBlock() == ModBlocks.SEAGRASS && worldIn.rand.nextInt(8) == 0) {
                             BlockPos upPos = blockpos1.up();
                             if (WorldHelper.inWater(worldIn, upPos)) {
-                                ModBlocks.SEAGRASS_DOUBLE.place(worldIn, blockpos1, ModBlocks.SEAGRASS.getDefaultState());
+                                ((BlockPlantDouble) ModBlocks.SEAGRASS_DOUBLE).place(worldIn, blockpos1, ModBlocks.SEAGRASS.getDefaultState());
                             }
                         }
                         else if (check.getBlock() != ModBlocks.SEAGRASS_DOUBLE) {
                             IBlockState state = ModBlocks.SEAGRASS.getDefaultState();
-                            if (ModBlocks.SEAGRASS.canBlockStay(worldIn, blockpos1, state)) {
+                            if (((BlockPlant) ModBlocks.SEAGRASS).canBlockStay(worldIn, blockpos1, state)) {
                                 worldIn.setBlockState(blockpos1, state, 3);
                             }
                         }

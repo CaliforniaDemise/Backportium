@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
-import surreal.backportium.api.client.model.ModelProvider;
+import surreal.backportium.api.client.item.ModelProvider;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nonnull;

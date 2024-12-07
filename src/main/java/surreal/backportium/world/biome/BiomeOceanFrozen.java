@@ -18,8 +18,8 @@ import java.util.Random;
 
 public class BiomeOceanFrozen extends BiomeOcean {
 
-    protected static final WorldGenIceberg ICEBERG_PACKED = new WorldGenIceberg(false, Blocks.PACKED_ICE.getDefaultState());
-    protected static final WorldGenIceberg ICEBERG_BLUE = new WorldGenIceberg(false, ModBlocks.BLUE_ICE.getDefaultState());
+    protected final WorldGenIceberg ICEBERG_PACKED = new WorldGenIceberg(false, Blocks.PACKED_ICE.getDefaultState());
+    protected final WorldGenIceberg ICEBERG_BLUE = new WorldGenIceberg(false, ModBlocks.BLUE_ICE.getDefaultState());
 
     private static final NoiseGeneratorSimplex FROZEN_NOISE = new NoiseGeneratorSimplex(new Random(3456L));
     private static NoiseGeneratorDoublePerlin ICEBERG_SURFACE_NOISE = null;

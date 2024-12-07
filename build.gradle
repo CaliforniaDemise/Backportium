@@ -50,6 +50,14 @@ tasks.injectTags.configure {
     outputClassName.set("${project.group}.${project.mod_id}.Tags")
 }
 
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnlyApi 'org.jetbrains:annotations:24.1.0'
+}
+
 apply from: 'dependencies.gradle'
 
 // Adds Access Transformer files to tasks
