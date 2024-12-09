@@ -6,7 +6,7 @@ import net.minecraft.util.IStringSerializable;
 import javax.annotation.Nonnull;
 
 /**
- * Mostly used for slabs.
+ * Used for slabs.
  **/
 public class PropertyNormal {
 

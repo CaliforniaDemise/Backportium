@@ -1,6 +1,5 @@
 package surreal.backportium.core;
 
-import forestry.arboriculture.blocks.BlockForestryLog;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
@@ -28,19 +27,23 @@ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Backportium;
-import surreal.backportium.api.block.DebarkedLog;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.v1_13.BlockBubbleColumn;
+import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
-import surreal.backportium.item.v1_13.ItemBlockDebarkedLog;
+import surreal.backportium.item.v1_13.ItemBlockAddLog;
 import surreal.backportium.item.v1_13.ItemTrident;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.RandomHelper;
@@ -117,64 +120,66 @@ public class BPHooks {
         return original && !(state.getBlock() instanceof FluidLogged);
     }
 
-    // Debarking
-    public static final Map<Block, Block> DEBARKED_LOG_BLOCKS = new LinkedHashMap<>(); // originalLog, debarkedLog
-    public static final List<ItemBlock> DEBARKED_LOG_ITEMS = new ArrayList<>(); // debarkedLogItem
-
+    // Logs
     /**
      * Used in {@link DebarkingTransformer#transformBlockLogEx(byte[])}
      **/
-    public static void Debarking$registerBlock(Block block, Block log) {
-        DEBARKED_LOG_BLOCKS.put(log, block);
+    public static void Logs$registerBlocks(Block origLog, Block stripped, Block bark, Block strippedBark) {
+        LogSystem system = LogSystem.INSTANCE;
+        system.register(origLog, stripped, bark, strippedBark);
     }
 
     /**
      * Used in {@link DebarkingTransformer#transformItemBlock(byte[])}
      **/
-    public static void Debarking$registerItem(Block block, ItemBlock itemBlock) {
-        if (block instanceof DebarkedLog) {
-            DEBARKED_LOG_ITEMS.add(itemBlock);
+    public static void Logs$registerItem(Block addLog, ItemBlock item) {
+        if (Logs$isNonOriginal(addLog)) LogSystem.INSTANCE.registerItem(addLog, item);
+    }
+
+    /**
+     * Used in {@link DebarkingTransformer#transformItemBlock(byte[])}
+     **/
+    public static String Logs$getItemStackDisplayName(String def, ItemStack stack) {
+        Block block = ((ItemBlock) stack.getItem()).getBlock();
+        if (Logs$isNonOriginal(block)) {
+            ResourceLocation location = Objects.requireNonNull(block.getRegistryName());
+            if (location.getPath().endsWith("_stripped")) return I18n.translateToLocalFormatted("tile.backportium.log_stripped", def);
+            if (location.getPath().endsWith("_bark")) return I18n.translateToLocalFormatted("tile.backportium.log_bark", def);
+            if (location.getPath().endsWith("_stripped_bark")) return I18n.translateToLocalFormatted("tile.backportium.log_stripped_bark", def);
         }
-    }
-
-    /**
-     * Used in {@link DebarkingTransformer#transformItemBlock(byte[])}
-     **/
-    public static String Debarking$getItemStackDisplayName(String def, ItemStack stack) {
-        if (((ItemBlock) stack.getItem()).getBlock() instanceof DebarkedLog)
-            return I18n.translateToLocalFormatted("tile.backportium.debarked_log", def);
-        else return def;
+        return def;
     }
 
     /**
      * Used in registering debarked log blocks for vanilla log types.
      **/
-    private static int nextId = 253;
+    private static int nextId = 2268;
 
     /**
      * Used in {@link DebarkingTransformer#transformBlock(byte[])}
      **/
-    public static void Debarking$tryRegisteringDebarkedLogVanilla(RegistryNamespacedDefaultedByKey<ResourceLocation, Block> registry, String registryName, Block origLog) {
-        if (Debarking$isOriginal(origLog)) {
-            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-            if (debarkedLog == null) return;
+    public static void Logs$registerVanilla(RegistryNamespacedDefaultedByKey<ResourceLocation, Block> registry, String registryName, Block origLog) {
+        if (Logs$isOriginal(origLog)) {
+            LogSystem system = LogSystem.INSTANCE;
             ResourceLocation location = new ResourceLocation(registryName);
-            debarkedLog.setRegistryName(registryName);
-            registry.register(nextId, location, debarkedLog);
-            nextId++;
+            registry.register(nextId++, location, system.getStripped(origLog).setRegistryName(location));
+            registry.register(nextId++, location, system.getBark(origLog).setRegistryName(location));
+            registry.register(nextId++, location, system.getStrippedBark(origLog).setRegistryName(location));
         }
     }
 
     /**
      * Used in {@link DebarkingTransformer#transformItem(byte[])}
      **/
-    public static void Debarking$tryRegisteringDebarkedLogVanilla(RegistryNamespaced<ResourceLocation, Item> registry, Map<Block, Item> blockToItem, Block origLog, Item origItem) {
-        if (Debarking$isOriginal(origLog)) {
-            Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-            ItemBlockDebarkedLog debarkedLogItem = new ItemBlockDebarkedLog(debarkedLog, origLog);
-            debarkedLogItem.setRegistryName(Objects.requireNonNull(debarkedLog.getRegistryName()));
-            registry.register(Block.getIdFromBlock(debarkedLog), Block.REGISTRY.getNameForObject(debarkedLog), debarkedLogItem);
-            blockToItem.put(debarkedLog, debarkedLogItem);
+    public static void Logs$registerVanilla(RegistryNamespaced<ResourceLocation, Item> registry, Map<Block, Item> blockToItem, Block origLog, Item origItem) {
+        if (Logs$isOriginal(origLog)) {
+            LogSystem system = LogSystem.INSTANCE;
+            ItemBlockAddLog strippedItem = new ItemBlockAddLog(system.getStripped(origLog), origLog);
+            ItemBlockAddLog barkItem = new ItemBlockAddLog(system.getBark(origLog), origLog);
+            ItemBlockAddLog strippedBarkItem = new ItemBlockAddLog(system.getStrippedBark(origLog), origLog);
+            registry.register(Block.getIdFromBlock(strippedItem.getBlock()), Block.REGISTRY.getNameForObject(strippedItem.getBlock()), strippedItem);
+            registry.register(Block.getIdFromBlock(barkItem.getBlock()), Block.REGISTRY.getNameForObject(barkItem.getBlock()), barkItem);
+            registry.register(Block.getIdFromBlock(strippedBarkItem.getBlock()), Block.REGISTRY.getNameForObject(strippedBarkItem.getBlock()), strippedBarkItem);
         }
     }
 
@@ -182,52 +187,55 @@ public class BPHooks {
     // TODO Mod might be adding multiple instances of debarked block and item, check and find ways if some of them actually are
     /**
      * Used in {@link DebarkingTransformer#transformForgeRegistry(byte[])}
+     * Putted after everything is registered
      **/
-    public static boolean Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
-        if (origLog instanceof DebarkedLog && registry.containsValue(origLog)) {
-            return false;
-        }
-        Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-        if (debarkedLog == null) return true;
-        if (debarkedLog.getRegistryName() == null) {
-            debarkedLog.setRegistryName(Objects.requireNonNull(origLog.getRegistryName()));
-        }
-        // TODO Copy over variables
-        if (!registry.containsValue(debarkedLog)) {
-            registry.register(debarkedLog);
-        }
-        return true;
-    }
+
+
+//    public static boolean Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
+//        if (origLog instanceof DebarkedLog && registry.containsValue(origLog)) {
+//            return false;
+//        }
+//        Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
+//        if (debarkedLog == null) return true;
+//        if (debarkedLog.getRegistryName() == null) {
+//            debarkedLog.setRegistryName(Objects.requireNonNull(origLog.getRegistryName()));
+//        }
+//        // TODO Copy over variables
+//        if (!registry.containsValue(debarkedLog)) {
+//            registry.register(debarkedLog);
+//        }
+//        return true;
+//    }
 
     // TODO Use ForgeRegistry#add instead of hooks
     /**
      * Used in {@link DebarkingTransformer#transformForgeRegistry(byte[])}
      **/
-    public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Item> registry, Item item) {
-        if (!(item instanceof ItemBlock)) return;
-        if (((ItemBlock) item).getBlock() instanceof DebarkedLog && registry.containsValue(item)) {
-            return;
-        }
-        Block origLog = ((ItemBlock) item).getBlock();
-        Block debLog = DEBARKED_LOG_BLOCKS.get(origLog);
-        if (debLog != null) {
-            for (ItemBlock itemBlock : DEBARKED_LOG_ITEMS) {
-                if (itemBlock.getBlock() == debLog) return;
-            }
-            boolean forestryLoaded = Loader.isModLoaded("forestry");
-            if (forestryLoaded && origLog instanceof BlockForestryLog) {
-                registry.register(new ItemBlockDebarkedLog.ItemBlockDebarkedForestryLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
-            }
-            else registry.register(new ItemBlockDebarkedLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
-        }
-    }
+//    public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Item> registry, Item item) {
+//        if (!(item instanceof ItemBlock)) return;
+//        if (((ItemBlock) item).getBlock() instanceof DebarkedLog && registry.containsValue(item)) {
+//            return;
+//        }
+//        Block origLog = ((ItemBlock) item).getBlock();
+//        Block debLog = DEBARKED_LOG_BLOCKS.get(origLog);
+//        if (debLog != null) {
+//            for (ItemBlock itemBlock : DEBARKED_LOG_ITEMS) {
+//                if (itemBlock.getBlock() == debLog) return;
+//            }
+//            boolean forestryLoaded = Loader.isModLoaded("forestry");
+//            if (forestryLoaded && origLog instanceof BlockForestryLog) {
+//                registry.register(new ItemBlockAddLog.ItemBlockAddLogForestry(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
+//            }
+//            else registry.register(new ItemBlockAddLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
+//        }
+//    }
 
     /**
      * Used in createDebarkedLogClass in {@link DebarkingTransformer}.
      * Some mods like BoP uses variant values that are hardcoded to the specific block.
      * Just fetch the metadata and states from original block right?
      **/
-    public static int Debarking$getMetaFromState(Block debarkedLog, Block origLog, IBlockState state) {
+    public static int Logs$getMetaFromState(Block debarkedLog, Block origLog, IBlockState state) {
         return origLog.getMetaFromState(RandomHelper.copyState(state, origLog));
     }
 
@@ -236,34 +244,88 @@ public class BPHooks {
      * Some mods like BoP uses variant values that are hardcoded to the specific block.
      * Just fetch the metadata and states from original block right?
      **/
-    public static IBlockState Debarking$getStateFromMeta(Block debarkedLog, Block origLog, int meta) {
+    public static IBlockState Logs$getStateFromMeta(Block debarkedLog, Block origLog, int meta) {
         IBlockState ass = origLog.getStateFromMeta(meta);
         return RandomHelper.copyState(ass, debarkedLog);
-    }
-
-    // TODO Change position of this when creating an API
-    /**
-     * Used outside {@link DebarkingTransformer}
-     **/
-    public static boolean Debarking$isOriginal(Block block) {
-        return block instanceof BlockLog && !(block instanceof DebarkedLog);
     }
 
     /**
      * Used in {@link DebarkingTransformer#transformForgeRegistryEntry$Impl(byte[])}
      * Why care about the existence of registry name when I can just change it before name check happens.
      **/
-    public static String Debarking$setRegistryNameDeep(IForgeRegistryEntry.Impl<?> entry, String name) {
-        if (entry instanceof Block && entry instanceof DebarkedLog) {
-            return name + "_debarked";
-        }
-        else if (entry instanceof ItemBlock) {
-            ItemBlock ass = (ItemBlock) entry;
-            if (ass.getBlock() instanceof DebarkedLog) {
-                if (!name.endsWith("_debarked")) return name + "_debarked";
-            }
+    public static String Logs$setRegistryNameDeep(IForgeRegistryEntry.Impl<?> entry, String name) {
+        if (Logs$isNonOriginal(entry)) {
+            String clsName = entry.getClass().getName();
+            if (clsName.endsWith("$Stripped")) return name + "_stripped";
+            if (clsName.endsWith("$Bark")) return name + "_bark";
+            if (clsName.endsWith("$StrippedBark")) return name + "_stripped_bark";
         }
         return name;
+    }
+
+    public static void Logs$postRegister(Event event) {
+        ModContainer container = Loader.instance().activeModContainer();
+        if (container == null) return;
+        String modId = container.getModId();
+        if (event instanceof RegistryEvent.Register) {
+            RegistryEvent.Register<?> register = (RegistryEvent.Register<?>) event;
+            if (register.getRegistry().getRegistrySuperType() == Block.class) {
+                IForgeRegistry<Block> registry = (IForgeRegistry<Block>) register.getRegistry();
+                LogSystem system = LogSystem.INSTANCE;
+                system.forEachBlock(origLog -> {
+                    ResourceLocation origLoc = Objects.requireNonNull(origLog.getRegistryName());
+                    if (!origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
+                        Block stripped = system.getStripped(origLog);
+                        Block bark = system.getBark(origLog);
+                        Block strippedBark = system.getStrippedBark(origLog);
+                        if (stripped.getRegistryName() == null) stripped.setRegistryName(origLoc);
+                        if (bark.getRegistryName() == null) bark.setRegistryName(origLoc);
+                        if (stripped.getRegistryName() == null) strippedBark.setRegistryName(origLoc);
+                        if (!registry.containsValue(stripped)) registry.register(stripped);
+                        if (!registry.containsValue(bark)) registry.register(bark);
+                        if (!registry.containsValue(strippedBark)) registry.register(strippedBark);
+                    }
+                });
+            }
+            else if (register.getRegistry().getRegistrySuperType() == Item.class) {
+                IForgeRegistry<Item> registry = (IForgeRegistry<Item>) register.getRegistry();
+                LogSystem system = LogSystem.INSTANCE;
+                system.forEachBlock(origLog -> {
+                    ResourceLocation origLoc = Objects.requireNonNull(origLog.getRegistryName());
+                    if (!origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
+                        Block stripped = system.getStripped(origLog);
+                        Block bark = system.getBark(origLog);
+                        Block strippedBark = system.getStrippedBark(origLog);
+                        ItemBlock strippedItem = system.getItem(stripped);
+                        ItemBlock barkItem = system.getItem(bark);
+                        ItemBlock strippedBarkItem = system.getItem(strippedBark);
+                        if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(Objects.requireNonNull(stripped.getRegistryName())));
+                        else {
+                            if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(Objects.requireNonNull(stripped.getRegistryName()));
+                            if (!registry.containsValue(strippedItem)) registry.register(strippedItem);
+                        }
+                        if (barkItem == null) registry.register(new ItemBlockAddLog(bark, origLog).setRegistryName(Objects.requireNonNull(bark.getRegistryName())));
+                        else {
+                            if (barkItem.getRegistryName() == null) barkItem.setRegistryName(Objects.requireNonNull(bark.getRegistryName()));
+                            if (!registry.containsValue(barkItem)) registry.register(barkItem);
+                        }
+                        if (strippedBarkItem == null) registry.register(new ItemBlockAddLog(strippedBark, origLog).setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName())));
+                        else {
+                            if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName()));
+                            if (!registry.containsValue(strippedBarkItem)) registry.register(strippedBarkItem);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    public static boolean Logs$isOriginal(Object block) {
+        return block instanceof BlockLog && !block.getClass().getName().startsWith("backportium.logs");
+    }
+
+    private static boolean Logs$isNonOriginal(Object block) {
+        return block instanceof BlockLog && block.getClass().getName().startsWith("backportium.logs");
     }
 
     // Button Placement
@@ -331,19 +393,38 @@ public class BPHooks {
         /**
          * Used in {@link DebarkingTransformer#transformBlockStateMapper(byte[])}
          **/
-        public static void Debarking$registerBlockStateMapper(BlockStateMapper mapper, Block origLog, IStateMapper mapperIface) {
-            if (Debarking$isOriginal(origLog)) {
-                Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-                if (debarkedLog == null) return;
+        public static void Logs$registerBlockStateMapper(BlockStateMapper mapper, Block origLog, IStateMapper mapperIface) {
+            if (Logs$isOriginal(origLog)) {
+                LogSystem system = LogSystem.INSTANCE;
                 Map<IBlockState, ModelResourceLocation> m = mapperIface.putStateModelLocations(origLog);
-                mapper.registerBlockStateMapper(debarkedLog, new StateMapperBase() {
+                mapper.registerBlockStateMapper(system.getStripped(origLog), new StateMapperBase() {
                     @Nonnull
                     @Override
                     @SuppressWarnings("deprecation")
-                    protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
+                    protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
                         IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
                         ModelResourceLocation origLoc = m.get(origState);
-                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_debarked"), origLoc.getVariant());
+                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_stripped"), origLoc.getVariant());
+                    }
+                });
+                mapper.registerBlockStateMapper(system.getBark(origLog), new StateMapperBase() {
+                    @Nonnull
+                    @Override
+                    @SuppressWarnings("deprecation")
+                    protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+                        IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
+                        ModelResourceLocation origLoc = m.get(origState);
+                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_bark"), origLoc.getVariant());
+                    }
+                });
+                mapper.registerBlockStateMapper(system.getStrippedBark(origLog), new StateMapperBase() {
+                    @Nonnull
+                    @Override
+                    @SuppressWarnings("deprecation")
+                    protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+                        IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
+                        ModelResourceLocation origLoc = m.get(origState);
+                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_stripped_bark"), origLoc.getVariant());
                     }
                 });
             }

@@ -37,12 +37,13 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockLiquid": return FluidloggingTransformer.transformBlockLiquid(basicClass);
 
             // Debarking
-            case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return DebarkingTransformer.transformBlockStateMapper(basicClass);
-            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
-            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return DebarkingTransformer.transformForgeRegistryEntry$Impl(basicClass);
-            case "net.minecraft.block.Block": return DebarkingTransformer.transformBlock(basicClass);
-            case "net.minecraft.item.Item": return DebarkingTransformer.transformItem(basicClass);
-            case "net.minecraft.item.ItemBlock": return DebarkingTransformer.transformItemBlock(basicClass);
+            case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
+//            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
+            case "net.minecraftforge.fml.common.eventhandler.ASMEventHandler": return LogTransformer.transformASMEventHandler(basicClass);
+            case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return LogTransformer.transformForgeRegistryEntry$Impl(basicClass);
+            case "net.minecraft.block.Block": return LogTransformer.transformBlock(basicClass);
+            case "net.minecraft.item.Item": return LogTransformer.transformItem(basicClass);
+            case "net.minecraft.item.ItemBlock": return LogTransformer.transformItemBlock(basicClass);
 
             // For The Game Players
             case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);
@@ -69,7 +70,7 @@ public class BPTransformer implements IClassTransformer {
             boolean techrebornCheck = transformedName.equals("techreborn.blocks.BlockRubberLog");
             boolean thaumcraftCheck = transformedName.equals("thaumcraft.common.blocks.world.plants.BlockLogsTC");
             String[] toCheck = new String[] { "net/minecraft/block/BlockLog", "com/progwml6/natura/common/block/BlockEnumLog" };
-            if (bewitchmentCheck || techrebornCheck || thaumcraftCheck || DebarkingTransformer.checkLogs(basicClass, transformedName, toCheck, false)) return DebarkingTransformer.transformBlockLogEx(basicClass);
+            if (bewitchmentCheck || techrebornCheck || thaumcraftCheck || LogTransformer.checkLogs(basicClass, transformedName, toCheck)) return LogTransformer.transformBlockLogEx(basicClass);
         }
         return basicClass;
     }

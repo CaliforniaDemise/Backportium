@@ -43,6 +43,7 @@ import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.ClientHandler;
 import surreal.backportium.client.renderer.tile.TESRConduit;
 import surreal.backportium.command.debug.CommandGenerate;
+import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.ModEntities;
 import surreal.backportium.entity.v1_13.EntityTrident;
@@ -146,6 +147,7 @@ public class Backportium {
 
     private void cleanup() {
         this.registries = null;
+        LogSystem.cleanup();
         System.gc();
     }
 

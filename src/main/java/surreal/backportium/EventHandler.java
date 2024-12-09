@@ -20,13 +20,12 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.plant.BlockPlant;
 import surreal.backportium.block.plant.BlockPlantDouble;
-import surreal.backportium.core.BPHooks;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
-import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.WorldHelper;
 
 import java.util.Objects;
@@ -75,16 +74,15 @@ public class EventHandler {
         EntityPlayer player = event.getEntityPlayer();
 
         {
-            Block debarkedLog = BPHooks.DEBARKED_LOG_BLOCKS.get(block);
-            if (debarkedLog != null) {
+            if (block instanceof StrippableLog) {
                 if (stack.getItem().getHarvestLevel(stack, "axe", player, state) <= -1) return;
-                if (!world.isRemote) {
-                    world.setBlockState(pos, RandomHelper.copyState(state, debarkedLog));
+                StrippableLog log = (StrippableLog) block;
+                if (log.onStrip(event.getWorld(), event.getEntityPlayer(), event.getHand(), event.getPos(), event.getWorld().getBlockState(event.getPos()), event.getFace(), event.getHitVec())) {
+                    player.swingArm(event.getHand());
+                    event.setUseItem(Event.Result.ALLOW);
+                    event.setResult(Event.Result.ALLOW);
+                    event.setCanceled(true);
                 }
-                player.swingArm(event.getHand());
-                event.setUseItem(Event.Result.ALLOW);
-                event.setResult(Event.Result.ALLOW);
-                event.setCanceled(true);
             }
         }
     }
