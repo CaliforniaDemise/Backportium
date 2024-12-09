@@ -2,6 +2,7 @@ package surreal.backportium.enchantment;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.enchantment.v1_13.EnchantmentChanneling;
@@ -19,6 +20,10 @@ public class ModEnchantments extends Registrar<Enchantment> {
 
     public ModEnchantments() {
         super(4);
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
         this.register();
     }
 

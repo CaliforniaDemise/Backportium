@@ -5,6 +5,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -28,8 +29,6 @@ public class ModEntities extends Registrar<EntityEntry> {
 
     public ModEntities() {
         super(8);
-        this.register(builder(EntityTrident.class, EntityTrident::new, "trident", 1));
-        this.register(builder(EntityPhantom.class, EntityPhantom::new, "phantom", 3).egg(0x3E4B80, 0x75DB00));
     }
 
     public EntityEntry register(EntityEntryBuilder<? extends Entity> builder) {
@@ -43,8 +42,18 @@ public class ModEntities extends Registrar<EntityEntry> {
     }
 
     @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        this.register();
+    }
+
+    @Override
     public void init(FMLInitializationEvent event) {
         if (PHANTOM != null) LootTableList.register(LOOT_PHANTOM);
+    }
+
+    private void register() {
+        this.register(builder(EntityTrident.class, EntityTrident::new, "trident", 1));
+        this.register(builder(EntityPhantom.class, EntityPhantom::new, "phantom", 3).egg(0x3E4B80, 0x75DB00));
     }
 
     private <T extends Entity> EntityEntryBuilder<T> builder(Class<T> entityClass, Function<World, T> factory, String name, int updateFrequency) {

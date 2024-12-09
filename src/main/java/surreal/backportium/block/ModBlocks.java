@@ -11,6 +11,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -137,7 +138,6 @@ public class ModBlocks extends Registrar<Block> {
     public ModBlocks(ModItems modItems) {
         super(16);
         this.modItems = modItems;
-        this.register();
     }
 
     @SideOnly(Side.CLIENT)
@@ -157,6 +157,11 @@ public class ModBlocks extends Registrar<Block> {
     @Override
     protected Block register(@NotNull Block entry, @NotNull ResourceLocation location) {
         return super.register(entry, location).setRegistryName(location).setTranslationKey(location.getNamespace() + "." + location.getPath());
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        this.register();
     }
 
     @Override

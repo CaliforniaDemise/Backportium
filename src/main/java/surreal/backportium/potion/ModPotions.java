@@ -30,11 +30,11 @@ public class ModPotions extends Registrar<Potion> {
 
     public ModPotions() {
         super(4);
-        this.register();
     }
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
+        this.register();
         this.types.preInit(event);
     }
 

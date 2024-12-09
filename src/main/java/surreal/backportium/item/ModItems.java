@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
@@ -34,7 +35,6 @@ public class ModItems extends Registrar<Item> {
 
     public ModItems() {
         super(8);
-        this.register();
     }
 
     public Item register(String name) {
@@ -54,6 +54,11 @@ public class ModItems extends Registrar<Item> {
     @Override
     public Item register(@NotNull Item entry, @NotNull ResourceLocation location) {
         return super.register(entry, location).setRegistryName(location).setTranslationKey(location.getNamespace() + "." + location.getPath());
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
+        this.register();
     }
 
     @Override

@@ -2,6 +2,7 @@ package surreal.backportium.sound;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Tags;
@@ -35,6 +36,10 @@ public class ModSounds extends Registrar<SoundEvent> {
 
     public ModSounds() {
         super(16);
+    }
+
+    @Override
+    public void preInit(FMLPreInitializationEvent event) {
         this.register();
     }
 
