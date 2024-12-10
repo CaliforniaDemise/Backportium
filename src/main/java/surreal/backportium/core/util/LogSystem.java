@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -33,14 +32,13 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
-import surreal.backportium.client.textures.DebarkedSpriteSide;
-import surreal.backportium.client.textures.DebarkedSpriteTop;
-import surreal.backportium.client.textures.DebarkedSpriteTopDumb;
+import surreal.backportium.client.textures.StrippedSpriteSide;
+import surreal.backportium.client.textures.StrippedSpriteTop;
+import surreal.backportium.client.textures.StrippedSpriteTopTemplate;
 import surreal.backportium.util.RandomHelper;
 
 import javax.annotation.Nullable;
@@ -262,20 +260,25 @@ public class LogSystem {
                                     { // TODO Change how this works
                                         String texLoc = strippedSprite.toString();
                                         if (map.getTextureExtry(texLoc) == null) {
-                                            map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
+                                            map.setTextureEntry(new StrippedSpriteTopTemplate(texLoc, endSprite));
                                         }
                                     }
 
                                     {
                                         String location = endSprite + "_stripped";
                                         if (map.getTextureExtry(location) == null) {
-                                            map.setTextureEntry(new DebarkedSpriteTop(location, endSprite, strippedSprite));
+                                            if (stripped.getRegistryName().getNamespace().equals("ee")) {
+                                                map.setTextureEntry(new StrippedSpriteSide(location, endSprite, endSprite));
+                                            }
+                                            else {
+                                                map.setTextureEntry(new StrippedSpriteTop(location, endSprite, strippedSprite));
+                                            }
                                         }
                                     }
                                     {
                                         String location = sideSprite + "_stripped";
                                         if (map.getTextureExtry(location) == null) {
-                                            map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, sideSprite));
+                                            map.setTextureEntry(new StrippedSpriteSide(location, endSprite, sideSprite));
                                         }
                                     }
                                 }
@@ -298,19 +301,19 @@ public class LogSystem {
             { // TODO Change how this works
                 String texLoc = debarkedSprite.toString();
                 if (map.getTextureExtry(texLoc) == null) {
-                    map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
+                    map.setTextureEntry(new StrippedSpriteTopTemplate(texLoc, endSprite));
                 }
             }
             {
                 String location = endSprite + "_stripped";
                 if (map.getTextureExtry(location) == null) {
-                    map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_stripped", endSprite, debarkedSprite));
+                    map.setTextureEntry(new StrippedSpriteTop(endSprite + "_stripped", endSprite, debarkedSprite));
                 }
             }
             {
                 String location = type.getBarkTexture() + "_stripped";
                 if (map.getTextureExtry(location) == null) {
-                    map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, new ResourceLocation(type.getBarkTexture())));
+                    map.setTextureEntry(new StrippedSpriteSide(location, endSprite, new ResourceLocation(type.getBarkTexture())));
                 }
             }
         }

@@ -314,7 +314,7 @@ public class BPHooks {
                 });
             }
             else if (register.getRegistry().getRegistrySuperType() == Item.class) {
-                if (modId.equals("mm")) return; // I am not sure why this happens
+                if (modId.equals("mm") || modId.equals("ee")) return; // I am not sure why this happens
                 IForgeRegistry<Item> registry = (IForgeRegistry<Item>) register.getRegistry();
                 LogSystem system = LogSystem.INSTANCE;
                 system.forEachBlock(origLog -> {

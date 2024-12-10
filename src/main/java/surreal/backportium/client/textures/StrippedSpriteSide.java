@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.util.fromdebark.SpriteUtils;
 import surreal.backportium.util.fromdebark.UCWColorSpaceUtils;
 
@@ -12,17 +13,18 @@ import java.util.Collection;
 import java.util.function.Function;
 
 // Stolen from https://github.com/asiekierka/Debark/blob/master/src/main/java/pl/asie/debark/messy/StrippedBarkColoredSprite.java
-public class DebarkedSpriteSide extends SpriteDef {
+public class StrippedSpriteSide extends SpriteDef {
 
     private final ResourceLocation logTop;
     private final ResourceLocation logSide;
 
-    public DebarkedSpriteSide(String spriteName, ResourceLocation logTop, ResourceLocation logSide) {
+    public StrippedSpriteSide(String spriteName, ResourceLocation logTop, ResourceLocation logSide) {
         super(spriteName);
         this.logTop = logTop;
         this.logSide = logSide;
     }
 
+    @NotNull
     @Override
     public Collection<ResourceLocation> getDependencies() {
         return ImmutableSet.of(logTop, logSide);
@@ -87,7 +89,6 @@ public class DebarkedSpriteSide extends SpriteDef {
             minL /= 100f;
             maxL /= 100f;
 
-            int lastPixel = -1;
             for (int iy = 0; iy < baseTex.getIconHeight(); iy++) {
                 int ip = iy * baseTex.getIconWidth() + ix;
                 int pixel = templateInput[ip];
@@ -113,7 +114,6 @@ public class DebarkedSpriteSide extends SpriteDef {
                 lab[1] = gcrMiddle[2];
                 lab[2] = gcrMiddle[3];
                 templateData[ip] = UCWColorSpaceUtils.asInt(UCWColorSpaceUtils.XYZtosRGB(UCWColorSpaceUtils.LABtoXYZ(lab))) | 0xFF000000;
-                lastPixel = pixel;
             }
         }
 

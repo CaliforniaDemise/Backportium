@@ -10,11 +10,11 @@ import surreal.backportium.util.fromdebark.UCWColorSpaceUtils;
 import java.util.Collection;
 import java.util.function.Function;
 
-public class DebarkedSpriteTop extends SpriteDef {
+public class StrippedSpriteTop extends SpriteDef {
     private final ResourceLocation base;
     private final ResourceLocation template;
 
-    public DebarkedSpriteTop(String spriteName, ResourceLocation base, ResourceLocation template) {
+    public StrippedSpriteTop(String spriteName, ResourceLocation base, ResourceLocation template) {
         super(spriteName);
         this.base = base;
         this.template = template;

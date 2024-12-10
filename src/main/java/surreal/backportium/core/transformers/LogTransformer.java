@@ -129,11 +129,13 @@ public class LogTransformer extends BasicTransformer {
         }
         MethodNode initMethod = null;
         boolean createsBlockState = false;
+        boolean initInit = false;
         for (MethodNode method : cls.methods) {
             if ((method.access & ACC_PRIVATE) == ACC_PRIVATE) method.access ^= ACC_PRIVATE;
             if ((method.access & ACC_PUBLIC) != ACC_PUBLIC) method.access |= ACC_PROTECTED;
-            if (method.name.equals("<init>")) {
+            if (!initInit && method.name.equals("<init>")) {
                 initMethod = method;
+                initInit = true;
             }
             else if (method.name.equals(getName("createBlockState", "func_180661_e"))) {
                 createsBlockState = true;
@@ -156,7 +158,7 @@ public class LogTransformer extends BasicTransformer {
                 String clsStrippedBark = null;
                 clsStripped = createStrippedClass(cls, initMethod.desc, map, createsBlockState);
                 boolean maelstrom = clsName.startsWith("com/barribob/MaelstromMod/blocks");
-                if (!clsName.startsWith("de/ellpeck/naturesaura") && (!maelstrom || !clsName.endsWith("BlockFullLog"))) {
+                if (!clsName.startsWith("de/ellpeck/naturesaura") && (!maelstrom || !clsName.endsWith("BlockFullLog")) && !clsName.startsWith("com/example/structure/blocks")) {
                     clsBark = createBarkClass(cls, initMethod.desc, map, createsBlockState);
                     clsStrippedBark = createStrippedBarkClass(cls, initMethod.desc, map, createsBlockState);
                 }
@@ -521,7 +523,6 @@ public class LogTransformer extends BasicTransformer {
                 m.visitInsn(ARETURN);
             }
         }
-        writeClass(clsStripped);
         byte[] bytes = write(clsStripped);
         loadNewClass(strippedClsName, bytes);
         return strippedClsName;

@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-public class DebarkedSpriteTopDumb extends SpriteDef {
+public class StrippedSpriteTopTemplate extends SpriteDef {
 
     private final ResourceLocation base;
 
-    public DebarkedSpriteTopDumb(String spriteName, ResourceLocation base) {
+    public StrippedSpriteTopTemplate(String spriteName, ResourceLocation base) {
         super(spriteName);
         this.base = base;
     }
