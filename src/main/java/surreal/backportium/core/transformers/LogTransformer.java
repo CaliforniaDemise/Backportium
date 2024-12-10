@@ -97,7 +97,7 @@ public class LogTransformer extends BasicTransformer {
         ClassNode cls = read(basicClass);
         cls.interfaces = new ArrayList<>(cls.interfaces);
         cls.interfaces.add("surreal/backportium/api/block/StrippableLog");
-        {
+        { // TODO Change these to static
             cls.visitField(ACC_PUBLIC, "stripped", "Lnet/minecraft/block/Block;", null, null);
             cls.visitField(ACC_PUBLIC, "strippedBark", "Lnet/minecraft/block/Block;", null, null);
         }
@@ -109,7 +109,7 @@ public class LogTransformer extends BasicTransformer {
             m.visitJumpInsn(IFNE, l_con);
             m.visitVarInsn(ALOAD, 0);
             m.visitFieldInsn(GETFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;");
-            m.visitJumpInsn(IFNONNULL, l_con);
+            m.visitJumpInsn(IFNULL, l_con);
             m.visitVarInsn(ALOAD, 1);
             m.visitVarInsn(ALOAD, 4);
             m.visitVarInsn(ALOAD, 0);
@@ -530,15 +530,19 @@ public class LogTransformer extends BasicTransformer {
             Label l_con = new Label();
             m.visitJumpInsn(IFNE, l_con);
             m.visitVarInsn(ALOAD, 0);
+            m.visitFieldInsn(GETFIELD, barkClsName, "origLog", "Lnet/minecraft/block/Block;");
+            m.visitTypeInsn(CHECKCAST, cls.name);
             m.visitFieldInsn(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;");
-            m.visitJumpInsn(IFNONNULL, l_con);
+            m.visitJumpInsn(IFNULL, l_con);
             m.visitVarInsn(ALOAD, 1);
             m.visitVarInsn(ALOAD, 4);
             m.visitVarInsn(ALOAD, 0);
+            m.visitFieldInsn(GETFIELD, barkClsName, "origLog", "Lnet/minecraft/block/Block;");
+            m.visitTypeInsn(CHECKCAST, cls.name);
             m.visitFieldInsn(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;");
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 5);
-            m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getMetaFromState", "func_176201_c"), "(Lnet/minecraft/block/state/IBlockState;)I", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, barkClsName, getName("getMetaFromState", "func_176201_c"), "(Lnet/minecraft/block/state/IBlockState;)I", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getStateFromMeta", "func_176203_a"), "(I)Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
             m.visitInsn(IRETURN);
