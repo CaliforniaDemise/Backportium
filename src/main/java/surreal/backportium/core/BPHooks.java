@@ -144,8 +144,8 @@ public class BPHooks {
         if (Logs$isNonOriginal(block)) {
             ResourceLocation location = Objects.requireNonNull(block.getRegistryName());
             if (location.getPath().endsWith("_stripped")) return I18n.translateToLocalFormatted("tile.backportium.log_stripped", def);
-            if (location.getPath().endsWith("_bark")) return I18n.translateToLocalFormatted("tile.backportium.log_bark", def);
             if (location.getPath().endsWith("_stripped_bark")) return I18n.translateToLocalFormatted("tile.backportium.log_stripped_bark", def);
+            if (location.getPath().endsWith("_bark")) return I18n.translateToLocalFormatted("tile.backportium.log_bark", def);
         }
         return def;
     }
@@ -162,9 +162,12 @@ public class BPHooks {
         if (Logs$isOriginal(origLog)) {
             LogSystem system = LogSystem.INSTANCE;
             ResourceLocation location = new ResourceLocation(registryName);
-            registry.register(nextId++, location, system.getStripped(origLog).setRegistryName(location));
-            registry.register(nextId++, location, system.getBark(origLog).setRegistryName(location));
-            registry.register(nextId++, location, system.getStrippedBark(origLog).setRegistryName(location));
+            Block stripped = system.getStripped(origLog);
+            Block bark = system.getBark(origLog);
+            Block strippedBark = system.getStrippedBark(origLog);
+            if (stripped != null) registry.register(nextId++, location, stripped.setRegistryName(location));
+            if (bark != null) registry.register(nextId++, location, bark.setRegistryName(location));
+            if (strippedBark != null) registry.register(nextId++, location, strippedBark.setRegistryName(location));
         }
     }
 
@@ -174,12 +177,21 @@ public class BPHooks {
     public static void Logs$registerVanilla(RegistryNamespaced<ResourceLocation, Item> registry, Map<Block, Item> blockToItem, Block origLog, Item origItem) {
         if (Logs$isOriginal(origLog)) {
             LogSystem system = LogSystem.INSTANCE;
-            ItemBlockAddLog strippedItem = new ItemBlockAddLog(system.getStripped(origLog), origLog);
-            ItemBlockAddLog barkItem = new ItemBlockAddLog(system.getBark(origLog), origLog);
-            ItemBlockAddLog strippedBarkItem = new ItemBlockAddLog(system.getStrippedBark(origLog), origLog);
-            registry.register(Block.getIdFromBlock(strippedItem.getBlock()), Block.REGISTRY.getNameForObject(strippedItem.getBlock()), strippedItem);
-            registry.register(Block.getIdFromBlock(barkItem.getBlock()), Block.REGISTRY.getNameForObject(barkItem.getBlock()), barkItem);
-            registry.register(Block.getIdFromBlock(strippedBarkItem.getBlock()), Block.REGISTRY.getNameForObject(strippedBarkItem.getBlock()), strippedBarkItem);
+            Block stripped = system.getStripped(origLog);
+            Block bark = system.getBark(origLog);
+            Block strippedBark = system.getStrippedBark(origLog);
+            if (stripped != null) {
+                ItemBlockAddLog strippedItem = new ItemBlockAddLog(stripped, origLog);
+                registry.register(Block.getIdFromBlock(strippedItem.getBlock()), Block.REGISTRY.getNameForObject(strippedItem.getBlock()), strippedItem);
+            }
+            if (bark != null) {
+                ItemBlockAddLog barkItem = new ItemBlockAddLog(bark, origLog);
+                registry.register(Block.getIdFromBlock(barkItem.getBlock()), Block.REGISTRY.getNameForObject(barkItem.getBlock()), barkItem);
+            }
+            if (strippedBark != null) {
+                ItemBlockAddLog strippedBarkItem = new ItemBlockAddLog(strippedBark, origLog);
+                registry.register(Block.getIdFromBlock(strippedBarkItem.getBlock()), Block.REGISTRY.getNameForObject(strippedBarkItem.getBlock()), strippedBarkItem);
+            }
         }
     }
 
@@ -278,12 +290,18 @@ public class BPHooks {
                         Block stripped = system.getStripped(origLog);
                         Block bark = system.getBark(origLog);
                         Block strippedBark = system.getStrippedBark(origLog);
-                        if (stripped.getRegistryName() == null) stripped.setRegistryName(origLoc);
-                        if (bark.getRegistryName() == null) bark.setRegistryName(origLoc);
-                        if (stripped.getRegistryName() == null) strippedBark.setRegistryName(origLoc);
-                        if (!registry.containsValue(stripped)) registry.register(stripped);
-                        if (!registry.containsValue(bark)) registry.register(bark);
-                        if (!registry.containsValue(strippedBark)) registry.register(strippedBark);
+                        if (stripped != null) {
+                            if (stripped.getRegistryName() == null) stripped.setRegistryName(origLoc);
+                            if (!registry.containsValue(stripped)) registry.register(stripped);
+                        }
+                        if (bark != null) {
+                            if (bark.getRegistryName() == null) bark.setRegistryName(origLoc);
+                            if (!registry.containsValue(bark)) registry.register(bark);
+                        }
+                        if (strippedBark != null) {
+                            if (strippedBark.getRegistryName() == null) strippedBark.setRegistryName(origLoc);
+                            if (!registry.containsValue(strippedBark)) registry.register(strippedBark);
+                        }
                     }
                 });
             }
@@ -296,23 +314,29 @@ public class BPHooks {
                         Block stripped = system.getStripped(origLog);
                         Block bark = system.getBark(origLog);
                         Block strippedBark = system.getStrippedBark(origLog);
-                        ItemBlock strippedItem = system.getItem(stripped);
-                        ItemBlock barkItem = system.getItem(bark);
-                        ItemBlock strippedBarkItem = system.getItem(strippedBark);
-                        if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(Objects.requireNonNull(stripped.getRegistryName())));
-                        else {
-                            if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(Objects.requireNonNull(stripped.getRegistryName()));
-                            if (!registry.containsValue(strippedItem)) registry.register(strippedItem);
+                        if (stripped != null) {
+                            ItemBlock strippedItem = system.getItem(stripped);
+                            if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(Objects.requireNonNull(stripped.getRegistryName())));
+                            else {
+                                if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(Objects.requireNonNull(stripped.getRegistryName()));
+                                if (!registry.containsValue(strippedItem)) registry.register(strippedItem);
+                            }
                         }
-                        if (barkItem == null) registry.register(new ItemBlockAddLog(bark, origLog).setRegistryName(Objects.requireNonNull(bark.getRegistryName())));
-                        else {
-                            if (barkItem.getRegistryName() == null) barkItem.setRegistryName(Objects.requireNonNull(bark.getRegistryName()));
-                            if (!registry.containsValue(barkItem)) registry.register(barkItem);
+                        if (bark != null) {
+                            ItemBlock barkItem = system.getItem(bark);
+                            if (barkItem == null) registry.register(new ItemBlockAddLog(bark, origLog).setRegistryName(Objects.requireNonNull(bark.getRegistryName())));
+                            else {
+                                if (barkItem.getRegistryName() == null) barkItem.setRegistryName(Objects.requireNonNull(bark.getRegistryName()));
+                                if (!registry.containsValue(barkItem)) registry.register(barkItem);
+                            }
                         }
-                        if (strippedBarkItem == null) registry.register(new ItemBlockAddLog(strippedBark, origLog).setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName())));
-                        else {
-                            if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName()));
-                            if (!registry.containsValue(strippedBarkItem)) registry.register(strippedBarkItem);
+                        if (strippedBark != null) {
+                            ItemBlock strippedBarkItem = system.getItem(strippedBark);
+                            if (strippedBarkItem == null) registry.register(new ItemBlockAddLog(strippedBark, origLog).setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName())));
+                            else {
+                                if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName()));
+                                if (!registry.containsValue(strippedBarkItem)) registry.register(strippedBarkItem);
+                            }
                         }
                     }
                 });
@@ -397,36 +421,45 @@ public class BPHooks {
             if (Logs$isOriginal(origLog)) {
                 LogSystem system = LogSystem.INSTANCE;
                 Map<IBlockState, ModelResourceLocation> m = mapperIface.putStateModelLocations(origLog);
-                mapper.registerBlockStateMapper(system.getStripped(origLog), new StateMapperBase() {
-                    @Nonnull
-                    @Override
-                    @SuppressWarnings("deprecation")
-                    protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
-                        IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
-                        ModelResourceLocation origLoc = m.get(origState);
-                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_stripped"), origLoc.getVariant());
-                    }
-                });
-                mapper.registerBlockStateMapper(system.getBark(origLog), new StateMapperBase() {
-                    @Nonnull
-                    @Override
-                    @SuppressWarnings("deprecation")
-                    protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
-                        IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
-                        ModelResourceLocation origLoc = m.get(origState);
-                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_bark"), origLoc.getVariant());
-                    }
-                });
-                mapper.registerBlockStateMapper(system.getStrippedBark(origLog), new StateMapperBase() {
-                    @Nonnull
-                    @Override
-                    @SuppressWarnings("deprecation")
-                    protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
-                        IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
-                        ModelResourceLocation origLoc = m.get(origState);
-                        return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_stripped_bark"), origLoc.getVariant());
-                    }
-                });
+                Block stripped = system.getStripped(origLog);
+                Block bark = system.getBark(origLog);
+                Block strippedBark = system.getStrippedBark(origLog);
+                if (stripped != null) {
+                    mapper.registerBlockStateMapper(stripped, new StateMapperBase() {
+                        @Nonnull
+                        @Override
+                        @SuppressWarnings("deprecation")
+                        protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+                            IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
+                            ModelResourceLocation origLoc = m.get(origState);
+                            return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_stripped"), origLoc.getVariant());
+                        }
+                    });
+                }
+                if (bark != null) {
+                    mapper.registerBlockStateMapper(bark, new StateMapperBase() {
+                        @Nonnull
+                        @Override
+                        @SuppressWarnings("deprecation")
+                        protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+                            IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
+                            ModelResourceLocation origLoc = m.get(origState);
+                            return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_bark"), origLoc.getVariant());
+                        }
+                    });
+                }
+                if (strippedBark != null) {
+                    mapper.registerBlockStateMapper(strippedBark, new StateMapperBase() {
+                        @Nonnull
+                        @Override
+                        @SuppressWarnings("deprecation")
+                        protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+                            IBlockState origState = origLog.getStateFromMeta(state.getBlock().getMetaFromState(state));
+                            ModelResourceLocation origLoc = m.get(origState);
+                            return new ModelResourceLocation(new ResourceLocation(origLoc.getNamespace(), origLoc.getPath() + "_stripped_bark"), origLoc.getVariant());
+                        }
+                    });
+                }
             }
         }
 

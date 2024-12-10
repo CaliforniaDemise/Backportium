@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -12,9 +13,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.api.client.item.ModelProvider;
 import surreal.backportium.api.enums.ModArmorMaterials;
+import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.item.v1_13.ItemArmorTurtle;
 import surreal.backportium.item.v1_13.ItemTrident;
 import surreal.backportium.util.Registrar;
@@ -41,14 +44,13 @@ public class ModItems extends Registrar<Item> {
         return this.register(new Item(), name);
     }
 
-    private void registerOres() {}
-
     @SideOnly(Side.CLIENT)
     public void registerModels(ModelRegistryEvent event) {
         this.forEach(item -> {
             if (item instanceof ModelProvider) ((ModelProvider) item).registerModels();
             else ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(Objects.requireNonNull(item.getRegistryName()), "inventory"));
         });
+        LogSystem.INSTANCE.registerModels(event);
     }
 
     @Override
@@ -63,7 +65,7 @@ public class ModItems extends Registrar<Item> {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        this.registerOres();
+        this.registerOres(event);
     }
 
     private void register() {
@@ -76,31 +78,10 @@ public class ModItems extends Registrar<Item> {
         this.register(new ItemArmorTurtle(ModArmorMaterials.TURTLE_SHELL, EntityEquipmentSlot.HEAD), "turtle_helmet");
     }
 
-    //    public static void registerOres() {
-//        for (Item item : ITEMS) {
-//            if (item instanceof OredictProvider) {
-//                OredictProvider provider = (OredictProvider) item;
-//                provider.registerOreEntries();
-//            }
-//        }
-//        for (ItemBlock itemBlock : BPHooks.DEBARKED_LOG_ITEMS) {
-//            Block origLog = ((DebarkedLog) itemBlock.getBlock()).getOriginal();
-//            Item origItem = Item.getItemFromBlock(origLog);
-//            OreDictionary.registerOre("logStripped", itemBlock);
-//            int[] ids = OreDictionary.getOreIDs(new ItemStack(origItem, 1, OreDictionary.WILDCARD_VALUE));
-//            if (ids.length == 0) {
-//                ids = OreDictionary.getOreIDs(new ItemStack(origItem));
-//                if (ids.length == 0) {
-//                    OreDictionary.registerOre("logWood", new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
-//                    continue;
-//                }
-//            }
-//            for (int i : ids) {
-//                OreDictionary.registerOre(OreDictionary.getOreName(i), new ItemStack(itemBlock, 1, OreDictionary.WILDCARD_VALUE));
-//            }
-//        }
-//    }
-//
+    private void registerOres(FMLInitializationEvent event) {
+        LogSystem.INSTANCE.registerOres(event);
+    }
+
 //    @SideOnly(Side.CLIENT)
 //    public static void registerModels(ModelRegistryEvent event) {
 //        ITEMS.forEach(item -> {

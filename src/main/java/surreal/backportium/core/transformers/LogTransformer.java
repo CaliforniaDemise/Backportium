@@ -107,6 +107,9 @@ public class LogTransformer extends BasicTransformer {
             m.visitFieldInsn(GETFIELD, "net/minecraft/world/World", getName("isRemote", "field_72995_K"), "Z");
             Label l_con = new Label();
             m.visitJumpInsn(IFNE, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitFieldInsn(GETFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;");
+            m.visitJumpInsn(IFNONNULL, l_con);
             m.visitVarInsn(ALOAD, 1);
             m.visitVarInsn(ALOAD, 4);
             m.visitVarInsn(ALOAD, 0);
@@ -144,13 +147,19 @@ public class LogTransformer extends BasicTransformer {
                     initMethod.access ^= ACC_PRIVATE;
                     initMethod.access |= ACC_PUBLIC;
                 }
+                String clsName = cls.name;
                 IntList map = getDescList(initMethod.desc);
-                String clsStripped = createStrippedClass(cls, initMethod.desc, map, createsBlockState);
-                String clsBark = createBarkClass(cls, initMethod.desc, map, createsBlockState);
-                String clsStrippedBark = createStrippedBarkClass(cls, initMethod.desc, map, createsBlockState);
-                cls.visitInnerClass(clsStripped, cls.name, "Stripped", ACC_PUBLIC | ACC_STATIC);
-                cls.visitInnerClass(clsBark, cls.name, "Bark", ACC_PUBLIC | ACC_STATIC);
-                cls.visitInnerClass(clsStrippedBark, cls.name, "StrippedBark", ACC_PUBLIC | ACC_STATIC);
+                String clsStripped = null;
+                String clsBark = null;
+                String clsStrippedBark = null;
+                clsStripped = createStrippedClass(cls, initMethod.desc, map, createsBlockState);
+                if (!clsName.startsWith("de/ellpeck/naturesaura")) {
+                    clsBark = createBarkClass(cls, initMethod.desc, map, createsBlockState);
+                    clsStrippedBark = createStrippedBarkClass(cls, initMethod.desc, map, createsBlockState);
+                }
+                if (clsStripped != null) cls.visitInnerClass(clsStripped, cls.name, "Stripped", ACC_PUBLIC | ACC_STATIC);
+                if (clsBark != null) cls.visitInnerClass(clsBark, cls.name, "Bark", ACC_PUBLIC | ACC_STATIC);
+                if (clsStrippedBark != null) cls.visitInnerClass(clsStrippedBark, cls.name, "StrippedBark", ACC_PUBLIC | ACC_STATIC);
                 Iterator<AbstractInsnNode> iterator = initMethod.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -173,39 +182,48 @@ public class LogTransformer extends BasicTransformer {
                         LabelNode l_con = new LabelNode();
                         list.add(new JumpInsnNode(IFEQ, l_con));
                         list.add(new VarInsnNode(ALOAD, 0)); // origLog
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(new TypeInsnNode(NEW, clsStripped));
-                        list.add(new InsnNode(DUP));
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        if (!map.isEmpty()) {
-                            for (int i = 0; i < map.size(); i++) {
-                                list.add(new VarInsnNode(map.getInt(i), i + 1));
+                        if (clsStripped != null) {
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new TypeInsnNode(NEW, clsStripped));
+                            list.add(new InsnNode(DUP));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            if (!map.isEmpty()) {
+                                for (int i = 0; i < map.size(); i++) {
+                                    list.add(new VarInsnNode(map.getInt(i), i + 1));
+                                }
                             }
+                            list.add(new MethodInsnNode(INVOKESPECIAL, clsStripped, "<init>", initDesc, false));
+                            list.add(new FieldInsnNode(PUTFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;"));
                         }
-                        list.add(new MethodInsnNode(INVOKESPECIAL, clsStripped, "<init>", initDesc, false));
-                        list.add(new FieldInsnNode(PUTFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;"));
-                        list.add(new TypeInsnNode(NEW, clsBark));
-                        list.add(new InsnNode(DUP));
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        if (!map.isEmpty()) {
-                            for (int i = 0; i < map.size(); i++) {
-                                list.add(new VarInsnNode(map.getInt(i), i + 1));
+                        if (clsBark != null) {
+                            list.add(new TypeInsnNode(NEW, clsBark));
+                            list.add(new InsnNode(DUP));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            if (!map.isEmpty()) {
+                                for (int i = 0; i < map.size(); i++) {
+                                    list.add(new VarInsnNode(map.getInt(i), i + 1));
+                                }
                             }
+                            list.add(new MethodInsnNode(INVOKESPECIAL, clsBark, "<init>", initDesc, false));
                         }
-                        list.add(new MethodInsnNode(INVOKESPECIAL, clsBark, "<init>", initDesc, false));
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(new TypeInsnNode(NEW, clsStrippedBark));
-                        list.add(new InsnNode(DUP));
-                        list.add(new VarInsnNode(ALOAD, 0));
-                        if (!map.isEmpty()) {
-                            for (int i = 0; i < map.size(); i++) {
-                                list.add(new VarInsnNode(map.getInt(i), i + 1));
+                        else {
+                            list.add(new InsnNode(ACONST_NULL));
+                        }
+                        if (clsStrippedBark != null) {
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new TypeInsnNode(NEW, clsStrippedBark));
+                            list.add(new InsnNode(DUP));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            if (!map.isEmpty()) {
+                                for (int i = 0; i < map.size(); i++) {
+                                    list.add(new VarInsnNode(map.getInt(i), i + 1));
+                                }
                             }
+                            list.add(new MethodInsnNode(INVOKESPECIAL, clsStrippedBark, "<init>", initDesc, false));
+                            list.add(new FieldInsnNode(PUTFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;"));
                         }
-                        list.add(new MethodInsnNode(INVOKESPECIAL, clsStrippedBark, "<init>", initDesc, false));
-                        list.add(new FieldInsnNode(PUTFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;"));
                         list.add(hook("Logs$registerBlocks", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V"));
@@ -511,6 +529,9 @@ public class LogTransformer extends BasicTransformer {
             m.visitFieldInsn(GETFIELD, "net/minecraft/world/World", getName("isRemote", "field_72995_K"), "Z");
             Label l_con = new Label();
             m.visitJumpInsn(IFNE, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitFieldInsn(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;");
+            m.visitJumpInsn(IFNONNULL, l_con);
             m.visitVarInsn(ALOAD, 1);
             m.visitVarInsn(ALOAD, 4);
             m.visitVarInsn(ALOAD, 0);
