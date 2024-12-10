@@ -40,7 +40,9 @@ tile.backportium.jungle_button.name=Jungle Button
 tile.backportium.acacia_button.name=Acacia Button
 tile.backportium.dark_oak_button.name=Dark Oak Button
 
-tile.backportium.debarked_log=Stripped %s
+tile.backportium.log_stripped=Stripped %s
+tile.backportium.log_bark=%s Bark
+tile.backportium.log_stripped_bark=Stripped %s Bark
 
 tile.backportium.coral.tube.name=Tube Coral
 tile.backportium.coral.brain.name=Brain Coral

@@ -100,8 +100,8 @@ public class ItemBlockAddLog extends ItemBlock {
             String name = "tile.backportium.log_stripped";
             {
                 ResourceLocation regName = Objects.requireNonNull(this.block.getRegistryName());
-                if (regName.getPath().endsWith("_bark")) name = "tile.backportium.log_bark";
                 if (regName.getPath().endsWith("_stripped_bark")) name = "tile.backportium.log_stripped_bark";
+                else if (regName.getPath().endsWith("_bark")) name = "tile.backportium.log_bark";
             }
             return I18n.translateToLocalFormatted(name, displayName);
         }
