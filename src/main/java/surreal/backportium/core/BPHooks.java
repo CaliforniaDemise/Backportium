@@ -314,6 +314,7 @@ public class BPHooks {
                 });
             }
             else if (register.getRegistry().getRegistrySuperType() == Item.class) {
+                if (modId.equals("mm")) return; // I am not sure why this happens
                 IForgeRegistry<Item> registry = (IForgeRegistry<Item>) register.getRegistry();
                 LogSystem system = LogSystem.INSTANCE;
                 system.forEachBlock(origLog -> {
@@ -324,25 +325,25 @@ public class BPHooks {
                         Block strippedBark = system.getStrippedBark(origLog);
                         if (stripped != null) {
                             ItemBlock strippedItem = system.getItem(stripped);
-                            if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(Objects.requireNonNull(stripped.getRegistryName())));
+                            if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(origLoc));
                             else {
-                                if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(Objects.requireNonNull(stripped.getRegistryName()));
+                                if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(origLoc);
                                 if (!registry.containsValue(strippedItem)) registry.register(strippedItem);
                             }
                         }
                         if (bark != null) {
                             ItemBlock barkItem = system.getItem(bark);
-                            if (barkItem == null) registry.register(new ItemBlockAddLog(bark, origLog).setRegistryName(Objects.requireNonNull(bark.getRegistryName())));
+                            if (barkItem == null) registry.register(new ItemBlockAddLog(bark, origLog).setRegistryName(origLoc));
                             else {
-                                if (barkItem.getRegistryName() == null) barkItem.setRegistryName(Objects.requireNonNull(bark.getRegistryName()));
+                                if (barkItem.getRegistryName() == null) barkItem.setRegistryName(origLoc);
                                 if (!registry.containsValue(barkItem)) registry.register(barkItem);
                             }
                         }
                         if (strippedBark != null) {
                             ItemBlock strippedBarkItem = system.getItem(strippedBark);
-                            if (strippedBarkItem == null) registry.register(new ItemBlockAddLog(strippedBark, origLog).setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName())));
+                            if (strippedBarkItem == null) registry.register(new ItemBlockAddLog(strippedBark, origLog).setRegistryName(origLoc));
                             else {
-                                if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(Objects.requireNonNull(strippedBark.getRegistryName()));
+                                if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(origLoc);
                                 if (!registry.containsValue(strippedBarkItem)) registry.register(strippedBarkItem);
                             }
                         }
