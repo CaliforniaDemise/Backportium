@@ -314,7 +314,6 @@ public class LogTransformer extends BasicTransformer {
                 }
             }
         }
-        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
