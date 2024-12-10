@@ -22,6 +22,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.commons.lang3.tuple.Pair;
 import surreal.backportium.Tags;
 import surreal.backportium.core.BPHooks;
+import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.RandomHelper;
 
@@ -98,43 +99,46 @@ public class ModRecipes {
     }
 
     public static void registerLateRecipes() {
-//        {
-//            List<Pair<ItemStack, ItemStack>> craftingList = new ArrayList<>(); // input, output
-//            List<Pair<ItemStack, ItemStack>> furnaceRecipeList = new ArrayList<>();
-//            for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
-//                Block keyBlock = Block.getBlockFromItem(entry.getKey().getItem());
-//                if (keyBlock != AIR) {
-//                    Block debarkedLog = BPHooks.DEBARKED_LOG_BLOCKS.get(keyBlock);
-//                    if (debarkedLog != null) {
-//                        furnaceRecipeList.add(Pair.of(entry.getKey(), entry.getValue()));
-//                    }
-//                }
-//            }
-//            for (IRecipe recipe : ForgeRegistries.RECIPES) {
-//                if (recipe.canFit(1, 1) && !recipe.getIngredients().isEmpty()) {
-//                    Ingredient ingredient = recipe.getIngredients().get(0);
-//                    if (!(ingredient instanceof OreIngredient)) {
-//                        for (ItemStack s : ingredient.getMatchingStacks()) {
-//                            if (!(s.getItem() instanceof ItemBlock)) continue;
-//                            Block block = Block.getBlockFromItem(s.getItem());
-//                            if (BPHooks.DEBARKED_LOG_BLOCKS.get(block) != null) {
-//                                craftingList.add(Pair.of(s, recipe.getRecipeOutput()));
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            ResourceLocation planks = new ResourceLocation("planks");
-//            for (Pair<ItemStack, ItemStack> pair : craftingList) {
-//                ResourceLocation recipeLoc = new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(pair.getValue().getItem().getRegistryName()).getPath() + "_" + pair.getValue().getMetadata());
-//                GameRegistry.addShapedRecipe(recipeLoc, planks, pair.getValue(), "A", 'A', new ItemStack(BPHooks.DEBARKED_LOG_BLOCKS.get(Block.getBlockFromItem(pair.getKey().getItem())), 1, pair.getKey().getMetadata()));
-//            }
-//            for (Pair<ItemStack, ItemStack> pair : furnaceRecipeList) {
-//                FurnaceRecipes f = FurnaceRecipes.instance();
-//                f.addSmeltingRecipe(new ItemStack(BPHooks.DEBARKED_LOG_BLOCKS.get(Block.getBlockFromItem(pair.getKey().getItem())), 1, pair.getKey().getMetadata()), pair.getValue(), f.getSmeltingExperience(pair.getValue()));
-//            }
-//        }
+        {
+            List<Pair<ItemStack, ItemStack>> furnaceRecipes = new ArrayList<>();
+            List<Pair<ItemStack, ItemStack>> craftingRecipes = new ArrayList<>();
+            for (Map.Entry<ItemStack, ItemStack> entry : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
+                Block keyBlock = Block.getBlockFromItem(entry.getKey().getItem());
+                if (BPHooks.Logs$isOriginal(keyBlock)) {
+                    LogSystem system = LogSystem.INSTANCE;
+                    Block stripped = system.getStripped(keyBlock);
+                    Block bark = system.getBark(keyBlock);
+                    Block strippedBark = system.getStrippedBark(keyBlock);
+                    System.out.println("Furnace: " + keyBlock.getRegistryName() + "   " + stripped + " | " + bark + " | " + strippedBark);
+                    if (stripped != null) furnaceRecipes.add(Pair.of(new ItemStack(stripped, 1, entry.getKey().getMetadata()), entry.getValue()));
+                    if (bark != null) furnaceRecipes.add(Pair.of(new ItemStack(bark, 1, entry.getKey().getMetadata()), entry.getValue()));
+                    if (strippedBark != null) furnaceRecipes.add(Pair.of(new ItemStack(strippedBark, 1, entry.getKey().getMetadata()), entry.getValue()));
+                }
+            }
+            for (IRecipe recipe : ForgeRegistries.RECIPES) {
+                if (recipe.canFit(1, 1) && !recipe.getIngredients().isEmpty()) {
+                    Ingredient ingredient = recipe.getIngredients().get(0);
+                    if (!(ingredient instanceof OreIngredient)) {
+                        for (ItemStack s : ingredient.getMatchingStacks()) {
+                            if (!(s.getItem() instanceof ItemBlock)) continue;
+                            Block block = Block.getBlockFromItem(s.getItem());
+                            if (!BPHooks.Logs$isOriginal(block)) continue;
+                            LogSystem system = LogSystem.INSTANCE;
+                            Block stripped = system.getStripped(block);
+                            Block bark = system.getBark(block);
+                            Block strippedBark = system.getStrippedBark(block);
+                            System.out.println("Crafting: " + block.getRegistryName() + "   " + stripped + " | " + bark + " | " + strippedBark);
+                            if (stripped != null) craftingRecipes.add(Pair.of(new ItemStack(stripped, 1, s.getMetadata()), recipe.getRecipeOutput()));
+                            if (bark != null) craftingRecipes.add(Pair.of(new ItemStack(bark, 1, s.getMetadata()), recipe.getRecipeOutput()));
+                            if (strippedBark != null) craftingRecipes.add(Pair.of(new ItemStack(strippedBark, 1, s.getMetadata()), recipe.getRecipeOutput()));
+                        }
+                    }
+                }
+            }
+            furnaceRecipes.forEach(p -> FurnaceRecipes.instance().addSmeltingRecipe(p.getKey(), p.getValue(), FurnaceRecipes.instance().getSmeltingExperience(p.getValue())));
+            ResourceLocation group = new ResourceLocation("planks");
+            craftingRecipes.forEach(p -> GameRegistry.addShapedRecipe(new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(p.getKey().getItem().getRegistryName()).getPath() + "_" + p.getKey().getMetadata()), group, p.getValue(), "A", 'A', p.getKey()));
+        }
     }
 
     private static void addShaped(ItemStack output, Object... params) {

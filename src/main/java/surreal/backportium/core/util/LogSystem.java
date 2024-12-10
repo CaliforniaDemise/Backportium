@@ -119,7 +119,6 @@ public class LogSystem {
             Block strippedBarkBlock = this.getStrippedBark(origLog);
             if (strippedBlock != null || barkBlock != null || strippedBarkBlock != null) {
                 int meta = OreDictionary.WILDCARD_VALUE;
-                System.out.println(origLog.getRegistryName() + "   " + new ItemStack(origLog, 1, meta));
                 int[] ids = OreDictionary.getOreIDs(new ItemStack(origLog, 1, meta));
                 if (ids.length == 0) {
                     ids = OreDictionary.getOreIDs(new ItemStack(origLog));

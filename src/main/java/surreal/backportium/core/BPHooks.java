@@ -38,6 +38,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Backportium;
 import surreal.backportium.api.block.FluidLogged;
+import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.v1_13.BlockBubbleColumn;
@@ -352,11 +353,11 @@ public class BPHooks {
     }
 
     public static boolean Logs$isOriginal(Object block) {
-        return block instanceof BlockLog && !block.getClass().getName().startsWith("backportium.logs");
+        return block instanceof StrippableLog && !block.getClass().getName().startsWith("backportium.logs");
     }
 
     private static boolean Logs$isNonOriginal(Object block) {
-        return block instanceof BlockLog && block.getClass().getName().startsWith("backportium.logs");
+        return block instanceof StrippableLog && block.getClass().getName().startsWith("backportium.logs");
     }
 
     // Button Placement
