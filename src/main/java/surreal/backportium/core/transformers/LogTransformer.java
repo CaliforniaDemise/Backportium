@@ -25,6 +25,7 @@ public class LogTransformer extends BasicTransformer {
     static {
         DO_NOT_TRANSFORM.add("com.bewitchment.common.block.util.ModBlockLog");
         DO_NOT_TRANSFORM.add("org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog");
+        DO_NOT_TRANSFORM.add("epicsquid.mysticallib.block.BlockLogBase");
     }
 
     public static boolean checkLogs(byte[] cls, String transformedName, String[] superName) {
@@ -234,12 +235,15 @@ public class LogTransformer extends BasicTransformer {
                 }
             }
             else {
-                String clsStripped = createStrippedClass(cls, "()V", null, createsBlockState);
-                String clsBark = createBarkClass(cls, "()V", null, createsBlockState);
-                String clsStrippedBark = createStrippedBarkClass(cls, "()V", null, createsBlockState);
-                cls.visitInnerClass(clsStripped, cls.name, "Stripped", ACC_PUBLIC | ACC_STATIC);
-                cls.visitInnerClass(clsBark, cls.name, "Bark", ACC_PUBLIC | ACC_STATIC);
-                cls.visitInnerClass(clsStrippedBark, cls.name, "StrippedBark", ACC_PUBLIC | ACC_STATIC);
+                String clsStripped = null;
+                String clsBark = null;
+                String clsStrippedBark = null;
+                clsStripped = createStrippedClass(cls, "()V", null, createsBlockState);
+                clsBark = createBarkClass(cls, "()V", null, createsBlockState);
+                clsStrippedBark = createStrippedBarkClass(cls, "()V", null, createsBlockState);
+                if (clsStripped != null) cls.visitInnerClass(clsStripped, cls.name, "Stripped", ACC_PUBLIC | ACC_STATIC);
+                if (clsBark != null) cls.visitInnerClass(clsBark, cls.name, "Bark", ACC_PUBLIC | ACC_STATIC);
+                if (clsStrippedBark != null) cls.visitInnerClass(clsStrippedBark, cls.name, "StrippedBark", ACC_PUBLIC | ACC_STATIC);
                 { // <init>
                     MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
                     m.visitVarInsn(ALOAD, 0);
@@ -249,18 +253,35 @@ public class LogTransformer extends BasicTransformer {
                     Label l_con = new Label();
                     m.visitJumpInsn(IFEQ, l_con);
                     m.visitVarInsn(ALOAD, 0);
-                    m.visitTypeInsn(NEW, clsStripped);
-                    m.visitInsn(DUP);
+                    if (clsStripped != null) {
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitTypeInsn(NEW, clsStripped);
+                        m.visitInsn(DUP);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitMethodInsn(INVOKESPECIAL, clsStripped, "<init>", "(Lnet/minecraft/block/Block;)V", false);
+                        m.visitFieldInsn(PUTFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;");
+                    }
                     m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESPECIAL, clsStripped, "<init>", "(Lnet/minecraft/block/Block;)V", false);
-                    m.visitTypeInsn(NEW, clsBark);
-                    m.visitInsn(DUP);
+                    m.visitFieldInsn(GETFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;");
+                    if (clsBark != null) {
+                        m.visitTypeInsn(NEW, clsBark);
+                        m.visitInsn(DUP);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitMethodInsn(INVOKESPECIAL, clsBark, "<init>", "(Lnet/minecraft/block/Block;)V", false);
+                    }
+                    else {
+                        m.visitInsn(ACONST_NULL);
+                    }
+                    if (clsStrippedBark != null) {
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitTypeInsn(NEW, clsStrippedBark);
+                        m.visitInsn(DUP);
+                        m.visitVarInsn(ALOAD, 0);
+                        m.visitMethodInsn(INVOKESPECIAL, clsStrippedBark, "<init>", "(Lnet/minecraft/block/Block;)V", false);
+                        m.visitFieldInsn(PUTFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;");
+                    }
                     m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESPECIAL, clsBark, "<init>", "(Lnet/minecraft/block/Block;)V", false);
-                    m.visitTypeInsn(NEW, clsStrippedBark);
-                    m.visitInsn(DUP);
-                    m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESPECIAL, clsStrippedBark, "<init>", "(Lnet/minecraft/block/Block;)V", false);
+                    m.visitFieldInsn(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;");
                     m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$registerBlocks", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V", false);
                     m.visitLabel(l_con);
                     m.visitFrame(F_SAME, 0, null, 0, null);
@@ -268,6 +289,7 @@ public class LogTransformer extends BasicTransformer {
                 }
             }
         }
+        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
@@ -476,6 +498,7 @@ public class LogTransformer extends BasicTransformer {
                 m.visitInsn(ARETURN);
             }
         }
+        writeClass(clsStripped);
         byte[] bytes = write(clsStripped);
         loadNewClass(strippedClsName, bytes);
         return strippedClsName;

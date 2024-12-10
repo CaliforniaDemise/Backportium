@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -117,6 +119,7 @@ public class LogSystem {
             Block strippedBarkBlock = this.getStrippedBark(origLog);
             if (strippedBlock != null || barkBlock != null || strippedBarkBlock != null) {
                 int meta = OreDictionary.WILDCARD_VALUE;
+                System.out.println(origLog.getRegistryName() + "   " + new ItemStack(origLog, 1, meta));
                 int[] ids = OreDictionary.getOreIDs(new ItemStack(origLog, 1, meta));
                 if (ids.length == 0) {
                     ids = OreDictionary.getOreIDs(new ItemStack(origLog));
@@ -140,6 +143,11 @@ public class LogSystem {
             }
         });
     }
+
+    // Mystical World charred logs are stupid
+//    private Item getMysticallyStupidItem() {
+//
+//    }
 
     @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)

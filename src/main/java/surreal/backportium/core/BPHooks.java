@@ -266,11 +266,15 @@ public class BPHooks {
      * Why care about the existence of registry name when I can just change it before name check happens.
      **/
     public static String Logs$setRegistryNameDeep(IForgeRegistryEntry.Impl<?> entry, String name) {
-        if (Logs$isNonOriginal(entry)) {
-            String clsName = entry.getClass().getName();
-            if (clsName.endsWith("$Stripped")) return name + "_stripped";
-            if (clsName.endsWith("$Bark")) return name + "_bark";
-            if (clsName.endsWith("$StrippedBark")) return name + "_stripped_bark";
+        Block block = null;
+        if (entry instanceof Block) block = (Block) entry;
+        else if (entry instanceof ItemBlock) block = ((ItemBlock) entry).getBlock();
+        if (block == null) return name;
+        if (Logs$isNonOriginal(block)) {
+            String clsName = block.getClass().getName();
+            if (!name.endsWith("_stripped_bark") && clsName.endsWith("$StrippedBark")) return name + "_stripped_bark";
+            if (!name.endsWith("_stripped") && clsName.endsWith("$Stripped")) return name + "_stripped";
+            if (!name.endsWith("_bark") && clsName.endsWith("$Bark")) return name + "_bark";
         }
         return name;
     }
@@ -292,14 +296,17 @@ public class BPHooks {
                         Block strippedBark = system.getStrippedBark(origLog);
                         if (stripped != null) {
                             if (stripped.getRegistryName() == null) stripped.setRegistryName(origLoc);
+                            stripped.setCreativeTab(origLog.getCreativeTab());
                             if (!registry.containsValue(stripped)) registry.register(stripped);
                         }
                         if (bark != null) {
                             if (bark.getRegistryName() == null) bark.setRegistryName(origLoc);
+                            bark.setCreativeTab(origLog.getCreativeTab());
                             if (!registry.containsValue(bark)) registry.register(bark);
                         }
                         if (strippedBark != null) {
                             if (strippedBark.getRegistryName() == null) strippedBark.setRegistryName(origLoc);
+                            strippedBark.setCreativeTab(origLog.getCreativeTab());
                             if (!registry.containsValue(strippedBark)) registry.register(strippedBark);
                         }
                     }
