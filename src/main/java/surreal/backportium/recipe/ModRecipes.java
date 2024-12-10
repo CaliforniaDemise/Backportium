@@ -109,7 +109,6 @@ public class ModRecipes {
                     Block stripped = system.getStripped(keyBlock);
                     Block bark = system.getBark(keyBlock);
                     Block strippedBark = system.getStrippedBark(keyBlock);
-                    System.out.println("Furnace: " + keyBlock.getRegistryName() + "   " + stripped + " | " + bark + " | " + strippedBark);
                     if (stripped != null) furnaceRecipes.add(Pair.of(new ItemStack(stripped, 1, entry.getKey().getMetadata()), entry.getValue()));
                     if (bark != null) furnaceRecipes.add(Pair.of(new ItemStack(bark, 1, entry.getKey().getMetadata()), entry.getValue()));
                     if (strippedBark != null) furnaceRecipes.add(Pair.of(new ItemStack(strippedBark, 1, entry.getKey().getMetadata()), entry.getValue()));
@@ -127,7 +126,6 @@ public class ModRecipes {
                             Block stripped = system.getStripped(block);
                             Block bark = system.getBark(block);
                             Block strippedBark = system.getStrippedBark(block);
-                            System.out.println("Crafting: " + block.getRegistryName() + "   " + stripped + " | " + bark + " | " + strippedBark);
                             if (stripped != null) craftingRecipes.add(Pair.of(new ItemStack(stripped, 1, s.getMetadata()), recipe.getRecipeOutput()));
                             if (bark != null) craftingRecipes.add(Pair.of(new ItemStack(bark, 1, s.getMetadata()), recipe.getRecipeOutput()));
                             if (strippedBark != null) craftingRecipes.add(Pair.of(new ItemStack(strippedBark, 1, s.getMetadata()), recipe.getRecipeOutput()));

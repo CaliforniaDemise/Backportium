@@ -143,11 +143,6 @@ public class LogSystem {
         });
     }
 
-    // Mystical World charred logs are stupid
-//    private Item getMysticallyStupidItem() {
-//
-//    }
-
     @SuppressWarnings("deprecation")
     @SideOnly(Side.CLIENT)
     public void registerModels(ModelRegistryEvent event) {
@@ -259,6 +254,7 @@ public class LogSystem {
                                     }
                                 }
                                 if (end != null && side != null) {
+                                    if (end.equals(side)) return;
                                     TextureMap map = event.getMap();
                                     ResourceLocation endSprite = new ResourceLocation(end);
                                     ResourceLocation sideSprite = new ResourceLocation(side);
@@ -290,68 +286,6 @@ public class LogSystem {
                 }
             }
         });
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void registerTextures(TextureStitchEvent.Pre event, Block origLog, Block addLog) {
-
-        //        for (Map.Entry<Block, Block> entry : BPHooks.DEBARKED_LOG_BLOCKS.entrySet()) {
-//                    IModel origModel;
-//                    try {
-//                        origModel = ModelLoaderRegistry.getModel(loc);
-//                    }
-//                    catch (Exception e) {
-//                        continue;
-//                        // throw new RuntimeException(e);
-//                    }
-//                    Optional<ModelBlock> origModelBlockOpt = origModel.asVanillaModel();
-//                    if (origModelBlockOpt.isPresent()) {
-//                        ModelBlock origModelBlock = origModelBlockOpt.get();
-//                        String end = null;
-//                        List<String> otherSprites = new ArrayList<>(1);
-//                        if (ass == null) {
-//                            for (Map.Entry<String, String> texEntry : origModelBlock.textures.entrySet()) {
-//                                if (texEntry.getKey().equals("end")) end = texEntry.getValue();
-//                                else otherSprites.add(texEntry.getValue());
-//                            }
-//                        }
-//                        else {
-//                            for (String assType : ass) {
-//                                String[] split = assType.split("=");
-//                                if (split[0].equals("end")) end = split[1];
-//                                else otherSprites.add(split[1]);
-//                            }
-//                        }
-//                        if (end == null) {
-//                            continue;
-//                        }
-//                        ResourceLocation endSprite = new ResourceLocation(end);
-//                        ResourceLocation debarkedSprite = new ResourceLocation(endSprite + "_debarked_template");
-//
-//                        { // TODO Change how this works
-//                            String texLoc = debarkedSprite.toString();
-//                            if (map.getTextureExtry(texLoc) == null) {
-//                                map.setTextureEntry(new DebarkedSpriteTopDumb(texLoc, endSprite));
-//                            }
-//                        }
-//
-//                        {
-//                            String location = endSprite + "_debarked";
-//                            if (map.getTextureExtry(location) == null) {
-//                                map.setTextureEntry(new DebarkedSpriteTop(endSprite + "_debarked", endSprite, debarkedSprite));
-//                            }
-//                        }
-//                        for (String sprite : otherSprites) {
-//                            String location = new ResourceLocation(sprite + "_debarked").toString();
-//                            if (map.getTextureExtry(location) == null) {
-//                                map.setTextureEntry(new DebarkedSpriteSide(location, endSprite, new ResourceLocation(sprite)));
-//                            }
-//                        }
-//                    }
-//                    i++;
-//                }
-//            }
-//        }
     }
 
     private static void registerForestryTextures(TextureStitchEvent.Pre event, Block origLog, Block addLog) {
@@ -489,6 +423,7 @@ public class LogSystem {
                                 stupidityMap.remove("end");
                                 stupidityMap.remove("side");
                                 stupidityMap.put("all", side);
+                                System.out.println(addLog.getRegistryName() + "   " + side);
                                 try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }
                             }
                             else {
