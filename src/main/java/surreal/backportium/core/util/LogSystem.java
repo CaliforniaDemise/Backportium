@@ -331,8 +331,14 @@ public class LogSystem {
                 if (property.getValueClass() == EnumFacing.Axis.class) y = EnumFacing.Axis.Y;
                 else if (property.getValueClass() == BlockLog.EnumAxis.class) y = BlockLog.EnumAxis.Y;
                 else {
-                    System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + addLog.getRegistryName());
-                    return;
+                    com.google.common.base.Optional<?> opt = property.parseValue("y");
+                    if (opt.isPresent()) {
+                        y = opt.get();
+                    }
+                    else {
+                        System.out.println("'Axis' property type " + property.getValueClass() + " does not match for block " + addLog.getRegistryName());
+                        return;
+                    }
                 }
             }
         }
@@ -423,7 +429,6 @@ public class LogSystem {
                                 stupidityMap.remove("end");
                                 stupidityMap.remove("side");
                                 stupidityMap.put("all", side);
-                                System.out.println(addLog.getRegistryName() + "   " + side);
                                 try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }
                             }
                             else {
