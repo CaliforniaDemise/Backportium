@@ -101,6 +101,7 @@ public class LogTransformer extends BasicTransformer {
         { // TODO Change these to static
             cls.visitField(ACC_PUBLIC, "stripped", "Lnet/minecraft/block/Block;", null, null);
             cls.visitField(ACC_PUBLIC, "strippedBark", "Lnet/minecraft/block/Block;", null, null);
+            cls.visitField(ACC_PUBLIC, "bark", "Lnet/minecraft/block/Block;", null, null);
         }
         { // onStrip
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "onStrip", "(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/EnumHand;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/EnumFacing;Lnet/minecraft/util/math/Vec3d;)Z", null, null);
@@ -154,7 +155,8 @@ public class LogTransformer extends BasicTransformer {
                 String clsBark = null;
                 String clsStrippedBark = null;
                 clsStripped = createStrippedClass(cls, initMethod.desc, map, createsBlockState);
-                if (!clsName.startsWith("de/ellpeck/naturesaura")) {
+                boolean maelstrom = clsName.startsWith("com/barribob/MaelstromMod/blocks");
+                if (!clsName.startsWith("de/ellpeck/naturesaura") && (!maelstrom || !clsName.endsWith("BlockFullLog"))) {
                     clsBark = createBarkClass(cls, initMethod.desc, map, createsBlockState);
                     clsStrippedBark = createStrippedBarkClass(cls, initMethod.desc, map, createsBlockState);
                 }
@@ -199,6 +201,14 @@ public class LogTransformer extends BasicTransformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "stripped", "Lnet/minecraft/block/Block;"));
                         if (clsBark != null) {
+                            LabelNode l_con_swamp = new LabelNode();
+                            if (maelstrom) {
+                                list.add(new VarInsnNode(ALOAD, 1));
+                                list.add(new LdcInsnNode("swamp_log"));
+                                list.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false));
+                                list.add(new JumpInsnNode(IFNE, l_con_swamp));
+                            }
+                            list.add(new VarInsnNode(ALOAD, 0));
                             list.add(new TypeInsnNode(NEW, clsBark));
                             list.add(new InsnNode(DUP));
                             list.add(new VarInsnNode(ALOAD, 0));
@@ -208,11 +218,21 @@ public class LogTransformer extends BasicTransformer {
                                 }
                             }
                             list.add(new MethodInsnNode(INVOKESPECIAL, clsBark, "<init>", initDesc, false));
+                            list.add(new FieldInsnNode(PUTFIELD, cls.name, "bark", "Lnet/minecraft/block/Block;"));
+                            if (maelstrom) {
+                                list.add(l_con_swamp);
+                            }
                         }
-                        else {
-                            list.add(new InsnNode(ACONST_NULL));
-                        }
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "bark", "Lnet/minecraft/block/Block;"));
                         if (clsStrippedBark != null) {
+                            LabelNode l_con_swamp = new LabelNode();
+                            if (maelstrom) {
+                                list.add(new VarInsnNode(ALOAD, 1));
+                                list.add(new LdcInsnNode("swamp_log"));
+                                list.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/String", "equals", "(Ljava/lang/Object;)Z", false));
+                                list.add(new JumpInsnNode(IFNE, l_con_swamp));
+                            }
                             list.add(new VarInsnNode(ALOAD, 0));
                             list.add(new TypeInsnNode(NEW, clsStrippedBark));
                             list.add(new InsnNode(DUP));
@@ -224,6 +244,9 @@ public class LogTransformer extends BasicTransformer {
                             }
                             list.add(new MethodInsnNode(INVOKESPECIAL, clsStrippedBark, "<init>", initDesc, false));
                             list.add(new FieldInsnNode(PUTFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;"));
+                            if (maelstrom) {
+                                list.add(l_con_swamp);
+                            }
                         }
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;"));

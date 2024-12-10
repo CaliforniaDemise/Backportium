@@ -440,6 +440,7 @@ public class LogSystem {
                     if (property != null) {
                         if (addState.getValue(property) == y) {
                             event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(addLog.getRegistryName()), RandomHelper.getVariantFromState(addState)), m);
+                            event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(addLog.getRegistryName()), "inventory"), m);
                             ModelResourceLocation modelLoc = addModelLocations.get(addState);
                             event.getModelRegistry().putObject(modelLoc, m);
                         }
