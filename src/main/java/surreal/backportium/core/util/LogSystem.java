@@ -470,6 +470,12 @@ public class LogSystem {
                                 stupidityMap.put(key, value);
                             }
                         }
+                        if (stupidityMap.isEmpty()) {
+                            for (ResourceLocation texture : origModel.getTextures()) {
+                                if (texture.getPath().contains("_top")) stupidityMap.put("end", texture + (isStripped ? "_stripped" : ""));
+                                else stupidityMap.put("side", texture + (isStripped ? "_stripped" : ""));
+                            }
+                        }
                         if (stupidityMap.containsKey("end")) {
                             String side = stupidityMap.get("side");
                             if (isBark || stupidityMap.get("end").equals(side)) {
