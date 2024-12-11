@@ -81,12 +81,14 @@ public class ClientHandler {
         LogSystem system = LogSystem.INSTANCE;
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void bakeModels(ModelBakeEvent event) {
         LogSystem system = LogSystem.INSTANCE;
         system.bakeModels(event);
     }
 
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public static void registerTextures(TextureStitchEvent.Pre event) {
         TextureMap map = event.getMap();

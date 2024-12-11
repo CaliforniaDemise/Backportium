@@ -12,7 +12,7 @@ import java.util.Map;
 @IFMLLoadingPlugin.Name(Tags.MOD_ID)
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(-100)
-@IFMLLoadingPlugin.TransformerExclusions({ "backportium.debarked.", "surreal.backportium.core." })
+@IFMLLoadingPlugin.TransformerExclusions({ "backportium.logs." })
 public class BPPlugin implements IFMLLoadingPlugin {
 
     public static boolean FLUIDLOGGED;
