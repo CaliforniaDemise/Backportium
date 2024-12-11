@@ -440,7 +440,19 @@ public class LogSystem {
                                 }
                             }
                         }
-                        else if (stupidityMap.containsKey("north")) {
+                        else if (stupidityMap.containsKey("end") || stupidityMap.containsKey("side")) {
+                            String side = stupidityMap.get("side");
+                            if (isBark || stupidityMap.get("end").equals(side)) {
+                                stupidityMap.remove("end");
+                                stupidityMap.remove("side");
+                                stupidityMap.put("all", side);
+                                try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }
+                            }
+                            else {
+                                try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column")); } catch (Exception e) { return; }
+                            }
+                        }
+                        else if (stupidityMap.containsKey("north") && stupidityMap.containsKey("south") && stupidityMap.containsKey("west") && stupidityMap.containsKey("east") && stupidityMap.containsKey("up") && stupidityMap.containsKey("down")) {
                             String side = stupidityMap.get("north");
                             String end = stupidityMap.get("up");
                             stupidityMap.remove("north");
@@ -459,19 +471,14 @@ public class LogSystem {
                                 try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column")); } catch (Exception e) { return; }
                             }
                         }
-                        else if (stupidityMap.containsKey("end") || stupidityMap.containsKey("side")) {
-                            String side = stupidityMap.get("side");
-                            if (isBark || stupidityMap.get("end").equals(side)) {
-                                stupidityMap.remove("end");
-                                stupidityMap.remove("side");
-                                stupidityMap.put("all", side);
-                                try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }
-                            }
-                            else {
-                                try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column")); } catch (Exception e) { return; }
-                            }
+                        try {
+                            texturesMap = ImmutableMap.copyOf(stupidityMap);
                         }
-                        texturesMap = ImmutableMap.copyOf(stupidityMap);
+                        catch (Exception e) {
+                            System.err.println("Error occurred while baking model of " + addLog.getRegistryName());
+                            e.printStackTrace();
+                            return;
+                        }
                     }
                     IModel addModel = repModel.retexture(texturesMap);
                     IBlockState addState = RandomHelper.copyState(entry.getKey(), addLog);
