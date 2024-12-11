@@ -281,16 +281,17 @@ public class BPHooks {
     }
 
     public static void Logs$postRegister(Event event) {
-        ModContainer container = Loader.instance().activeModContainer();
-        if (container == null) return;
-        String modId = container.getModId();
         if (event instanceof RegistryEvent.Register) {
+            ModContainer container = Loader.instance().activeModContainer();
+            if (container == null) return;
+            String modId = container.getModId();
             RegistryEvent.Register<?> register = (RegistryEvent.Register<?>) event;
             if (register.getRegistry().getRegistrySuperType() == Block.class) {
                 IForgeRegistry<Block> registry = (IForgeRegistry<Block>) register.getRegistry();
                 LogSystem system = LogSystem.INSTANCE;
                 system.forEachBlock(origLog -> {
-                    ResourceLocation origLoc = Objects.requireNonNull(origLog.getRegistryName());
+                    if (origLog.getRegistryName() == null) return;
+                    ResourceLocation origLoc = origLog.getRegistryName();
                     if (!origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
                         Block stripped = system.getStripped(origLog);
                         Block bark = system.getBark(origLog);
