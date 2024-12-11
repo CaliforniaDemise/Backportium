@@ -409,8 +409,10 @@ public class LogTransformer extends BasicTransformer {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != RETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "owner", "Lnet/minecraftforge/fml/common/ModContainer;"));
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(hook("Logs$postRegister", "(Lnet/minecraftforge/fml/common/eventhandler/Event;)V"));
+                list.add(hook("Logs$postRegister", "(Lnet/minecraftforge/fml/common/ModContainer;Lnet/minecraftforge/fml/common/eventhandler/Event;)V"));
                 method.instructions.insertBefore(node, list);
                 break;
             }
