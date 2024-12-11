@@ -398,7 +398,6 @@ public class LogSystem {
                     ImmutableMap<String, String> texturesMap;
                     {
                         Map<String, String> stupidityMap = new HashMap<>();
-                        ImmutableMap.Builder<String, String> mapBuilder = new ImmutableBiMap.Builder<>();
                         if (textureList != null) {
                            for (String texture : textureList) {
                                String[] split = texture.split("=");
@@ -426,7 +425,7 @@ public class LogSystem {
                                 else stupidityMap.put("side", texture + (isStripped ? "_stripped" : ""));
                             }
                         }
-                        if (stupidityMap.containsKey("end")) {
+                        if (stupidityMap.containsKey("end") || stupidityMap.containsKey("side")) {
                             String side = stupidityMap.get("side");
                             if (isBark || stupidityMap.get("end").equals(side)) {
                                 stupidityMap.remove("end");
@@ -438,8 +437,7 @@ public class LogSystem {
                                 try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column")); } catch (Exception e) { return; }
                             }
                         }
-                        mapBuilder.putAll(stupidityMap);
-                        texturesMap = mapBuilder.build();
+                        texturesMap = ImmutableMap.copyOf(stupidityMap);
                     }
                     IModel addModel = repModel.retexture(texturesMap);
                     IBlockState addState = RandomHelper.copyState(entry.getKey(), addLog);
