@@ -145,6 +145,17 @@ public class Backportium {
     @SubscribeEvent public void playNoteBlock(NoteBlockEvent.Play event) { EventHandler.playNoteBlock(event); }
     @SubscribeEvent public void rightClickBlock(PlayerInteractEvent.RightClickBlock event) { EventHandler.rightClickBlock(event); }
 
+    // Additional Events
+    @SubscribeEvent
+    public void replaceMissingMappings(RegistryEvent.MissingMappings<Block> event) {
+        for(RegistryEvent.MissingMappings.Mapping<Block> mapping : event.getAllMappings()) {
+            if (mapping.key.getNamespace().equals("aquaacrobatics")) {
+                mapping.remap(ModBlocks.BUBBLE_COLUMN);
+                return;
+            }
+        }
+    }
+
     private void cleanup() {
         this.registries = null;
         LogSystem.cleanup();
