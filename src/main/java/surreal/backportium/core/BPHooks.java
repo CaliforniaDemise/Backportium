@@ -1,7 +1,6 @@
 package surreal.backportium.core;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLog;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
@@ -196,53 +195,6 @@ public class BPHooks {
         }
     }
 
-    // TODO Use ForgeRegistry#add instead of hooks
-    // TODO Mod might be adding multiple instances of debarked block and item, check and find ways if some of them actually are
-    /**
-     * Used in {@link DebarkingTransformer#transformForgeRegistry(byte[])}
-     * Putted after everything is registered
-     **/
-
-
-//    public static boolean Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Block> registry, Block origLog) {
-//        if (origLog instanceof DebarkedLog && registry.containsValue(origLog)) {
-//            return false;
-//        }
-//        Block debarkedLog = DEBARKED_LOG_BLOCKS.get(origLog);
-//        if (debarkedLog == null) return true;
-//        if (debarkedLog.getRegistryName() == null) {
-//            debarkedLog.setRegistryName(Objects.requireNonNull(origLog.getRegistryName()));
-//        }
-//        // TODO Copy over variables
-//        if (!registry.containsValue(debarkedLog)) {
-//            registry.register(debarkedLog);
-//        }
-//        return true;
-//    }
-
-    // TODO Use ForgeRegistry#add instead of hooks
-    /**
-     * Used in {@link DebarkingTransformer#transformForgeRegistry(byte[])}
-     **/
-//    public static void Debarking$tryRegisteringDebarkedLog(IForgeRegistry<Item> registry, Item item) {
-//        if (!(item instanceof ItemBlock)) return;
-//        if (((ItemBlock) item).getBlock() instanceof DebarkedLog && registry.containsValue(item)) {
-//            return;
-//        }
-//        Block origLog = ((ItemBlock) item).getBlock();
-//        Block debLog = DEBARKED_LOG_BLOCKS.get(origLog);
-//        if (debLog != null) {
-//            for (ItemBlock itemBlock : DEBARKED_LOG_ITEMS) {
-//                if (itemBlock.getBlock() == debLog) return;
-//            }
-//            boolean forestryLoaded = Loader.isModLoaded("forestry");
-//            if (forestryLoaded && origLog instanceof BlockForestryLog) {
-//                registry.register(new ItemBlockAddLog.ItemBlockAddLogForestry(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
-//            }
-//            else registry.register(new ItemBlockAddLog(debLog, origLog).setRegistryName(Objects.requireNonNull(origLog.getRegistryName())));
-//        }
-//    }
-
     /**
      * Used in createDebarkedLogClass in {@link DebarkingTransformer}.
      * Some mods like BoP uses variant values that are hardcoded to the specific block.
@@ -281,10 +233,11 @@ public class BPHooks {
     }
 
     public static void Logs$postRegister(Event event) {
-        ModContainer container = Loader.instance().activeModContainer();
-        if (container == null) return;
-        String modId = container.getModId();
+        if (LogSystem.INSTANCE == null) return;
         if (event instanceof RegistryEvent.Register) {
+            ModContainer container = Loader.instance().activeModContainer();
+            if (container == null) return;
+            String modId = container.getModId();
             RegistryEvent.Register<?> register = (RegistryEvent.Register<?>) event;
             if (register.getRegistry().getRegistrySuperType() == Block.class) {
                 IForgeRegistry<Block> registry = (IForgeRegistry<Block>) register.getRegistry();
