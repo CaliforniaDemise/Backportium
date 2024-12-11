@@ -2,6 +2,7 @@ package surreal.backportium.recipe;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
@@ -12,6 +13,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.PotionHelper;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -136,6 +138,23 @@ public class ModRecipes {
             furnaceRecipes.forEach(p -> FurnaceRecipes.instance().addSmeltingRecipe(p.getKey(), p.getValue(), FurnaceRecipes.instance().getSmeltingExperience(p.getValue())));
             ResourceLocation group = new ResourceLocation("planks");
             craftingRecipes.forEach(p -> GameRegistry.addShapedRecipe(new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(p.getKey().getItem().getRegistryName()).getPath() + "_" + p.getKey().getMetadata()), group, p.getValue(), "A", 'A', p.getKey()));
+            { // Barks
+                LogSystem system = LogSystem.INSTANCE;
+                ResourceLocation barkGroup = new ResourceLocation("bark");
+                system.forEachBlock(origLog -> {
+                    Block stripped = system.getStripped(origLog);
+                    Block bark = system.getBark(origLog);
+                    Block strippedBark = system.getStrippedBark(origLog);
+                    if (bark != null || (stripped != null && strippedBark != null)) {
+                        NonNullList<ItemStack> list = NonNullList.create();
+                        origLog.getSubBlocks(CreativeTabs.SEARCH, list);
+                        list.forEach(origStack -> {
+                            if (bark != null) GameRegistry.addShapedRecipe(new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(origLog.getRegistryName()).getPath() + "_bark"), barkGroup, new ItemStack(bark, 3, origStack.getMetadata()), "AA", "AA", 'A', origStack);
+                            if ((stripped != null && strippedBark != null)) GameRegistry.addShapedRecipe(new ResourceLocation(Tags.MOD_ID, Objects.requireNonNull(origLog.getRegistryName()).getPath() + "_stripped_bark"), barkGroup, new ItemStack(strippedBark, 3, origStack.getMetadata()), "AA", "AA", 'A', new ItemStack(stripped, 1, origStack.getMetadata()));
+                        });
+                    }
+                });
+            }
         }
     }
 
