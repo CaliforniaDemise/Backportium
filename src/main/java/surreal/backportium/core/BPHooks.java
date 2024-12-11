@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -310,6 +311,25 @@ public class BPHooks {
 
     private static boolean Logs$isNonOriginal(Object block) {
         return block instanceof StrippableLog && block.getClass().getName().startsWith("backportium.logs");
+    }
+
+    // Bubble Column
+    public static int BubbleColumn$inBubbleColumn(Entity entity) {
+        BlockPos pos = new BlockPos(entity).add(0D, entity.getEyeHeight(), 0D);
+        IBlockState state = entity.world.getBlockState(pos);
+        if (state.getBlock() == ModBlocks.BUBBLE_COLUMN && entity.world.isAirBlock(pos.up())) {
+            boolean downwards = !state.getValue(BlockBubbleColumn.DRAG);
+            if (downwards) return 2;
+            else return 1;
+        }
+        return 0;
+    }
+
+    public static boolean BubbleColumn$isPlayerRiding(EntityBoat boat) {
+        for (Entity entity : boat.getPassengers()) {
+            if (entity instanceof EntityPlayer) return true;
+        }
+        return false;
     }
 
     // Button Placement

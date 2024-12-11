@@ -55,10 +55,7 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     public void onEntityCollision(World worldIn, BlockPos pos, IBlockState state, @Nonnull Entity entityIn) {
         IBlockState upState = worldIn.getBlockState(pos.up());
         boolean downwards = !state.getValue(DRAG);
-        if (entityIn instanceof EntityBoat) {
-            // TODO Handle rocking... With POSE??!?!?!?
-        }
-        else if (!(entityIn instanceof EntityTrident)) {
+        if (!(entityIn instanceof EntityBoat) && !(entityIn instanceof EntityTrident)) {
             if (upState.getBlock() == Blocks.AIR) {
                 if (downwards) entityIn.motionY = Math.max(-0.9D, entityIn.motionY - 0.03D);
                 else entityIn.motionY = Math.min(1.8D, entityIn.motionY + 0.1D);
@@ -69,13 +66,6 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
                 entityIn.fallDistance = 0.0F;
             }
         }
-//        IBubbleColumnInteractable bubbleEntity = (IBubbleColumnInteractable)entityIn;
-//        boolean downwards = !state.getValue(DRAG);
-//        if (iblockstate.getBlock() == Blocks.AIR) {
-//            bubbleEntity.onEnterBubbleColumnWithAirAbove(downwards);
-//        } else {
-//            bubbleEntity.onEnterBubbleColumn(downwards);
-//        }
     }
 
     public static void placeBubbleColumn(World world, BlockPos pos, boolean isUpwards) {

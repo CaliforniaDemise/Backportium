@@ -38,7 +38,6 @@ public class BPTransformer implements IClassTransformer {
 
             // Debarking
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
-//            case "net.minecraftforge.registries.ForgeRegistry": return DebarkingTransformer.transformForgeRegistry(basicClass);
             case "net.minecraftforge.fml.common.eventhandler.ASMEventHandler": return LogTransformer.transformASMEventHandler(basicClass);
             case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return LogTransformer.transformForgeRegistryEntry$Impl(basicClass);
             case "net.minecraft.block.Block": return LogTransformer.transformBlock(basicClass);
@@ -55,6 +54,8 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockSoulSand": return BubbleColumnTransformer.transformSoulSand(basicClass);
             case "net.minecraft.block.BlockMagma": return BubbleColumnTransformer.transformBlockMagma(basicClass);
             case "net.minecraft.entity.projectile.EntityThrowable": return BubbleColumnTransformer.transformEntityThrowable(basicClass);
+            case "net.minecraft.entity.item.EntityBoat": return BubbleColumnTransformer.transformEntityBoat(basicClass);
+            case "net.minecraft.client.renderer.entity.RenderBoat": return BubbleColumnTransformer.transformRenderBoat(basicClass);
 
             // Random Fixes
             case "net.minecraft.block.BlockGrass":
