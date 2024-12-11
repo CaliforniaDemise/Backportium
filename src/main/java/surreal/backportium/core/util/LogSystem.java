@@ -243,12 +243,20 @@ public class LogSystem {
                                         String[] split = texture.split("=");
                                         if (split[0].equals("end")) end = split[1];
                                         else if (split[0].equals("side")) side = split[1];
+                                        else {
+                                            if (split[0].equals("up")) end = split[1];
+                                            else if (split[0].equals("north")) side = split[1];
+                                        }
                                     }
                                 }
                                 else {
                                     for (Map.Entry<String, String> texEntry : actualModelBlock.textures.entrySet()) {
                                         if (texEntry.getKey().equals("end")) end = texEntry.getValue();
                                         else if (texEntry.getKey().equals("side")) side = texEntry.getValue();
+                                        else {
+                                            if (texEntry.getKey().equals("up")) end = texEntry.getValue();
+                                            else if (texEntry.getKey().equals("north")) side = texEntry.getValue();
+                                        }
                                     }
                                 }
                                 if (end != null && side != null) {
@@ -421,11 +429,37 @@ public class LogSystem {
                         }
                         if (stupidityMap.isEmpty()) {
                             for (ResourceLocation texture : origModel.getTextures()) {
-                                if (texture.getPath().contains("_top")) stupidityMap.put("end", texture + (isStripped ? "_stripped" : ""));
-                                else stupidityMap.put("side", texture + (isStripped ? "_stripped" : ""));
+                                if (isBark) {
+                                    if (!texture.getPath().contains("_top")) stupidityMap.put("all", texture + (isStripped ? "_stripped" : ""));
+                                    try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }
+                                }
+                                else {
+                                    if (texture.getPath().contains("_top")) stupidityMap.put("end", texture + (isStripped ? "_stripped" : ""));
+                                    else stupidityMap.put("side", texture + (isStripped ? "_stripped" : ""));
+                                    try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column")); } catch (Exception e) { return; }
+                                }
                             }
                         }
-                        if (stupidityMap.containsKey("end") || stupidityMap.containsKey("side")) {
+                        else if (stupidityMap.containsKey("north")) {
+                            String side = stupidityMap.get("north");
+                            String end = stupidityMap.get("up");
+                            stupidityMap.remove("north");
+                            stupidityMap.remove("south");
+                            stupidityMap.remove("west");
+                            stupidityMap.remove("east");
+                            stupidityMap.remove("up");
+                            stupidityMap.remove("down");
+                            if (isBark) {
+                                stupidityMap.put("all", side);
+                                try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }
+                            }
+                            else {
+                                stupidityMap.put("side", side);
+                                stupidityMap.put("end", end);
+                                try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_column")); } catch (Exception e) { return; }
+                            }
+                        }
+                        else if (stupidityMap.containsKey("end") || stupidityMap.containsKey("side")) {
                             String side = stupidityMap.get("side");
                             if (isBark || stupidityMap.get("end").equals(side)) {
                                 stupidityMap.remove("end");
