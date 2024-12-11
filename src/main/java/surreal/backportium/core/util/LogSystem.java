@@ -1,6 +1,5 @@
 package surreal.backportium.core.util;
 
-import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import forestry.api.arboriculture.EnumVanillaWoodType;
@@ -299,6 +298,7 @@ public class LogSystem {
         });
     }
 
+    @SideOnly(Side.CLIENT)
     private static void registerForestryTextures(TextureStitchEvent.Pre event, Block origLog, Block addLog) {
         TextureMap map = event.getMap();
         for (IBlockState state : origLog.getBlockState().getValidStates()) {
@@ -407,17 +407,17 @@ public class LogSystem {
                     {
                         Map<String, String> stupidityMap = new HashMap<>();
                         if (textureList != null) {
-                           for (String texture : textureList) {
-                               String[] split = texture.split("=");
-                               String key = split[0];
-                               String value;
-                               {
-                                   StringBuilder valBuilder = new StringBuilder(split[1]);
-                                   if (isStripped) valBuilder.append("_stripped");
-                                   value = valBuilder.toString();
-                               }
-                               stupidityMap.put(key, value);
-                           }
+                            for (String texture : textureList) {
+                                String[] split = texture.split("=");
+                                String key = split[0];
+                                String value;
+                                {
+                                    StringBuilder valBuilder = new StringBuilder(split[1]);
+                                    if (isStripped) valBuilder.append("_stripped");
+                                    value = valBuilder.toString();
+                                }
+                                stupidityMap.put(key, value);
+                            }
                         }
                         else {
                             for (Map.Entry<String, String> texEntry : actualModelBlock.textures.entrySet()) {
@@ -453,14 +453,14 @@ public class LogSystem {
                             }
                         }
                         else if (stupidityMap.containsKey("north") && stupidityMap.containsKey("south") && stupidityMap.containsKey("west") && stupidityMap.containsKey("east") && stupidityMap.containsKey("up") && stupidityMap.containsKey("down")) {
-                            String side = stupidityMap.get("north");
+                            String side = stupidityMap.get("west");
                             String end = stupidityMap.get("up");
-                            stupidityMap.remove("north");
-                            stupidityMap.remove("south");
+                            if (stupidityMap.get("north").equals(side)) stupidityMap.remove("north");
+                            if (stupidityMap.get("south").equals(side)) stupidityMap.remove("south");
                             stupidityMap.remove("west");
-                            stupidityMap.remove("east");
+                            if (stupidityMap.get("east").equals(side)) stupidityMap.remove("east");
                             stupidityMap.remove("up");
-                            stupidityMap.remove("down");
+                            if (stupidityMap.get("down").equals(end)) stupidityMap.remove("down");
                             if (isBark) {
                                 stupidityMap.put("all", side);
                                 try { repModel = ModelLoaderRegistry.getModel(new ResourceLocation("block/cube_all")); } catch (Exception e) { return; }

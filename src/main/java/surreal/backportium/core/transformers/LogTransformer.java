@@ -26,6 +26,9 @@ public class LogTransformer extends BasicTransformer {
         DO_NOT_TRANSFORM.add("com.bewitchment.common.block.util.ModBlockLog");
         DO_NOT_TRANSFORM.add("org.cyclops.cyclopscore.config.configurable.ConfigurableBlockLog");
         DO_NOT_TRANSFORM.add("epicsquid.mysticallib.block.BlockLogBase");
+
+        // TODO Fix problems with these
+        DO_NOT_TRANSFORM.add("org.cyclops.integrateddynamics.block.BlockMenrilLogFilled");
     }
 
     public static boolean checkLogs(byte[] cls, String transformedName, String[] superName) {
