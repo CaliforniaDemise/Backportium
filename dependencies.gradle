@@ -29,4 +29,6 @@ dependencies {
 
     compileOnly "curse.maven:forestry-59751:5875571"
     compileOnly "curse.maven:binnies-mods-899182:5492997"
+
+    compileOnly "curse.maven:ae2-223794:2747063"
 }

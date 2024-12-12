@@ -55,6 +55,9 @@ public class BuoyancyTransformer extends BasicTransformer {
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getEyeHeight", "func_70047_e"), "()F", false));
                         list.add(new InsnNode(F2D));
                         list.add(new InsnNode(DADD));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(hook("Buoyancy$addY", "(Lnet/minecraft/entity/item/EntityItem;)D"));
+                        list.add(new InsnNode(DADD));
                         list.add(new VarInsnNode(DSTORE, 7));
                         list.add(new TypeInsnNode(NEW, "net/minecraft/util/math/BlockPos"));
                         list.add(new InsnNode(DUP));
@@ -106,6 +109,7 @@ public class BuoyancyTransformer extends BasicTransformer {
                 }
             }
         }
+        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 }

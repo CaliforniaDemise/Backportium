@@ -27,6 +27,7 @@ import surreal.backportium.core.BPHooks;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.RandomHelper;
+import surreal.backportium.util.Tuple;
 
 import java.util.*;
 
@@ -108,9 +109,10 @@ public class ModRecipes {
                 Block keyBlock = Block.getBlockFromItem(entry.getKey().getItem());
                 if (BPHooks.Logs$isOriginal(keyBlock)) {
                     LogSystem system = LogSystem.INSTANCE;
-                    Block stripped = system.getStripped(keyBlock);
-                    Block bark = system.getBark(keyBlock);
-                    Block strippedBark = system.getStrippedBark(keyBlock);
+                    Tuple<Block, Block, Block> tuple = system.getLogs(keyBlock);
+                    Block stripped = tuple.getFirst();
+                    Block bark = tuple.getSecond();
+                    Block strippedBark = tuple.getThird();
                     if (stripped != null) furnaceRecipes.add(Pair.of(new ItemStack(stripped, 1, entry.getKey().getMetadata()), entry.getValue()));
                     if (bark != null) furnaceRecipes.add(Pair.of(new ItemStack(bark, 1, entry.getKey().getMetadata()), entry.getValue()));
                     if (strippedBark != null) furnaceRecipes.add(Pair.of(new ItemStack(strippedBark, 1, entry.getKey().getMetadata()), entry.getValue()));
@@ -125,9 +127,10 @@ public class ModRecipes {
                             Block block = Block.getBlockFromItem(s.getItem());
                             if (!BPHooks.Logs$isOriginal(block)) continue;
                             LogSystem system = LogSystem.INSTANCE;
-                            Block stripped = system.getStripped(block);
-                            Block bark = system.getBark(block);
-                            Block strippedBark = system.getStrippedBark(block);
+                            Tuple<Block, Block, Block> tuple = system.getLogs(block);
+                            Block stripped = tuple.getFirst();
+                            Block bark = tuple.getSecond();
+                            Block strippedBark = tuple.getThird();
                             if (stripped != null) craftingRecipes.add(Pair.of(new ItemStack(stripped, 1, s.getMetadata()), recipe.getRecipeOutput()));
                             if (bark != null) craftingRecipes.add(Pair.of(new ItemStack(bark, 1, s.getMetadata()), recipe.getRecipeOutput()));
                             if (strippedBark != null) craftingRecipes.add(Pair.of(new ItemStack(strippedBark, 1, s.getMetadata()), recipe.getRecipeOutput()));
@@ -142,9 +145,10 @@ public class ModRecipes {
                 LogSystem system = LogSystem.INSTANCE;
                 ResourceLocation barkGroup = new ResourceLocation("bark");
                 system.forEachBlock(origLog -> {
-                    Block stripped = system.getStripped(origLog);
-                    Block bark = system.getBark(origLog);
-                    Block strippedBark = system.getStrippedBark(origLog);
+                    Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+                    Block stripped = tuple.getFirst();
+                    Block bark = tuple.getSecond();
+                    Block strippedBark = tuple.getThird();
                     if (bark != null || (stripped != null && strippedBark != null)) {
                         NonNullList<ItemStack> list = NonNullList.create();
                         origLog.getSubBlocks(CreativeTabs.SEARCH, list);

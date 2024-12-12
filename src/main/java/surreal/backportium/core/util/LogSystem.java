@@ -35,10 +35,12 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.client.textures.StrippedSpriteSide;
 import surreal.backportium.client.textures.StrippedSpriteTop;
 import surreal.backportium.client.textures.StrippedSpriteTopTemplate;
 import surreal.backportium.util.RandomHelper;
+import surreal.backportium.util.Tuple;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
@@ -55,17 +57,13 @@ public class LogSystem {
 
     public static LogSystem INSTANCE = new LogSystem();
 
-    private final Map<Block, Block> stripped; // origLog, stripped
-    private final Map<Block, Block> bark; // origLog, bark
-    private final Map<Block, Block> sBark; // origLog, strippedBark
+    private final Map<Block, Tuple<Block, Block, Block>> addLogs;
     private final Map<Block, ItemBlock> items; // stripped/bark/sbark, item
 
     private final Gson vanillaGson;
 
     public LogSystem() {
-        this.stripped = new HashMap<>();
-        this.bark = new HashMap<>();
-        this.sBark = new HashMap<>();
+        this.addLogs = new HashMap<>();
         this.items = new HashMap<>();
         if (FMLLaunchHandler.side().isClient()) {
             Field f_gson = ObfuscationReflectionHelper.findField(ModelBlockDefinition.class, "field_178333_a");
@@ -76,28 +74,17 @@ public class LogSystem {
     }
 
     public void register(Block log, @Nullable Block stripped, @Nullable Block bark, @Nullable Block strippedBark) {
-        if (stripped != null) this.stripped.put(log, stripped);
-        if (bark != null) this.bark.put(log, bark);
-        if (strippedBark != null) this.sBark.put(log, strippedBark);
+        if (stripped == null && bark == null && strippedBark == null) return;
+        this.addLogs.put(log, new Tuple<>(stripped, bark, strippedBark));
     }
 
     public void registerItem(Block addLog, ItemBlock item) {
         this.items.put(addLog, item);
     }
 
-    @Nullable
-    public Block getStripped(Block origLog) {
-        return this.stripped.get(origLog);
-    }
-
-    @Nullable
-    public Block getBark(Block origLog) {
-        return this.bark.get(origLog);
-    }
-
-    @Nullable
-    public Block getStrippedBark(Block origLog) {
-        return this.sBark.get(origLog);
+    @NotNull
+    public Tuple<Block, Block, Block> getLogs(Block origLog) {
+        return this.addLogs.get(origLog);
     }
 
     @Nullable
@@ -106,14 +93,15 @@ public class LogSystem {
     }
 
     public void forEachBlock(Consumer<Block> consumer) {
-        this.stripped.keySet().forEach(consumer);
+        this.addLogs.keySet().forEach(consumer);
     }
 
     public void registerOres(FMLInitializationEvent event) {
         this.forEachBlock(origLog -> {
-            Block strippedBlock = this.getStripped(origLog);
-            Block barkBlock = this.getBark(origLog);
-            Block strippedBarkBlock = this.getStrippedBark(origLog);
+            Tuple<Block, Block, Block> tuple = this.getLogs(origLog);
+            Block strippedBlock = tuple.getFirst();
+            Block barkBlock = tuple.getSecond();
+            Block strippedBarkBlock = tuple.getThird();
             if (strippedBlock != null || barkBlock != null || strippedBarkBlock != null) {
                 int meta = OreDictionary.WILDCARD_VALUE;
                 int[] ids = OreDictionary.getOreIDs(new ItemStack(origLog, 1, meta));
@@ -164,9 +152,10 @@ public class LogSystem {
     public void bakeModels(ModelBakeEvent event) {
         boolean hasForestry = Loader.isModLoaded("forestry");
         this.forEachBlock(origLog -> {
-            Block stripped = this.getStripped(origLog);
-            Block bark = this.getBark(origLog);
-            Block strippedBark = this.getStrippedBark(origLog);
+            Tuple<Block, Block, Block> tuple = this.getLogs(origLog);
+            Block stripped = tuple.getFirst();
+            Block bark = tuple.getSecond();
+            Block strippedBark = tuple.getThird();
             if (hasForestry && origLog instanceof BlockForestryLog<?>) {
                 if (stripped != null) bakeForestryModels(event, origLog, stripped);
                 if (bark != null) bakeForestryModels(event, origLog, bark);
@@ -184,12 +173,13 @@ public class LogSystem {
     public void registerTextures(TextureStitchEvent.Pre event) {
         boolean hasForestry = Loader.isModLoaded("forestry");
         this.forEachBlock(origLog -> {
+            Tuple<Block, Block, Block> tuple = this.getLogs(origLog);
             if (hasForestry && origLog instanceof BlockForestryLog<?>) {
-                Block stripped = this.getStripped(origLog);
+                Block stripped = tuple.getFirst();
                 if (stripped != null) registerForestryTextures(event, origLog, stripped);
             }
             else {
-                Block stripped = this.getStripped(origLog);
+                Block stripped = tuple.getFirst();
                 if (stripped != null) {
                     Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(origLog);
                     for (Map.Entry<IBlockState, ModelResourceLocation> entry : modelLocations.entrySet()) {
@@ -554,9 +544,5 @@ public class LogSystem {
             event.getModelRegistry().putObject(addModelLocs.get(addState), bakedModel);
             event.getModelRegistry().putObject(new ModelResourceLocation(Objects.requireNonNull(addLog.getRegistryName()), RandomHelper.getVariantFromState(addState)), bakedModel);
         }
-    }
-
-    public static void cleanup() {
-        INSTANCE = null;
     }
 }

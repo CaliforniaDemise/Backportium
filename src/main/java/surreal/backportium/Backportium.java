@@ -158,7 +158,6 @@ public class Backportium {
 
     private void cleanup() {
         this.registries = null;
-        LogSystem.cleanup();
         System.gc();
     }
 

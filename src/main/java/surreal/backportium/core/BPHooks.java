@@ -1,5 +1,8 @@
 package surreal.backportium.core;
 
+import appeng.core.AEConfig;
+import appeng.core.features.AEFeature;
+import appeng.entity.EntityGrowingCrystal;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -14,6 +17,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -49,6 +53,7 @@ import surreal.backportium.item.v1_13.ItemTrident;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.core.transformers.DebarkingTransformer;
+import surreal.backportium.util.Tuple;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -163,9 +168,10 @@ public class BPHooks {
         if (Logs$isOriginal(origLog)) {
             LogSystem system = LogSystem.INSTANCE;
             ResourceLocation location = new ResourceLocation(registryName);
-            Block stripped = system.getStripped(origLog);
-            Block bark = system.getBark(origLog);
-            Block strippedBark = system.getStrippedBark(origLog);
+            Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+            Block stripped = tuple.getFirst();
+            Block bark = tuple.getSecond();
+            Block strippedBark = tuple.getThird();
             if (stripped != null) registry.register(nextId++, location, stripped.setRegistryName(location));
             if (bark != null) registry.register(nextId++, location, bark.setRegistryName(location));
             if (strippedBark != null) registry.register(nextId++, location, strippedBark.setRegistryName(location));
@@ -178,9 +184,10 @@ public class BPHooks {
     public static void Logs$registerVanilla(RegistryNamespaced<ResourceLocation, Item> registry, Map<Block, Item> blockToItem, Block origLog, Item origItem) {
         if (Logs$isOriginal(origLog)) {
             LogSystem system = LogSystem.INSTANCE;
-            Block stripped = system.getStripped(origLog);
-            Block bark = system.getBark(origLog);
-            Block strippedBark = system.getStrippedBark(origLog);
+            Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+            Block stripped = tuple.getFirst();
+            Block bark = tuple.getSecond();
+            Block strippedBark = tuple.getThird();
             if (stripped != null) {
                 ItemBlockAddLog strippedItem = new ItemBlockAddLog(stripped, origLog);
                 registry.register(Block.getIdFromBlock(strippedItem.getBlock()), Block.REGISTRY.getNameForObject(strippedItem.getBlock()), strippedItem);
@@ -244,9 +251,10 @@ public class BPHooks {
                 system.forEachBlock(origLog -> {
                     ResourceLocation origLoc = origLog.getRegistryName();
                     if (origLoc != null && !origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
-                        Block stripped = system.getStripped(origLog);
-                        Block bark = system.getBark(origLog);
-                        Block strippedBark = system.getStrippedBark(origLog);
+                        Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+                        Block stripped = tuple.getFirst();
+                        Block bark = tuple.getSecond();
+                        Block strippedBark = tuple.getThird();
                         if (stripped != null) {
                             if (stripped.getRegistryName() == null) stripped.setRegistryName(origLoc);
                             stripped.setCreativeTab(origLog.getCreativeTab());
@@ -272,9 +280,10 @@ public class BPHooks {
                 system.forEachBlock(origLog -> {
                     ResourceLocation origLoc = Objects.requireNonNull(origLog.getRegistryName());
                     if (!origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
-                        Block stripped = system.getStripped(origLog);
-                        Block bark = system.getBark(origLog);
-                        Block strippedBark = system.getStrippedBark(origLog);
+                        Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+                        Block stripped = tuple.getFirst();
+                        Block bark = tuple.getSecond();
+                        Block strippedBark = tuple.getThird();
                         if (stripped != null) {
                             ItemBlock strippedItem = system.getItem(stripped);
                             if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(origLoc));
@@ -311,6 +320,14 @@ public class BPHooks {
 
     private static boolean Logs$isNonOriginal(Object block) {
         return block instanceof StrippableLog && block.getClass().getName().startsWith("backportium.logs");
+    }
+
+    // Buoyancy
+    public static double Buoyancy$addY(EntityItem entity) {
+        if (Loader.isModLoaded("appliedenergistics2") && AEConfig.instance().isFeatureEnabled(AEFeature.IN_WORLD_PURIFICATION) && entity instanceof EntityGrowingCrystal) {
+            return 0.25D;
+        }
+        return 0D;
     }
 
     // Bubble Column
@@ -401,9 +418,10 @@ public class BPHooks {
             if (Logs$isOriginal(origLog)) {
                 LogSystem system = LogSystem.INSTANCE;
                 Map<IBlockState, ModelResourceLocation> m = mapperIface.putStateModelLocations(origLog);
-                Block stripped = system.getStripped(origLog);
-                Block bark = system.getBark(origLog);
-                Block strippedBark = system.getStrippedBark(origLog);
+                Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+                Block stripped = tuple.getFirst();
+                Block bark = tuple.getSecond();
+                Block strippedBark = tuple.getThird();
                 if (stripped != null) {
                     mapper.registerBlockStateMapper(stripped, new StateMapperBase() {
                         @Nonnull
