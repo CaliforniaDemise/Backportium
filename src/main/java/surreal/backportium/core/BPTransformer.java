@@ -50,6 +50,9 @@ public class BPTransformer implements IClassTransformer {
             // Biomes
             case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);
 
+            // Item Entity Buoyancy
+            case "net.minecraft.entity.item.EntityItem": return BuoyancyTransformer.transformEntityItem(basicClass);
+
             // Bubble Column
             case "net.minecraft.block.BlockSoulSand": return BubbleColumnTransformer.transformSoulSand(basicClass);
             case "net.minecraft.block.BlockMagma": return BubbleColumnTransformer.transformBlockMagma(basicClass);
