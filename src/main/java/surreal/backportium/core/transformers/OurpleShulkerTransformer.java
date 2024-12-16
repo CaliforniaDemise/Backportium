@@ -1,7 +1,5 @@
 package surreal.backportium.core.transformers;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
 
@@ -11,8 +9,6 @@ import java.util.Iterator;
  * Transformers for Purple Shulker Box
  **/
 public class OurpleShulkerTransformer extends BasicTransformer {
-
-    private static final Log log = LogFactory.getLog(OurpleShulkerTransformer.class);
 
     public static byte[] transformEntityShulker(byte[] basicClass) {
         ClassNode cls = read(basicClass);
