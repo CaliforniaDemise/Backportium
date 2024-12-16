@@ -26,6 +26,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -144,6 +145,7 @@ public class Backportium {
     @SubscribeEvent public void applyBonemeal(BonemealEvent event) { EventHandler.applyBonemeal(event); }
     @SubscribeEvent public void playNoteBlock(NoteBlockEvent.Play event) { EventHandler.playNoteBlock(event); }
     @SubscribeEvent public void rightClickBlock(PlayerInteractEvent.RightClickBlock event) { EventHandler.rightClickBlock(event); }
+    @SubscribeEvent public void decorateBiome(DecorateBiomeEvent.Post event) { EventHandler.decorateBiome(event); }
 
     // Additional Events
     @SubscribeEvent

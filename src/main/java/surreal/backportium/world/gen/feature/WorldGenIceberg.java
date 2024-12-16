@@ -1,4 +1,4 @@
-package surreal.backportium.world.gen;
+package surreal.backportium.world.gen.feature;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

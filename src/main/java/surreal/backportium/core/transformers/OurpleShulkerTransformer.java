@@ -178,7 +178,6 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != ALOAD || ((VarInsnNode) node).var != 0) node = node.getPrevious();
                 AbstractInsnNode to = node.getNext().getNext().getNext().getNext().getNext().getNext().getNext();
-                System.out.println(to);
                 LabelNode gotoLabel = new LabelNode();
                 InsnList list = new InsnList();
                 list.add(new VarInsnNode(ALOAD, 1));

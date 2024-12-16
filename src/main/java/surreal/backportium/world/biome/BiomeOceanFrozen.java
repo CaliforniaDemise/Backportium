@@ -9,7 +9,7 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
-import surreal.backportium.world.gen.WorldGenIceberg;
+import surreal.backportium.world.gen.feature.WorldGenIceberg;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;

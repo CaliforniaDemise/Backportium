@@ -10,14 +10,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.loot.*;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraft.world.storage.loot.functions.LootFunction;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import surreal.backportium.api.block.StrippableLog;
@@ -27,11 +32,17 @@ import surreal.backportium.block.plant.BlockPlantDouble;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.WorldHelper;
+import surreal.backportium.world.biome.BiomeOceanFrozen;
+import surreal.backportium.world.gen.feature.WorldGenKelp;
+import surreal.backportium.world.gen.feature.WorldGenSeagrass;
 
 import java.util.Objects;
 import java.util.Random;
 
 public class EventHandler {
+
+    public static final WorldGenKelp KELP_GEN = new WorldGenKelp();
+    public static final WorldGenSeagrass SEAGRASS_GEN = new WorldGenSeagrass();
 
     public static void loadLootTables(LootTableLoadEvent event) {
         if (event.getName().equals(LootTableList.GAMEPLAY_FISHING_TREASURE)) {
@@ -131,6 +142,27 @@ public class EventHandler {
 
                     ++j;
                 }
+            }
+        }
+    }
+
+    public static void decorateBiome(DecorateBiomeEvent.Post event) {
+        World world = event.getWorld();
+        if (world.provider.getDimensionType() != DimensionType.OVERWORLD) return;
+        ChunkPos chunkPos = event.getChunkPos();
+        BlockPos pos = chunkPos.getBlock(0, 255, 0);
+        Biome biome = world.getBiome(pos);
+
+        boolean isCold = BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD);
+
+        boolean isOcean = BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN);
+        boolean isRiver = BiomeDictionary.hasType(biome, BiomeDictionary.Type.RIVER);
+        boolean isSwamp = BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP);
+
+        if ((isOcean || isRiver || isSwamp)) {
+            if (!isCold) KELP_GEN.generate(event.getWorld(), event.getRand(), event.getChunkPos().getBlock(8, world.getSeaLevel(), 8));
+            if (!(biome instanceof BiomeOceanFrozen)) {
+                SEAGRASS_GEN.generate(event.getWorld(), event.getRand(), event.getChunkPos().getBlock(8, world.getSeaLevel(), 8));
             }
         }
     }

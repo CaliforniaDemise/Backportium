@@ -55,7 +55,7 @@ public class BlockPlantDouble extends BlockBush implements IShearable {
     @Override
     @ParametersAreNonnullByDefault
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
-        return super.canPlaceBlockAt(worldIn, pos) && worldIn.isAirBlock(pos.up());
+        return super.canPlaceBlockAt(worldIn, pos) && worldIn.isSideSolid(pos.down(), EnumFacing.UP) && worldIn.getBlockState(pos.up()).getBlock().isReplaceable(worldIn, pos.up());
     }
 
     @Override
