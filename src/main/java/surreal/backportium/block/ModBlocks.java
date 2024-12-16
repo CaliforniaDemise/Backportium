@@ -25,6 +25,7 @@ import surreal.backportium.item.*;
 import surreal.backportium.item.v1_13.ItemBlockCoral;
 import surreal.backportium.item.v1_13.ItemBlockCoralFan;
 import surreal.backportium.item.v1_13.ItemBlockKelp;
+import surreal.backportium.item.v1_13.ItemShulkerBox;
 import surreal.backportium.tile.v1_13.TileConduit;
 import surreal.backportium.util.Registrar;
 import surreal.backportium.util.SupplierInput;
@@ -37,6 +38,8 @@ import static surreal.backportium.api.enums.CoralType.*;
 public class ModBlocks extends Registrar<Block> {
 
     // 1.13
+    @ObjectHolder("backportium:shulker_box") public static final Block SHULKER_BOX = null;
+
     @ObjectHolder("backportium:blue_ice") public static final Block BLUE_ICE = null;
     @ObjectHolder("backportium:bubble_column") public static final Block BUBBLE_COLUMN = null;
     @ObjectHolder("backportium:pumpkin") public static final Block UNCARVED_PUMPKIN = null;
@@ -143,6 +146,7 @@ public class ModBlocks extends Registrar<Block> {
     @SideOnly(Side.CLIENT)
     public static void registerStateMappers() {
         ModelLoader.setCustomStateMapper(BUBBLE_COLUMN, new StateMap.Builder().ignore(BlockBubbleColumn.DRAG, BlockBubbleColumn.LEVEL).build());
+        ModelLoader.setCustomStateMapper(SHULKER_BOX, new StateMap.Builder().ignore(BlockShulkerBox.FACING).build());
     }
 
     protected Block register(Block block, SupplierInput<Block, Item> handleItem, String name) {
@@ -187,6 +191,7 @@ public class ModBlocks extends Registrar<Block> {
             return new ItemSlabDef(block, slab, slab.getDoubleSlab());
         };
 
+        this.register(new BlockShulkerBox(null), ItemShulkerBox::new, "shulker_box");
         this.register(new BlockBlueIce(), BASIC_ITEM, "blue_ice");
         this.register(new BlockBubbleColumn(), null, "bubble_column");
         this.register(new BlockPumpkin(), BASIC_ITEM, "pumpkin");

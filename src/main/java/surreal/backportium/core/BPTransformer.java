@@ -60,6 +60,13 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.entity.item.EntityBoat": return BubbleColumnTransformer.transformEntityBoat(basicClass);
             case "net.minecraft.client.renderer.entity.RenderBoat": return BubbleColumnTransformer.transformRenderBoat(basicClass);
 
+            // Purple Shulker Box
+            case "net.minecraft.block.BlockShulkerBox": return OurpleShulkerTransformer.transformBlockShulkerBox(basicClass);
+            case "net.minecraft.entity.monster.EntityShulker": return OurpleShulkerTransformer.transformEntityShulker(basicClass);
+            case "net.minecraft.client.renderer.tileentity.TileEntityShulkerBoxRenderer": return OurpleShulkerTransformer.transformTESRShulker(basicClass);
+            case "net.minecraft.client.renderer.entity.RenderShulker": return OurpleShulkerTransformer.transformRenderShulker(basicClass);
+            case "net.minecraft.client.renderer.entity.RenderShulker$HeadLayer": return OurpleShulkerTransformer.transformRenderShulker$HeadLayer(basicClass);
+
             // Random Fixes
             case "net.minecraft.block.BlockGrass":
             case "net.minecraft.block.BlockMycelium": return FixTransformer.transformBlockGrass(basicClass);

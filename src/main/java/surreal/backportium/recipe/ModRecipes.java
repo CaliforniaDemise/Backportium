@@ -99,6 +99,10 @@ public class ModRecipes {
             PotionHelper.addMix(ModPotions.TURTLE_MASTER_TYPE, redstoneIng, ModPotions.LONG_TURTLE_MASTER_TYPE);
             PotionHelper.addMix(ModPotions.TURTLE_MASTER_TYPE, GLOWSTONE_DUST, ModPotions.STRONG_TURTLE_MASTER_TYPE);
         }
+
+        {
+            GameRegistry.addShapedRecipe(new ResourceLocation("purple_shulker_box"), new ResourceLocation("shulker_box"), new ItemStack(SHULKER_BOX), "A", "B", "A", 'A', new ItemStack(Items.SHULKER_SHELL), 'B', new ItemStack(CHEST));
+        }
     }
 
     public static void registerLateRecipes() {

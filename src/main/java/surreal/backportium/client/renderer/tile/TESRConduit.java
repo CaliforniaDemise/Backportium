@@ -31,6 +31,7 @@ public class TESRConduit extends TileEntitySpecialRenderer<TileConduit> {
     private final ModelConduit SHELL = new ModelConduit.Shell();
     private final ModelConduit CAGE = new ModelConduit.Cage();
 
+    // TODO Handle destroy stages
     @Override
     public void render(@Nonnull TileConduit te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         super.render(te, x, y, z, partialTicks, destroyStage, alpha);

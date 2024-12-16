@@ -77,6 +77,8 @@ tile.backportium.bubble_coral_fan.dead.name=Dead Bubble Coral Fan
 tile.backportium.fire_coral_fan.dead.name=Dead Fire Coral Fan
 tile.backportium.horn_coral_fan.dead.name=Dead Horn Coral Fan
 
+tile.backportium.shulker_box.name=Shulker Box
+
 # Items
 item.backportium.dried_kelp.name=Dried Kelp
 item.backportium.sea_heart.name=Sea Heart
