@@ -2,6 +2,7 @@ package surreal.backportium.core.transformers;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.objectweb.asm.ClassReader;
@@ -12,13 +13,15 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import java.io.*;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.jar.JarEntry;
-import java.util.jar.JarOutputStream;
+import java.util.Map;
 
 public abstract class BasicTransformer implements Opcodes {
+
+    private static final MethodHandle RESOURCE_CACHE;
 
     protected static MethodInsnNode clientHook(String name, String desc) {
         return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks$Client", name, desc, false);
@@ -116,20 +119,26 @@ public abstract class BasicTransformer implements Opcodes {
     }
 
     protected static void loadNewClass(String clsName, byte[] basicClass) {
-        LaunchClassLoader loader = (LaunchClassLoader) BasicTransformer.class.getClassLoader();
-        File out = new File(".backportium_classes");
-        Path path = Paths.get(out.getAbsolutePath(), clsName + ".jar");
-        File f = path.toFile();
-        f.getParentFile().mkdirs();
         try {
-            JarOutputStream jos = new JarOutputStream(new BufferedOutputStream(Files.newOutputStream(path)));
-            jos.putNextEntry(new JarEntry(clsName + ".class"));
-            jos.write(basicClass);
-            jos.closeEntry();
-            jos.close();
-            loader.addURL(path.toUri().toURL());
+            Map<String, byte[]> map = getResourceCache();
+            map.put(clsName.replace('/', '.'), basicClass);
         }
-        catch (IOException e) {
+        catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Map<String, byte[]> getResourceCache() throws Throwable {
+        return  (Map<String, byte[]>) RESOURCE_CACHE.invoke(Launch.classLoader);
+    }
+
+    static {
+        try {
+            Field f_resoureCache = LaunchClassLoader.class.getDeclaredField("resourceCache");
+            f_resoureCache.setAccessible(true);
+            RESOURCE_CACHE = MethodHandles.lookup().unreflectGetter(f_resoureCache);
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
