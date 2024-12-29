@@ -40,8 +40,8 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
             case "net.minecraftforge.fml.common.eventhandler.ASMEventHandler": return LogTransformer.transformASMEventHandler(basicClass);
             case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return LogTransformer.transformForgeRegistryEntry$Impl(basicClass);
-            case "net.minecraft.block.Block": return LogTransformer.transformBlock(basicClass);
-            case "net.minecraft.item.Item": return LogTransformer.transformItem(basicClass);
+            case "net.minecraft.block.Block": return OurpleShulkerTransformer.transformBlock(LogTransformer.transformBlock(basicClass));
+            case "net.minecraft.item.Item": return OurpleShulkerTransformer.transformItem(LogTransformer.transformItem(basicClass));
             case "net.minecraft.item.ItemBlock": return LogTransformer.transformItemBlock(basicClass);
 
             // For The Game Players
@@ -66,6 +66,10 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.client.renderer.tileentity.TileEntityShulkerBoxRenderer": return OurpleShulkerTransformer.transformTESRShulker(basicClass);
             case "net.minecraft.client.renderer.entity.RenderShulker": return OurpleShulkerTransformer.transformRenderShulker(basicClass);
             case "net.minecraft.client.renderer.entity.RenderShulker$HeadLayer": return OurpleShulkerTransformer.transformRenderShulker$HeadLayer(basicClass);
+            case "net.minecraft.init.Blocks": return OurpleShulkerTransformer.transformBlocks(basicClass);
+            case "net.minecraft.client.renderer.BlockModelShapes": return OurpleShulkerTransformer.transformBlockModelShapes(basicClass);
+            case "net.minecraft.client.renderer.RenderItem": return OurpleShulkerTransformer.transformRenderItem(basicClass);
+            case "net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer": return OurpleShulkerTransformer.transformTileEntityItemStackRenderer(basicClass);
 
             // Random Fixes
             case "net.minecraft.block.BlockGrass":

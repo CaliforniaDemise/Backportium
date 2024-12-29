@@ -10,6 +10,193 @@ import java.util.Iterator;
  **/
 public class OurpleShulkerTransformer extends BasicTransformer {
 
+    public static byte[] transformBlock(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("registerBlocks", ""))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new IntInsnNode(SIPUSH, 253));
+                list.add(new LdcInsnNode("shulker_box"));
+                list.add(new TypeInsnNode(NEW, "net/minecraft/block/BlockShulkerBox"));
+                list.add(new InsnNode(DUP));
+                list.add(new InsnNode(ACONST_NULL));
+                list.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/block/BlockShulkerBox", "<init>", "(Lnet/minecraft/item/EnumDyeColor;)V", false));
+                list.add(new InsnNode(FCONST_2));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/BlockShulkerBox", getName("setHardness", ""), "(F)Lnet/minecraft/block/Block;", false));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/block/SoundType", getName("STONE", ""), "Lnet/minecraft/block/SoundType;"));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setSoundType", ""), "(Lnet/minecraft/block/SoundType;)Lnet/minecraft/block/Block;", false));
+                list.add(new LdcInsnNode("shulkerBox"));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setTranslationKey", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
+                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerBlock", ""), "(ILjava/lang/String;Lnet/minecraft/block/Block;)V", false));
+                method.instructions.insertBefore(node, list);
+//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+//                while (iterator.hasNext()) {
+//                    AbstractInsnNode node = iterator.next();
+//                    if (node.getOpcode() == SIPUSH && ((IntInsnNode) node).operand == 219) { // 2271
+//                        break;
+//                    }
+//                }
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformBlockModelShapes(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("getTexture", ""))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == ALOAD && ((VarInsnNode) node).var == 2) {
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 2));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+                        LabelNode l_con = new LabelNode();
+                        list.add(new JumpInsnNode(IF_ACMPNE, l_con));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, getName("modelManager", ""), "Lnet/minecraft/client/renderer/block/model/ModelManager;"));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/block/model/ModelManager", getName("getTextureMap", ""),"()Lnet/minecraft/client/renderer/texture/TextureMap;", false));
+                        list.add(new LdcInsnNode("minecraft:blocks/shulker_top"));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/texture/TextureMap", getName("getAtlasSprite", ""), "(Ljava/lang/String;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", false));
+                        list.add(new InsnNode(ARETURN));
+                        list.add(l_con);
+                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+            }
+            else if (method.name.equals(getName("registerAllBlocks", ""))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != ALOAD) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new InsnNode(ICONST_1));
+                list.add(new TypeInsnNode(ANEWARRAY, "net/minecraft/block/Block"));
+                list.add(new InsnNode(DUP));
+                list.add(new InsnNode(ICONST_0));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+                list.add(new InsnNode(AASTORE));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("registerBuiltInBlocks", ""), "([Lnet/minecraft/block/Block;)V", false));
+                method.instructions.insertBefore(node, list);
+                break;
+            }
+        }
+        return write(cls);
+    }
+
+    public static byte[] transformTileEntityItemStackRenderer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        cls.visitField(ACC_PRIVATE | ACC_FINAL, "shulkerBox", "Lnet/minecraft/tileentity/TileEntityShulkerBox;", null, null);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("renderByItem", ""))) {
+                boolean check = false;
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INSTANCEOF && ((TypeInsnNode) node).desc.endsWith("BlockShulkerBox")) check = true;
+                    if (check && node.getOpcode() == GETSTATIC) {
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 3));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/BlockShulkerBox", getName("getColorFromItem", ""), "(Lnet/minecraft/item/Item;)Lnet/minecraft/item/EnumDyeColor;", false));
+                        LabelNode l_con = new LabelNode();
+                        list.add(new JumpInsnNode(IFNONNULL, l_con));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", getName("instance", ""), "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;"));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "shulkerBox", "Lnet/minecraft/tileentity/TileEntityShulkerBox;"));
+                        list.add(new InsnNode(DCONST_0));
+                        list.add(new InsnNode(DCONST_0));
+                        list.add(new InsnNode(DCONST_0));
+                        list.add(new InsnNode(FCONST_0));
+                        list.add(new VarInsnNode(FLOAD, 2));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", getName("render", ""), "(Lnet/minecraft/tileentity/TileEntity;DDDFF)V", false));
+                        list.add(new InsnNode(RETURN));
+                        list.add(l_con);
+                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+            }
+            else if (method.name.equals("<init>")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new TypeInsnNode(NEW, "net/minecraft/tileentity/TileEntityShulkerBox"));
+                list.add(new InsnNode(DUP));
+                list.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/tileentity/TileEntityShulkerBox", "<init>", "()V", false));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "shulkerBox", "Lnet/minecraft/tileentity/TileEntityShulkerBox;"));
+                method.instructions.insertBefore(node, list);
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformBlocks(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        cls.visitField(ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "SHULKER_BOX", "Lnet/minecraft/block/Block;", null, null);
+        MethodNode method = clinit(cls);
+        AbstractInsnNode node = method.instructions.getLast();
+        while (node.getOpcode() != RETURN) node = node.getPrevious();
+        InsnList list = new InsnList();
+        list.add(new LdcInsnNode("shulker_box"));
+        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/init/Blocks", getName("getRegisteredBlock", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
+        list.add(new FieldInsnNode(PUTSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+        method.instructions.insertBefore(node, list);
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformItem(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("registerItems", ""))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals(getName("WHITE_SHULKER_BOX", ""))) {
+                        InsnList list = new InsnList();
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+                        list.add(new TypeInsnNode(NEW, "net/minecraft/item/ItemShulkerBox"));
+                        list.add(new InsnNode(DUP));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+                        list.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/item/ItemShulkerBox", "<init>", "(Lnet/minecraft/block/Block;)V", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerItemBlock", ""), "(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item;)V", false));
+                        method.instructions.insertBefore(node, list);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformRenderItem(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("registerItems", ""))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+                list.add(new LdcInsnNode("shulker_box"));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("registerBlock", ""), "(Lnet/minecraft/block/Block;Ljava/lang/String;)V", false));
+                method.instructions.insertBefore(node, list);
+                break;
+            }
+        }
+        return write(cls);
+    }
+
     public static byte[] transformEntityShulker(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
