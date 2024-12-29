@@ -17,6 +17,10 @@ import java.util.Map;
 
 public class RandomHelper {
 
+    public static float lerp(float pct, float start, float end) {
+        return start + pct * (end - start);
+    }
+
     public static int getMetaFromVariant(IBlockState state, IProperty<?> property) {
         if (property instanceof PropertyInteger) {
             PropertyInteger intProperty = (PropertyInteger) property;

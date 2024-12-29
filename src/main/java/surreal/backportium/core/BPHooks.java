@@ -382,7 +382,7 @@ public class BPHooks {
         }
 
         public static void RenderLivingBase$applyRotations(EntityLivingBase entity, boolean inRiptide, int tickLeft, float partialTicks) {
-            if (inRiptide) {
+            if (false && inRiptide) {
                 float yRotation = 72F * (tickLeft - partialTicks + 1.0F);
 
                 if (!entity.isElytraFlying()) {
@@ -404,7 +404,7 @@ public class BPHooks {
         }
 
         public static void RenderPlayer$fixElytraRotations(EntityPlayer player, boolean inRiptide, int tickLeft, float partialTicks) {
-            if (player.isElytraFlying() && inRiptide) {
+            if (false && player.isElytraFlying() && inRiptide) {
                 float rotate = 72F * (tickLeft - partialTicks + 1.0F);
                 GlStateManager.rotate(rotate, 0.0F, 1.0F, 0.0F);
             }

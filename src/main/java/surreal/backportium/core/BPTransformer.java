@@ -18,11 +18,11 @@ public class BPTransformer implements IClassTransformer {
         if (transformedName.startsWith("it.unimi") || transformedName.startsWith("com.google") || transformedName.startsWith("com.ibm") || transformedName.startsWith("com.paulscode")) return basicClass;
         switch (transformedName) {
             // Trident
-            case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(basicClass);
-            case "net.minecraft.entity.EntityLivingBase": return BreathingTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(basicClass));
-            case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(basicClass);
+            case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(PlayerMoveTransformer.transformModelBiped(basicClass));
+            case "net.minecraft.entity.EntityLivingBase": return BreathingTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(basicClass)));
+            case "net.minecraft.entity.player.EntityPlayer": return PlayerMoveTransformer.transformEntityPlayer(TridentTransformer.transformEntityPlayer(basicClass));
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
-            case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(basicClass);
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return PlayerMoveTransformer.transformRenderPlayer(TridentTransformer.transformRenderLivingBase(basicClass));
             case "net.minecraft.client.entity.EntityPlayerSP": return BubbleColumnTransformer.transformEntityPlayerSP(TridentTransformer.transformEntityPlayerSP(basicClass));
 
             // Pumpkin

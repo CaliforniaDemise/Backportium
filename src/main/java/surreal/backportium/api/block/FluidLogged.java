@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.Optional;
 import surreal.backportium.util.IntegrationHelper;
 
 // TODO Fix issues with other liquids that use WATER material.
+// TODO Implement waterlogging and apply IFluidloggable interface with transformers.
 @Optional.Interface(modid = IntegrationHelper.FLUIDLOGGED, iface = "git.jbredwards.fluidlogged_api.api.block.IFluidloggable")
 public interface FluidLogged extends IFluidloggable {
 

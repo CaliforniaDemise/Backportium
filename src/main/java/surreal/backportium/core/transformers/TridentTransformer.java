@@ -1,6 +1,5 @@
 package surreal.backportium.core.transformers;
 
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
@@ -44,7 +43,8 @@ public class TridentTransformer extends BasicTransformer {
                 break;
             }
         }
-        return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // Cursed frames
+//        return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // Cursed frames
+        return basicClass;
     }
 
     // TODO Use capabilities instead
