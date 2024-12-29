@@ -16,16 +16,16 @@ repositories {
 dependencies {
     runtimeOnly "com.cleanroommc:strip-latest-forge-requirements:1.0"
 
-    if (project.use_assetmover) implementation "com.cleanroommc:assetmover:2.5"
+    if (project.use_assetmover.toBoolean()) implementation "com.cleanroommc:assetmover:2.5"
     else compileOnly "com.cleanroommc:assetmover:2.5"
 
-    if (project.use_fluidloggedAPI) implementation "com.github.jbredwards:fluidlogged-api:47f153989e"
+    if (project.use_fluidloggedAPI.toBoolean()) implementation "com.github.jbredwards:fluidlogged-api:47f153989e"
     else compileOnly "com.github.jbredwards:fluidlogged-api:47f153989e"
 
-    if (project.use_jei) implementation rfg.deobf("mezz:jei:4.25.5")
+    if (project.use_jei.toBoolean()) implementation rfg.deobf("mezz:jei:4.25.5")
     else compileOnly rfg.deobf("mezz:jei:4.25.5")
 
-    if (project.use_aainfo) runtimeOnly "curse.maven:aainfo-573154:3627065"
+    if (project.use_aainfo.toBoolean()) runtimeOnly "curse.maven:aainfo-573154:3627065"
 
     compileOnly "curse.maven:forestry-59751:5875571"
     compileOnly "curse.maven:binnies-mods-899182:5492997"
