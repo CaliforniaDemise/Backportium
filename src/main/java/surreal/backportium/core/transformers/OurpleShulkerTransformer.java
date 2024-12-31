@@ -1,6 +1,8 @@
 package surreal.backportium.core.transformers;
 
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
@@ -10,6 +12,7 @@ import java.util.Iterator;
  **/
 public class OurpleShulkerTransformer extends BasicTransformer {
 
+    // Vanilla
     public static byte[] transformBlock(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
@@ -31,13 +34,6 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setTranslationKey", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
                 list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerBlock", ""), "(ILjava/lang/String;Lnet/minecraft/block/Block;)V", false));
                 method.instructions.insertBefore(node, list);
-//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-//                while (iterator.hasNext()) {
-//                    AbstractInsnNode node = iterator.next();
-//                    if (node.getOpcode() == SIPUSH && ((IntInsnNode) node).operand == 219) { // 2271
-//                        break;
-//                    }
-//                }
             }
         }
         writeClass(cls);
@@ -419,6 +415,233 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                 }
             }
         }
+        return write(cls);
+    }
+
+    // Iron Chests
+    public static byte[] transformBlockIronShulkerBox(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        { // getColorName
+            MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            Label l_con = new Label();
+            m.visitJumpInsn(IFNULL, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", ""), "()Ljava/lang/String;", false);
+            m.visitInsn(ARETURN);
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
+            m.visitLdcInsn("");
+            m.visitInsn(ARETURN);
+        }
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("<init>")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                int count = 0;
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL) {
+                        count++;
+                        if (count == 3) {
+                            method.instructions.insertBefore(node, new MethodInsnNode(INVOKESTATIC, cls.name, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", false));
+                            method.instructions.remove(node);
+                            break;
+                        }
+                    }
+                }
+            }
+            else if (method.name.equals("getBlockByColor")) {
+                AbstractInsnNode node = method.instructions.getFirst();
+                while (node.getOpcode() != GETSTATIC) node = node.getNext();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                LabelNode l_con = new LabelNode();
+                list.add(new JumpInsnNode(IFNONNULL, l_con));
+                list.add(new FieldInsnNode(GETSTATIC, "cpw/mods/ironchest/common/core/IronChestBlocks", "ironShulkerBox", "Lnet/minecraft/block/Block;"));
+                list.add(new InsnNode(ARETURN));
+                list.add(l_con);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                method.instructions.insertBefore(node, list);
+            }
+            else if (method.name.equals("getColorFromBlock")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != GETSTATIC) node = node.getPrevious();
+                method.instructions.insertBefore(node, new InsnNode(ACONST_NULL));
+                method.instructions.remove(node);
+                break;
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformItemIronShulkerBox(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        { // getColorName
+            MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            Label l_con = new Label();
+            m.visitJumpInsn(IFNULL, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", ""), "()Ljava/lang/String;", false);
+            m.visitInsn(ARETURN);
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
+            m.visitLdcInsn("");
+            m.visitInsn(ARETURN);
+        }
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("<init>")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != INVOKEVIRTUAL) node = node.getPrevious();
+                method.instructions.insertBefore(node, new MethodInsnNode(INVOKESTATIC, cls.name, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", false));
+                method.instructions.remove(node);
+                break;
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformIronChestBlocks(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        { // ironShulkerBox
+            cls.visitField(ACC_PUBLIC | ACC_STATIC, "ironShulkerBox", "Lnet/minecraft/block/Block;", null, null);
+        }
+        return write(cls);
+    }
+
+    public static byte[] transformIronChestBlocks$Registration(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("registerBlocks")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEINTERFACE) {
+                        InsnList list = new InsnList();
+                        list.add(new TypeInsnNode(NEW, "cpw/mods/ironchest/common/blocks/shulker/BlockIronShulkerBox"));
+                        list.add(new InsnNode(DUP));
+                        list.add(new InsnNode(ACONST_NULL));
+                        list.add(new LdcInsnNode("ironchest:iron_shulker_box"));
+                        list.add(new MethodInsnNode(INVOKESPECIAL, "cpw/mods/ironchest/common/blocks/shulker/BlockIronShulkerBox", "<init>", "(Lnet/minecraft/item/EnumDyeColor;Ljava/lang/String;)V", false));
+                        list.add(new FieldInsnNode(PUTSTATIC, "cpw/mods/ironchest/common/core/IronChestBlocks", "ironShulkerBox", "Lnet/minecraft/block/Block;"));
+                        list.add(new VarInsnNode(ALOAD, 1));
+                        list.add(new FieldInsnNode(GETSTATIC, "cpw/mods/ironchest/common/core/IronChestBlocks", "ironShulkerBox", "Lnet/minecraft/block/Block;"));
+                        list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraftforge/registries/IForgeRegistry", "register", "(Lnet/minecraftforge/registries/IForgeRegistryEntry;)V", true));
+                        method.instructions.insert(node, list);
+                        break;
+                    }
+                }
+            }
+            else if (method.name.equals("registerItems")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEINTERFACE) {
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 1));
+                        list.add(new TypeInsnNode(NEW, "cpw/mods/ironchest/common/items/shulker/ItemIronShulkerBox"));
+                        list.add(new InsnNode(DUP));
+                        list.add(new LdcInsnNode("ironchest:iron_shulker_box"));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/Block", getName("getBlockFromName", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
+                        list.add(new InsnNode(ACONST_NULL));
+                        list.add(new MethodInsnNode(INVOKESPECIAL, "cpw/mods/ironchest/common/items/shulker/ItemIronShulkerBox", "<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/EnumDyeColor;)V", false));
+                        list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraftforge/registries/IForgeRegistry", "register", "(Lnet/minecraftforge/registries/IForgeRegistryEntry;)V", true));
+                        method.instructions.insert(node, list);
+                        break;
+                    }
+                }
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformTileEntityIronShulkerBoxRenderer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        { // getColorName
+            MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            Label l_con = new Label();
+            m.visitJumpInsn(IFNULL, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", ""), "()Ljava/lang/String;", false);
+            m.visitInsn(ARETURN);
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
+            m.visitLdcInsn("default");
+            m.visitInsn(ARETURN);
+        }
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("render", ""))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                boolean inNew = false;
+                int count = 0;
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == NEW) inNew = true;
+                    else if (inNew && node.getOpcode() == ALOAD) {
+                        method.instructions.remove(node.getNext().getNext());
+                        method.instructions.insert(node.getNext(), new MethodInsnNode(INVOKESTATIC, cls.name, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", false));
+                        count++;
+                        if (count == 2) break;
+                    }
+                }
+                break;
+            }
+        }
+        writeClass(cls);
+        return write(cls);
+    }
+
+    public static byte[] transformItemShulkerBoxChanger(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("getColorFromTileEntity")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != GETSTATIC) node = node.getPrevious();
+                method.instructions.insertBefore(node,  new InsnNode(ACONST_NULL));
+                method.instructions.remove(node);
+            }
+            else if (method.name.equals(getName("onItemUseFirst", ""))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).owner.endsWith("EnumDyeColor")) {
+                        method.instructions.insertBefore(node, new InsnNode(ACONST_NULL));
+                        method.instructions.remove(node);
+                    }
+                    else if (node.getOpcode() == ASTORE && ((VarInsnNode) node).var == 17) {
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 14));
+                        LabelNode l_con = new LabelNode();
+                        list.add(new JumpInsnNode(IFNONNULL, l_con));
+                        list.add(new VarInsnNode(ALOAD, 11));
+                        list.add(new TypeInsnNode(CHECKCAST, "cpw/mods/ironchest/common/tileentity/shulker/TileEntityIronShulkerBox"));
+                        list.add(new VarInsnNode(ALOAD, 12));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "cpw/mods/ironchest/common/tileentity/shulker/TileEntityIronShulkerBox", "setContents", "(Lnet/minecraft/util/NonNullList;)V", false));
+                        list.add(new VarInsnNode(ALOAD, 11));
+                        list.add(new TypeInsnNode(CHECKCAST, "cpw/mods/ironchest/common/tileentity/shulker/TileEntityIronShulkerBox"));
+                        list.add(new VarInsnNode(ALOAD, 13));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "cpw/mods/ironchest/common/tileentity/shulker/TileEntityIronShulkerBox", "setFacing", "(Lnet/minecraft/util/EnumFacing;)V", false));
+                        list.add(new VarInsnNode(ALOAD, 2));
+                        list.add(new VarInsnNode(ALOAD, 3));
+                        list.add(new VarInsnNode(ALOAD, 11));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setTileEntity", ""), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V", false));
+                        list.add(new VarInsnNode(ALOAD, 2));
+                        list.add(new VarInsnNode(ALOAD, 3));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
+
+                        list.add(l_con);
+
+                        method.instructions.insert(node, list);
+                        break;
+                    }
+                }
+            }
+        }
+        writeClass(cls);
         return write(cls);
     }
 }

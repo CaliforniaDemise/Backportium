@@ -71,6 +71,14 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.client.renderer.RenderItem": return OurpleShulkerTransformer.transformRenderItem(basicClass);
             case "net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer": return OurpleShulkerTransformer.transformTileEntityItemStackRenderer(basicClass);
 
+            // Iron Chest
+            case "cpw.mods.ironchest.common.blocks.shulker.BlockIronShulkerBox": return OurpleShulkerTransformer.transformBlockIronShulkerBox(basicClass);
+            case "cpw.mods.ironchest.common.items.shulker.ItemIronShulkerBox": return OurpleShulkerTransformer.transformItemIronShulkerBox(basicClass);
+            case "cpw.mods.ironchest.common.core.IronChestBlocks": return OurpleShulkerTransformer.transformIronChestBlocks(basicClass);
+            case "cpw.mods.ironchest.common.core.IronChestBlocks$Registration": return OurpleShulkerTransformer.transformIronChestBlocks$Registration(basicClass);
+//            case "cpw.mods.ironchest.common.items.shulker.ItemShulkerBoxChanger": return OurpleShulkerTransformer.transformItemShulkerBoxChanger(basicClass);
+            case "cpw.mods.ironchest.client.renderer.shulker.TileEntityIronShulkerBoxRenderer": return OurpleShulkerTransformer.transformTileEntityIronShulkerBoxRenderer(basicClass);
+
             // Random Fixes
             case "net.minecraft.block.BlockGrass":
             case "net.minecraft.block.BlockMycelium": return FixTransformer.transformBlockGrass(basicClass);
@@ -78,6 +86,8 @@ public class BPTransformer implements IClassTransformer {
 
             // Breathing
             case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
+
+            // Resource Management
         }
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

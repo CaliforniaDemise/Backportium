@@ -26,7 +26,7 @@ public class WorldGenKelp extends WorldGenerator {
             }
             blockPos = blockPos.up();
             if (!((BlockKelp) ModBlocks.KELP).canBlockStay(worldIn, blockPos, KELP_STATE)) continue;
-            int kelpY = rand.nextInt(position.getY() - blockPos.getY());
+            int kelpY = rand.nextInt(position.getY() - blockPos.getY()); // TODO Can be negative / 0
             worldIn.setBlockState(blockPos, KELP_STATE);
             for (int a = 1; a < kelpY; a++) {
                 worldIn.setBlockState(blockPos.add(0, a, 0), KELP_STATE);
