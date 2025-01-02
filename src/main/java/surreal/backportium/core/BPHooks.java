@@ -382,7 +382,7 @@ public class BPHooks {
         }
 
         public static void RenderLivingBase$applyRotations(EntityLivingBase entity, boolean inRiptide, int tickLeft, float partialTicks) {
-            if (false && inRiptide) {
+            if (inRiptide) {
                 float yRotation = 72F * (tickLeft - partialTicks + 1.0F);
 
                 if (!entity.isElytraFlying()) {
