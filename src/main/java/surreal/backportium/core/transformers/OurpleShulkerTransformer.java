@@ -7,6 +7,7 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
+// TODO Properly register purple shulker box (?)
 /**
  * Transformers for Purple Shulker Box
  **/
@@ -16,7 +17,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
     public static byte[] transformBlock(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("registerBlocks", ""))) {
+            if (method.name.equals(getName("registerBlocks", "func_149671_p"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != RETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
@@ -27,12 +28,12 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                 list.add(new InsnNode(ACONST_NULL));
                 list.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/block/BlockShulkerBox", "<init>", "(Lnet/minecraft/item/EnumDyeColor;)V", false));
                 list.add(new InsnNode(FCONST_2));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/BlockShulkerBox", getName("setHardness", ""), "(F)Lnet/minecraft/block/Block;", false));
-                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/block/SoundType", getName("STONE", ""), "Lnet/minecraft/block/SoundType;"));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setSoundType", ""), "(Lnet/minecraft/block/SoundType;)Lnet/minecraft/block/Block;", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/block/BlockShulkerBox", getName("setHardness", "func_149711_c"), "(F)Lnet/minecraft/block/Block;", false));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/block/SoundType", getName("STONE", "field_185851_d"), "Lnet/minecraft/block/SoundType;"));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setSoundType", "func_149672_a"), "(Lnet/minecraft/block/SoundType;)Lnet/minecraft/block/Block;", false));
                 list.add(new LdcInsnNode("shulkerBox"));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setTranslationKey", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
-                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerBlock", ""), "(ILjava/lang/String;Lnet/minecraft/block/Block;)V", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("setTranslationKey", "func_149663_c"), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
+                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerBlock", "func_176219_a"), "(ILjava/lang/String;Lnet/minecraft/block/Block;)V", false));
                 method.instructions.insertBefore(node, list);
             }
         }
@@ -43,7 +44,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
     public static byte[] transformBlockModelShapes(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("getTexture", ""))) {
+            if (method.name.equals(getName("getTexture", "func_178122_a"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -54,10 +55,10 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                         LabelNode l_con = new LabelNode();
                         list.add(new JumpInsnNode(IF_ACMPNE, l_con));
                         list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(new FieldInsnNode(GETFIELD, cls.name, getName("modelManager", ""), "Lnet/minecraft/client/renderer/block/model/ModelManager;"));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/block/model/ModelManager", getName("getTextureMap", ""),"()Lnet/minecraft/client/renderer/texture/TextureMap;", false));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, getName("modelManager", "field_178128_c"), "Lnet/minecraft/client/renderer/block/model/ModelManager;"));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/block/model/ModelManager", getName("getTextureMap", "func_174952_b"),"()Lnet/minecraft/client/renderer/texture/TextureMap;", false));
                         list.add(new LdcInsnNode("minecraft:blocks/shulker_top"));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/texture/TextureMap", getName("getAtlasSprite", ""), "(Ljava/lang/String;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/texture/TextureMap", getName("getAtlasSprite", "func_110572_b"), "(Ljava/lang/String;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", false));
                         list.add(new InsnNode(ARETURN));
                         list.add(l_con);
                         list.add(new FrameNode(F_SAME, 0, null, 0, null));
@@ -66,7 +67,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                     }
                 }
             }
-            else if (method.name.equals(getName("registerAllBlocks", ""))) {
+            else if (method.name.equals(getName("registerAllBlocks", "func_178119_d"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != ALOAD) node = node.getPrevious();
                 InsnList list = new InsnList();
@@ -77,7 +78,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                 list.add(new InsnNode(ICONST_0));
                 list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
                 list.add(new InsnNode(AASTORE));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("registerBuiltInBlocks", ""), "([Lnet/minecraft/block/Block;)V", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("registerBuiltInBlocks", "func_178123_a"), "([Lnet/minecraft/block/Block;)V", false));
                 method.instructions.insertBefore(node, list);
                 break;
             }
@@ -89,7 +90,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
         ClassNode cls = read(basicClass);
         cls.visitField(ACC_PRIVATE | ACC_FINAL, "shulkerBox", "Lnet/minecraft/tileentity/TileEntityShulkerBox;", null, null);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("renderByItem", ""))) {
+            if (method.name.equals(getName("renderByItem", "func_179022_a")) && method.desc.endsWith("F)V")) {
                 boolean check = false;
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
@@ -98,10 +99,10 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                     if (check && node.getOpcode() == GETSTATIC) {
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 3));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/BlockShulkerBox", getName("getColorFromItem", ""), "(Lnet/minecraft/item/Item;)Lnet/minecraft/item/EnumDyeColor;", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/BlockShulkerBox", getName("getColorFromItem", "func_190955_b"), "(Lnet/minecraft/item/Item;)Lnet/minecraft/item/EnumDyeColor;", false));
                         LabelNode l_con = new LabelNode();
                         list.add(new JumpInsnNode(IFNONNULL, l_con));
-                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", getName("instance", ""), "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;"));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", getName("instance", "field_147556_a"), "Lnet/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher;"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "shulkerBox", "Lnet/minecraft/tileentity/TileEntityShulkerBox;"));
                         list.add(new InsnNode(DCONST_0));
@@ -109,7 +110,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                         list.add(new InsnNode(DCONST_0));
                         list.add(new InsnNode(FCONST_0));
                         list.add(new VarInsnNode(FLOAD, 2));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", getName("render", ""), "(Lnet/minecraft/tileentity/TileEntity;DDDFF)V", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher", getName("render", "func_192855_a"), "(Lnet/minecraft/tileentity/TileEntity;DDDFF)V", false));
                         list.add(new InsnNode(RETURN));
                         list.add(l_con);
                         list.add(new FrameNode(F_SAME, 0, null, 0, null));
@@ -142,7 +143,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
         while (node.getOpcode() != RETURN) node = node.getPrevious();
         InsnList list = new InsnList();
         list.add(new LdcInsnNode("shulker_box"));
-        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/init/Blocks", getName("getRegisteredBlock", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
+        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/init/Blocks", getName("getRegisteredBlock", "func_180383_a"), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
         list.add(new FieldInsnNode(PUTSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
         method.instructions.insertBefore(node, list);
         writeClass(cls);
@@ -152,18 +153,18 @@ public class OurpleShulkerTransformer extends BasicTransformer {
     public static byte[] transformItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("registerItems", ""))) {
+            if (method.name.equals(getName("registerItems", "func_150900_l"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
-                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals(getName("WHITE_SHULKER_BOX", ""))) {
+                    if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).name.equals(getName("WHITE_SHULKER_BOX", "field_190977_dl"))) {
                         InsnList list = new InsnList();
                         list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
                         list.add(new TypeInsnNode(NEW, "net/minecraft/item/ItemShulkerBox"));
                         list.add(new InsnNode(DUP));
                         list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
                         list.add(new MethodInsnNode(INVOKESPECIAL, "net/minecraft/item/ItemShulkerBox", "<init>", "(Lnet/minecraft/block/Block;)V", false));
-                        list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerItemBlock", ""), "(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item;)V", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, cls.name, getName("registerItemBlock", "func_179214_a"), "(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item;)V", false));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -178,14 +179,14 @@ public class OurpleShulkerTransformer extends BasicTransformer {
     public static byte[] transformRenderItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("registerItems", ""))) {
+            if (method.name.equals(getName("registerItems", "func_175041_b"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != RETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
                 list.add(new LdcInsnNode("shulker_box"));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("registerBlock", ""), "(Lnet/minecraft/block/Block;Ljava/lang/String;)V", false));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("registerBlock", "func_175031_a"), "(Lnet/minecraft/block/Block;Ljava/lang/String;)V", false));
                 method.instructions.insertBefore(node, list);
                 break;
             }
@@ -427,7 +428,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
             Label l_con = new Label();
             m.visitJumpInsn(IFNULL, l_con);
             m.visitVarInsn(ALOAD, 0);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", ""), "()Ljava/lang/String;", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", "func_176610_l"), "()Ljava/lang/String;", false);
             m.visitInsn(ARETURN);
             m.visitLabel(l_con);
             m.visitFrame(F_SAME, 0, null, 0, null);
@@ -483,7 +484,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
             Label l_con = new Label();
             m.visitJumpInsn(IFNULL, l_con);
             m.visitVarInsn(ALOAD, 0);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", ""), "()Ljava/lang/String;", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", "func_176610_l"), "()Ljava/lang/String;", false);
             m.visitInsn(ARETURN);
             m.visitLabel(l_con);
             m.visitFrame(F_SAME, 0, null, 0, null);
@@ -544,7 +545,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                         list.add(new TypeInsnNode(NEW, "cpw/mods/ironchest/common/items/shulker/ItemIronShulkerBox"));
                         list.add(new InsnNode(DUP));
                         list.add(new LdcInsnNode("ironchest:iron_shulker_box"));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/Block", getName("getBlockFromName", ""), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/block/Block", getName("getBlockFromName", "func_149684_b"), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
                         list.add(new InsnNode(ACONST_NULL));
                         list.add(new MethodInsnNode(INVOKESPECIAL, "cpw/mods/ironchest/common/items/shulker/ItemIronShulkerBox", "<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/EnumDyeColor;)V", false));
                         list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraftforge/registries/IForgeRegistry", "register", "(Lnet/minecraftforge/registries/IForgeRegistryEntry;)V", true));
@@ -566,7 +567,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
             Label l_con = new Label();
             m.visitJumpInsn(IFNULL, l_con);
             m.visitVarInsn(ALOAD, 0);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", ""), "()Ljava/lang/String;", false);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/item/EnumDyeColor", getName("getName", "func_176610_l"), "()Ljava/lang/String;", false);
             m.visitInsn(ARETURN);
             m.visitLabel(l_con);
             m.visitFrame(F_SAME, 0, null, 0, null);
@@ -574,7 +575,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
             m.visitInsn(ARETURN);
         }
         for (MethodNode method : cls.methods) {
-            if (method.name.equals(getName("render", ""))) {
+            if (method.name.equals(getName("render", "func_192841_a"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 boolean inNew = false;
                 int count = 0;
@@ -604,7 +605,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                 method.instructions.insertBefore(node,  new InsnNode(ACONST_NULL));
                 method.instructions.remove(node);
             }
-            else if (method.name.equals(getName("onItemUseFirst", ""))) {
+            else if (method.name.equals("onItemUseFirst")) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
                     AbstractInsnNode node = iterator.next();
@@ -628,7 +629,7 @@ public class OurpleShulkerTransformer extends BasicTransformer {
                         list.add(new VarInsnNode(ALOAD, 2));
                         list.add(new VarInsnNode(ALOAD, 3));
                         list.add(new VarInsnNode(ALOAD, 11));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setTileEntity", ""), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setTileEntity", "func_175690_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;)V", false));
                         list.add(new VarInsnNode(ALOAD, 2));
                         list.add(new VarInsnNode(ALOAD, 3));
                         list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
