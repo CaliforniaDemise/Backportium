@@ -13,10 +13,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.renderer.entity.RenderTrident;
-import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.entity.v13.EntityTrident;
 import surreal.backportium.item.ItemBlockTEISR;
-import surreal.backportium.item.v1_13.ItemTrident;
-import surreal.backportium.tile.v1_13.TileConduit;
+import surreal.backportium.item.v13.ItemTrident;
+import surreal.backportium.tile.v13.TileConduit;
 
 import javax.annotation.Nonnull;
 

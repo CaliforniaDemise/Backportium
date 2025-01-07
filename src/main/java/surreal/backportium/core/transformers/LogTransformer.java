@@ -2,7 +2,6 @@ package surreal.backportium.core.transformers;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -19,7 +18,7 @@ import static surreal.backportium.core.BPPlugin.FUTUREMC;
 /**
  * For transforming Log blocks to have stripped and bark variants and also a way to reach that said variants.
  **/
-public class LogTransformer extends BasicTransformer {
+public class LogTransformer extends Transformer {
 
     private static final Set<String> DO_NOT_TRANSFORM = new HashSet<>();
 

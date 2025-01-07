@@ -8,7 +8,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import java.util.Iterator;
 
-public class ResourceManagementTransformer extends BasicTransformer {
+public class ResourceManagementTransformer extends Transformer {
 
     public static byte[] transformFMLClientHandler(byte[] basicClass) {
         ClassNode cls = read(basicClass);

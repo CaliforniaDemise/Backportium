@@ -45,11 +45,11 @@ import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.api.helper.RiptideHelper;
 import surreal.backportium.block.ModBlocks;
-import surreal.backportium.block.v1_13.BlockBubbleColumn;
+import surreal.backportium.block.v13.BlockBubbleColumn;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
-import surreal.backportium.item.v1_13.ItemBlockAddLog;
-import surreal.backportium.item.v1_13.ItemTrident;
+import surreal.backportium.item.v13.ItemBlockAddLog;
+import surreal.backportium.item.v13.ItemTrident;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.core.transformers.DebarkingTransformer;
@@ -114,16 +114,6 @@ public class BPHooks {
             return new EntityDamageSource("trident", player);
         }
         return DamageSource.causePlayerDamage(player);
-    }
-
-    // Fluidlogging
-    public static boolean BlockFluidBase$renderSide(boolean original, IBlockState neighbor) {
-        return original && !(neighbor.getBlock() instanceof FluidLogged);
-    }
-
-    public static boolean BlockLiquid$renderSide(boolean original, IBlockAccess world, BlockPos pos, EnumFacing facing) {
-        IBlockState state = world.getBlockState(pos.offset(facing));
-        return original && !(state.getBlock() instanceof FluidLogged);
     }
 
     // Logs

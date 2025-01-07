@@ -11,7 +11,7 @@ import java.util.Iterator;
 /**
  * Transformers for Purple Shulker Box
  **/
-public class OurpleShulkerTransformer extends BasicTransformer {
+public class OurpleShulkerTransformer extends Transformer {
 
     // Vanilla
     public static byte[] transformBlock(byte[] basicClass) {

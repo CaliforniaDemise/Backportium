@@ -5,7 +5,8 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
-public class BubbleColumnTransformer extends BasicTransformer {
+// TODO BUBBLE_COLUMN null check
+public class BubbleColumnTransformer extends Transformer {
 
     /**
      * Handle ambient and going inside sounds
@@ -14,6 +15,93 @@ public class BubbleColumnTransformer extends BasicTransformer {
         { // inColumn |  0 - None / 1 - Upwards / 2 - Downwards
             FieldVisitor inColum = cls.visitField(ACC_PROTECTED, "inColumn", "I", null, 0);
             inColum.visitEnd();
+        }
+        { // BP$handleBubbleColumn
+            MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "BP$handleBubbleColumn", "(I)I", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitFieldInsn(GETFIELD, cls.name, getName("world", ""), "Lnet/minecraft/world/World;");
+            m.visitVarInsn(ASTORE, 2);
+            m.visitTypeInsn(NEW, "net/minecraft/util/math/BlockPos");
+            m.visitInsn(DUP);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitMethodInsn(INVOKESPECIAL, "net/minecraft/util/math/BlockPos", "<init>", "(Lnet/minecraft/entity/Entity;)V", false);
+            m.visitInsn(DCONST_0);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getEyeHeight", ""), "()F", false);
+            m.visitInsn(F2D);
+            m.visitInsn(DCONST_0);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("add", ""), "(DDD)Lnet/minecraft/util/math/BlockPos;", false);
+            m.visitVarInsn(ASTORE, 3);
+            m.visitVarInsn(ALOAD, 2);
+            m.visitVarInsn(ALOAD, 3);
+            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false);
+            m.visitVarInsn(ASTORE, 4);
+            m.visitVarInsn(ALOAD, 4);
+            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getBlock", "func_177230_c"), "()Lnet/minecraft/block/Block;", true);
+            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;"); /// {@link surreal.backportium.block.ModBlocks.BUBBLE_COLUMN}
+            Label l_con_column = new Label();
+            m.visitJumpInsn(IF_ACMPNE, l_con_column);
+            m.visitVarInsn(ALOAD, 4);
+            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/v13/BlockBubbleColumn", "DRAG", "Lnet/minecraft/block/properties/PropertyBool;");
+            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getValue", ""), "(Lnet/minecraft/block/properties/IProperty;)Ljava/lang/Comparable;", true);
+            m.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
+            m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+            m.visitVarInsn(ISTORE, 5);
+            m.visitVarInsn(ILOAD, 5);
+            Label l_con_upwards = new Label();
+            m.visitJumpInsn(IFEQ, l_con_upwards);
+            {
+                m.visitVarInsn(ILOAD, 1);
+                m.visitInsn(ICONST_1);
+                Label l_con_I = new Label();
+                m.visitJumpInsn(IF_ICMPEQ, l_con_I);
+                m.visitVarInsn(ALOAD, 2);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("posX", "field_70165_t"), "D");
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("posY", "field_70163_u"), "D");
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("posZ", "field_70161_v"), "D");
+                m.visitFieldInsn(GETSTATIC, "surreal/backportium/sound/ModSounds", "BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE", "Lnet/minecraft/util/SoundEvent;");
+                m.visitFieldInsn(GETSTATIC, "net/minecraft/util/SoundCategory", getName("BLOCKS", ""), "Lnet/minecraft/util/SoundCategory;");
+                m.visitLdcInsn(0.7F);
+                m.visitInsn(FCONST_1);
+                m.visitInsn(ICONST_0);
+                m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", ""), "(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FFZ)V", false);
+                m.visitLabel(l_con_I);
+                m.visitFrame(F_APPEND, 3, new Object[] { "net/minecraft/world/World", "net/minecraft/util/math/BlockPos", "net/minecraft/block/state/IBlockState" }, 0, null);
+            }
+            m.visitInsn(ICONST_1);
+            m.visitInsn(IRETURN);
+            m.visitLabel(l_con_upwards);
+            m.visitFrame(F_APPEND, 1, new Object[] { INTEGER }, 0, null);
+            {
+                m.visitVarInsn(ILOAD, 1);
+                m.visitInsn(ICONST_2);
+                Label l_con_I = new Label();
+                m.visitJumpInsn(IF_ICMPEQ, l_con_I);
+                m.visitVarInsn(ALOAD, 2);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("posX", "field_70165_t"), "D");
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("posY", "field_70163_u"), "D");
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("posZ", "field_70161_v"), "D");
+                m.visitFieldInsn(GETSTATIC, "surreal/backportium/sound/ModSounds", "BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE", "Lnet/minecraft/util/SoundEvent;");
+                m.visitFieldInsn(GETSTATIC, "net/minecraft/util/SoundCategory", getName("BLOCKS", ""), "Lnet/minecraft/util/SoundCategory;");
+                m.visitLdcInsn(0.7F);
+                m.visitInsn(FCONST_1);
+                m.visitInsn(ICONST_0);
+                m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", ""), "(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FFZ)V", false);
+                m.visitLabel(l_con_I);
+                m.visitFrame(F_CHOP, 1, null, 0, null);
+            }
+            m.visitInsn(ICONST_2);
+            m.visitInsn(IRETURN);
+            m.visitLabel(l_con_column);
+            m.visitFrame(F_SAME, 0, null, 0, null);
+            m.visitInsn(ICONST_0);
+            m.visitInsn(IRETURN);
         }
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
@@ -24,11 +112,12 @@ public class BubbleColumnTransformer extends BasicTransformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "inColumn", "I"));
-                list.add(clientHook("EntityPlayerSP$handleBubbleColumn", "(Lnet/minecraft/client/entity/EntityPlayerSP;I)I"));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "BP$handleBubbleColumn", "(I)I", false));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "inColumn", "I"));
                 method.instructions.insertBefore(node, list);
             }
         }
+        writeClass(cls);
         return write(cls);
     }
 

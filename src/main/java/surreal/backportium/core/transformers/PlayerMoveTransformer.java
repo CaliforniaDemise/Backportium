@@ -14,7 +14,7 @@ import java.util.Iterator;
 /**
  * New swimming, crouching etc. mechanics.
  **/
-public class PlayerMoveTransformer extends BasicTransformer {
+public class PlayerMoveTransformer extends Transformer {
 
     public static byte[] transformRenderPlayer(byte[] basicClass) {
        ClassNode cls = read(basicClass);
@@ -634,7 +634,7 @@ public class PlayerMoveTransformer extends BasicTransformer {
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 
-    public static ClassNode transformEntityLivingBase(ClassNode cls) {
+    public static byte[] transformEntityLivingBase(ClassNode cls) {
         { // isSwimming
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "isSwimming", "()Z", null, null);
             m.visitVarInsn(ALOAD, 0);
@@ -770,7 +770,7 @@ public class PlayerMoveTransformer extends BasicTransformer {
             }
         }
         writeClass(cls);
-        return cls;
+        return write(cls);
     }
 
     // TODO Move to EntityLivingBase (for drowned)

@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import surreal.backportium.block.ModBlocks;
-import surreal.backportium.block.v1_13.BlockKelp;
+import surreal.backportium.block.v13.BlockKelp;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;

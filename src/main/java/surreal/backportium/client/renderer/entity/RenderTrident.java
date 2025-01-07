@@ -5,11 +5,10 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import surreal.backportium.Tags;
-import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.entity.v13.EntityTrident;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

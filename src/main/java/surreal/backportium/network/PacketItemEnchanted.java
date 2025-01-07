@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.entity.v13.EntityTrident;
 
 import java.util.UUID;
 

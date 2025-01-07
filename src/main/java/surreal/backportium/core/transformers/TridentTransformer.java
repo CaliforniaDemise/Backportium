@@ -6,7 +6,7 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
-public class TridentTransformer extends BasicTransformer {
+public class TridentTransformer extends Transformer {
 
     // Yes Forge, I will cancel RenderPlayerEvent and re-render the entire player model just to move players arm by 180 degrees
     public static byte[] transformModelBiped(byte[] basicClass) {

@@ -8,7 +8,7 @@ import org.objectweb.asm.tree.*;
 import java.util.Iterator;
 
 // TODO Handle AE2 crystal seeds and BWM buoyancy
-public class BuoyancyTransformer extends BasicTransformer {
+public class BuoyancyTransformer extends Transformer {
 
     public static byte[] transformEntityItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);

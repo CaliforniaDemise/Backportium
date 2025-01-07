@@ -2,7 +2,7 @@ package surreal.backportium.core.transformers;
 
 import org.objectweb.asm.tree.*;
 
-public class IntentionalTransformerDesign extends BasicTransformer {
+public class IntentionalTransformerDesign extends Transformer {
 
     public static byte[] transformBlockBed(byte[] basicClass) {
         ClassNode cls = read(basicClass);

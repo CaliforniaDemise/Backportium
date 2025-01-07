@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
-import surreal.backportium.potion.v1_13.PotionConduitPower;
-import surreal.backportium.potion.v1_13.PotionSlowFalling;
+import surreal.backportium.potion.v13.PotionConduitPower;
+import surreal.backportium.potion.v13.PotionSlowFalling;
 import surreal.backportium.util.Registrar;
 
 public class ModPotions extends Registrar<Potion> {

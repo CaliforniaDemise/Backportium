@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import surreal.backportium.Tags;
 import surreal.backportium.client.model.tile.ModelConduit;
-import surreal.backportium.tile.v1_13.TileConduit;
+import surreal.backportium.tile.v13.TileConduit;
 
 import javax.annotation.Nonnull;
 

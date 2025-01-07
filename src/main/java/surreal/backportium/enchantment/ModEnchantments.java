@@ -5,10 +5,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
-import surreal.backportium.enchantment.v1_13.EnchantmentChanneling;
-import surreal.backportium.enchantment.v1_13.EnchantmentImpaling;
-import surreal.backportium.enchantment.v1_13.EnchantmentLoyalty;
-import surreal.backportium.enchantment.v1_13.EnchantmentRiptide;
+import surreal.backportium.enchantment.v13.EnchantmentChanneling;
+import surreal.backportium.enchantment.v13.EnchantmentImpaling;
+import surreal.backportium.enchantment.v13.EnchantmentLoyalty;
+import surreal.backportium.enchantment.v13.EnchantmentRiptide;
 import surreal.backportium.util.Registrar;
 
 public class ModEnchantments extends Registrar<Enchantment> {

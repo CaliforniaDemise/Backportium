@@ -20,7 +20,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.enums.CoralType;
-import surreal.backportium.block.v1_13.BlockSeaPickle;
+import surreal.backportium.block.v13.BlockSeaPickle;
 import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;

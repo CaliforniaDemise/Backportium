@@ -16,7 +16,7 @@ import static surreal.backportium.core.BPPlugin.DEBARK;
 import static surreal.backportium.core.BPPlugin.DEBARKED_LOGS;
 import static surreal.backportium.core.BPPlugin.FUTUREMC;
 
-public class DebarkingTransformer extends BasicTransformer {
+public class DebarkingTransformer extends Transformer {
 
     private static final Set<String> DO_NOT_TRANSFORM = new HashSet<>();
 

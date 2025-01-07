@@ -5,7 +5,7 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
-public class PumpkinTransformer extends BasicTransformer {
+public class PumpkinTransformer extends Transformer {
 
     public static byte[] transformBlockFenceLike(byte[] basicClass) {
         ClassNode cls = read(basicClass);

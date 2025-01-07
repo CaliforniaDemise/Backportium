@@ -2,6 +2,7 @@ package surreal.backportium.core;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import surreal.backportium.core.transformers.*;
+import surreal.backportium.core.v13.ClassTransformer13;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +17,11 @@ public class BPTransformer implements IClassTransformer {
         if (basicClass == null) return null;
         if (transformedName.startsWith("surreal.backportium")) return basicClass;
         if (transformedName.startsWith("it.unimi") || transformedName.startsWith("com.google") || transformedName.startsWith("com.ibm") || transformedName.startsWith("com.paulscode")) return basicClass;
+        basicClass = ClassTransformer13.transformClass(transformedName, basicClass);
         switch (transformedName) {
             // Trident
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(PlayerMoveTransformer.transformModelBiped(basicClass));
-            case "net.minecraft.entity.EntityLivingBase": return BreathingTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(basicClass)));
+            case "net.minecraft.entity.EntityLivingBase": return PlayerMoveTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(basicClass));
             case "net.minecraft.entity.player.EntityPlayer": return PlayerMoveTransformer.transformEntityPlayer(TridentTransformer.transformEntityPlayer(basicClass));
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
             case "net.minecraft.client.renderer.entity.RenderPlayer": return PlayerMoveTransformer.transformRenderPlayer(TridentTransformer.transformRenderLivingBase(basicClass));
@@ -31,10 +33,6 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockStem": return PumpkinTransformer.transformBlockStem(basicClass);
             case "net.minecraft.stats.StatList": return PumpkinTransformer.transformStatList(basicClass);
             case "net.minecraft.world.gen.feature.WorldGenPumpkin": return PumpkinTransformer.transformWorldGenPumpkin(basicClass);
-
-            // Fluidlogging
-            case "net.minecraftforge.fluids.BlockFluidBase": return FluidloggingTransformer.transformBlockFluidBase(basicClass);
-            case "net.minecraft.block.BlockLiquid": return FluidloggingTransformer.transformBlockLiquid(basicClass);
 
             // Debarking
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
@@ -48,7 +46,6 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);
 
             // Biomes
-            case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);
 
             // Item Entity Buoyancy
             case "net.minecraft.entity.item.EntityItem": return BuoyancyTransformer.transformEntityItem(basicClass);
@@ -84,9 +81,6 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.BlockMycelium": return FixTransformer.transformBlockGrass(basicClass);
             case "net.minecraft.network.NetHandlerPlayServer": return FixTransformer.transformNetHandlerPlayServer(basicClass);
 
-            // Breathing
-            case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
-
             // Resource Management
         }
         // To Fix: Some AoA and DivineRPG logs are not BlockLogs
@@ -98,30 +92,5 @@ public class BPTransformer implements IClassTransformer {
             if (bewitchmentCheck || techrebornCheck || thaumcraftCheck || LogTransformer.checkLogs(basicClass, transformedName, toCheck)) return LogTransformer.transformBlockLogEx(basicClass);
         }
         return basicClass;
-    }
-
-    public static void classOut(String name, byte[] bytes) {
-        File file = new File(BPPlugin.GAME_DIR, "classOut/" + name + ".class");
-        file.getParentFile().mkdirs();
-
-        try (OutputStream os = Files.newOutputStream(file.toPath())) {
-            os.write(bytes);
-        } catch (IOException ignored) {
-        }
-    }
-
-    private static boolean checkBytes(byte[] basicClass, String name) {
-        for (int i = basicClass.length - 1; i >= 0; i--) {
-            byte b = basicClass[i];
-            int ii = i;
-            int g = name.length() - 1;
-            while (name.charAt(g) == (char) b) {
-                ii--;
-                b = basicClass[ii];
-                if (g == 0) return true;
-                g--;
-            }
-        }
-        return false;
     }
 }

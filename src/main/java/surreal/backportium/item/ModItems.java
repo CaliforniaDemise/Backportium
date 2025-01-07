@@ -16,8 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import surreal.backportium.api.client.item.ModelProvider;
 import surreal.backportium.api.enums.ModArmorMaterials;
 import surreal.backportium.core.util.LogSystem;
-import surreal.backportium.item.v1_13.ItemArmorTurtle;
-import surreal.backportium.item.v1_13.ItemTrident;
+import surreal.backportium.item.v13.ItemArmorTurtle;
+import surreal.backportium.item.v13.ItemTrident;
 import surreal.backportium.util.Registrar;
 
 import java.util.Objects;

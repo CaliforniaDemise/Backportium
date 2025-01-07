@@ -7,7 +7,7 @@ import java.util.Iterator;
 /**
  * Small fixes from newer Minecraft versions.
  **/
-public class FixTransformer extends BasicTransformer {
+public class FixTransformer extends Transformer {
 
     // Make Elytra usable even when rising (1.15)
     public static byte[] transformNetHandlerPlayServer(byte[] basicClass) {

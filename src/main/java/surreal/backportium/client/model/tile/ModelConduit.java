@@ -2,7 +2,7 @@ package surreal.backportium.client.model.tile;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
-import surreal.backportium.tile.v1_13.TileConduit;
+import surreal.backportium.tile.v13.TileConduit;
 
 public abstract class ModelConduit extends ModelTile<TileConduit> {
 

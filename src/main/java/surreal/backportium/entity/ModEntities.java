@@ -12,8 +12,8 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import surreal.backportium.Tags;
-import surreal.backportium.entity.v1_13.EntityPhantom;
-import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.entity.v13.EntityPhantom;
+import surreal.backportium.entity.v13.EntityTrident;
 import surreal.backportium.util.Registrar;
 
 import java.util.function.Function;

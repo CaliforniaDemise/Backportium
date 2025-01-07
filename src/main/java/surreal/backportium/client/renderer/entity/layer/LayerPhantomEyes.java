@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.util.ResourceLocation;
 import surreal.backportium.Tags;
-import surreal.backportium.entity.v1_13.EntityPhantom;
+import surreal.backportium.entity.v13.EntityPhantom;
 
 import javax.annotation.Nonnull;
 

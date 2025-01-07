@@ -2,7 +2,7 @@ package surreal.backportium.api.enums;
 
 import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraftforge.common.util.EnumHelper;
-import surreal.backportium.item.v1_13.ItemTrident;
+import surreal.backportium.item.v13.ItemTrident;
 
 public class ModEnchantmentTypes {
 

@@ -36,8 +36,8 @@ import surreal.backportium.client.resource.Textures;
 import surreal.backportium.client.textures.AnimatedSpriteStill;
 import surreal.backportium.core.BPPlugin;
 import surreal.backportium.core.util.LogSystem;
-import surreal.backportium.entity.v1_13.EntityPhantom;
-import surreal.backportium.entity.v1_13.EntityTrident;
+import surreal.backportium.entity.v13.EntityPhantom;
+import surreal.backportium.entity.v13.EntityTrident;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
