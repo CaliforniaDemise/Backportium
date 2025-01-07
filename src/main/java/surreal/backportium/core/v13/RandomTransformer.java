@@ -1,9 +1,16 @@
-package surreal.backportium.core.transformers;
+package surreal.backportium.core.v13;
 
 import org.objectweb.asm.tree.*;
+import surreal.backportium.core.transformers.Transformer;
 
-public class IntentionalTransformerDesign extends Transformer {
+/**
+ * Features that are pretty basic to implement and not need a transformer class.
+ **/
+public class RandomTransformer extends Transformer {
 
+    /**
+     * Adds custom death message to Nether bed explosion
+     **/
     public static byte[] transformBlockBed(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {

@@ -1,11 +1,16 @@
-package surreal.backportium.core.transformers;
+package surreal.backportium.core.v13;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
+import surreal.backportium.core.transformers.Transformer;
 
 import java.util.Iterator;
 
-public class PumpkinTransformer extends Transformer {
+/**
+ * Adds Uncarved Pumpkin
+ **/
+public class UncarvedPumpkinTransformer extends Transformer {
 
     public static byte[] transformBlockFenceLike(byte[] basicClass) {
         ClassNode cls = read(basicClass);
@@ -30,12 +35,25 @@ public class PumpkinTransformer extends Transformer {
 
     public static byte[] transformBlockStem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
+        { // BP$getCrop
+            MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "BP$getCrop", "(Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;", null, null);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitFieldInsn(GETSTATIC, "net/minecraft/init/Blocks", getName("PUMPKIN", ""), "Lnet/minecraft/block/Block;");
+            Label l_con = new Label();
+            m.visitJumpInsn(IF_ACMPNE, l_con);
+            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "UNCARVED_PUMPKIN", "Lnet/minecraft/block/Block;");
+            m.visitInsn(ARETURN);
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitInsn(ARETURN);
+        }
         for (MethodNode method : cls.methods) {
             String name = method.name;
             if (name.equals(getName("getActualState", "func_176221_a"))) {
-                transformBlockStem$apply(method);
+                transformBlockStem$apply(cls, method);
             } else if (name.equals(getName("updateTick", "func_180650_b"))) {
-                transformBlockStem$apply(method);
+                transformBlockStem$apply(cls, method);
                 break;
             }
         }
@@ -68,22 +86,32 @@ public class PumpkinTransformer extends Transformer {
 
     public static byte[] transformWorldGenPumpkin(byte[] basicClass) {
         ClassNode cls = read(basicClass);
-        String mName = getName("generate", "func_180709_b");
-        Iterator<MethodNode> iterator = cls.methods.iterator();
-        while (iterator.hasNext()) {
-            MethodNode m = iterator.next();
-            if (m.name.equals(mName)) {
-                iterator.remove();
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("generate", "func_180709_b"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                int i = 0;
+                boolean check = false;
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == GETSTATIC) {
+                        FieldInsnNode field = (FieldInsnNode) node;
+                        if (field.owner.endsWith("/Blocks")) {
+                            if (!check) check = true;
+                            else {
+                                method.instructions.insertBefore(node, getUncarvedPumpkin());
+                                iterator.remove();
+                            }
+                        }
+                        else if (field.owner.endsWith("/BlockPumpkin")) i = 5;
+                    }
+                    if (i > 0) {
+                        iterator.remove();
+                        i--;
+                        if (i == 0) break;
+                    }
+                }
                 break;
             }
-        }
-        {
-            MethodVisitor m_generate = cls.visitMethod(ACC_PUBLIC, mName, "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", null, null);
-            m_generate.visitVarInsn(ALOAD, 1);
-            m_generate.visitVarInsn(ALOAD, 2);
-            m_generate.visitVarInsn(ALOAD, 3);
-            m_generate.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "WorldGenPumpkin$generate", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;)Z", false);
-            m_generate.visitInsn(IRETURN);
         }
         return write(cls);
     }
@@ -92,13 +120,13 @@ public class PumpkinTransformer extends Transformer {
         return new FieldInsnNode(GETSTATIC, "surreal/backportium/block/ModBlocks", "UNCARVED_PUMPKIN", "Lnet/minecraft/block/Block;");
     }
 
-    private static void transformBlockStem$apply(MethodNode method) {
+    private static void transformBlockStem$apply(ClassNode cls, MethodNode method) {
         Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
         int i = 0;
         while (iterator.hasNext()) {
             AbstractInsnNode node = iterator.next();
             if (node.getOpcode() == GETFIELD) {
-                method.instructions.insert(node, hook("BlockStem$getCrop", "(Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;"));
+                method.instructions.insert(node, new MethodInsnNode(INVOKESTATIC, cls.name, "BP$getCrop", "(Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;", false));
                 i++;
                 if (i == 2) return;
             }

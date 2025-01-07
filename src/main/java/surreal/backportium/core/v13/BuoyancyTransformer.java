@@ -1,13 +1,15 @@
-package surreal.backportium.core.transformers;
+package surreal.backportium.core.v13;
 
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
+import surreal.backportium.core.transformers.Transformer;
 
 import java.util.Iterator;
 
-// TODO Handle AE2 crystal seeds and BWM buoyancy
+/**
+ * Adds buoyancy to item entities.
+ **/
 public class BuoyancyTransformer extends Transformer {
 
     public static byte[] transformEntityItem(byte[] basicClass) {
@@ -42,6 +44,29 @@ public class BuoyancyTransformer extends Transformer {
             m.visitFieldInsn(PUTFIELD, cls.name, getName("motionZ", "field_70179_y"), "D");
             m.visitInsn(RETURN);
         }
+        { // BP$additionalY | For items like AE2 Crystal Seeds
+            MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "BP$additionalY", "()D", null, null);
+
+            // AE2
+            m.visitLdcInsn("appliedenergistics2");
+            m.visitMethodInsn(INVOKESTATIC, "net/minecraftforge/fml/common/Loader", "isModLoaded", "(Ljava/lang/String;)Z", false);
+            Label l_con = new Label();
+            m.visitJumpInsn(IFEQ, l_con);
+            m.visitMethodInsn(INVOKESTATIC, "appeng/core/AEConfig", "instance", "()Lappeng/core/AEConfig;", false);
+            m.visitFieldInsn(GETSTATIC, "appeng/core/features/AEFeature", "IN_WORLD_PURIFICATION", "Lappeng/core/features/AEFeature;");
+            m.visitMethodInsn(INVOKEVIRTUAL, "appeng/core/AEConfig", "isFeatureEnabled", "(Lappeng/core/features/AEFeature;)Z", false);
+            m.visitJumpInsn(IFEQ, l_con);
+            m.visitVarInsn(ALOAD, 0);
+            m.visitTypeInsn(INSTANCEOF, "appeng/entity/EntityGrowingCrystal");
+            m.visitJumpInsn(IFEQ, l_con);
+            m.visitLdcInsn(0.25D);
+            m.visitInsn(DRETURN);
+
+            m.visitLabel(l_con);
+            m.visitFrame(F_SAME, 0, null, 0, null);
+            m.visitInsn(DCONST_0);
+            m.visitInsn(DRETURN);
+        }
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
@@ -56,7 +81,7 @@ public class BuoyancyTransformer extends Transformer {
                         list.add(new InsnNode(F2D));
                         list.add(new InsnNode(DADD));
                         list.add(new VarInsnNode(ALOAD, 0));
-                        list.add(hook("Buoyancy$addY", "(Lnet/minecraft/entity/item/EntityItem;)D"));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "BP$additionalY", "()D", false));
                         list.add(new InsnNode(DADD));
                         list.add(new VarInsnNode(DSTORE, 7));
                         list.add(new TypeInsnNode(NEW, "net/minecraft/util/math/BlockPos"));
@@ -101,15 +126,17 @@ public class BuoyancyTransformer extends Transformer {
                         list.add(new JumpInsnNode(IFGT, l_con));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "applyFloatMotion", "()V", false));
-                        list.add(new JumpInsnNode(GOTO, ((JumpInsnNode) node.getNext()).label));
+                        LabelNode l_goto = ((JumpInsnNode) node.getNext()).label;
+                        list.add(new JumpInsnNode(GOTO, l_goto));
                         list.add(l_con);
-                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        list.add(new FrameNode(F_APPEND, 3, new Object[] { DOUBLE, DOUBLE, DOUBLE }, 0, null));
                         method.instructions.insertBefore(node.getPrevious(), list);
+                        method.instructions.remove(l_goto.getNext().getNext());
+                        method.instructions.insert(l_goto.getNext(), new FrameNode(F_SAME, 0, null, 0, null));
                     }
                 }
             }
         }
-        writeClass(cls);
-        return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        return write(cls);
     }
 }

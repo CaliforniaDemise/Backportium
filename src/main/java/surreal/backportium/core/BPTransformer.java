@@ -27,13 +27,6 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.client.renderer.entity.RenderPlayer": return PlayerMoveTransformer.transformRenderPlayer(TridentTransformer.transformRenderLivingBase(basicClass));
             case "net.minecraft.client.entity.EntityPlayerSP": return BubbleColumnTransformer.transformEntityPlayerSP(TridentTransformer.transformEntityPlayerSP(basicClass));
 
-            // Pumpkin
-            case "net.minecraft.block.BlockPane":
-            case "net.minecraft.block.BlockWall": return PumpkinTransformer.transformBlockFenceLike(basicClass);
-            case "net.minecraft.block.BlockStem": return PumpkinTransformer.transformBlockStem(basicClass);
-            case "net.minecraft.stats.StatList": return PumpkinTransformer.transformStatList(basicClass);
-            case "net.minecraft.world.gen.feature.WorldGenPumpkin": return PumpkinTransformer.transformWorldGenPumpkin(basicClass);
-
             // Debarking
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
             case "net.minecraftforge.fml.common.eventhandler.ASMEventHandler": return LogTransformer.transformASMEventHandler(basicClass);
@@ -41,14 +34,6 @@ public class BPTransformer implements IClassTransformer {
             case "net.minecraft.block.Block": return OurpleShulkerTransformer.transformBlock(LogTransformer.transformBlock(basicClass));
             case "net.minecraft.item.Item": return OurpleShulkerTransformer.transformItem(LogTransformer.transformItem(basicClass));
             case "net.minecraft.item.ItemBlock": return LogTransformer.transformItemBlock(basicClass);
-
-            // For The Game Players
-            case "net.minecraft.block.BlockBed": return IntentionalTransformerDesign.transformBlockBed(basicClass);
-
-            // Biomes
-
-            // Item Entity Buoyancy
-            case "net.minecraft.entity.item.EntityItem": return BuoyancyTransformer.transformEntityItem(basicClass);
 
             // Bubble Column
             case "net.minecraft.block.BlockSoulSand": return BubbleColumnTransformer.transformSoulSand(basicClass);

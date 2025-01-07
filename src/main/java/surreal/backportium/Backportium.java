@@ -18,6 +18,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.feature.WorldGenPumpkin;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
@@ -80,6 +81,7 @@ public class Backportium {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         this.registries.init(event);
+        new WorldGenPumpkin();
         registerDispenseBehaviours();
     }
 

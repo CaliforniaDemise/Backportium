@@ -91,6 +91,9 @@ public class ModBlocks extends Registrar<Block> {
     @ObjectHolder("backportium:acacia_button") public static final Block ACACIA_BUTTON = null;
     @ObjectHolder("backportium:dark_oak_button") public static final Block DARKOAK_BUTTON = null;
 
+    @ObjectHolder("backportium:unicorn") public static final Block UNICORN = null;
+    @ObjectHolder("backportium:grass_8x8") public static final Block GRASS_8x8 = null;
+
     public static Block getWoodTrapdoor(BlockPlanks.EnumType type) {
         switch (type) {
             case SPRUCE: return SPRUCE_TRAPDOOR;
