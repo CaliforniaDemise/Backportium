@@ -81,7 +81,6 @@ public class Backportium {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         this.registries.init(event);
-        new WorldGenPumpkin();
         registerDispenseBehaviours();
     }
 
