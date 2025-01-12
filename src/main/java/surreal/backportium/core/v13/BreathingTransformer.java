@@ -8,7 +8,7 @@ import java.util.Iterator;
 /**
  * Changes the breathing bar replenishment to work like 1.13.
  **/
-public class BreathingTransformer extends Transformer {
+class BreathingTransformer extends Transformer {
 
     /**
      * Change breathing replenishment system.

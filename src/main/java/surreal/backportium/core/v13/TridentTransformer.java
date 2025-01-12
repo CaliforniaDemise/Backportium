@@ -1,12 +1,13 @@
-package surreal.backportium.core.transformers;
+package surreal.backportium.core.v13;
 
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
+import surreal.backportium.core.transformers.Transformer;
 
 import java.util.Iterator;
 
-public class TridentTransformer extends Transformer {
+class TridentTransformer extends Transformer {
 
     // Yes Forge, I will cancel RenderPlayerEvent and re-render the entire player model just to move players arm by 180 degrees
     public static byte[] transformModelBiped(byte[] basicClass) {
@@ -15,41 +16,106 @@ public class TridentTransformer extends Transformer {
             if (method.name.equals(getName("setRotationAngles", "func_78087_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != RETURN) node = node.getPrevious();
-                String modelBiped = "net/minecraft/client/model/ModelBiped";
-
                 InsnList list = new InsnList();
-                list.add(new VarInsnNode(ALOAD, 0));
-
-                list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 7));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new TypeInsnNode(INSTANCEOF, "net/minecraft/entity/EntityLivingBase"));
+                LabelNode l_con_living = new LabelNode();
+                list.add(new JumpInsnNode(IFEQ, l_con_living));
                 list.add(new VarInsnNode(ALOAD, 7));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, modelBiped, getName("getArmForSide", "func_187074_a"), "(Lnet/minecraft/util/EnumHandSide;)Lnet/minecraft/client/model/ModelRenderer;", false));
-
-                list.add(new VarInsnNode(FLOAD, 1));
-                list.add(new VarInsnNode(FLOAD, 2));
-                list.add(new VarInsnNode(FLOAD, 3));
-                list.add(new VarInsnNode(FLOAD, 4));
-                list.add(new VarInsnNode(FLOAD, 5));
-                list.add(new VarInsnNode(FLOAD, 6));
-                list.add(new VarInsnNode(ALOAD, 7));
-                list.add(clientHook("ModelBiped$setRotationAngles", "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/util/EnumHandSide;Lnet/minecraft/client/model/ModelRenderer;FFFFFFLnet/minecraft/entity/Entity;)V"));
-
+                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/EntityLivingBase"));
+                list.add(new VarInsnNode(ASTORE, 8));
+                list.add(new VarInsnNode(ALOAD, 8));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("getActiveItemStack", "func_184607_cu"), "()Lnet/minecraft/item/ItemStack;", false));
+                list.add(new VarInsnNode(ASTORE, 9));
+                list.add(new VarInsnNode(ALOAD, 8));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("getPrimaryHand", "func_184591_cq"), "()Lnet/minecraft/util/EnumHandSide;", false));
+                list.add(new VarInsnNode(ASTORE, 10));
+                list.add(new VarInsnNode(ALOAD, 8));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("getActiveHand", "func_184600_cs"), "()Lnet/minecraft/util/EnumHand;", false));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EnumHand", "MAIN_HAND", "Lnet/minecraft/util/EnumHand;"));
+                {
+                    LabelNode l_con = new LabelNode();
+                    list.add(new JumpInsnNode(IF_ACMPEQ, l_con));
+                    list.add(new VarInsnNode(ALOAD, 8));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("getPrimaryHand", "func_184591_cq"), "()Lnet/minecraft/util/EnumHandSide;", false));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/EnumHandSide", getName("opposite", "func_188468_a"), "()Lnet/minecraft/util/EnumHandSide;", false));
+                    list.add(new VarInsnNode(ASTORE, 10));
+                    list.add(l_con);
+                    list.add(new FrameNode(F_APPEND, 3, new Object[] { "net/minecraft/entity/EntityLivingBase", "net/minecraft/item/ItemStack", "net/minecraft/util/EnumHandSide" }, 0, null));
+                }
+                list.add(new VarInsnNode(ALOAD, 9));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/item/ItemStack", getName("getItemUseAction", "func_77975_n"), "()Lnet/minecraft/item/EnumAction;", false));
+                list.add(new FieldInsnNode(GETSTATIC, "surreal/backportium/Backportium", "SPEAR", "Lnet/minecraft/item/EnumAction;"));
+                list.add(new JumpInsnNode(IF_ACMPNE, l_con_living));
+                list.add(new FieldInsnNode(GETSTATIC, "surreal/backportium/enchantment/ModEnchantments", "RIPTIDE", "Lnet/minecraft/enchantment/Enchantment;"));
+                list.add(new VarInsnNode(ALOAD, 9));
+                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/enchantment/EnchantmentHelper", getName("getEnchantmentLevel", "func_77506_a"), "(Lnet/minecraft/enchantment/Enchantment;Lnet/minecraft/item/ItemStack;)I", false));
+                list.add(new InsnNode(ICONST_0));
+                LabelNode l_con_riptide = new LabelNode();
+                list.add(new JumpInsnNode(IF_ICMPEQ, l_con_riptide));
+                list.add(new VarInsnNode(ALOAD, 8));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/entity/EntityLivingBase", getName("world", "field_70170_p"), "Lnet/minecraft/world/World;"));
+                list.add(new VarInsnNode(ALOAD, 8));
+                list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/api/helper/RiptideHelper", "canRiptide", "(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityLivingBase;)Z", false));
+                list.add(new JumpInsnNode(IFNE, l_con_riptide));
+                list.add(new InsnNode(RETURN));
+                list.add(l_con_riptide);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                list.add(new VarInsnNode(ALOAD, 10));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EnumHandSide", "RIGHT", "Lnet/minecraft/util/EnumHandSide;"));
+                LabelNode l_con = new LabelNode();
+                list.add(new JumpInsnNode(IF_ACMPNE, l_con));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
+                list.add(new LdcInsnNode(0.5F));
+                list.add(new InsnNode(FMUL));
+                list.add(new LdcInsnNode((float) 3.14159265358979323846D));
+                list.add(new InsnNode(FSUB));
+                list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
+                list.add(new LdcInsnNode(0.15F));
+                list.add(new InsnNode(FSUB));
+                list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
+                list.add(new JumpInsnNode(GOTO, l_con_living));
+                list.add(l_con);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
+                list.add(new LdcInsnNode(0.5F));
+                list.add(new InsnNode(FMUL));
+                list.add(new LdcInsnNode((float) 3.14159265358979323846D));
+                list.add(new InsnNode(FSUB));
+                list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
+                list.add(new LdcInsnNode(0.15F));
+                list.add(new InsnNode(FADD));
+                list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
+                list.add(l_con_living);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 method.instructions.insertBefore(node, list);
                 break;
             }
         }
-//        return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // Cursed frames
-        return basicClass;
+        return write(cls, 3); // Cursed frames
     }
 
     // TODO Use capabilities instead
     // Add values to living entity to track if it's in riptide effect or not
-    public static ClassNode transformEntityLivingBase(byte[] basicClass) {
+    public static byte[] transformEntityLivingBase(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // If entity is in riptide
             FieldVisitor visitor = cls.visitField(ACC_PROTECTED, "inRiptide", "Z", null, false);
@@ -200,7 +266,7 @@ public class TridentTransformer extends Transformer {
             m_getRiptideTime.visitFieldInsn(GETFIELD, cls.name, "riptideTime", "I");
             m_getRiptideTime.visitInsn(IRETURN);
         }
-        return cls;
+        return write(cls);
     }
 
     // Add riptide effect to entities
@@ -309,23 +375,11 @@ public class TridentTransformer extends Transformer {
                     }
                 }
             }
-            else if (method.name.equals(getName("attackTargetEntityWithCurrentItem", "func_71059_n"))) {
-                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-                while (iterator.hasNext()) {
-                    AbstractInsnNode node = iterator.next();
-                    if (node.getOpcode() == INVOKESTATIC && ((MethodInsnNode) node).name.equals(getName("causePlayerDamage", "func_76365_a"))) {
-                        method.instructions.insertBefore(node, hook("EntityPlayer$getDamageSource", "(Lnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/util/DamageSource;"));
-                        iterator.remove();
-                        break;
-                    }
-                }
-                break;
-            }
         }
         return write(cls);
     }
 
-    public static ClassNode transformEntityPlayerSP(byte[] basicClass) {
+    public static byte[] transformEntityPlayerSP(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("isSneaking", "func_70093_af"))) {
@@ -345,6 +399,6 @@ public class TridentTransformer extends Transformer {
                 break;
             }
         }
-        return cls;
+        return write(cls);
     }
 }

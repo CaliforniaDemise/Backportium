@@ -6,7 +6,7 @@ import surreal.backportium.core.transformers.Transformer;
 /**
  * Features that are pretty basic to implement and not need a transformer class.
  **/
-public class RandomTransformer extends Transformer {
+class RandomTransformer extends Transformer {
 
     /**
      * Adds custom death message to Nether bed explosion

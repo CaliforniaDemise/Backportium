@@ -1,11 +1,7 @@
 package surreal.backportium.core;
 
-import appeng.core.AEConfig;
-import appeng.core.features.AEFeature;
-import appeng.entity.EntityGrowingCrystal;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,23 +12,17 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,18 +31,13 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Backportium;
-import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.api.helper.RiptideHelper;
-import surreal.backportium.block.ModBlocks;
-import surreal.backportium.block.v13.BlockBubbleColumn;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v13.ItemBlockAddLog;
 import surreal.backportium.item.v13.ItemTrident;
-import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.RandomHelper;
-import surreal.backportium.core.transformers.DebarkingTransformer;
 import surreal.backportium.util.Tuple;
 
 import javax.annotation.Nonnull;
@@ -66,19 +51,19 @@ public class BPHooks {
     }
 
     // PumpkinTransformer
-    public static Block BlockStem$getCrop(Block original) {
-        return original == Blocks.MELON_BLOCK ? original : ModBlocks.UNCARVED_PUMPKIN;
-    }
-
-    public static boolean WorldGenPumpkin$generate(World worldIn, Random rand, BlockPos position) {
-        for (int i = 0; i < 64; ++i) {
-            BlockPos blockpos = position.add(rand.nextInt(8) - rand.nextInt(8), rand.nextInt(4) - rand.nextInt(4), rand.nextInt(8) - rand.nextInt(8));
-            if (worldIn.isAirBlock(blockpos) && worldIn.getBlockState(blockpos.down()).getBlock() == Blocks.GRASS && ModBlocks.UNCARVED_PUMPKIN.canPlaceBlockAt(worldIn, blockpos)) {
-                worldIn.setBlockState(blockpos, ModBlocks.UNCARVED_PUMPKIN.getDefaultState(), 2);
-            }
-        }
-        return true;
-    }
+//    public static Block BlockStem$getCrop(Block original) {
+//        return original == Blocks.MELON_BLOCK ? original : ModBlocks.UNCARVED_PUMPKIN;
+//    }
+//
+//    public static boolean WorldGenPumpkin$generate(World worldIn, Random rand, BlockPos position) {
+//        for (int i = 0; i < 64; ++i) {
+//            BlockPos blockpos = position.add(rand.nextInt(8) - rand.nextInt(8), rand.nextInt(4) - rand.nextInt(4), rand.nextInt(8) - rand.nextInt(8));
+//            if (worldIn.isAirBlock(blockpos) && worldIn.getBlockState(blockpos.down()).getBlock() == Blocks.GRASS && ModBlocks.UNCARVED_PUMPKIN.canPlaceBlockAt(worldIn, blockpos)) {
+//                worldIn.setBlockState(blockpos, ModBlocks.UNCARVED_PUMPKIN.getDefaultState(), 2);
+//            }
+//        }
+//        return true;
+//    }
 
     // TridentTransformer
     public static boolean EntityLivingBase$handleRiptide(EntityLivingBase entity, int riptideTime) {
@@ -313,31 +298,31 @@ public class BPHooks {
     }
 
     // Buoyancy
-    public static double Buoyancy$addY(EntityItem entity) {
-        if (Loader.isModLoaded("appliedenergistics2") && AEConfig.instance().isFeatureEnabled(AEFeature.IN_WORLD_PURIFICATION) && entity instanceof EntityGrowingCrystal) {
-            return 0.25D;
-        }
-        return 0D;
-    }
+//    public static double Buoyancy$addY(EntityItem entity) {
+//        if (Loader.isModLoaded("appliedenergistics2") && AEConfig.instance().isFeatureEnabled(AEFeature.IN_WORLD_PURIFICATION) && entity instanceof EntityGrowingCrystal) {
+//            return 0.25D;
+//        }
+//        return 0D;
+//    }
 
     // Bubble Column
-    public static int BubbleColumn$inBubbleColumn(Entity entity) {
-        BlockPos pos = new BlockPos(entity).add(0D, entity.getEyeHeight(), 0D);
-        IBlockState state = entity.world.getBlockState(pos);
-        if (state.getBlock() == ModBlocks.BUBBLE_COLUMN && entity.world.isAirBlock(pos.up())) {
-            boolean downwards = !state.getValue(BlockBubbleColumn.DRAG);
-            if (downwards) return 2;
-            else return 1;
-        }
-        return 0;
-    }
-
-    public static boolean BubbleColumn$isPlayerRiding(EntityBoat boat) {
-        for (Entity entity : boat.getPassengers()) {
-            if (entity instanceof EntityPlayer) return true;
-        }
-        return false;
-    }
+//    public static int BubbleColumn$inBubbleColumn(Entity entity) {
+//        BlockPos pos = new BlockPos(entity).add(0D, entity.getEyeHeight(), 0D);
+//        IBlockState state = entity.world.getBlockState(pos);
+//        if (state.getBlock() == ModBlocks.BUBBLE_COLUMN && entity.world.isAirBlock(pos.up())) {
+//            boolean downwards = !state.getValue(BlockBubbleColumn.DRAG);
+//            if (downwards) return 2;
+//            else return 1;
+//        }
+//        return 0;
+//    }
+//
+//    public static boolean BubbleColumn$isPlayerRiding(EntityBoat boat) {
+//        for (Entity entity : boat.getPassengers()) {
+//            if (entity instanceof EntityPlayer) return true;
+//        }
+//        return false;
+//    }
 
     // Button Placement
     public static IBlockState button$getStateFromMeta(Block block, int meta) {
@@ -351,25 +336,25 @@ public class BPHooks {
     @SideOnly(Side.CLIENT)
     public static class Client {
         // TridentTransformer
-        public static void ModelBiped$setRotationAngles(ModelBiped model, EnumHandSide handSide, ModelRenderer mainHandModel, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
-            if (entityIn instanceof EntityLivingBase) {
-                EntityLivingBase living = (EntityLivingBase) entityIn;
-                EnumHand activeHand = living.getActiveHand();
-                ItemStack activeStack = living.getActiveItemStack();
-                handSide = activeHand == EnumHand.MAIN_HAND ? living.getPrimaryHand() : living.getPrimaryHand().opposite();
-                if (activeStack.getItemUseAction() == Backportium.SPEAR && living.isHandActive()) {
-                    int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, activeStack);
-                    if (riptide != 0 && !RiptideHelper.canRiptide(living.world, living)) return;
-                    if (handSide == EnumHandSide.RIGHT) {
-                        model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX * 0.5F - ((float) Math.PI);
-                        model.bipedRightArm.rotateAngleZ = model.bipedRightArm.rotateAngleZ - 0.15F; // Attention to detail mode
-                    } else {
-                        model.bipedLeftArm.rotateAngleX = model.bipedLeftArm.rotateAngleX * 0.5F - ((float) Math.PI);
-                        model.bipedLeftArm.rotateAngleZ = model.bipedLeftArm.rotateAngleZ + 0.15F; // Attention to detail mode
-                    }
-                }
-            }
-        }
+//        public static void ModelBiped$setRotationAngles(ModelBiped model, EnumHandSide handSide, ModelRenderer mainHandModel, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
+//            if (entityIn instanceof EntityLivingBase) {
+//                EntityLivingBase living = (EntityLivingBase) entityIn;
+//                EnumHand activeHand = living.getActiveHand();
+//                ItemStack activeStack = living.getActiveItemStack();
+//                handSide = activeHand == EnumHand.MAIN_HAND ? living.getPrimaryHand() : living.getPrimaryHand().opposite();
+//                if (activeStack.getItemUseAction() == Backportium.SPEAR && living.isHandActive()) {
+//                    int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, activeStack);
+//                    if (riptide != 0 && !RiptideHelper.canRiptide(living.world, living)) return;
+//                    if (handSide == EnumHandSide.RIGHT) {
+//                        model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX * 0.5F - ((float) Math.PI);
+//                        model.bipedRightArm.rotateAngleZ = model.bipedRightArm.rotateAngleZ - 0.15F; // Attention to detail mode
+//                    } else {
+//                        model.bipedLeftArm.rotateAngleX = model.bipedLeftArm.rotateAngleX * 0.5F - ((float) Math.PI);
+//                        model.bipedLeftArm.rotateAngleZ = model.bipedLeftArm.rotateAngleZ + 0.15F; // Attention to detail mode
+//                    }
+//                }
+//            }
+//        }
 
         public static void RenderLivingBase$applyRotations(EntityLivingBase entity, boolean inRiptide, int tickLeft, float partialTicks) {
             if (inRiptide) {
@@ -452,22 +437,22 @@ public class BPHooks {
         }
 
         // Bubble Column
-        public static int EntityPlayerSP$handleBubbleColumn(EntityPlayerSP entity, int i) {
-            World world = entity.world;
-            BlockPos pos = new BlockPos(entity).add(0, entity.getEyeHeight(), 0);
-            IBlockState state = world.getBlockState(pos);
-            if (state.getBlock() == ModBlocks.BUBBLE_COLUMN) {
-                boolean upwards = state.getValue(BlockBubbleColumn.DRAG);
-                if (upwards) {
-                    if (i != 1) world.playSound(entity.posX, entity.posY, entity.posZ, ModSounds.BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE, SoundCategory.BLOCKS, 0.7F, 1.0F, false);
-                    return 1;
-                }
-                else {
-                    if (i != 2) world.playSound(entity.posX, entity.posY, entity.posZ, ModSounds.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE, SoundCategory.BLOCKS, 0.7F, 1.0F, false);
-                    return 2;
-                }
-            }
-            return 0;
-        }
+//        public static int EntityPlayerSP$handleBubbleColumn(EntityPlayerSP entity, int i) {
+//            World world = entity.world;
+//            BlockPos pos = new BlockPos(entity).add(0, entity.getEyeHeight(), 0);
+//            IBlockState state = world.getBlockState(pos);
+//            if (state.getBlock() == ModBlocks.BUBBLE_COLUMN) {
+//                boolean upwards = state.getValue(BlockBubbleColumn.DRAG);
+//                if (upwards) {
+//                    if (i != 1) world.playSound(entity.posX, entity.posY, entity.posZ, ModSounds.BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE, SoundCategory.BLOCKS, 0.7F, 1.0F, false);
+//                    return 1;
+//                }
+//                else {
+//                    if (i != 2) world.playSound(entity.posX, entity.posY, entity.posZ, ModSounds.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE, SoundCategory.BLOCKS, 0.7F, 1.0F, false);
+//                    return 2;
+//                }
+//            }
+//            return 0;
+//        }
     }
 }

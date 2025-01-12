@@ -1,6 +1,5 @@
 package surreal.backportium.core.v13;
 
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.BPPlugin;
 import surreal.backportium.core.transformers.Transformer;

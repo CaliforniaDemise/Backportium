@@ -10,7 +10,7 @@ import java.util.Iterator;
 /**
  * Adds Uncarved Pumpkin
  **/
-public class UncarvedPumpkinTransformer extends Transformer {
+class UncarvedPumpkinTransformer extends Transformer {
 
     public static byte[] transformBlockFenceLike(byte[] basicClass) {
         ClassNode cls = read(basicClass);

@@ -1,4 +1,4 @@
-package surreal.backportium.core.transformers;
+package surreal.backportium.core.v13;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import org.apache.commons.io.IOUtils;
@@ -6,6 +6,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
+import surreal.backportium.core.transformers.Transformer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +19,7 @@ import static surreal.backportium.core.BPPlugin.FUTUREMC;
 /**
  * For transforming Log blocks to have stripped and bark variants and also a way to reach that said variants.
  **/
-public class LogTransformer extends Transformer {
+class LogTransformer extends Transformer {
 
     private static final Set<String> DO_NOT_TRANSFORM = new HashSet<>();
 
@@ -263,9 +264,9 @@ public class LogTransformer extends Transformer {
                 }
             }
             else {
-                String clsStripped = null;
-                String clsBark = null;
-                String clsStrippedBark = null;
+                String clsStripped;
+                String clsBark;
+                String clsStrippedBark;
                 clsStripped = createStrippedClass(cls, "()V", null, createsBlockState);
                 clsBark = createBarkClass(cls, "()V", null, createsBlockState);
                 clsStrippedBark = createStrippedBarkClass(cls, "()V", null, createsBlockState);

@@ -1,17 +1,14 @@
-package surreal.backportium.core.transformers;
+package surreal.backportium.core.v13;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
+import surreal.backportium.core.transformers.Transformer;
 
 import java.util.Iterator;
 
-// TODO Properly register purple shulker box (?)
-/**
- * Transformers for Purple Shulker Box
- **/
-public class OurpleShulkerTransformer extends Transformer {
+class OurpleShulkerTransformer extends Transformer {
 
     // Vanilla
     public static byte[] transformBlock(byte[] basicClass) {

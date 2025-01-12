@@ -10,7 +10,7 @@ import java.util.Iterator;
 /**
  * Adds buoyancy to item entities.
  **/
-public class BuoyancyTransformer extends Transformer {
+class BuoyancyTransformer extends Transformer {
 
     public static byte[] transformEntityItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
