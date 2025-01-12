@@ -98,6 +98,7 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/conduit_power"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/slow_falling"));
+        map.registerSprite(new ResourceLocation("blocks/shulker_top"));
 
         {
             map.setTextureEntry(new AnimatedSpriteStill(new ResourceLocation(Tags.MOD_ID, "blocks/seagrass"), Tags.MOD_ID + ":items/seagrass"));

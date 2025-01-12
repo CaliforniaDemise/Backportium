@@ -34,7 +34,6 @@ class OurpleShulkerTransformer extends Transformer {
                 method.instructions.insertBefore(node, list);
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -80,6 +79,7 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
+        writeClass(cls);
         return write(cls);
     }
 
@@ -128,7 +128,6 @@ class OurpleShulkerTransformer extends Transformer {
                 method.instructions.insertBefore(node, list);
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -143,7 +142,6 @@ class OurpleShulkerTransformer extends Transformer {
         list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/init/Blocks", getName("getRegisteredBlock", "func_180383_a"), "(Ljava/lang/String;)Lnet/minecraft/block/Block;", false));
         list.add(new FieldInsnNode(PUTSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
         method.instructions.insertBefore(node, list);
-        writeClass(cls);
         return write(cls);
     }
 
@@ -169,7 +167,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -274,7 +271,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -306,7 +302,6 @@ class OurpleShulkerTransformer extends Transformer {
                 method.instructions.remove(node);
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -378,7 +373,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 
@@ -469,7 +463,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -497,7 +490,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -552,7 +544,6 @@ class OurpleShulkerTransformer extends Transformer {
                 }
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -589,7 +580,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -639,7 +629,6 @@ class OurpleShulkerTransformer extends Transformer {
                 }
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 }

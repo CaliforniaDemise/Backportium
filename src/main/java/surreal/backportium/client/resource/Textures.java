@@ -89,8 +89,8 @@ public class Textures {
 //        put2(map, "entity/conduit/wind_vertical.png.mcmeta", "entity/conduit/wind_vertical.png.mcmeta");
         put(map, "entity/phantom", "entity/phantom");
         put(map, "entity/phantom_eyes", "entity/phantom_eyes");
-        put(map, "entity/shulker/shulker", "minecraft:entity/shulker/shulker");
-        put(map, "block/shulker_box", "minecraft:blocks/shulker_top");
+        map.put("textures/entity/shulker/shulker.png", "minecraft:textures/entity/shulker/shulker.png");
+        map.put("textures/block/shulker_box.png", "minecraft:textures/blocks/shulker_top.png");
 
         put(map, "mob_effect/conduit_power");
         put(map, "mob_effect/dolphins_grace");
