@@ -80,10 +80,12 @@ public class ItemTrident extends ItemTEISR {
         float velocity = (ItemBow.getArrowVelocity(this.getMaxItemUseDuration(stack) - timeLeft) / 5) * 4;
         if (velocity > 0.3F) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
-            if (riptide != 0 && RiptideHelper.canRiptide(worldIn, entityLiving)) {
-                RiptideHelper.handleRiptide(entityLiving, stack);
-                entityLiving.setPosition(entityLiving.posX, entityLiving.posY + 1.0D, entityLiving.posZ);
-                stack.damageItem(1, entityLiving);
+            if (riptide != 0) {
+                if (RiptideHelper.canRiptide(worldIn, entityLiving)) {
+                    RiptideHelper.handleRiptide(entityLiving, stack);
+                    entityLiving.setPosition(entityLiving.posX, entityLiving.posY + 1.0D, entityLiving.posZ);
+                    stack.damageItem(1, entityLiving);
+                }
                 return;
             }
             if (!worldIn.isRemote && stack.getItemDamage() != stack.getMaxDamage() - 1) {
