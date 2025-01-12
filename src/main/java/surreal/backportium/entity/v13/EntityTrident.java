@@ -58,7 +58,6 @@ public class EntityTrident extends AbstractEntityArrow {
         this.tag = stack.getTagCompound();
         if (this.tag == null) this.tag = new NBTTagCompound();
         this.damage = stack.getItemDamage();
-        this.initEnchLevels();
     }
 
     public EntityTrident(World worldIn, EntityLivingBase shooter, ItemStack stack) {
@@ -66,13 +65,13 @@ public class EntityTrident extends AbstractEntityArrow {
         this.tag = stack.getTagCompound();
         if (this.tag == null) this.tag = new NBTTagCompound();
         this.damage = stack.getItemDamage();
-        this.initEnchLevels();
     }
 
     @Override
     public void onUpdate() {
         if (!this.initialized) {
             if (!world.isRemote) {
+                this.initEnchLevels();
                 if (this.isEnchanted()) {
                     NetworkHandler.INSTANCE.sendToAll(new PacketItemEnchanted(this.getUniqueID(), true));
                 }
@@ -188,12 +187,10 @@ public class EntityTrident extends AbstractEntityArrow {
             int impaling = Enchantment.getEnchantmentID(ModEnchantments.IMPALING);
             int loyalty = Enchantment.getEnchantmentID(ModEnchantments.LOYALTY);
             int channeling = Enchantment.getEnchantmentID(ModEnchantments.CHANNELING);
-
             for (int i = 0; i < list.tagCount(); i++) {
                 NBTTagCompound enchCompound = list.getCompoundTagAt(i);
                 short id = enchCompound.getShort("id");
                 short lvl = enchCompound.getShort("lvl");
-
                 if (id == impaling) {
                     impalingLvl = lvl;
                 }
@@ -205,7 +202,6 @@ public class EntityTrident extends AbstractEntityArrow {
                 }
             }
         }
-
         if (this.impalingLvl == -1) this.impalingLvl = 0;
         if (this.loyaltyLvl == -1) this.loyaltyLvl = 0;
         if (this.channelingLvl == -1) this.channelingLvl = 0;

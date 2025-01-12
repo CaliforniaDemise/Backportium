@@ -78,7 +78,6 @@ public class ItemTrident extends ItemTEISR {
     @ParametersAreNonnullByDefault
     public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft) {
         float velocity = (ItemBow.getArrowVelocity(this.getMaxItemUseDuration(stack) - timeLeft) / 5) * 4;
-
         if (velocity > 0.3F) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
             if (riptide != 0 && RiptideHelper.canRiptide(worldIn, entityLiving)) {
