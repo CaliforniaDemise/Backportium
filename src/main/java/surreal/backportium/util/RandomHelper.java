@@ -6,19 +6,38 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.MovementInput;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class RandomHelper {
 
+    /**
+     * Used in various methods of {@link surreal.backportium.core.v13.PlayerMoveTransformer}
+     **/
+    @SuppressWarnings("unused")
     public static float lerp(float pct, float start, float end) {
         return start + pct * (end - start);
+    }
+
+    /**
+     * Used in {@link surreal.backportium.core.v13.PlayerMoveTransformer#transformEntityPlayer(byte[])}
+     **/
+    @SuppressWarnings("unused")
+    @SideOnly(Side.CLIENT)
+    public static boolean isPlayerMoving(EntityPlayerSP player, boolean verticalSpeed) {
+        MovementInput input = player.movementInput;
+        boolean vert = verticalSpeed && input.jump;
+        return vert || input.forwardKeyDown || input.backKeyDown || input.leftKeyDown || input.rightKeyDown;
     }
 
     public static int getMetaFromVariant(IBlockState state, IProperty<?> property) {

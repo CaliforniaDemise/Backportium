@@ -113,7 +113,6 @@ class TridentTransformer extends Transformer {
         return write(cls, 3); // Cursed frames
     }
 
-    // TODO Use capabilities instead
     // Add values to living entity to track if it's in riptide effect or not
     public static byte[] transformEntityLivingBase(byte[] basicClass) {
         ClassNode cls = read(basicClass);
@@ -336,6 +335,7 @@ class TridentTransformer extends Transformer {
                 method.instructions.insertBefore(node, list);
             }
         }
+        writeClass(cls);
         return write(cls);
     }
 

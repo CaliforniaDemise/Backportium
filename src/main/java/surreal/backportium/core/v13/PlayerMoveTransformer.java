@@ -51,6 +51,9 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("isElytraFlying", "func_184613_cA"), "()Z", false));
                 LabelNode l_con_elytra = new LabelNode();
                 list.add(new JumpInsnNode(IFNE, l_con_elytra));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "isInRiptide", "()Z", false));
+                list.add(new JumpInsnNode(IFNE, l_con_elytra));
 
                 list.add(new InsnNode(FCONST_0));
                 list.add(new VarInsnNode(FSTORE, 5));
@@ -80,21 +83,19 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new InsnNode(FCONST_0));
                 list.add(new VarInsnNode(FLOAD, 5));
                 list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                list.add(new InsnNode(FCONST_2));
+                list.add(new InsnNode(FDIV));
                 list.add(new InsnNode(FCONST_1));
                 list.add(new InsnNode(FCONST_0));
                 list.add(new InsnNode(FCONST_0));
                 list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
-
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "isSwimming", "()Z", false));
                 LabelNode l_con_swimming = new LabelNode();
                 list.add(new JumpInsnNode(IFEQ, l_con_swimming));
                 list.add(new InsnNode(FCONST_0));
-//                list.add(new InsnNode(FCONST_1));
-//                list.add(new InsnNode(FNEG));
-                list.add(new LdcInsnNode(-0.5F));
-//                list.add(new LdcInsnNode(0.3F));
-                list.add(new LdcInsnNode(0.3F));
+                list.add(new LdcInsnNode(-0.45F));
+                list.add(new LdcInsnNode(0.35F));
                 list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("translate", "func_179109_b"), "(FFF)V", false));
                 list.add(l_con_swimming);
                 list.add(new FrameNode(F_CHOP, 1, null, 0, null));
@@ -103,7 +104,6 @@ class PlayerMoveTransformer extends Transformer {
                 method.instructions.insertBefore(node, list);
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -140,39 +140,27 @@ class PlayerMoveTransformer extends Transformer {
             m.visitVarInsn(FLOAD, 2);
             m.visitVarInsn(FLOAD, 1);
             m.visitInsn(FSUB);
-            m.visitFieldInsn(GETSTATIC, "java/lang/Math", "PI", "D");
-            m.visitInsn(D2F);
-            m.visitInsn(FCONST_2);
-            m.visitInsn(FMUL);
+            m.visitLdcInsn((float) (Math.PI * 2));
             m.visitInsn(FREM);
             m.visitVarInsn(FSTORE, 3);
             m.visitVarInsn(FLOAD, 3);
-            m.visitFieldInsn(GETSTATIC, "java/lang/Math", "PI", "D");
-            m.visitInsn(D2F);
-            m.visitInsn(FNEG);
+            m.visitLdcInsn(-(float)Math.PI);
             Label l_con = new Label();
             m.visitInsn(FCMPG);
             m.visitJumpInsn(IFGE, l_con);
             m.visitVarInsn(FLOAD, 3);
-            m.visitFieldInsn(GETSTATIC, "java/lang/Math", "PI", "D");
-            m.visitInsn(D2F);
-            m.visitInsn(FCONST_2);
-            m.visitInsn(FMUL);
+            m.visitLdcInsn((float) (Math.PI) * 2);
             m.visitInsn(FADD);
             m.visitVarInsn(FSTORE, 3);
             m.visitLabel(l_con);
             m.visitFrame(F_APPEND, 1, new Object[] { FLOAT }, 0, null);
             m.visitVarInsn(FLOAD, 3);
-            m.visitFieldInsn(GETSTATIC, "java/lang/Math", "PI", "D");
-            m.visitInsn(D2F);
+            m.visitLdcInsn((float) Math.PI);
             l_con = new Label();
-            m.visitInsn(FCMPG);
+            m.visitInsn(FCMPL);
             m.visitJumpInsn(IFLT, l_con);
             m.visitVarInsn(FLOAD, 3);
-            m.visitFieldInsn(GETSTATIC, "java/lang/Math", "PI", "D");
-            m.visitInsn(D2F);
-            m.visitInsn(FCONST_2);
-            m.visitInsn(FMUL);
+            m.visitLdcInsn((float) (Math.PI * 2));
             m.visitInsn(FSUB);
             m.visitVarInsn(FSTORE, 3);
             m.visitLabel(l_con);
@@ -214,7 +202,7 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
                 list.add(new InsnNode(FCONST_0));
-                list.add(new InsnNode(FCMPG));
+                list.add(new InsnNode(FCMPL));
                 list.add(new JumpInsnNode(IFLE, l_con_living));
                 list.add(new VarInsnNode(ALOAD, 8));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "isSwimming", "()Z", false));
@@ -225,14 +213,10 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedHead", "field_78116_c"), "Lnet/minecraft/client/model/ModelRenderer;"));
                 list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
-                list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                list.add(new InsnNode(DNEG));
-                list.add(new InsnNode(D2F));
-                list.add(new LdcInsnNode(4F));
-                list.add(new InsnNode(FDIV));
+                list.add(new LdcInsnNode(-0.7853982F));
+                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                 list.add(new LdcInsnNode(0.017453292F));
                 list.add(new InsnNode(FDIV));
-                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                 list.add(new VarInsnNode(FSTORE, 6));
                 list.add(new JumpInsnNode(GOTO, l_con_living));
                 list.add(l_con_swimming);
@@ -243,14 +227,11 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedHead", "field_78116_c"), "Lnet/minecraft/client/model/ModelRenderer;"));
                 list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "rotateAngleX"), "F"));
                 list.add(new VarInsnNode(FLOAD, 6));
-                list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                list.add(new InsnNode(D2F));
-                list.add(new LdcInsnNode(180F));
-                list.add(new InsnNode(FDIV));
+                list.add(new LdcInsnNode(0.017453292F));
                 list.add(new InsnNode(FMUL));
+                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                 list.add(new LdcInsnNode(0.017453292F));
                 list.add(new InsnNode(FDIV));
-                list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                 list.add(new VarInsnNode(FSTORE, 6));
                 list.add(l_con_living);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
@@ -286,7 +267,7 @@ class PlayerMoveTransformer extends Transformer {
                     list.add(new VarInsnNode(ALOAD, 0));
                     list.add(new FieldInsnNode(GETFIELD, cls.name, getName("swingProgress", "field_78095_p"), "F"));
                     list.add(new InsnNode(FCONST_0));
-                    list.add(new InsnNode(FCMPG));
+                    list.add(new InsnNode(FCMPL));
                     LabelNode l_con_swing = new LabelNode();
                     list.add(new JumpInsnNode(IFLE, l_con_swing));
                     LabelNode l_con_else = new LabelNode();
@@ -308,6 +289,65 @@ class PlayerMoveTransformer extends Transformer {
                     list.add(new VarInsnNode(FSTORE, 10));
                     list.add(new JumpInsnNode(GOTO, l_con_else));
                     list.add(l_con_swing);
+
+                    list.add(new VarInsnNode(ALOAD, 7));
+                    list.add(new TypeInsnNode(INSTANCEOF, "net/minecraft/entity/EntityLivingBase"));
+                    LabelNode l_con_lb = new LabelNode();
+                    list.add(new JumpInsnNode(IFEQ, l_con_lb));
+                    list.add(new VarInsnNode(ALOAD, 7));
+                    list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/EntityLivingBase"));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("isHandActive", "func_184587_cr"), "()Z", false));
+                    list.add(new JumpInsnNode(IFEQ, l_con_lb));
+//                    list.add(new FrameNode(F_SAME, 0, null, 0, null));
+
+                    list.add(new VarInsnNode(ALOAD, 7));
+                    list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/EntityLivingBase"));
+                    list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("getActiveHand", "func_184600_cs"), "()Lnet/minecraft/util/EnumHand;", false));
+                    list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EnumHand", getName("MAIN_HAND", "field_184828_bq"), "Lnet/minecraft/util/EnumHand;"));
+                    LabelNode l_con_mainHand = new LabelNode();
+                    list.add(new JumpInsnNode(IF_ACMPNE, l_con_mainHand));
+
+                    {
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new VarInsnNode(ALOAD, 7));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EnumHandSide", "RIGHT", "Lnet/minecraft/util/EnumHandSide;"));
+                        LabelNode l_con_handSide = new LabelNode();
+                        list.add(new JumpInsnNode(IF_ACMPNE, l_con_handSide));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
+                        list.add(new VarInsnNode(FSTORE, 10));
+                        list.add(new JumpInsnNode(GOTO, l_con_else));
+                        list.add(l_con_handSide);
+                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
+                        list.add(new VarInsnNode(FSTORE, 11));
+                        list.add(new JumpInsnNode(GOTO, l_con_else));
+                    }
+                    list.add(l_con_mainHand);
+                    // FrameNode
+
+                    {
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new VarInsnNode(ALOAD, 7));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getMainHand", "func_187072_a"), "(Lnet/minecraft/entity/Entity;)Lnet/minecraft/util/EnumHandSide;", false));
+                        list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EnumHandSide", "RIGHT", "Lnet/minecraft/util/EnumHandSide;"));
+                        LabelNode l_con_handSide = new LabelNode();
+                        list.add(new JumpInsnNode(IF_ACMPNE, l_con_handSide));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
+                        list.add(new VarInsnNode(FSTORE, 11));
+                        list.add(new JumpInsnNode(GOTO, l_con_else));
+                        list.add(l_con_handSide);
+                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
+                        list.add(new VarInsnNode(FSTORE, 10));
+                        list.add(new JumpInsnNode(GOTO, l_con_else));
+                    }
+
+                    list.add(l_con_lb);
 //                    list.add(new FrameNode(F_SAME, 0, null, 0, null));
                     list.add(new VarInsnNode(ALOAD, 0));
                     list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
@@ -317,7 +357,6 @@ class PlayerMoveTransformer extends Transformer {
                     list.add(new VarInsnNode(FSTORE, 11));
 
                     list.add(l_con_else);
-//                    list.add(new FrameNode(F_SAME, 0, null, 0, null));
 
                     {
                         list.add(new VarInsnNode(FLOAD, 9));
@@ -349,8 +388,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -359,8 +397,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -369,8 +406,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new LdcInsnNode(1.8707964F));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new VarInsnNode(FLOAD, 9));
@@ -389,8 +425,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new LdcInsnNode(1.8707964F));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new VarInsnNode(FLOAD, 9));
@@ -424,10 +459,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
-                        list.add(new InsnNode(FCONST_2));
-                        list.add(new InsnNode(FDIV));
+                        list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
                         list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
@@ -438,10 +470,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
-                        list.add(new InsnNode(FCONST_2));
-                        list.add(new InsnNode(FDIV));
+                        list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
                         list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
@@ -452,8 +481,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -462,8 +490,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -511,14 +538,8 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
-                        list.add(new InsnNode(FCONST_2));
-                        list.add(new InsnNode(FDIV));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
-                        list.add(new InsnNode(FCONST_2));
-                        list.add(new InsnNode(FDIV));
+                        list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
+                        list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
                         list.add(new InsnNode(FSUB));
@@ -530,14 +551,8 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
-                        list.add(new InsnNode(FCONST_2));
-                        list.add(new InsnNode(FDIV));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
-                        list.add(new InsnNode(FCONST_2));
-                        list.add(new InsnNode(FDIV));
+                        list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
+                        list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
                         list.add(new InsnNode(FSUB));
@@ -549,8 +564,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -559,8 +573,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -569,8 +582,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, cls.name, "rotLerpRad", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -579,8 +591,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
 
@@ -597,8 +608,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(FLOAD, 1));
                         list.add(new LdcInsnNode(0.33333334F));
                         list.add(new InsnNode(FMUL));
-                        list.add(new FieldInsnNode(GETSTATIC, "java/lang/Math", "PI", "D"));
-                        list.add(new InsnNode(D2F));
+                        list.add(new LdcInsnNode((float) Math.PI));
                         list.add(new InsnNode(FADD));
                         list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/math/MathHelper", getName("cos", "func_76134_b"), "(F)F", false));
                         list.add(new InsnNode(FMUL));
@@ -1133,9 +1143,24 @@ class PlayerMoveTransformer extends Transformer {
             Label l_con_swimming = new Label();
             m.visitJumpInsn(IFEQ, l_con_swimming);
             {
+                Label l_jump = new Label();
                 m.visitVarInsn(ALOAD, 0);
                 m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("isSprinting", "func_70051_ag"), "()Z", false);
+                m.visitJumpInsn(IFNE, l_jump);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("isHandActive", "func_184587_cr"), "()Z", false);
                 m.visitJumpInsn(IFEQ, l_con_swimming);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitFieldInsn(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;");
+                m.visitFieldInsn(GETFIELD, "net/minecraft/world/World", getName("isRemote", "field_72995_K"), "Z");
+                m.visitJumpInsn(IFEQ, l_jump);
+                m.visitVarInsn(ALOAD, 0);
+                m.visitTypeInsn(CHECKCAST, "net/minecraft/client/entity/EntityPlayerSP");
+                m.visitInsn(ICONST_0);
+                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "isPlayerMoving", "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z", false);
+                m.visitJumpInsn(IFEQ, l_con_swimming);
+                m.visitLabel(l_jump);
+                m.visitFrame(F_SAME,0 , null, 0, null);
                 m.visitVarInsn(ALOAD, 0);
                 m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("isInWater", "func_70090_H"), "()Z", false);
                 m.visitJumpInsn(IFEQ, l_con_swimming);

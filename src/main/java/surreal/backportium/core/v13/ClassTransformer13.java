@@ -62,6 +62,7 @@ public class ClassTransformer13 {
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass));
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(PlayerMoveTransformer.transformRenderPlayer(basicClass));
 
+            // TODO Use capabilities instead
             // TODO Fix trident damage sources and enchantment glint rendering -- Trident
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
         }
