@@ -24,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.Backportium;
 import surreal.backportium.Tags;
 import surreal.backportium.api.block.FluidLogged;
-import surreal.backportium.api.helper.RiptideHelper;
+import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.client.model.entity.ModelPhantom;
 import surreal.backportium.client.model.entity.ModelTrident;
@@ -160,7 +160,7 @@ public class ClientHandler {
             Minecraft.getMinecraft().getItemRenderer().renderItemSide(player, stack, rightArm ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !rightArm);
             GlStateManager.popMatrix();
         }
-        else if (stack.getItemUseAction() == Backportium.SPEAR && RiptideHelper.isInRiptide(player)) {
+        else if (stack.getItemUseAction() == Backportium.SPEAR && TridentHelper.isInRiptide(player)) {
             event.setCanceled(true);
 
             World world = Minecraft.getMinecraft().world;

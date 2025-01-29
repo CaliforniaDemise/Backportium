@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import surreal.backportium.Tags;
-import surreal.backportium.api.helper.RiptideHelper;
+import surreal.backportium.api.helper.TridentHelper;
 
 import javax.annotation.Nonnull;
 
@@ -25,7 +25,7 @@ public class LayerRiptide implements LayerRenderer<EntityLivingBase> {
 
     @Override
     public void doRenderLayer(@Nonnull EntityLivingBase entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        if (RiptideHelper.isInRiptide(entity)) {
+        if (TridentHelper.isInRiptide(entity)) {
             this.entityRender.bindTexture(TRIDENT_RIPTIDE_TEXTURE);
             this.riptideModel.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
         }

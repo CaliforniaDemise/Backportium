@@ -5,7 +5,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import surreal.backportium.api.helper.RiptideHelper;
+import surreal.backportium.api.helper.TridentHelper;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +22,7 @@ public class ModelRiptide extends ModelBase {
 
     @Override
     public void render(@Nonnull Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        if (entityIn instanceof EntityLivingBase && RiptideHelper.isInRiptide((EntityLivingBase) entityIn)) {
+        if (entityIn instanceof EntityLivingBase && TridentHelper.isInRiptide((EntityLivingBase) entityIn)) {
             for (int i = 0; i < 3; i++) {
                 GlStateManager.pushMatrix();
                 float n = netHeadYaw * (float) (-(45 + i * 5));

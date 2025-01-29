@@ -19,7 +19,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IRarity;
 import surreal.backportium.Backportium;
-import surreal.backportium.api.helper.RiptideHelper;
+import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.v13.EntityTrident;
 import surreal.backportium.item.ItemTEISR;
@@ -35,7 +35,7 @@ public class ItemTrident extends ItemTEISR {
         if (worldIn == null || entityIn == null) return -1F;
         if (entityIn.getActiveItemStack().getItem() instanceof ItemTrident) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
-            if (riptide != 0 && !RiptideHelper.canRiptide(worldIn, entityIn)) {
+            if (riptide != 0 && !TridentHelper.canRiptide(worldIn, entityIn)) {
                 return 0F;
             }
             return 1F;
@@ -81,8 +81,8 @@ public class ItemTrident extends ItemTEISR {
         if (velocity > 0.3F) {
             int riptide = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.RIPTIDE, stack);
             if (riptide != 0) {
-                if (RiptideHelper.canRiptide(worldIn, entityLiving)) {
-                    RiptideHelper.handleRiptide(entityLiving, stack);
+                if (TridentHelper.canRiptide(worldIn, entityLiving)) {
+                    TridentHelper.handleRiptide(entityLiving, stack);
                     entityLiving.setPosition(entityLiving.posX, entityLiving.posY + 1.0D, entityLiving.posZ);
                     stack.damageItem(1, entityLiving);
                 }
@@ -130,8 +130,8 @@ public class ItemTrident extends ItemTEISR {
     @ParametersAreNonnullByDefault
     public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
         int impaling = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.IMPALING, stack);
-        if (impaling > 0 && (entity instanceof EntityWaterMob || entity instanceof EntityGuardian)) {
-            float damageAdd = 2.5F * impaling;
+        if (impaling > 0 && TridentHelper.canImpale(entity)) {
+            float damageAdd = TridentHelper.handleImpaling(0.0F, impaling);
             entity.attackEntityFrom(DamageSource.causePlayerDamage(player), damageAdd);
         }
         return false;

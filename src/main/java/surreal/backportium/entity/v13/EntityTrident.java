@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.entity.AbstractEntityArrow;
 import surreal.backportium.item.ModItems;
@@ -210,9 +211,7 @@ public class EntityTrident extends AbstractEntityArrow {
     @Override
     public float getHitDamage(Entity entity, float original) {
         float add = 0F;
-        if (this.impalingLvl > 0 && (entity instanceof EntityWaterMob || entity instanceof EntityGuardian)) {
-            add += 2.5F * this.impalingLvl;
-        }
+        if (this.impalingLvl > 0 && TridentHelper.canImpale(entity)) add = TridentHelper.handleImpaling(add, this.impalingLvl);
         return 9 + add;
     }
 
