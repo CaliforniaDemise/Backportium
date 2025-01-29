@@ -12,9 +12,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.potion.v13.PotionConduitPower;
 import surreal.backportium.potion.v13.PotionSlowFalling;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 
-public class ModPotions extends Registrar<Potion> {
+public class ModPotions extends Registry<Potion> {
 
     private final ModPotionTypes types = new ModPotionTypes(8);
 
@@ -64,7 +64,7 @@ public class ModPotions extends Registrar<Potion> {
         this.types.register(new PotionType(new PotionEffect(MobEffects.SLOWNESS, 1200, 5), new PotionEffect(MobEffects.STRENGTH, 1200, 3)), "strong_turtle_master");
     }
 
-    protected static class ModPotionTypes extends Registrar<PotionType> {
+    protected static class ModPotionTypes extends Registry<PotionType> {
 
         public ModPotionTypes(int size) {
             super(size);

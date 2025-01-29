@@ -101,7 +101,7 @@ public class ModRecipes {
         }
 
         {
-            GameRegistry.addShapedRecipe(new ResourceLocation("purple_shulker_box"), new ResourceLocation("shulker_box"), new ItemStack(SHULKER_BOX), "A", "B", "A", 'A', new ItemStack(Items.SHULKER_SHELL), 'B', new ItemStack(CHEST));
+//            GameRegistry.addShapedRecipe(new ResourceLocation("purple_shulker_box"), new ResourceLocation("shulker_box"), new ItemStack(SHULKER_BOX), "A", "B", "A", 'A', new ItemStack(Items.SHULKER_SHELL), 'B', new ItemStack(CHEST));
         }
     }
 

@@ -18,11 +18,11 @@ import surreal.backportium.api.enums.ModArmorMaterials;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.item.v13.ItemArmorTurtle;
 import surreal.backportium.item.v13.ItemTrident;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 
 import java.util.Objects;
 
-public class ModItems extends Registrar<Item> {
+public class ModItems extends Registry<Item> {
 
     // 1.13
     @ObjectHolder("backportium:dried_kelp") public static final Item DRIED_KELP = null;

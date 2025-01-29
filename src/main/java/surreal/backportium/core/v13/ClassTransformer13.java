@@ -33,37 +33,36 @@ public class ClassTransformer13 {
             case "net.minecraft.client.renderer.entity.RenderBoat": return BubbleColumnTransformer.transformRenderBoat(basicClass);
 
             // TODO Better item listing on search tab etc, fix default shulker box block particle errors, fix iron chests -- Purple Shulker
-            case "net.minecraft.block.Block": return LogTransformer.transformBlock(OurpleShulkerTransformer.transformBlock(basicClass));
-            case "net.minecraft.item.Item": return LogTransformer.transformItem(OurpleShulkerTransformer.transformItem(basicClass));
-            case "net.minecraft.block.BlockShulkerBox": return OurpleShulkerTransformer.transformBlockShulkerBox(basicClass);
-            case "net.minecraft.entity.monster.EntityShulker": return OurpleShulkerTransformer.transformEntityShulker(basicClass);
-            case "net.minecraft.client.renderer.tileentity.TileEntityShulkerBoxRenderer": return OurpleShulkerTransformer.transformTESRShulker(basicClass);
-            case "net.minecraft.client.renderer.entity.RenderShulker": return OurpleShulkerTransformer.transformRenderShulker(basicClass);
-            case "net.minecraft.client.renderer.entity.RenderShulker$HeadLayer": return OurpleShulkerTransformer.transformRenderShulker$HeadLayer(basicClass);
-            case "net.minecraft.init.Blocks": return OurpleShulkerTransformer.transformBlocks(basicClass);
-            case "net.minecraft.client.renderer.BlockModelShapes": return OurpleShulkerTransformer.transformBlockModelShapes(basicClass);
-            case "net.minecraft.client.renderer.RenderItem": return OurpleShulkerTransformer.transformRenderItem(basicClass);
-            case "net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer": return OurpleShulkerTransformer.transformTileEntityItemStackRenderer(basicClass);
+//            case "net.minecraft.block.BlockShulkerBox": return OurpleShulkerTransformer.transformBlockShulkerBox(basicClass);
+//            case "net.minecraft.entity.monster.EntityShulker": return OurpleShulkerTransformer.transformEntityShulker(basicClass);
+//            case "net.minecraft.client.renderer.tileentity.TileEntityShulkerBoxRenderer": return OurpleShulkerTransformer.transformTESRShulker(basicClass);
+//            case "net.minecraft.client.renderer.entity.RenderShulker": return OurpleShulkerTransformer.transformRenderShulker(basicClass);
+//            case "net.minecraft.client.renderer.entity.RenderShulker$HeadLayer": return OurpleShulkerTransformer.transformRenderShulker$HeadLayer(basicClass);
+//            case "net.minecraft.init.Blocks": return OurpleShulkerTransformer.transformBlocks(basicClass);
+//            case "net.minecraft.client.renderer.BlockModelShapes": return OurpleShulkerTransformer.transformBlockModelShapes(basicClass);
+//            case "net.minecraft.client.renderer.RenderItem": return OurpleShulkerTransformer.transformRenderItem(basicClass);
+//            case "net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer": return OurpleShulkerTransformer.transformTileEntityItemStackRenderer(basicClass);
             // Iron Chest
-            case "cpw.mods.ironchest.common.blocks.shulker.BlockIronShulkerBox": return OurpleShulkerTransformer.transformBlockIronShulkerBox(basicClass);
-            case "cpw.mods.ironchest.common.items.shulker.ItemIronShulkerBox": return OurpleShulkerTransformer.transformItemIronShulkerBox(basicClass);
-            case "cpw.mods.ironchest.common.core.IronChestBlocks": return OurpleShulkerTransformer.transformIronChestBlocks(basicClass);
-            case "cpw.mods.ironchest.common.core.IronChestBlocks$Registration": return OurpleShulkerTransformer.transformIronChestBlocks$Registration(basicClass);
-//            case "cpw.mods.ironchest.common.items.shulker.ItemShulkerBoxChanger": return OurpleShulkerTransformer.transformItemShulkerBoxChanger(basicClass);
-            case "cpw.mods.ironchest.client.renderer.shulker.TileEntityIronShulkerBoxRenderer": return OurpleShulkerTransformer.transformTileEntityIronShulkerBoxRenderer(basicClass);
+//            case "cpw.mods.ironchest.common.blocks.shulker.BlockIronShulkerBox": return OurpleShulkerTransformer.transformBlockIronShulkerBox(basicClass);
+//            case "cpw.mods.ironchest.common.items.shulker.ItemIronShulkerBox": return OurpleShulkerTransformer.transformItemIronShulkerBox(basicClass);
+//            case "cpw.mods.ironchest.common.core.IronChestBlocks": return OurpleShulkerTransformer.transformIronChestBlocks(basicClass);
+//            case "cpw.mods.ironchest.common.core.IronChestBlocks$Registration": return OurpleShulkerTransformer.transformIronChestBlocks$Registration(basicClass);
+//            case "cpw.mods.ironchest.common.items.shulker.ItemShulkerBoxChanger": return OurpleShulkerTransformer.transformItemShulkerBoxChanger(basicClass); TODO Unfinished
+//            case "cpw.mods.ironchest.client.renderer.shulker.TileEntityIronShulkerBoxRenderer": return OurpleShulkerTransformer.transformTileEntityIronShulkerBoxRenderer(basicClass);
 
+            case "net.minecraft.block.Block": return LogTransformer.transformBlock(basicClass); // TODO Purple Shulker Box
+            case "net.minecraft.item.Item": return LogTransformer.transformItem(basicClass); // TODO Purple Shulker Box
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
             case "net.minecraftforge.fml.common.eventhandler.ASMEventHandler": return LogTransformer.transformASMEventHandler(basicClass);
             case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return LogTransformer.transformForgeRegistryEntry$Impl(basicClass);
             case "net.minecraft.item.ItemBlock": return LogTransformer.transformItemBlock(basicClass);
 
-            // TODO Fix swimming rotations, make eye height interpolation work, make collision check work and add crawling -- Player Movement
+            // TODO make eye height interpolation work, make collision check work and add crawling -- Player Movement
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(PlayerMoveTransformer.transformModelBiped(basicClass));
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass));
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(PlayerMoveTransformer.transformRenderPlayer(basicClass));
 
-            // TODO Use capabilities instead
-            // TODO Fix trident damage sources and enchantment glint rendering -- Trident
+            // TODO Use capabilities instead -- Trident
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
         }
         // TODO Proper AoA and DivineRPG support

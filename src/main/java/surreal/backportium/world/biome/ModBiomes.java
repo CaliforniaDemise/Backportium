@@ -7,11 +7,11 @@ import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 
-public class ModBiomes extends Registrar<Biome> {
+public class ModBiomes extends Registry<Biome> {
 
     @ObjectHolder("backportium:frozen_ocean") public static final BiomeOceanFrozen FROZEN_OCEAN = null;
     @ObjectHolder("backportium:deep_frozen_ocean") public static final BiomeOceanFrozen DEEP_FROZEN_OCEAN = null;

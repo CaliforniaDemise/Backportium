@@ -14,11 +14,11 @@ import org.jetbrains.annotations.Nullable;
 import surreal.backportium.Tags;
 import surreal.backportium.entity.v13.EntityPhantom;
 import surreal.backportium.entity.v13.EntityTrident;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 
 import java.util.function.Function;
 
-public class ModEntities extends Registrar<EntityEntry> {
+public class ModEntities extends Registry<EntityEntry> {
 
     private int networkId = 0;
 

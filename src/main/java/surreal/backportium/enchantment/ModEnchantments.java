@@ -9,9 +9,9 @@ import surreal.backportium.enchantment.v13.EnchantmentChanneling;
 import surreal.backportium.enchantment.v13.EnchantmentImpaling;
 import surreal.backportium.enchantment.v13.EnchantmentLoyalty;
 import surreal.backportium.enchantment.v13.EnchantmentRiptide;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 
-public class ModEnchantments extends Registrar<Enchantment> {
+public class ModEnchantments extends Registry<Enchantment> {
 
     @ObjectHolder("backportium:impaling") public static final Enchantment IMPALING = null;
     @ObjectHolder("backportium:loyalty") public static final Enchantment LOYALTY = null;

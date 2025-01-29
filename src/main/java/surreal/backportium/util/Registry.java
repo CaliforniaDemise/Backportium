@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class Registrar<T extends IForgeRegistryEntry<T>> implements Iterable<T> {
+public abstract class Registry<T extends IForgeRegistryEntry<T>> implements Iterable<T> {
 
     private final List<T> list;
 
-    public Registrar(int size) {
+    public Registry(int size) {
         this.list = new ArrayList<>(size);
     }
 

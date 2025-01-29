@@ -6,9 +6,9 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Tags;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 
-public class ModSounds extends Registrar<SoundEvent> {
+public class ModSounds extends Registry<SoundEvent> {
 
     @ObjectHolder("backportium:block.pumpkin.carve") public static final SoundEvent BLOCK_PUMPKIN_CARVE = null;
     @ObjectHolder("backportium:block.conduit.activate") public static final SoundEvent BLOCK_CONDUIT_ACTIVATE = null;

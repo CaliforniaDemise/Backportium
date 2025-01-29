@@ -26,7 +26,7 @@ import surreal.backportium.item.v13.ItemBlockCoral;
 import surreal.backportium.item.v13.ItemBlockCoralFan;
 import surreal.backportium.item.v13.ItemBlockKelp;
 import surreal.backportium.tile.v13.TileConduit;
-import surreal.backportium.util.Registrar;
+import surreal.backportium.util.Registry;
 import surreal.backportium.util.SupplierInput;
 
 import java.util.Objects;
@@ -34,7 +34,7 @@ import java.util.Objects;
 import static surreal.backportium.api.enums.CoralType.*;
 
 @SuppressWarnings("deprecation")
-public class ModBlocks extends Registrar<Block> {
+public class ModBlocks extends Registry<Block> {
 
     // 1.13
     @ObjectHolder("minecraft:shulker_box") public static final Block SHULKER_BOX = null;

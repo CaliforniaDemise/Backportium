@@ -45,21 +45,6 @@ public class BPHooks {
         System.out.println(obj);
     }
 
-    // PumpkinTransformer
-//    public static Block BlockStem$getCrop(Block original) {
-//        return original == Blocks.MELON_BLOCK ? original : ModBlocks.UNCARVED_PUMPKIN;
-//    }
-//
-//    public static boolean WorldGenPumpkin$generate(World worldIn, Random rand, BlockPos position) {
-//        for (int i = 0; i < 64; ++i) {
-//            BlockPos blockpos = position.add(rand.nextInt(8) - rand.nextInt(8), rand.nextInt(4) - rand.nextInt(4), rand.nextInt(8) - rand.nextInt(8));
-//            if (worldIn.isAirBlock(blockpos) && worldIn.getBlockState(blockpos.down()).getBlock() == Blocks.GRASS && ModBlocks.UNCARVED_PUMPKIN.canPlaceBlockAt(worldIn, blockpos)) {
-//                worldIn.setBlockState(blockpos, ModBlocks.UNCARVED_PUMPKIN.getDefaultState(), 2);
-//            }
-//        }
-//        return true;
-//    }
-
     // TridentTransformer
     public static boolean EntityLivingBase$handleRiptide(EntityLivingBase entity, int riptideTime) {
         World world = entity.world;
