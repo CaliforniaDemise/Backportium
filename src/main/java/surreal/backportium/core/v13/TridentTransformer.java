@@ -2,6 +2,7 @@ package surreal.backportium.core.v13;
 
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.transformers.Transformer;
 
@@ -56,7 +57,7 @@ class TridentTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 8));
                 list.add(new FieldInsnNode(GETFIELD, "net/minecraft/entity/EntityLivingBase", getName("world", "field_70170_p"), "Lnet/minecraft/world/World;"));
                 list.add(new VarInsnNode(ALOAD, 8));
-                list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/api/helper/RiptideHelper", "canRiptide", "(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityLivingBase;)Z", false));
+                list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/api/helper/TridentHelper", "canRiptide", "(Lnet/minecraft/world/World;Lnet/minecraft/entity/EntityLivingBase;)Z", false));
                 list.add(new JumpInsnNode(IFNE, l_con_riptide));
                 list.add(new InsnNode(RETURN));
                 list.add(l_con_riptide);
@@ -127,16 +128,13 @@ class TridentTransformer extends Transformer {
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
                 AbstractInsnNode node = method.instructions.getLast();
-                while (node.getOpcode() != RETURN) {
-                    node = node.getPrevious();
-                }
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
                 LabelNode l_elsecon = new LabelNode();
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "riptideTime", "I"));
                 list.add(new InsnNode(ICONST_0));
                 list.add(new JumpInsnNode(IF_ICMPNE, l_elsecon));
-                list.add(new LabelNode());
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new InsnNode(ICONST_0));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "inRiptide", "Z"));
@@ -151,11 +149,89 @@ class TridentTransformer extends Transformer {
                 list.add(new InsnNode(ISUB));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "riptideTime", "I"));
                 list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("world", ""), "Lnet/minecraft/world/World;"));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", getName("getEntityBoundingBox", ""), "()Lnet/minecraft/util/math/AxisAlignedBB;", false));
+//                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EntitySelectors", getName("IS_ALIVE", ""), "Lcom/google/common/base/Predicate;"));
+//                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getEntitiesInAABBexcluding", ""), "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;Lcom/google/common/base/Predicate;)Ljava/util/List;", false));
+//                list.add(new VarInsnNode(ASTORE, 9));
+//                list.add(new VarInsnNode(ALOAD, 9));
+//                list.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/List", "size", "()I", true));
+//                list.add(new InsnNode(ICONST_1));
+//                LabelNode l_con_entityCount = new LabelNode();
+//                list.add(new JumpInsnNode(IF_ICMPLE, l_con_entityCount));
+//                list.add(new InsnNode(FCONST_0));
+//                list.add(new VarInsnNode(FSTORE, 10));
+//                list.add(new VarInsnNode(ALOAD, 9));
+//                list.add(new InsnNode(ICONST_0));
+//                list.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/List", "get", "(I)Ljava/lang/Object;", true));
+//                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/Entity"));
+//                list.add(new VarInsnNode(ASTORE, 11));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 11));
+//                LabelNode l_con_sameEntity = new LabelNode();
+//                list.add(new JumpInsnNode(IF_ACMPNE, l_con_sameEntity));
+//                list.add(new VarInsnNode(ALOAD, 9));
+//                list.add(new InsnNode(ICONST_1));
+//                list.add(new MethodInsnNode(INVOKEINTERFACE, "java/util/List", "get", "(I)Ljava/lang/Object;", true));
+//                list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/Entity"));
+//                list.add(new VarInsnNode(ASTORE, 11));
+//                list.add(l_con_sameEntity);
+//                list.add(new FrameNode(F_APPEND, 3, new Object[] { "java/util/List", FLOAT, "net/minecraft/entity/Entity" }, 0, null));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getActiveItemStack", ""), "()Lnet/minecraft/item/ItemStack;", false));
+//                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/item/ItemStack", getName("isEmpty", ""), "()Z", false));
+//                LabelNode l_con_check = new LabelNode();
+//                list.add(new JumpInsnNode(IFNE, l_con_check));
+//                list.add(new VarInsnNode(ALOAD, 11));
+//                list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/api/helper/TridentHelper", "canImpale", "(Lnet/minecraft/entity/Entity;)Z", false));
+//                list.add(new JumpInsnNode(IFEQ, l_con_check));
+//                list.add(new VarInsnNode(FLOAD, 10));
+//                list.add(new FieldInsnNode(GETSTATIC, "surreal/backportium/enchantment/ModEnchantments", "IMPALING", "Lnet/minecraft/enchantment/Enchantment;"));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, getName("getActiveItemStack", ""), "()Lnet/minecraft/item/ItemStack;", false));
+//                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/enchantment/EnchantmentHelper", getName("getEnchantmentLevel", ""), "(Lnet/minecraft/enchantment/Enchantment;Lnet/minecraft/item/ItemStack;)I", false));
+//                list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/api/helper/TridentHelper", "handleImpaling", "(FI)F", false));
+//                list.add(new VarInsnNode(FSTORE, 10));
+//                list.add(l_con_check);
+//                list.add(new FrameNode(F_SAME, 0, null, 0, null));
+//                list.add(new VarInsnNode(ALOAD, 11));
+//                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/DamageSource", getName("GENERIC", ""), "Lnet/minecraft/util/DamageSource;"));
+//                list.add(new LdcInsnNode(8.0F));
+//                list.add(new VarInsnNode(FLOAD, 10));
+//                list.add(new InsnNode(FADD));
+//                list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/Entity", getName("attackEntityFrom", ""), "(Lnet/minecraft/util/DamageSource;F)Z", false));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("motionX", ""), "D"));
+//                list.add(new InsnNode(DNEG));
+//                list.add(new LdcInsnNode(2.0D));
+//                list.add(new InsnNode(DDIV));
+//                list.add(new FieldInsnNode(PUTFIELD, cls.name, getName("motionX", ""), "D"));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("motionY", ""), "D"));
+//                list.add(new InsnNode(DNEG));
+//                list.add(new LdcInsnNode(2.0D));
+//                list.add(new InsnNode(DDIV));
+//                list.add(new FieldInsnNode(PUTFIELD, cls.name, getName("motionY", ""), "D"));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("motionZ", ""), "D"));
+//                list.add(new InsnNode(DNEG));
+//                list.add(new LdcInsnNode(2.0D));
+//                list.add(new InsnNode(DDIV));
+//                list.add(new FieldInsnNode(PUTFIELD, cls.name, getName("motionZ", ""), "D"));
+//                list.add(new VarInsnNode(ALOAD, 0));
+//                list.add(new InsnNode(ICONST_0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "riptideTime", "I"));
                 list.add(hook("EntityLivingBase$handleRiptide", "(Lnet/minecraft/entity/EntityLivingBase;I)Z"));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "inRiptide", "Z"));
+//                list.add(l_con_entityCount);
+//                list.add(new FrameNode(F_CHOP, 2, null, 0, null));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "inRiptide", "Z"));
                 LabelNode l_con2 = new LabelNode();
@@ -232,7 +308,7 @@ class TridentTransformer extends Transformer {
             m_riptide.visitFieldInsn(PUTFIELD, cls.name, "riptideTime", "I");
 
             m_riptide.visitVarInsn(ILOAD, 2);
-            m_riptide.visitMethodInsn(INVOKESTATIC, "surreal/backportium/api/helper/RiptideHelper", "getSound", "(I)Lnet/minecraft/util/SoundEvent;", false);
+            m_riptide.visitMethodInsn(INVOKESTATIC, "surreal/backportium/api/helper/TridentHelper", "getRiptideSound", "(I)Lnet/minecraft/util/SoundEvent;", false);
             m_riptide.visitVarInsn(ASTORE, 5);
 
             m_riptide.visitVarInsn(ALOAD, 0);
@@ -270,49 +346,162 @@ class TridentTransformer extends Transformer {
 
     // Add riptide effect to entities
     public static byte[] transformRenderLivingBase(byte[] basicClass) {
-        String livingBase = "net/minecraft/entity/EntityLivingBase";
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("applyRotations", "func_77043_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
-                while (node.getOpcode() != RETURN) {
-                    node = node.getPrevious();
-                }
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                String livingBase = "net/minecraft/entity/EntityLivingBase";
                 InsnList list = new InsnList();
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, livingBase, "isInRiptide", "()Z", false));
+                LabelNode l_con_elytra = new LabelNode();
+                list.add(new JumpInsnNode(IFEQ, l_con_elytra));
+                list.add(new LdcInsnNode(-90F));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("rotationPitch", "field_70125_A"), "F"));
+                list.add(new InsnNode(FSUB));
+                list.add(new InsnNode(FCONST_1));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new VarInsnNode(FLOAD, 4));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, livingBase, getName("getLook", "func_70676_i"), "(F)Lnet/minecraft/util/math/Vec3d;", false));
+                list.add(new VarInsnNode(ASTORE, 5));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionX", "field_70159_w"), "D"));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionX", "field_70159_w"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionZ", "field_70179_y"), "D"));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionZ", "field_70179_y"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new InsnNode(DADD));
+                list.add(new VarInsnNode(DSTORE, 6));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("x", "field_72450_a"), "D"));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("x", "field_72450_a"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("z", "field_72449_c"), "D"));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("z", "field_72449_c"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new InsnNode(DADD));
+                list.add(new VarInsnNode(DSTORE, 8));
+                list.add(new VarInsnNode(DLOAD, 6));
+                list.add(new InsnNode(DCONST_0));
+                list.add(new InsnNode(DCMPG));
+                LabelNode l_con_d0 = new LabelNode();
+                list.add(new JumpInsnNode(IFLE, l_con_d0));
+                list.add(new VarInsnNode(DLOAD, 8));
+                list.add(new InsnNode(DCONST_0));
+                list.add(new InsnNode(DCMPG));
+                list.add(new JumpInsnNode(IFLE, l_con_d0));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionX", "field_70159_w"), "D"));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("x", "field_72450_a"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionZ", "field_70179_y"), "D"));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("z", "field_72449_c"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new InsnNode(DADD));
+                list.add(new VarInsnNode(DLOAD, 6));
+                list.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Math", "sqrt", "(D)D", false));
+                list.add(new VarInsnNode(DLOAD, 8));
+                list.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Math", "sqrt", "(D)D", false));
+                list.add(new InsnNode(DMUL));
+                list.add(new InsnNode(DDIV));
+                list.add(new VarInsnNode(DSTORE, 6));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionX", "field_70159_w"), "D"));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("z", "field_72449_c"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new FieldInsnNode(GETFIELD, livingBase, getName("motionZ", "field_70179_y"), "D"));
+                list.add(new VarInsnNode(ALOAD, 5));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/util/math/Vec3d", getName("x", "field_72450_a"), "D"));
+                list.add(new InsnNode(DMUL));
+                list.add(new InsnNode(DSUB));
+                list.add(new VarInsnNode(DSTORE, 8));
+                list.add(new VarInsnNode(DLOAD, 8));
+                list.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Math", "signum", "(D)D", false));
+                list.add(new VarInsnNode(DLOAD, 6));
+                list.add(new MethodInsnNode(INVOKESTATIC, "java/lang/Math", "acos", "(D)D", false));
+                list.add(new InsnNode(DMUL));
+                list.add(new LdcInsnNode(180.0D));
+                list.add(new InsnNode(DMUL));
+                list.add(new InsnNode(D2F));
+                list.add(new LdcInsnNode(Math.PI));
+                list.add(new InsnNode(D2F));
+                list.add(new InsnNode(FDIV));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new InsnNode(FCONST_1));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
+                list.add(l_con_d0);
+                list.add(new FrameNode(F_APPEND, 3, new Object[] { "net/minecraft/util/math/Vec3d", DOUBLE, DOUBLE }, 3, null));
+                list.add(new LdcInsnNode(72F));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, livingBase, "getRiptideTickLeft", "()I", false));
+                list.add(new InsnNode(I2F));
                 list.add(new VarInsnNode(FLOAD, 4));
-                list.add(clientHook("RenderLivingBase$applyRotations", "(Lnet/minecraft/entity/EntityLivingBase;ZIF)V"));
+                list.add(new InsnNode(FSUB));
+                list.add(new InsnNode(FCONST_1));
+                list.add(new InsnNode(FADD));
+                list.add(new InsnNode(FMUL));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new InsnNode(FCONST_1));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
+                list.add(l_con_elytra);
+                list.add(new FrameNode(F_CHOP, 3, null, 0, null));
                 method.instructions.insertBefore(node, list);
                 break;
             }
         }
-
         return write(cls);
     }
 
     // Fix rotation when using Trident with Elytra, maybe make Elytra rendering happen for all living entities
     public static byte[] transformRenderPlayer(byte[] basicClass) {
-        String player = "net/minecraft/entity/player/EntityPlayer";
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("applyRotations", "func_77043_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
-                while (node.getOpcode() != RETURN) {
-                    node = node.getPrevious();
-                }
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                String player = "net/minecraft/entity/player/EntityPlayer";
                 InsnList list = new InsnList();
-                list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 1));
+                list.add(new MethodInsnNode(INVOKEVIRTUAL, player, getName("isElytraFlying", "func_184613_cA"), "()Z", false));
+                LabelNode l_con = new LabelNode();
+                list.add(new JumpInsnNode(IFEQ, l_con));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, player, "isInRiptide", "()Z", false));
+                list.add(new JumpInsnNode(IFEQ, l_con));
+                list.add(new LdcInsnNode(72F));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, player, "getRiptideTickLeft", "()I", false));
+                list.add(new InsnNode(I2F));
                 list.add(new VarInsnNode(FLOAD, 4));
-                list.add(clientHook("RenderPlayer$fixElytraRotations", "(Lnet/minecraft/entity/player/EntityPlayer;ZIF)V"));
+                list.add(new InsnNode(FSUB));
+                list.add(new InsnNode(FCONST_1));
+                list.add(new InsnNode(FADD));
+                list.add(new InsnNode(FMUL));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new InsnNode(FCONST_1));
+                list.add(new InsnNode(FCONST_0));
+                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
+                list.add(l_con);
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 method.instructions.insertBefore(node, list);
                 break;
             } else if (method.name.equals("<init>")) {

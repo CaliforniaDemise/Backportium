@@ -1,20 +1,19 @@
 package surreal.backportium.core;
 
+import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
 import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
@@ -27,6 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.core.util.LogSystem;
@@ -48,12 +48,11 @@ public class BPHooks {
     // TridentTransformer
     public static boolean EntityLivingBase$handleRiptide(EntityLivingBase entity, int riptideTime) {
         World world = entity.world;
-        List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, entity.getEntityBoundingBox(), EntityLivingBase::canBeCollidedWith);
-        if (entities.size() > 1) {
+        List<Entity> entities = world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox(), e -> e instanceof EntityLivingBase && e.canBeCollidedWith() && EntitySelectors.NOT_SPECTATING.apply(e));
+        if (!entities.isEmpty()) {
             ItemStack stack = entity.getActiveItemStack();
             float add = 0F;
-            EntityLivingBase e = entities.get(0);
-            if (entity == e) e = entities.get(1);
+            Entity e = entities.get(0);
             if (!stack.isEmpty() && TridentHelper.canImpale(e)) {
                 int impaling = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.IMPALING, stack);
                 add = TridentHelper.handleImpaling(add, impaling);
@@ -274,36 +273,6 @@ public class BPHooks {
 
     @SideOnly(Side.CLIENT)
     public static class Client {
-        // TridentTransformer
-        public static void RenderLivingBase$applyRotations(EntityLivingBase entity, boolean inRiptide, int tickLeft, float partialTicks) {
-            if (inRiptide) {
-                float yRotation = 72F * (tickLeft - partialTicks + 1.0F);
-
-                if (!entity.isElytraFlying()) {
-                    GlStateManager.rotate(-90.0F - entity.rotationPitch, 1.0F, 0.0F, 0.0F);
-
-                    Vec3d vec3d = entity.getLook(partialTicks);
-                    double d0 = entity.motionX * entity.motionX + entity.motionZ * entity.motionZ;
-                    double d1 = vec3d.x * vec3d.x + vec3d.z * vec3d.z;
-
-                    if (d0 > 0.0D && d1 > 0.0D) {
-                        double d2 = (entity.motionX * vec3d.x + entity.motionZ * vec3d.z) / (Math.sqrt(d0) * Math.sqrt(d1));
-                        double d3 = entity.motionX * vec3d.z - entity.motionZ * vec3d.x;
-                        GlStateManager.rotate((float) (Math.signum(d3) * Math.acos(d2)) * 180.0F / (float) Math.PI, 0.0F, 1.0F, 0.0F);
-                    }
-
-                    GlStateManager.rotate(yRotation, 0, 1, 0);
-                }
-            }
-        }
-
-        public static void RenderPlayer$fixElytraRotations(EntityPlayer player, boolean inRiptide, int tickLeft, float partialTicks) {
-            if (false && player.isElytraFlying() && inRiptide) {
-                float rotate = 72F * (tickLeft - partialTicks + 1.0F);
-                GlStateManager.rotate(rotate, 0.0F, 1.0F, 0.0F);
-            }
-        }
-
         // Debarking
         /**
          * Used in {@link LogTransformer#transformBlockStateMapper(byte[])}
