@@ -13,6 +13,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.block.plant.BlockPlantWater;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.WorldHelper;
@@ -32,6 +33,7 @@ public class BlockKelp extends BlockPlantWater {
         super(Material.GRASS);
         this.setDefaultState(getDefaultState().withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER));
         this.setCreativeTab(CreativeTabs.DECORATIONS);
+        this.setTickRandomly(true);
     }
 
     @Nonnull
@@ -102,5 +104,23 @@ public class BlockKelp extends BlockPlantWater {
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, HALF);
+    }
+
+    @Override
+    public boolean canGrow(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, boolean isClient) {
+        return state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER && worldIn.getBlockState(pos.up()).getMaterial() == Material.WATER;
+    }
+
+    @Override
+    public void grow(@NotNull World worldIn, @NotNull Random rand, @NotNull BlockPos pos, @NotNull IBlockState state) {
+        worldIn.setBlockState(pos.up(), state);
+    }
+
+    @Override
+    public void randomTick(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, @NotNull Random random) {
+        if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER && random.nextInt(100 * 25) < 14) {
+            BlockPos upPos = pos.up();
+            if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER && worldIn.getBlockState(upPos).getMaterial() == Material.WATER) worldIn.setBlockState(upPos, state);
+        }
     }
 }
