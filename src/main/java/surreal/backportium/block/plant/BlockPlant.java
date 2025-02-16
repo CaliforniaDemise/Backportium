@@ -11,10 +11,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -59,6 +61,12 @@ public abstract class BlockPlant extends BlockBush implements IGrowable, ISheara
     public void grow(World worldIn, Random rand, BlockPos pos, IBlockState state) {
         assert doublePlant instanceof BlockPlantDouble;
         ((BlockPlantDouble) doublePlant).place(worldIn, pos, state);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isSideSolid(@NotNull IBlockState base_state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing side) {
+        return false;
     }
 
     @Nonnull

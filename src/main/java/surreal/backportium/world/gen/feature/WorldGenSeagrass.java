@@ -2,6 +2,7 @@ package surreal.backportium.world.gen.feature;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -9,6 +10,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.plant.BlockPlantDouble;
+import surreal.backportium.util.MutBlockPos;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
@@ -21,13 +23,14 @@ public class WorldGenSeagrass extends WorldGenerator {
     @ParametersAreNonnullByDefault
     public boolean generate(World worldIn, Random rand, BlockPos position) {
         if (worldIn.getHeight(position).getY() > position.getY()) return false;
-        BlockPos blockPos = position.down();
+        BlockPos.MutableBlockPos blockPos = new MutBlockPos();
+        blockPos.setPos(position.getX(), position.getY() - 1, position.getZ());
         for (IBlockState iblockstate = worldIn.getBlockState(blockPos); iblockstate.getMaterial() == Material.WATER && blockPos.getY() > 0; iblockstate = worldIn.getBlockState(blockPos)) {
-            blockPos = blockPos.down();
+            blockPos.move(EnumFacing.DOWN);
         }
-        blockPos = blockPos.up();
+        blockPos = blockPos.move(EnumFacing.UP);
         for (int i = 0; i < this.getChance(worldIn, blockPos); ++i) {
-            BlockPos blockpos = blockPos.add(rand.nextInt(7) - rand.nextInt(7), 0, rand.nextInt(7) - rand.nextInt(7));
+            BlockPos blockpos = blockPos.add(rand.nextInt(8) - rand.nextInt(8), 0, rand.nextInt(8) - rand.nextInt(8));
             if (this.isTall(worldIn, blockpos, rand) && ModBlocks.SEAGRASS_DOUBLE.canPlaceBlockAt(worldIn, blockpos)) {
                 ((BlockPlantDouble) ModBlocks.SEAGRASS_DOUBLE).place(worldIn, blockpos, SEAGRASS_STATE);
             }

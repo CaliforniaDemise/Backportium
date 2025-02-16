@@ -160,10 +160,8 @@ public class EventHandler {
         boolean isSwamp = BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP);
 
         if ((isOcean || isRiver || isSwamp)) {
-            if (!isCold) KELP_GEN.generate(event.getWorld(), event.getRand(), event.getChunkPos().getBlock(8, world.getSeaLevel(), 8));
-            if (!(biome instanceof BiomeOceanFrozen)) {
-                SEAGRASS_GEN.generate(event.getWorld(), event.getRand(), event.getChunkPos().getBlock(8, world.getSeaLevel(), 8));
-            }
+            if (!(biome instanceof BiomeOceanFrozen)) SEAGRASS_GEN.generate(event.getWorld(), event.getRand(), chunkPos.getBlock(8, world.getSeaLevel(), 8));
+            if (!isCold) KELP_GEN.generate(event.getWorld(), event.getRand(), chunkPos.getBlock(8, world.getSeaLevel(), 8));
         }
     }
 }

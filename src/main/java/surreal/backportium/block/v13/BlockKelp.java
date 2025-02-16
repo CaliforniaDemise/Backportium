@@ -7,13 +7,17 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.plant.BlockPlantWater;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.WorldHelper;
@@ -122,5 +126,11 @@ public class BlockKelp extends BlockPlantWater {
             BlockPos upPos = pos.up();
             if (state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER && worldIn.getBlockState(upPos).getMaterial() == Material.WATER) worldIn.setBlockState(upPos, state);
         }
+    }
+
+    @NotNull
+    @Override
+    public ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target, @NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player) {
+        return new ItemStack(RandomHelper.getItemFromBlock(this));
     }
 }
