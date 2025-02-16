@@ -1,6 +1,5 @@
 package surreal.backportium.world.gen.feature;
 
-import net.minecraft.block.BlockBush;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
