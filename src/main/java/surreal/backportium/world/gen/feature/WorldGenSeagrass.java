@@ -24,18 +24,17 @@ public class WorldGenSeagrass extends WorldGenerator {
     public boolean generate(World worldIn, Random rand, BlockPos position) {
         if (worldIn.getHeight(position).getY() > position.getY()) return false;
         BlockPos.MutableBlockPos blockPos = new MutBlockPos();
-        blockPos.setPos(position.getX(), position.getY() - 1, position.getZ());
-        for (IBlockState iblockstate = worldIn.getBlockState(blockPos); iblockstate.getMaterial() == Material.WATER && blockPos.getY() > 0; iblockstate = worldIn.getBlockState(blockPos)) {
-            blockPos.move(EnumFacing.DOWN);
-        }
-        blockPos = blockPos.move(EnumFacing.UP);
         for (int i = 0; i < this.getChance(worldIn, blockPos); ++i) {
-            BlockPos blockpos = blockPos.add(rand.nextInt(8) - rand.nextInt(8), 0, rand.nextInt(8) - rand.nextInt(8));
-            if (this.isTall(worldIn, blockpos, rand) && ModBlocks.SEAGRASS_DOUBLE.canPlaceBlockAt(worldIn, blockpos)) {
-                ((BlockPlantDouble) ModBlocks.SEAGRASS_DOUBLE).place(worldIn, blockpos, SEAGRASS_STATE);
+            blockPos.setPos(position.getX() + rand.nextInt(16), position.getY() - 1, position.getZ() + rand.nextInt(16));
+            for (IBlockState iblockstate = worldIn.getBlockState(blockPos); iblockstate.getMaterial() == Material.WATER && blockPos.getY() > 0; iblockstate = worldIn.getBlockState(blockPos)) {
+                blockPos.move(EnumFacing.DOWN);
             }
-            else if (ModBlocks.SEAGRASS.canPlaceBlockAt(worldIn, blockpos)) {
-                worldIn.setBlockState(blockpos, SEAGRASS_STATE, 2);
+            blockPos.move(EnumFacing.UP);
+            if (this.isTall(worldIn, blockPos, rand) && ModBlocks.SEAGRASS_DOUBLE.canPlaceBlockAt(worldIn, blockPos)) {
+                ((BlockPlantDouble) ModBlocks.SEAGRASS_DOUBLE).place(worldIn, blockPos, SEAGRASS_STATE);
+            }
+            else if (ModBlocks.SEAGRASS.canPlaceBlockAt(worldIn, blockPos)) {
+                worldIn.setBlockState(blockPos, SEAGRASS_STATE, 2);
             }
         }
         return true;
@@ -44,6 +43,7 @@ public class WorldGenSeagrass extends WorldGenerator {
     private int getChance(World world, BlockPos pos) {
         Biome biome = world.getBiome(pos);
         if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) return 32;
+        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) return 64;
         else return 48;
         // DEEP WARM 80
         // DEEP COLD 40
