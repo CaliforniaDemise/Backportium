@@ -7,19 +7,13 @@ import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeOcean;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
-import surreal.backportium.block.ModBlocks;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
-import surreal.backportium.world.gen.feature.WorldGenIceberg;
 
 import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.Random;
 
 public class BiomeOceanFrozen extends BiomeOcean {
-
-    protected final WorldGenIceberg ICEBERG_PACKED = new WorldGenIceberg(false, Blocks.PACKED_ICE.getDefaultState());
-    protected final WorldGenIceberg ICEBERG_BLUE = new WorldGenIceberg(false, ModBlocks.BLUE_ICE.getDefaultState());
 
     private static final NoiseGeneratorSimplex FROZEN_NOISE = new NoiseGeneratorSimplex(new Random(3456L));
     private static NoiseGeneratorDoublePerlin ICEBERG_SURFACE_NOISE = null;
@@ -50,16 +44,6 @@ public class BiomeOceanFrozen extends BiomeOcean {
     @Override
     public BiomeDecorator createBiomeDecorator() {
         return new BiomeDecoratorOceanFrozen();
-    }
-
-    @Override
-    @ParametersAreNonnullByDefault
-    public void decorate(World worldIn, Random rand, BlockPos pos) {
-        if (rand.nextInt(16) == 0) {
-            if (rand.nextInt(200) == 0) ICEBERG_BLUE.generate(worldIn, rand, pos);
-            else ICEBERG_PACKED.generate(worldIn, rand, pos);
-        }
-        super.decorate(worldIn, rand, pos);
     }
 
     // @Override

@@ -1290,8 +1290,88 @@ class PlayerMoveTransformer extends Transformer {
             m.visitInsn(FCONST_1);
             m.visitInsn(FRETURN);
         }
-//        return write(cls);
-        writeClass(cls);
         return write(cls);
+    }
+
+    public static byte[] transformEntityRenderer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        { // prevEyeHeight
+            cls.visitField(ACC_PRIVATE, "prevEyeHeight", "F", null, 0F);
+        }
+        { // eyeHeight
+            cls.visitField(ACC_PRIVATE, "eyeHeight", "F", null, 0F);
+        }
+        { // entityEyeHeight
+            cls.visitField(ACC_PRIVATE, "entityEyeHeight", "F", null, 0F);
+        }
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("orientCamera", "func_78467_g"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == FSTORE) {
+                        InsnList list = new InsnList();
+                        list.add(new VarInsnNode(ALOAD, 2));
+                        list.add(new TypeInsnNode(INSTANCEOF, "net/minecraft/entity/player/EntityPlayer"));
+                        LabelNode l_con_check = new LabelNode();
+                        list.add(new JumpInsnNode(IFEQ, l_con_check));
+                        list.add(new LdcInsnNode("randompatches"));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraftforge/fml/common/Loader", "isModLoaded", "(Ljava/lang/String;)Z", false));
+                        list.add(new JumpInsnNode(IFNE, l_con_check));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new VarInsnNode(FLOAD, 3));
+                        list.add(new FieldInsnNode(PUTFIELD, cls.name, "entityEyeHeight", "F"));
+                        list.add(new VarInsnNode(FLOAD, 1));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "prevEyeHeight", "F"));
+                        list.add(new VarInsnNode(ALOAD, 0));
+                        list.add(new FieldInsnNode(GETFIELD, cls.name, "eyeHeight", "F"));
+                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(new VarInsnNode(FSTORE, 3));
+                        list.add(l_con_check);
+//                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        method.instructions.insert(node, list);
+                        break;
+                    }
+                }
+            }
+            else if (method.name.equals(getName("updateRenderer", "func_78464_a"))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "eyeHeight", "F"));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "prevEyeHeight", "F"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "eyeHeight", "F"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "entityEyeHeight", "F"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "eyeHeight", "F"));
+                list.add(new InsnNode(FSUB));
+                list.add(new LdcInsnNode(0.5F));
+                list.add(new InsnNode(FMUL));
+                list.add(new InsnNode(FADD));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "eyeHeight", "F"));
+                method.instructions.insertBefore(node, list);
+            }
+            else if (method.name.equals(getName("renderWorldPass", "func_175068_a"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode) node).name.equals(getName("isInsideOfMaterial", "func_70055_a"))) {
+                        method.instructions.insert(node, new InsnNode(ICONST_0));
+                        method.instructions.remove(node.getPrevious().getPrevious());
+                        method.instructions.remove(node.getPrevious());
+                        method.instructions.remove(node);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        return write(cls, 3);
     }
 }

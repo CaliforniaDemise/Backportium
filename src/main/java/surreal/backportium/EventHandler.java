@@ -33,8 +33,14 @@ import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.util.WorldHelper;
 import surreal.backportium.world.biome.BiomeOceanFrozen;
+import surreal.backportium.world.biome.BiomeOceanWarm;
+import surreal.backportium.world.biome.ModBiomes;
 import surreal.backportium.world.gen.feature.WorldGenKelp;
 import surreal.backportium.world.gen.feature.WorldGenSeagrass;
+import surreal.backportium.world.gen.feature.coral.WorldGeneratorCoral;
+import surreal.backportium.world.gen.feature.coral.WorldGeneratorCoralClaw;
+import surreal.backportium.world.gen.feature.coral.WorldGeneratorCoralMushroom;
+import surreal.backportium.world.gen.feature.coral.WorldGeneratorCoralTree;
 
 import java.util.Objects;
 import java.util.Random;
@@ -43,6 +49,7 @@ public class EventHandler {
 
     public static final WorldGenKelp KELP_GEN = new WorldGenKelp(80, 80.0D, 0.0D);
     public static final WorldGenSeagrass SEAGRASS_GEN = new WorldGenSeagrass();
+    public static final WorldGeneratorCoral.WarmVegetation WARM_VEGETATION_GEN = new WorldGeneratorCoral.WarmVegetation(20, 400.0D, 0.0D, new WorldGeneratorCoralMushroom(), new WorldGeneratorCoralTree(), new WorldGeneratorCoralClaw());
 
     public static void loadLootTables(LootTableLoadEvent event) {
         if (event.getName().equals(LootTableList.GAMEPLAY_FISHING_TREASURE)) {
@@ -154,14 +161,19 @@ public class EventHandler {
         Biome biome = world.getBiome(pos);
 
         boolean isCold = BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD);
+        boolean isWarm = biome instanceof BiomeOceanWarm;
 
         boolean isOcean = BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN);
         boolean isRiver = BiomeDictionary.hasType(biome, BiomeDictionary.Type.RIVER);
         boolean isSwamp = BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP);
 
+        if (isOcean && isWarm) {
+            WARM_VEGETATION_GEN.generate(world, world.rand, chunkPos.getBlock(8, world.getSeaLevel(), 8));
+        }
+
         if ((isOcean || isRiver || isSwamp)) {
-            if (!isCold) KELP_GEN.generate(world, event.getRand(), chunkPos.getBlock(8, world.getSeaLevel(), 8));
-//            if (!(biome instanceof BiomeOceanFrozen)) SEAGRASS_GEN.generate(event.getWorld(), event.getRand(), chunkPos.getBlock(8, world.getSeaLevel(), 8));
+            if (!isCold && !isWarm) KELP_GEN.generate(world, event.getRand(), chunkPos.getBlock(8, world.getSeaLevel(), 8));
+            if (!(biome instanceof BiomeOceanFrozen)) SEAGRASS_GEN.generate(event.getWorld(), event.getRand(), chunkPos.getBlock(8, world.getSeaLevel(), 8));
         }
     }
 }

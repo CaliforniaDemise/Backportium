@@ -2,6 +2,7 @@ package surreal.backportium.world.gen.feature;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -11,6 +12,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.plant.BlockPlantDouble;
 import surreal.backportium.util.MutBlockPos;
+import surreal.backportium.world.biome.BiomeOceanWarm;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
@@ -23,6 +25,17 @@ public class WorldGenSeagrass extends WorldGenerator {
     @ParametersAreNonnullByDefault
     public boolean generate(World worldIn, Random rand, BlockPos position) {
         if (worldIn.getHeight(position).getY() > position.getY()) return false;
+        // SIMPLE
+//        if (rand.nextFloat() < 1.0F / 10F) {
+//            BlockPos.MutableBlockPos pos = new MutBlockPos();
+//            pos.setPos(position);
+//            IBlockState state;
+//            while ((state = worldIn.getBlockState(pos.move(EnumFacing.DOWN))).getMaterial() == Material.WATER) {}
+//            if (state.getBlock() == Blocks.STONE && worldIn.getBlockState(position).getMaterial() == Material.WATER && worldIn.getBlockState(position.up()).getMaterial() == Material.WATER) {
+//
+//            }
+//        }
+        // Everything else
         BlockPos.MutableBlockPos blockPos = new MutBlockPos();
         for (int i = 0; i < this.getChance(worldIn, blockPos); ++i) {
             blockPos.setPos(position.getX() + rand.nextInt(16), position.getY() - 1, position.getZ() + rand.nextInt(16));
@@ -42,16 +55,20 @@ public class WorldGenSeagrass extends WorldGenerator {
 
     private int getChance(World world, BlockPos pos) {
         Biome biome = world.getBiome(pos);
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) return 32;
-        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) return 64;
-        else return 48;
-        // DEEP WARM 80
-        // DEEP COLD 40
+        if (biome instanceof BiomeOceanWarm) return 80;
+        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.COLD)) {
+            if (biome.getHeightVariation() <= -1.8F) return 40;
+            return 32;
+        }
+        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) return 48;
+        return 48; // RIVER | NORMAL
     }
 
     private boolean isTall(World world, BlockPos pos, Random rand) {
-        boolean mid = rand.nextBoolean();
-        if (mid) return rand.nextFloat() < 0.6F;
+        Biome biome = world.getBiome(pos);
+        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.RIVER)) return rand.nextFloat() < 0.4F;
+        else if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) return rand.nextFloat() < 0.6F;
+        else if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.OCEAN) && biome.getBaseHeight() <= -1.8F) return rand.nextFloat() < 0.8F;
         else return rand.nextFloat() < 0.3F;
     }
 }

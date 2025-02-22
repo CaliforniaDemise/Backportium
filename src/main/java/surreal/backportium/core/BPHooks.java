@@ -2,6 +2,7 @@ package surreal.backportium.core;
 
 import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
@@ -14,10 +15,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -34,15 +38,37 @@ import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v13.ItemBlockAddLog;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.Tuple;
+import surreal.backportium.world.BiomeColorHandler;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 
+// TODO Change Hooks for reaching to other classes so when I remove method, field or class, I know a transformer uses it.
 @SuppressWarnings("unused")
 public class BPHooks {
 
     public static void debugPrint(Object obj) {
         System.out.println(obj);
+    }
+
+    // Water Color
+    public static int BiomeColorHander$getWaterColor(Biome biome, int oldColor) {
+        return BiomeColorHandler.getWaterColor(biome, oldColor);
+    }
+
+    public static Vec3d BiomeColorHander$getWaterFogColor(Vec3d oldColor, World world, BlockPos pos, IBlockState state) {
+        if (state.getMaterial() == Material.WATER) {
+            int fogColor = BiomeColorHandler.getWaterFogColor(world.getBiome(pos));
+            int r = (fogColor & 0xff0000) >> 16;
+            int g = (fogColor & 0x00ff00) >> 8;
+            int b = (fogColor & 0x0000ff);
+            return new Vec3d((double) r / 255D, (double) g / 255D, (double) b / 255D);
+        }
+        return oldColor;
+    }
+
+    public static int BiomeColorHander$emulateLegacyColor(int color) {
+        return BiomeColorHandler.emulateLegacyColor(color);
     }
 
     // TridentTransformer

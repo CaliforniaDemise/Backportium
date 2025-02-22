@@ -23,7 +23,6 @@ public class WorldGenIceberg extends WorldGenerator {
     @Override
     @ParametersAreNonnullByDefault
     public boolean generate(World world, Random rand, BlockPos pos) {
-        pos = new BlockPos(pos.getX(), world.getSeaLevel(), pos.getZ());
         boolean bl = rand.nextDouble() > 0.7;
         double d = rand.nextDouble() * 2.0 * Math.PI;
         int i = 11 - rand.nextInt(5);
@@ -105,7 +104,6 @@ public class WorldGenIceberg extends WorldGenerator {
     private void method_13415(int i, int y, BlockPos pos, World world, boolean placeWater, double d, BlockPos blockPos, int j, int k) {
         int l = i + 1 + j / 3;
         int m = Math.min(i - 3, 3) + k / 2 - 1;
-
         for (int n = -l; n < l; n++) {
             for (int o = -l; o < l; o++) {
                 double e = this.getDistance(n, o, blockPos, l, m, d);

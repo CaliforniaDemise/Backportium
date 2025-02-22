@@ -10,14 +10,16 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.block.ModBlocks;
+import surreal.backportium.world.gen.feature.WorldGenIceberg;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Random;
 
 public class BiomeDecoratorOceanFrozen extends BiomeDecorator {
 
-    public WorldGenerator blueIceGen;
+    public WorldGenerator blueIceGen, icebergPacked, icebergBlue;
 
     // TODO handle these in chunk settings
     public int blueIceSize = 33;
@@ -29,9 +31,20 @@ public class BiomeDecoratorOceanFrozen extends BiomeDecorator {
     @ParametersAreNonnullByDefault
     public void decorate(World worldIn, Random random, Biome biome, BlockPos pos) {
         if (!this.decorating) {
+            this.icebergPacked = new WorldGenIceberg(false, Blocks.PACKED_ICE.getDefaultState());
+            this.icebergBlue = new WorldGenIceberg(false, ModBlocks.BLUE_ICE.getDefaultState());
             this.blueIceGen = new WorldGenMinable(ModBlocks.BLUE_ICE.getDefaultState(), this.blueIceSize, state -> state.getBlock() == Blocks.PACKED_ICE);
         }
         super.decorate(worldIn, random, biome, pos);
+    }
+
+    @Override
+    protected void genDecorations(@NotNull Biome biomeIn, @NotNull World worldIn, @NotNull Random random) {
+        super.genDecorations(biomeIn, worldIn, random);
+        // Icebergs are too big to use the classic values :(
+        BlockPos pos = this.chunkPos.add(8 + random.nextInt(12), worldIn.getSeaLevel(), 8 + random.nextInt(12));
+        if (random.nextFloat() < 1.0F / 16.0F) this.icebergPacked.generate(worldIn, random, pos);
+        if (random.nextFloat() < 1.0F / 200.0F) this.icebergBlue.generate(worldIn, random, pos);
     }
 
     @Override

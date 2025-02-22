@@ -12,7 +12,7 @@ public class ClassTransformer13 {
 
             // TODO Implement actual waterlogging -- Waterlogging
             case "net.minecraftforge.fluids.BlockFluidBase": return WaterLoggingTransformer.transformBlockFluidBase(basicClass);
-            case "net.minecraft.block.BlockLiquid": return WaterLoggingTransformer.transformBlockLiquid(basicClass);
+            case "net.minecraft.block.BlockLiquid": return WaterLoggingTransformer.transformBlockLiquid(WaterTransformer.transformBlockLiquid(basicClass));
 
             // TODO Add BWM support -- Buoyancy
             case "net.minecraft.entity.item.EntityItem": return BuoyancyTransformer.transformEntityItem(basicClass);
@@ -64,6 +64,12 @@ public class ClassTransformer13 {
 
             // TODO Use capabilities instead -- Trident
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
+
+            case "net.minecraft.world.biome.Biome$BiomeProperties": return BiomeTransformer.transformBiomeProperties(basicClass);
+            case "net.minecraft.world.biome.BiomeColorHelper$3": return BiomeTransformer.transformBiomeColorHelper$WaterColor(basicClass);
+            case "net.minecraft.client.renderer.BlockFluidRenderer": return BiomeTransformer.transformBlockFluidRenderer(basicClass);
+            case "net.minecraft.client.renderer.ItemRenderer": return BiomeTransformer.transformItemRenderer(basicClass);
+            case "net.minecraft.client.renderer.EntityRenderer": return BiomeTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass));
         }
         // TODO Proper AoA and DivineRPG support
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

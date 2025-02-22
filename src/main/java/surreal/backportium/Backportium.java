@@ -54,6 +54,7 @@ import surreal.backportium.potion.ModPotions;
 import surreal.backportium.recipe.ModRecipes;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.tile.v13.TileConduit;
+import surreal.backportium.world.WorldTypeBuffet;
 import surreal.backportium.world.biome.ModBiomes;
 
 @Mod(modid = Tags.MOD_ID, name = "Backportium", version = Tags.MOD_VERSION, dependencies = "after:*")
@@ -61,6 +62,7 @@ import surreal.backportium.world.biome.ModBiomes;
 public class Backportium {
 
     public static final EnumAction SPEAR = EnumHelper.addAction("SPEAR");
+    public static final WorldTypeBuffet TYPE_BUFFET = new WorldTypeBuffet("buffet");
 
     private Registries registries = new Registries();
 

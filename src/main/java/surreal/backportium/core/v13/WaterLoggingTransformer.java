@@ -42,8 +42,6 @@ class WaterLoggingTransformer extends Transformer {
     protected static byte[] transformBlockLiquid(byte[] basicClass) {
         if (BPPlugin.FLUIDLOGGED) return basicClass;
         ClassNode cls = read(basicClass);
-        { // BP$upCheck
-        }
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("shouldSideBeRendered", "func_176225_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();

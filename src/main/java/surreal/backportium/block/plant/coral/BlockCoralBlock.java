@@ -17,6 +17,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import surreal.backportium.api.enums.CoralType;
 import surreal.backportium.block.BlockDef;
+import surreal.backportium.block.v13.BlockSeaPickle;
 import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
@@ -26,8 +27,8 @@ import java.util.Random;
 @SuppressWarnings("deprecation")
 public abstract class BlockCoralBlock extends BlockDef {
 
-    protected static final PropertyEnum<CoralType> VARIANT = BlockCoral.VARIANT;
-    protected static final PropertyBool ALIVE = BlockCoral.ALIVE;
+    public static final PropertyEnum<CoralType> VARIANT = BlockCoral.VARIANT;
+    public static final PropertyBool ALIVE = BlockSeaPickle.ALIVE;
 
     public BlockCoralBlock(Material materialIn) {
         this(materialIn, materialIn.getMaterialMapColor());
