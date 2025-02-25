@@ -53,7 +53,7 @@ public class ClassTransformer13 {
             case "net.minecraft.block.Block": return LogTransformer.transformBlock(basicClass); // TODO Purple Shulker Box
             case "net.minecraft.item.Item": return LogTransformer.transformItem(basicClass); // TODO Purple Shulker Box
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
-            case "net.minecraftforge.fml.common.eventhandler.ASMEventHandler": return LogTransformer.transformASMEventHandler(basicClass);
+            case "net.minecraftforge.registries.ForgeRegistry": return LogTransformer.transformForgeRegistry(basicClass);
             case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return LogTransformer.transformForgeRegistryEntry$Impl(basicClass);
             case "net.minecraft.item.ItemBlock": return LogTransformer.transformItemBlock(basicClass);
 

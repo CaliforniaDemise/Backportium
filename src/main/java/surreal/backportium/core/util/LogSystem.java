@@ -82,7 +82,7 @@ public class LogSystem {
         this.items.put(addLog, item);
     }
 
-    @NotNull
+    @Nullable
     public Tuple<Block, Block, Block> getLogs(Block origLog) {
         return this.addLogs.get(origLog);
     }

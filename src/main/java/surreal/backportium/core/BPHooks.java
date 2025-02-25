@@ -1,6 +1,5 @@
 package surreal.backportium.core;
 
-import com.google.common.base.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -11,6 +10,7 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -22,15 +22,11 @@ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.core.util.LogSystem;
@@ -206,76 +202,70 @@ public class BPHooks {
         return name;
     }
 
-    public static void Logs$postRegister(ModContainer container, Event event) {
+    public static <T extends IForgeRegistryEntry<T>> void Logs$postRegister(IForgeRegistry<T> registry, Object entry) {
         if (LogSystem.INSTANCE == null) return;
-        if (event instanceof RegistryEvent.Register) {
-            String modId = container.getModId();
-            RegistryEvent.Register<?> register = (RegistryEvent.Register<?>) event;
-            if (register.getRegistry().getRegistrySuperType() == Block.class) {
-                IForgeRegistry<Block> registry = (IForgeRegistry<Block>) register.getRegistry();
-                LogSystem system = LogSystem.INSTANCE;
-                system.forEachBlock(origLog -> {
-                    ResourceLocation origLoc = origLog.getRegistryName();
-                    if (origLoc != null && !origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
-                        Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
-                        Block stripped = tuple.getFirst();
-                        Block bark = tuple.getSecond();
-                        Block strippedBark = tuple.getThird();
-                        if (stripped != null) {
-                            if (stripped.getRegistryName() == null) stripped.setRegistryName(origLoc);
-                            stripped.setCreativeTab(origLog.getCreativeTab());
-                            if (!registry.containsValue(stripped)) registry.register(stripped);
-                        }
-                        if (bark != null) {
-                            if (bark.getRegistryName() == null) bark.setRegistryName(origLoc);
-                            bark.setCreativeTab(origLog.getCreativeTab());
-                            if (!registry.containsValue(bark)) registry.register(bark);
-                        }
-                        if (strippedBark != null) {
-                            if (strippedBark.getRegistryName() == null) strippedBark.setRegistryName(origLoc);
-                            strippedBark.setCreativeTab(origLog.getCreativeTab());
-                            if (!registry.containsValue(strippedBark)) registry.register(strippedBark);
-                        }
-                    }
-                });
+        if (registry.getRegistrySuperType() == Block.class) {
+            ResourceLocation location = Objects.requireNonNull(((T) entry).getRegistryName());
+            if (!location.getNamespace().equals("minecraft") && Logs$isOriginal(entry)) {
+                Block origLog = (Block) entry;
+                Tuple<Block, Block, Block> tuple = LogSystem.INSTANCE.getLogs(origLog);
+                if (tuple == null) return;
+                Block stripped = tuple.getFirst();
+                Block bark = tuple.getSecond();
+                Block strippedBark = tuple.getThird();
+                if (stripped != null) {
+                    if (stripped.getRegistryName() == null) stripped.setRegistryName(location);
+                    stripped.setCreativeTab(origLog.getCreativeTab());
+                    if (!registry.containsValue((T) stripped)) registry.register((T) stripped);
+                }
+                if (bark != null) {
+                    if (bark.getRegistryName() == null) bark.setRegistryName(location);
+                    bark.setCreativeTab(origLog.getCreativeTab());
+                    if (!registry.containsValue((T) bark)) registry.register((T) bark);
+                }
+                if (strippedBark != null) {
+                    if (strippedBark.getRegistryName() == null) strippedBark.setRegistryName(location);
+                    strippedBark.setCreativeTab(origLog.getCreativeTab());
+                    if (!registry.containsValue((T) strippedBark)) registry.register((T) strippedBark);
+                }
             }
-            else if (register.getRegistry().getRegistrySuperType() == Item.class) {
-                if (modId.equals("mm") || modId.equals("ee")) return; // I am not sure why this happens
-                IForgeRegistry<Item> registry = (IForgeRegistry<Item>) register.getRegistry();
+        }
+        else if (registry.getRegistrySuperType() == Item.class) {
+            ResourceLocation location = Objects.requireNonNull(((T) entry).getRegistryName());
+            String modId = location.getNamespace();
+            Block origLog = Block.getBlockFromItem((Item) entry);
+            if (origLog == Blocks.AIR) return;
+            if (!location.getNamespace().equals("minecraft") && Logs$isOriginal(origLog)) {
                 LogSystem system = LogSystem.INSTANCE;
-                system.forEachBlock(origLog -> {
-                    ResourceLocation origLoc = Objects.requireNonNull(origLog.getRegistryName());
-                    if (!origLoc.getNamespace().equals("minecraft") && origLoc.getNamespace().equals(modId)) {
-                        Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
-                        Block stripped = tuple.getFirst();
-                        Block bark = tuple.getSecond();
-                        Block strippedBark = tuple.getThird();
-                        if (stripped != null) {
-                            ItemBlock strippedItem = system.getItem(stripped);
-                            if (strippedItem == null) registry.register(new ItemBlockAddLog(stripped, origLog).setRegistryName(origLoc));
-                            else {
-                                if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(origLoc);
-                                if (!registry.containsValue(strippedItem)) registry.register(strippedItem);
-                            }
-                        }
-                        if (bark != null) {
-                            ItemBlock barkItem = system.getItem(bark);
-                            if (barkItem == null) registry.register(new ItemBlockAddLog(bark, origLog).setRegistryName(origLoc));
-                            else {
-                                if (barkItem.getRegistryName() == null) barkItem.setRegistryName(origLoc);
-                                if (!registry.containsValue(barkItem)) registry.register(barkItem);
-                            }
-                        }
-                        if (strippedBark != null) {
-                            ItemBlock strippedBarkItem = system.getItem(strippedBark);
-                            if (strippedBarkItem == null) registry.register(new ItemBlockAddLog(strippedBark, origLog).setRegistryName(origLoc));
-                            else {
-                                if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(origLoc);
-                                if (!registry.containsValue(strippedBarkItem)) registry.register(strippedBarkItem);
-                            }
-                        }
+                Tuple<Block, Block, Block> tuple = system.getLogs(origLog);
+                if (tuple == null) return;
+                Block stripped = tuple.getFirst();
+                Block bark = tuple.getSecond();
+                Block strippedBark = tuple.getThird();
+                if (stripped != null) {
+                    Item strippedItem = system.getItem(stripped);
+                    if (strippedItem == null) registry.register((T) new ItemBlockAddLog(stripped, origLog).setRegistryName(location));
+                    else {
+                        if (strippedItem.getRegistryName() == null) strippedItem.setRegistryName(location);
+                        if (!registry.containsValue((T) strippedItem)) registry.register((T) strippedItem);
                     }
-                });
+                }
+                if (bark != null) {
+                    Item barkItem = system.getItem(bark);
+                    if (barkItem == null) registry.register((T) new ItemBlockAddLog(bark, origLog).setRegistryName(location));
+                    else {
+                        if (barkItem.getRegistryName() == null) barkItem.setRegistryName(location);
+                        if (!registry.containsValue((T) barkItem)) registry.register((T) barkItem);
+                    }
+                }
+                if (strippedBark != null) {
+                    Item strippedBarkItem = system.getItem(strippedBark);
+                    if (strippedBarkItem == null) registry.register((T) new ItemBlockAddLog(strippedBark, origLog).setRegistryName(location));
+                    else {
+                        if (strippedBarkItem.getRegistryName() == null) strippedBarkItem.setRegistryName(location);
+                        if (!registry.containsValue((T) strippedBarkItem)) registry.register((T) strippedBarkItem);
+                    }
+                }
             }
         }
     }

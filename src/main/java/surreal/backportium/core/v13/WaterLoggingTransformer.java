@@ -31,7 +31,6 @@ class WaterLoggingTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 5));
                 list.add(new MethodInsnNode(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getBlock", "func_177230_c"), "()Lnet/minecraft/block/Block;", true));
                 list.add(new TypeInsnNode(INSTANCEOF, "surreal/backportium/api/block/FluidLogged"));
-                list.add(new InsnNode(IRETURN));
                 method.instructions.insertBefore(node, list);
                 break;
             }
