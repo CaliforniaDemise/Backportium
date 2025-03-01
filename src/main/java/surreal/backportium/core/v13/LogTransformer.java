@@ -10,11 +10,12 @@ import surreal.backportium.core.transformers.Transformer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
-import static surreal.backportium.core.BPPlugin.DEBARK;
-import static surreal.backportium.core.BPPlugin.DEBARKED_LOGS;
-import static surreal.backportium.core.BPPlugin.FUTUREMC;
+import static surreal.backportium.core.BPPlugin.*;
 
 /**
  * For transforming Log blocks to have stripped and bark variants and also a way to reach that said variants.
@@ -32,7 +33,7 @@ class LogTransformer extends Transformer {
         DO_NOT_TRANSFORM.add("org.cyclops.integrateddynamics.block.BlockMenrilLogFilled");
     }
 
-    public static boolean checkLogs(byte[] cls, String transformedName, String[] superName) {
+    protected static boolean checkLogs(byte[] cls, String transformedName, String[] superName) {
         if (transformedName.startsWith("backportium.logs")) return false;
 
         // Mods that already have stripped / debarked logs
@@ -91,14 +92,13 @@ class LogTransformer extends Transformer {
             byte[] bytes = IOUtils.toByteArray(stream);
             stream.close();
             return checkLogs(bytes, transformedName, superName);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     // Non-abstract BlockLog extending aberrations
-    public static byte[] transformBlockLogEx(byte[] basicClass) {
+    protected static byte[] transformBlockLogEx(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         cls.interfaces = new ArrayList<>(cls.interfaces);
         cls.interfaces.add("surreal/backportium/api/block/StrippableLog");
@@ -262,8 +262,7 @@ class LogTransformer extends Transformer {
                         break;
                     }
                 }
-            }
-            else {
+            } else {
                 String clsStripped;
                 String clsBark;
                 String clsStrippedBark;
@@ -321,7 +320,7 @@ class LogTransformer extends Transformer {
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES); // COMPUTE_FRAMES???? He fell off.....
     }
 
-    public static byte[] transformItemBlock(byte[] basicClass) {
+    protected static byte[] transformItemBlock(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("<init>")) {
@@ -350,7 +349,7 @@ class LogTransformer extends Transformer {
     /**
      * For registering vanilla additional logs.
      **/
-    public static byte[] transformBlock(byte[] basicClass) {
+    protected static byte[] transformBlock(byte[] basicClass) {
         if (!shouldRegisterVanillaLogs()) return basicClass;
         ClassNode cls = read(basicClass);
         for (int i = cls.methods.size() - 1; i >= 0; i--) {
@@ -372,7 +371,7 @@ class LogTransformer extends Transformer {
     /**
      * For registering vanilla additional logs.
      **/
-    public static byte[] transformItem(byte[] basicClass) {
+    protected static byte[] transformItem(byte[] basicClass) {
         if (!shouldRegisterVanillaLogs()) return basicClass;
         ClassNode cls = read(basicClass);
         for (int i = cls.methods.size() - 1; i >= 0; i--) {
@@ -392,7 +391,7 @@ class LogTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformForgeRegistryEntry$Impl(byte[] basicClass) {
+    protected static byte[] transformForgeRegistryEntry$Impl(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("setRegistryName")) {
@@ -406,7 +405,7 @@ class LogTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformForgeRegistry(byte[] basicClass) {
+    protected static byte[] transformForgeRegistry(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("register")) {
@@ -423,7 +422,7 @@ class LogTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformBlockStateMapper(byte[] basicClass) {
+    protected static byte[] transformBlockStateMapper(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("registerBlockStateMapper")) {

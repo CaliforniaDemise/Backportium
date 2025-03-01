@@ -12,7 +12,7 @@ import java.util.Iterator;
  **/
 class BuoyancyTransformer extends Transformer {
 
-    public static byte[] transformEntityItem(byte[] basicClass) {
+    protected static byte[] transformEntityItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // applyFloatMotion
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "applyFloatMotion", "()V", null, null);
@@ -46,7 +46,6 @@ class BuoyancyTransformer extends Transformer {
         }
         { // BP$additionalY | For items like AE2 Crystal Seeds
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "BP$additionalY", "()D", null, null);
-
             // AE2
             m.visitLdcInsn("appliedenergistics2");
             m.visitMethodInsn(INVOKESTATIC, "net/minecraftforge/fml/common/Loader", "isModLoaded", "(Ljava/lang/String;)Z", false);
@@ -61,7 +60,6 @@ class BuoyancyTransformer extends Transformer {
             m.visitJumpInsn(IFEQ, l_con);
             m.visitLdcInsn(0.25D);
             m.visitInsn(DRETURN);
-
             m.visitLabel(l_con);
             m.visitFrame(F_SAME, 0, null, 0, null);
             m.visitInsn(DCONST_0);
@@ -129,7 +127,7 @@ class BuoyancyTransformer extends Transformer {
                         LabelNode l_goto = ((JumpInsnNode) node.getNext()).label;
                         list.add(new JumpInsnNode(GOTO, l_goto));
                         list.add(l_con);
-                        list.add(new FrameNode(F_APPEND, 3, new Object[] { DOUBLE, DOUBLE, DOUBLE }, 0, null));
+                        list.add(new FrameNode(F_APPEND, 3, new Object[]{DOUBLE, DOUBLE, DOUBLE}, 0, null));
                         method.instructions.insertBefore(node.getPrevious(), list);
                         method.instructions.remove(l_goto.getNext().getNext());
                         method.instructions.insert(l_goto.getNext(), new FrameNode(F_SAME, 0, null, 0, null));

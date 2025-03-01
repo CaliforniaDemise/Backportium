@@ -22,12 +22,15 @@ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.api.block.StrippableLog;
+import surreal.backportium.api.extension.BiomePropertiesExtension;
 import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
@@ -65,6 +68,57 @@ public class BPHooks {
 
     public static int BiomeColorHander$emulateLegacyColor(int color) {
         return BiomeColorHandler.emulateLegacyColor(color);
+    }
+
+    public static void BiomeColor$defaultFogColors(Biome.BiomeProperties properties, String name) {
+        String modId;
+        {
+            ModContainer container = Loader.instance().activeModContainer();
+            modId = container != null ? container.getModId() : "minecraft";
+        }
+        BiomePropertiesExtension<?> ext = (BiomePropertiesExtension<?>) properties;
+        switch (modId) {
+            case "minecraft":
+                switch (name) {
+                    case "Swampland":
+                    case "SwamplandM": ext.setActualWaterColor(6388580); ext.setWaterFogColor(2302743); break;
+                    case "Frozen River":
+                    case "Legacy Frozen Ocean": ext.setActualWaterColor(3750089); break;
+                    case "Cold Beach":
+                    case "Cold Taiga":
+                    case "Cold Taiga Hills":
+                    case "Cold Taiga M": ext.setActualWaterColor(4020182); break;
+                }
+                return;
+            case "integrateddynamcis": ext.setWaterFogColor(5613789); return;
+            case "biomesoplenty":
+                switch (name) {
+                    case "Bayou": ext.setActualWaterColor(0x62AF84); ext.setWaterFogColor(0x0C211C); break;
+                    case "Dead Swamp": ext.setActualWaterColor(0x354762); ext.setWaterFogColor(0x040511); break;
+                    case "Mangrove": ext.setActualWaterColor(0x448FBD); ext.setWaterFogColor(0x061326); break;
+                    case "Mystic Grove": ext.setActualWaterColor(0x9C3FE4); ext.setWaterFogColor(0x2E0533); break;
+                    case "Ominous Woods": ext.setActualWaterColor(0x312346); ext.setWaterFogColor(0x0A030C); break;
+                    case "Tropical Rainforest": ext.setActualWaterColor(0x1FA14A); ext.setWaterFogColor(0x02271A); break;
+                    case "Quagmire": ext.setActualWaterColor(0x433721); ext.setWaterFogColor(0x0C0C03); break;
+                    case "Wetland": ext.setActualWaterColor(0x272179); ext.setWaterFogColor(0x0C031B); break;
+                }
+                return;
+            case "thebetweenlands":
+                switch (name) {
+                    case "Swamplands":
+                    case "Swamplands Clearing": ext.setActualWaterColor(1589792); ext.setWaterFogColor(1589792); break;
+                    case "Coarse Islands":
+                    case "Raised Isles":
+                    case "Deep Waters": ext.setActualWaterColor(1784132); ext.setWaterFogColor(1784132); break;
+                    case "Marsh 0":
+                    case "Marsh 1": ext.setActualWaterColor(4742680); ext.setWaterFogColor(4742680); break;
+                    case "Sludge Plains":
+                    case "Sludge Plains Clearing": ext.setActualWaterColor(3813131); ext.setWaterFogColor(3813131); break;
+                }
+                return;
+            case "traverse": ext.setActualWaterColor(0x3F76E4); ext.setWaterFogColor(0x50533); return;
+            case "thaumcraft": ext.setActualWaterColor(3035999); break;
+        }
     }
 
     // TridentTransformer

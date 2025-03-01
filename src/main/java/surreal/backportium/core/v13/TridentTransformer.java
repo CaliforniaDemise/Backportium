@@ -2,7 +2,6 @@ package surreal.backportium.core.v13;
 
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.transformers.Transformer;
 
@@ -11,7 +10,7 @@ import java.util.Iterator;
 class TridentTransformer extends Transformer {
 
     // Yes Forge, I will cancel RenderPlayerEvent and re-render the entire player model just to move players arm by 180 degrees
-    public static byte[] transformModelBiped(byte[] basicClass) {
+    protected static byte[] transformModelBiped(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("setRotationAngles", "func_78087_a"))) {
@@ -42,7 +41,7 @@ class TridentTransformer extends Transformer {
                     list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/EnumHandSide", getName("opposite", "func_188468_a"), "()Lnet/minecraft/util/EnumHandSide;", false));
                     list.add(new VarInsnNode(ASTORE, 10));
                     list.add(l_con);
-                    list.add(new FrameNode(F_APPEND, 3, new Object[] { "net/minecraft/entity/EntityLivingBase", "net/minecraft/item/ItemStack", "net/minecraft/util/EnumHandSide" }, 0, null));
+                    list.add(new FrameNode(F_APPEND, 3, new Object[]{"net/minecraft/entity/EntityLivingBase", "net/minecraft/item/ItemStack", "net/minecraft/util/EnumHandSide"}, 0, null));
                 }
                 list.add(new VarInsnNode(ALOAD, 9));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/item/ItemStack", getName("getItemUseAction", "func_77975_n"), "()Lnet/minecraft/item/EnumAction;", false));
@@ -115,7 +114,7 @@ class TridentTransformer extends Transformer {
     }
 
     // Add values to living entity to track if it's in riptide effect or not
-    public static byte[] transformEntityLivingBase(byte[] basicClass) {
+    protected static byte[] transformEntityLivingBase(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // If entity is in riptide
             FieldVisitor visitor = cls.visitField(ACC_PROTECTED, "inRiptide", "Z", null, false);
@@ -345,7 +344,7 @@ class TridentTransformer extends Transformer {
     }
 
     // Add riptide effect to entities
-    public static byte[] transformRenderLivingBase(byte[] basicClass) {
+    protected static byte[] transformRenderLivingBase(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("applyRotations", "func_77043_a"))) {
@@ -448,7 +447,7 @@ class TridentTransformer extends Transformer {
                 list.add(new InsnNode(FCONST_0));
                 list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
                 list.add(l_con_d0);
-                list.add(new FrameNode(F_APPEND, 3, new Object[] { "net/minecraft/util/math/Vec3d", DOUBLE, DOUBLE }, 3, null));
+                list.add(new FrameNode(F_APPEND, 3, new Object[]{"net/minecraft/util/math/Vec3d", DOUBLE, DOUBLE}, 3, null));
                 list.add(new LdcInsnNode(72F));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, livingBase, "getRiptideTickLeft", "()I", false));
@@ -472,7 +471,7 @@ class TridentTransformer extends Transformer {
     }
 
     // Fix rotation when using Trident with Elytra, maybe make Elytra rendering happen for all living entities
-    public static byte[] transformRenderPlayer(byte[] basicClass) {
+    protected static byte[] transformRenderPlayer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("applyRotations", "func_77043_a"))) {
@@ -528,7 +527,7 @@ class TridentTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformEntityPlayer(byte[] basicClass) {
+    protected static byte[] transformEntityPlayer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("updateSize", "func_184808_cD"))) {
@@ -568,7 +567,7 @@ class TridentTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformEntityPlayerSP(byte[] basicClass) {
+    protected static byte[] transformEntityPlayerSP(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("isSneaking", "func_70093_af"))) {

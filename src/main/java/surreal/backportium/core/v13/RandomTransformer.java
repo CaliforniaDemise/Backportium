@@ -11,7 +11,7 @@ class RandomTransformer extends Transformer {
     /**
      * Adds custom death message to Nether bed explosion
      **/
-    public static byte[] transformBlockBed(byte[] basicClass) {
+    protected static byte[] transformBlockBed(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("onBlockActivated")) {

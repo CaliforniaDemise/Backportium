@@ -12,13 +12,14 @@ import java.util.Iterator;
 // TODO Eating animation
 // TODO Fix Quark animations and swimming animation incompatibility
 // TODO Fix eye height
+
 /**
  * New swimming, crouching etc. mechanics.
  **/
 class PlayerMoveTransformer extends Transformer {
 
-    public static byte[] transformRenderPlayer(byte[] basicClass) {
-       ClassNode cls = read(basicClass);
+    protected static byte[] transformRenderPlayer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("renderRightArm", "func_177138_b"))) {
                 AbstractInsnNode node = method.instructions.getFirst();
@@ -74,7 +75,7 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new LdcInsnNode(-90F));
                 list.add(new VarInsnNode(FSTORE, 5));
                 list.add(l_con_inWaterGoto);
-                list.add(new FrameNode(F_APPEND, 1, new Object[] { FLOAT }, 0, null));
+                list.add(new FrameNode(F_APPEND, 1, new Object[]{FLOAT}, 0, null));
 
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/player/EntityPlayer"));
@@ -107,7 +108,7 @@ class PlayerMoveTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformModelBiped(byte[] basicClass) {
+    protected static byte[] transformModelBiped(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // setSwimAnimation
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "setSwimAnimation", "(F)V", null, null);
@@ -144,7 +145,7 @@ class PlayerMoveTransformer extends Transformer {
             m.visitInsn(FREM);
             m.visitVarInsn(FSTORE, 3);
             m.visitVarInsn(FLOAD, 3);
-            m.visitLdcInsn(-(float)Math.PI);
+            m.visitLdcInsn(-(float) Math.PI);
             Label l_con = new Label();
             m.visitInsn(FCMPG);
             m.visitJumpInsn(IFGE, l_con);
@@ -153,7 +154,7 @@ class PlayerMoveTransformer extends Transformer {
             m.visitInsn(FADD);
             m.visitVarInsn(FSTORE, 3);
             m.visitLabel(l_con);
-            m.visitFrame(F_APPEND, 1, new Object[] { FLOAT }, 0, null);
+            m.visitFrame(F_APPEND, 1, new Object[]{FLOAT}, 0, null);
             m.visitVarInsn(FLOAD, 3);
             m.visitLdcInsn((float) Math.PI);
             l_con = new Label();
@@ -645,7 +646,7 @@ class PlayerMoveTransformer extends Transformer {
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 
-    public static byte[] transformEntityLivingBase(byte[] basicClass) {
+    protected static byte[] transformEntityLivingBase(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // isSwimming
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "isSwimming", "()Z", null, null);
@@ -672,7 +673,7 @@ class PlayerMoveTransformer extends Transformer {
                 m.visitLdcInsn(0.4F);
                 m.visitInsn(FRETURN);
                 m.visitLabel(l_con);
-                m.visitFrame(F_SAME, 0, null, 0 ,null);
+                m.visitFrame(F_SAME, 0, null, 0, null);
             }
             {
                 m.visitVarInsn(ALOAD, 1);
@@ -682,7 +683,7 @@ class PlayerMoveTransformer extends Transformer {
                 m.visitLdcInsn(0.4F);
                 m.visitInsn(FRETURN);
                 m.visitLabel(l_con);
-                m.visitFrame(F_SAME, 0, null, 0 ,null);
+                m.visitFrame(F_SAME, 0, null, 0, null);
             }
             m.visitVarInsn(FLOAD, 0);
             m.visitInsn(FRETURN);
@@ -786,7 +787,7 @@ class PlayerMoveTransformer extends Transformer {
     }
 
     // TODO Move to EntityLivingBase (for drowned)
-    public static byte[] transformEntityPlayer(byte[] basicClass) {
+    protected static byte[] transformEntityPlayer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // _blockCheck
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "_blockCheck", "(Lnet/minecraft/block/Block;)Z", null, null);
@@ -840,7 +841,7 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new JumpInsnNode(IFEQ, l_con_blockCheck));
                 list.add(new JumpInsnNode(GOTO, l_con_yLook));
                 list.add(l_con_blockCheck);
-                list.add(new FrameNode(F_APPEND, 1, new Object[] { DOUBLE }, 0, null));
+                list.add(new FrameNode(F_APPEND, 1, new Object[]{DOUBLE}, 0, null));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;"));
@@ -863,7 +864,7 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new JumpInsnNode(IFEQ, l_con_swimming));
                 list.add(l_con_yLook);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
-                list.add(new VarInsnNode(DLOAD ,4));
+                list.add(new VarInsnNode(DLOAD, 4));
                 list.add(new LdcInsnNode(-0.2D));
                 list.add(new InsnNode(DCMPG));
                 LabelNode l_con_large = new LabelNode();
@@ -913,7 +914,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new LdcInsnNode(0.6F));
                         list.add(new VarInsnNode(FSTORE, 2));
                         list.add(l_con);
-                        list.add(new FrameNode(F_SAME, 0, null, 0 ,null));
+                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -1049,7 +1050,7 @@ class PlayerMoveTransformer extends Transformer {
             m.visitInsn(I2F);
             m.visitFieldInsn(PUTFIELD, cls.name, "timeUnderwater", "F");
             m.visitLabel(l_con);
-            m.visitFrame(F_SAME, 0, null, 0 ,null);
+            m.visitFrame(F_SAME, 0, null, 0, null);
             m.visitVarInsn(ALOAD, 0);
             m.visitMethodInsn(INVOKEVIRTUAL, cls.name, "updateEyesInWater", "()V", false);
             m.visitVarInsn(ALOAD, 0);
@@ -1160,7 +1161,7 @@ class PlayerMoveTransformer extends Transformer {
                 m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "isPlayerMoving", "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z", false);
                 m.visitJumpInsn(IFEQ, l_con_swimming);
                 m.visitLabel(l_jump);
-                m.visitFrame(F_SAME,0 , null, 0, null);
+                m.visitFrame(F_SAME, 0, null, 0, null);
                 m.visitVarInsn(ALOAD, 0);
                 m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("isInWater", "func_70090_H"), "()Z", false);
                 m.visitJumpInsn(IFEQ, l_con_swimming);
@@ -1293,7 +1294,7 @@ class PlayerMoveTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformEntityRenderer(byte[] basicClass) {
+    protected static byte[] transformEntityRenderer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // prevEyeHeight
             cls.visitField(ACC_PRIVATE, "prevEyeHeight", "F", null, 0F);

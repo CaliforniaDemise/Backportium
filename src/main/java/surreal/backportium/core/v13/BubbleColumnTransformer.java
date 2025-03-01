@@ -1,6 +1,9 @@
 package surreal.backportium.core.v13;
 
-import org.objectweb.asm.*;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.transformers.Transformer;
 
@@ -11,7 +14,7 @@ class BubbleColumnTransformer extends Transformer {
     /**
      * Handle ambient and going inside sounds
      **/
-    public static byte[] transformEntityPlayerSP(byte[] basicClass) {
+    protected static byte[] transformEntityPlayerSP(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // inColumn |  0 - None / 1 - Upwards / 2 - Downwards
             FieldVisitor inColum = cls.visitField(ACC_PROTECTED, "inColumn", "I", null, 0);
@@ -70,12 +73,12 @@ class BubbleColumnTransformer extends Transformer {
                 m.visitInsn(ICONST_0);
                 m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184134_a"), "(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FFZ)V", false);
                 m.visitLabel(l_con_I);
-                m.visitFrame(F_APPEND, 3, new Object[] { "net/minecraft/world/World", "net/minecraft/util/math/BlockPos", "net/minecraft/block/state/IBlockState" }, 0, null);
+                m.visitFrame(F_APPEND, 3, new Object[]{"net/minecraft/world/World", "net/minecraft/util/math/BlockPos", "net/minecraft/block/state/IBlockState"}, 0, null);
             }
             m.visitInsn(ICONST_1);
             m.visitInsn(IRETURN);
             m.visitLabel(l_con_upwards);
-            m.visitFrame(F_APPEND, 1, new Object[] { INTEGER }, 0, null);
+            m.visitFrame(F_APPEND, 1, new Object[]{INTEGER}, 0, null);
             {
                 m.visitVarInsn(ILOAD, 1);
                 m.visitInsn(ICONST_2);
@@ -124,7 +127,7 @@ class BubbleColumnTransformer extends Transformer {
     /**
      * Make EntityThrowable raytrace liquid blocks.
      **/
-    public static byte[] transformEntityThrowable(byte[] basicClass) {
+    protected static byte[] transformEntityThrowable(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
@@ -168,7 +171,7 @@ class BubbleColumnTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformEntityBoat(byte[] basicClass) {
+    protected static byte[] transformEntityBoat(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         {
             cls.visitField(ACC_PRIVATE | ACC_STATIC | ACC_FINAL, "BOAT_ROCKING_TICKS", "Lnet/minecraft/network/datasync/DataParameter;", null, null);
@@ -249,7 +252,7 @@ class BubbleColumnTransformer extends Transformer {
             m.visitInsn(ICONST_2);
             m.visitInsn(IRETURN);
             m.visitLabel(l_con_bubbleColumn);
-            m.visitFrame(F_APPEND, 2, new Object[] { "net/minecraft/util/math/BlockPos", "net/minecraft/block/state/IBlockState" }, 0, null);
+            m.visitFrame(F_APPEND, 2, new Object[]{"net/minecraft/util/math/BlockPos", "net/minecraft/block/state/IBlockState"}, 0, null);
             m.visitInsn(ICONST_0);
             m.visitInsn(IRETURN);
         }
@@ -259,7 +262,7 @@ class BubbleColumnTransformer extends Transformer {
             m.visitVarInsn(ISTORE, 1);
             Label l_con_for = new Label();
             m.visitLabel(l_con_for);
-            m.visitFrame(F_APPEND, 1, new Object[] { INTEGER }, 0, null);
+            m.visitFrame(F_APPEND, 1, new Object[]{INTEGER}, 0, null);
             m.visitVarInsn(ILOAD, 1);
             m.visitVarInsn(ALOAD, 0);
             m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getPassengers", "func_184188_bt"), "()Ljava/util/List;", false);
@@ -467,7 +470,7 @@ class BubbleColumnTransformer extends Transformer {
                 list.add(new LdcInsnNode(60));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "setRockingTicks", "(I)V", false));
                 list.add(l_con_isRemote);
-                list.add(new FrameNode(F_SAME, 0, null, 0 ,null));
+                list.add(new FrameNode(F_SAME, 0, null, 0, null));
 
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;"));
@@ -542,7 +545,7 @@ class BubbleColumnTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformRenderBoat(byte[] basicClass) {
+    protected static byte[] transformRenderBoat(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("setupRotation", "func_188311_a"))) {
@@ -578,7 +581,7 @@ class BubbleColumnTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformSoulSand(byte[] basicClass) {
+    protected static byte[] transformSoulSand(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // placeBubbleColumn
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC | ACC_STATIC, "placeBubbleColumn", "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V", null, null);
@@ -649,7 +652,7 @@ class BubbleColumnTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformBlockMagma(byte[] basicClass) {
+    protected static byte[] transformBlockMagma(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         Iterator<MethodNode> methods = cls.methods.iterator();
         while (methods.hasNext()) {

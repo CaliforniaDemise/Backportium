@@ -11,7 +11,7 @@ import java.util.Iterator;
 class OurpleShulkerTransformer extends Transformer {
 
     // Vanilla
-    public static byte[] transformBlock(byte[] basicClass) {
+    protected static byte[] transformBlock(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("registerBlocks", "func_149671_p"))) {
@@ -37,7 +37,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformBlockModelShapes(byte[] basicClass) {
+    protected static byte[] transformBlockModelShapes(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("getTexture", "func_178122_a"))) {
@@ -52,7 +52,7 @@ class OurpleShulkerTransformer extends Transformer {
                         list.add(new JumpInsnNode(IF_ACMPNE, l_con));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("modelManager", "field_178128_c"), "Lnet/minecraft/client/renderer/block/model/ModelManager;"));
-                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/block/model/ModelManager", getName("getTextureMap", "func_174952_b"),"()Lnet/minecraft/client/renderer/texture/TextureMap;", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/block/model/ModelManager", getName("getTextureMap", "func_174952_b"), "()Lnet/minecraft/client/renderer/texture/TextureMap;", false));
                         list.add(new LdcInsnNode("minecraft:blocks/shulker_top"));
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/client/renderer/texture/TextureMap", getName("getAtlasSprite", "func_110572_b"), "(Ljava/lang/String;)Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;", false));
                         list.add(new InsnNode(ARETURN));
@@ -83,7 +83,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformTileEntityItemStackRenderer(byte[] basicClass) {
+    protected static byte[] transformTileEntityItemStackRenderer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         cls.visitField(ACC_PRIVATE | ACC_FINAL, "shulkerBox", "Lnet/minecraft/tileentity/TileEntityShulkerBox;", null, null);
         for (MethodNode method : cls.methods) {
@@ -131,7 +131,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformBlocks(byte[] basicClass) {
+    protected static byte[] transformBlocks(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         cls.visitField(ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "SHULKER_BOX", "Lnet/minecraft/block/Block;", null, null);
         MethodNode method = clinit(cls);
@@ -145,7 +145,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformItem(byte[] basicClass) {
+    protected static byte[] transformItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("registerItems", "func_150900_l"))) {
@@ -170,7 +170,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformRenderItem(byte[] basicClass) {
+    protected static byte[] transformRenderItem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("registerItems", "func_175041_b"))) {
@@ -188,7 +188,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformEntityShulker(byte[] basicClass) {
+    protected static byte[] transformEntityShulker(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("entityInit", "func_70088_a"))) {
@@ -253,7 +253,7 @@ class OurpleShulkerTransformer extends Transformer {
                     }
                 }
             }
-            else if (method.name.equals(getName("getColor", "func_190769_dn")))  {
+            else if (method.name.equals(getName("getColor", "func_190769_dn"))) {
                 AbstractInsnNode node = method.instructions.getFirst();
                 while (node.getOpcode() != ALOAD) node = node.getNext();
                 InsnList list = new InsnList();
@@ -274,7 +274,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformBlockShulkerBox(byte[] basicClass) {
+    protected static byte[] transformBlockShulkerBox(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("getBlockByColor", "func_190952_a"))) {
@@ -305,7 +305,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformRenderShulker(byte[] basicClass) {
+    protected static byte[] transformRenderShulker(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // DEFAULT_TEXTURE
             cls.visitField(ACC_PUBLIC | ACC_STATIC | ACC_FINAL, "DEFAULT_TEXTURE", "Lnet/minecraft/util/ResourceLocation;", null, null);
@@ -347,7 +347,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 
-    public static byte[] transformRenderShulker$HeadLayer(byte[] basicClass) {
+    protected static byte[] transformRenderShulker$HeadLayer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("doRenderLayer", "func_177141_a"))) {
@@ -376,7 +376,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 
-    public static byte[] transformTESRShulker(byte[] basicClass) {
+    protected static byte[] transformTESRShulker(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("render", "func_192841_a"))) {
@@ -411,7 +411,7 @@ class OurpleShulkerTransformer extends Transformer {
     }
 
     // Iron Chests
-    public static byte[] transformBlockIronShulkerBox(byte[] basicClass) {
+    protected static byte[] transformBlockIronShulkerBox(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // getColorName
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", null, null);
@@ -466,7 +466,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformItemIronShulkerBox(byte[] basicClass) {
+    protected static byte[] transformItemIronShulkerBox(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // getColorName
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", null, null);
@@ -493,7 +493,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformIronChestBlocks(byte[] basicClass) {
+    protected static byte[] transformIronChestBlocks(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // ironShulkerBox
             cls.visitField(ACC_PUBLIC | ACC_STATIC, "ironShulkerBox", "Lnet/minecraft/block/Block;", null, null);
@@ -501,7 +501,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformIronChestBlocks$Registration(byte[] basicClass) {
+    protected static byte[] transformIronChestBlocks$Registration(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("registerBlocks")) {
@@ -547,7 +547,7 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformTileEntityIronShulkerBoxRenderer(byte[] basicClass) {
+    protected static byte[] transformTileEntityIronShulkerBoxRenderer(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // getColorName
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "getColorName", "(Lnet/minecraft/item/EnumDyeColor;)Ljava/lang/String;", null, null);
@@ -583,13 +583,13 @@ class OurpleShulkerTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformItemShulkerBoxChanger(byte[] basicClass) {
+    protected static byte[] transformItemShulkerBoxChanger(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals("getColorFromTileEntity")) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != GETSTATIC) node = node.getPrevious();
-                method.instructions.insertBefore(node,  new InsnNode(ACONST_NULL));
+                method.instructions.insertBefore(node, new InsnNode(ACONST_NULL));
                 method.instructions.remove(node);
             }
             else if (method.name.equals("onItemUseFirst")) {
@@ -599,8 +599,7 @@ class OurpleShulkerTransformer extends Transformer {
                     if (node.getOpcode() == GETSTATIC && ((FieldInsnNode) node).owner.endsWith("EnumDyeColor")) {
                         method.instructions.insertBefore(node, new InsnNode(ACONST_NULL));
                         method.instructions.remove(node);
-                    }
-                    else if (node.getOpcode() == ASTORE && ((VarInsnNode) node).var == 17) {
+                    } else if (node.getOpcode() == ASTORE && ((VarInsnNode) node).var == 17) {
                         InsnList list = new InsnList();
                         list.add(new VarInsnNode(ALOAD, 14));
                         LabelNode l_con = new LabelNode();
@@ -620,9 +619,7 @@ class OurpleShulkerTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 2));
                         list.add(new VarInsnNode(ALOAD, 3));
                         list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/init/Blocks", "SHULKER_BOX", "Lnet/minecraft/block/Block;"));
-
                         list.add(l_con);
-
                         method.instructions.insert(node, list);
                         break;
                     }

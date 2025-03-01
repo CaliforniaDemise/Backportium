@@ -1,6 +1,5 @@
 package surreal.backportium.core.v13;
 
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.transformers.Transformer;
@@ -55,8 +54,7 @@ class BiomeTransformer extends Transformer {
                 list.add(new FieldInsnNode(GETFIELD, cls.name + "$BiomeProperties", "waterFogColor", "I"));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "waterFogColor", "I"));
                 method.instructions.insertBefore(node, list);
-            }
-            else if (method.name.equals(getName("getTemperature", "func_180626_a"))) {
+            } else if (method.name.equals(getName("getTemperature", "func_180626_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != INVOKEVIRTUAL) node = node.getPrevious();
                 InsnList list = new InsnList();
@@ -64,8 +62,7 @@ class BiomeTransformer extends Transformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "getTheTemperature", "(Lnet/minecraft/util/math/BlockPos;)F", false));
                 method.instructions.insertBefore(node, list);
                 method.instructions.remove(node);
-            }
-            else if (method.name.equals(getName("generateBiomeTerrain", "func_180628_b"))) {
+            } else if (method.name.equals(getName("generateBiomeTerrain", "func_180628_b"))) {
                 {
                     Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                     while (iterator.hasNext()) {
@@ -116,7 +113,7 @@ class BiomeTransformer extends Transformer {
                             LdcInsnNode ldc = (LdcInsnNode) node;
                             String str = (String) ldc.cst;
                             if (str.equals("FrozenOcean")) {
-                                ldc.cst = "Legacy Frozen Ocean";
+//                                ldc.cst = "Legacy Frozen Ocean";
                                 continue;
                             }
                             StringBuilder builder = new StringBuilder(str.length());
@@ -124,8 +121,7 @@ class BiomeTransformer extends Transformer {
                                 char c = str.charAt(i);
                                 if (Character.isUpperCase(c) && i != 0 && str.charAt(i - 1) != ' ') {
                                     builder.append(' ').append(c);
-                                }
-                                else builder.append(c);
+                                } else builder.append(c);
                             }
                             ldc.cst = builder.toString();
                         }
@@ -159,8 +155,12 @@ class BiomeTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new LdcInsnNode(329011));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "waterFogColor", "I"));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 1));
+                list.add(hook("BiomeColor$defaultFogColors", "(Lnet/minecraft/world/biome/Biome$BiomeProperties;Ljava/lang/String;)V"));
                 method.instructions.insertBefore(node, list);
             }
+
             else if (method.name.equals(getName("setWaterColor", "func_185402_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != PUTFIELD) node = node.getPrevious();
@@ -268,5 +268,10 @@ class BiomeTransformer extends Transformer {
             }
         }
         return write(cls);
+    }
+
+    // Uses I18n for biome properties biomeName
+    protected static byte[] transformCyclopsCore$Name(byte[] basicClass) {
+        return basicClass;
     }
 }

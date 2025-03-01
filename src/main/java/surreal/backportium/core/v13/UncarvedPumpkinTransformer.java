@@ -12,7 +12,7 @@ import java.util.Iterator;
  **/
 class UncarvedPumpkinTransformer extends Transformer {
 
-    public static byte[] transformBlockFenceLike(byte[] basicClass) {
+    protected static byte[] transformBlockFenceLike(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("isExcepBlockForAttachWithPiston", "func_193394_e"))) {
@@ -33,7 +33,7 @@ class UncarvedPumpkinTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformBlockStem(byte[] basicClass) {
+    protected static byte[] transformBlockStem(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // BP$getCrop
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "BP$getCrop", "(Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;", null, null);
@@ -60,7 +60,7 @@ class UncarvedPumpkinTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformStatList(byte[] basicClass) {
+    protected static byte[] transformStatList(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("replaceAllSimilarBlocks", "func_75924_a"))) {
@@ -84,7 +84,7 @@ class UncarvedPumpkinTransformer extends Transformer {
         return write(cls);
     }
 
-    public static byte[] transformWorldGenPumpkin(byte[] basicClass) {
+    protected static byte[] transformWorldGenPumpkin(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("generate", "func_180709_b"))) {
