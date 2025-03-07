@@ -100,6 +100,6 @@ public class BlockPlantWater extends BlockPlant implements FluidLogged {
 
     @Override
     public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, EntityLiving.SpawnPlacementType type) {
-        return type == EntityLiving.SpawnPlacementType.IN_WATER;
+        return false;
     }
 }

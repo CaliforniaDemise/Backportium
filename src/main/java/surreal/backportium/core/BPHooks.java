@@ -29,6 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
+import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.block.StrippableLog;
 import surreal.backportium.api.extension.BiomePropertiesExtension;
 import surreal.backportium.api.helper.TridentHelper;
@@ -38,6 +39,7 @@ import surreal.backportium.item.v13.ItemBlockAddLog;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.Tuple;
 import surreal.backportium.world.BiomeColorHandler;
+import surreal.backportium.world.biome.ModBiomes;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -48,6 +50,31 @@ public class BPHooks {
 
     public static void debugPrint(Object obj) {
         System.out.println(obj);
+    }
+
+    public static void debugPrint(int i) {
+        System.out.println(i);
+    }
+
+    public static boolean WorldEntitySpawner$fluidLoggedSpawning(boolean def, IBlockState state) {
+        boolean check = state.getBlock() instanceof FluidLogged;
+        if (!check || Loader.isModLoaded("fluidlogged_api")) return def;
+        else return false;
+    }
+
+    public static int GenLayerBiomeEdge$getBiomeId(int def, int i, int j, int areaWidth, int areaHeight, int[] aint, int[] aint1) {
+        if (def == 0) return Biome.getIdForBiome(ModBiomes.WARM_OCEAN);
+        return def;
+    }
+
+    private static int $getTemp(Biome.TempCategory category) {
+        switch (category) {
+            case COLD: return -1;
+            case WARM: return 1;
+            case OCEAN:
+            case MEDIUM:
+            default: return 0;
+        }
     }
 
     // Water Color

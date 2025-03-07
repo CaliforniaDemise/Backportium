@@ -70,7 +70,22 @@ class WaterLoggingTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
+        return write(cls);
+    }
+
+    protected static byte[] transformWorldEntitySpawner(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals(getName("isValidEmptySpawnBlock", "func_185331_a"))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != IRETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(hook("WorldEntitySpawner$fluidLoggedSpawning", "(ZLnet/minecraft/block/state/IBlockState;)Z"));
+                method.instructions.insertBefore(node, list);
+                break;
+            }
+        }
         return write(cls);
     }
 }

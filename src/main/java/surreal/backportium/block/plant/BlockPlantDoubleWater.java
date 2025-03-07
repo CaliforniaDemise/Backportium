@@ -4,6 +4,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -11,6 +12,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.core.BPPlugin;
 import surreal.backportium.util.WorldHelper;
@@ -69,5 +71,10 @@ public class BlockPlantDoubleWater extends BlockPlantDouble implements FluidLogg
     public Boolean isEntityInsideMaterial(IBlockAccess world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead) {
         if (BPPlugin.FLUIDLOGGED) return super.isEntityInsideMaterial(world, blockpos, iblockstate, entity, yToTest, materialIn, testingHead);
         return materialIn == Material.WATER;
+    }
+
+    @Override
+    public boolean canCreatureSpawn(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EntityLiving.SpawnPlacementType type) {
+        return false;
     }
 }
