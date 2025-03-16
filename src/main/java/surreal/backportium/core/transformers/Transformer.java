@@ -7,6 +7,7 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -23,13 +24,8 @@ public abstract class Transformer implements Opcodes {
 
     private static final MethodHandle RESOURCE_CACHE;
 
-    protected static MethodInsnNode clientHook(String name, String desc) {
-        return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks$Client", name, desc, false);
-    }
-
-    protected static MethodInsnNode hook(String name, String desc) {
-        return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks", name, desc, false);
-    }
+    protected static MethodInsnNode hook(String name, String desc) { return new MethodInsnNode(INVOKESTATIC, "surreal/backportium/core/BPHooks", name, desc, false); }
+    protected static void hook(MethodVisitor m, String name, String desc) { m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", name, desc, false); }
 
     protected static String getName(String mcpName, String srgName) {
         return FMLLaunchHandler.isDeobfuscatedEnvironment() ? mcpName : srgName;

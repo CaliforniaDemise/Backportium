@@ -47,7 +47,7 @@ class BuoyancyTransformer extends Transformer {
         { // BP$additionalY | For items like AE2 Crystal Seeds
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "BP$additionalY", "()D", null, null);
             // AE2
-            m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Buoyancy$isAE2Loaded", "()Z", false);
+            hook(m, "Buoyancy$isAE2Loaded", "()Z");
             Label l_con = new Label();
             m.visitJumpInsn(IFEQ, l_con);
             m.visitMethodInsn(INVOKESTATIC, "appeng/core/AEConfig", "instance", "()Lappeng/core/AEConfig;", false);
@@ -126,7 +126,7 @@ class BuoyancyTransformer extends Transformer {
                         LabelNode l_goto = ((JumpInsnNode) node.getNext()).label;
                         list.add(new JumpInsnNode(GOTO, l_goto));
                         list.add(l_con);
-                        list.add(new FrameNode(F_APPEND, 3, new Object[]{DOUBLE, DOUBLE, DOUBLE}, 0, null));
+                        list.add(new FrameNode(F_APPEND, 3, new Object[]{ DOUBLE, DOUBLE, DOUBLE }, 0, null));
                         method.instructions.insertBefore(node.getPrevious(), list);
                         method.instructions.remove(l_goto.getNext().getNext());
                         method.instructions.insert(l_goto.getNext(), new FrameNode(F_SAME, 0, null, 0, null));

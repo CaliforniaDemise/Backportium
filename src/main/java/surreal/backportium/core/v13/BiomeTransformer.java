@@ -101,7 +101,7 @@ class BiomeTransformer extends Transformer {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != IRETURN) node = node.getPrevious();
                 method.instructions.insertBefore(node.getPrevious().getPrevious(), new VarInsnNode(ALOAD, 0));
-                method.instructions.insertBefore(node, hook("BiomeColorHander$getWaterColor", "(Lnet/minecraft/world/biome/Biome;I)I"));
+                method.instructions.insertBefore(node, hook("WaterColor$getWaterColor", "(Lnet/minecraft/world/biome/Biome;I)I"));
             }
             else if (method.name.equals(getName("registerBiomes", "func_185358_q"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
@@ -157,14 +157,14 @@ class BiomeTransformer extends Transformer {
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "waterFogColor", "I"));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 1));
-                list.add(hook("BiomeColor$defaultFogColors", "(Lnet/minecraft/world/biome/Biome$BiomeProperties;Ljava/lang/String;)V"));
+                list.add(hook("WaterColor$defaultWaterColors", "(Lnet/minecraft/world/biome/Biome$BiomeProperties;Ljava/lang/String;)V"));
                 method.instructions.insertBefore(node, list);
             }
 
             else if (method.name.equals(getName("setWaterColor", "func_185402_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != PUTFIELD) node = node.getPrevious();
-                method.instructions.insertBefore(node, hook("BiomeColorHander$emulateLegacyColor", "(I)I"));
+                method.instructions.insertBefore(node, hook("WaterColor$emulateLegacyColor", "(I)I"));
                 break;
             }
         }
@@ -194,7 +194,7 @@ class BiomeTransformer extends Transformer {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != IRETURN) node = node.getPrevious();
                 method.instructions.insertBefore(node.getPrevious().getPrevious(), new VarInsnNode(ALOAD, 1));
-                method.instructions.insertBefore(node, hook("BiomeColorHander$getWaterColor", "(Lnet/minecraft/world/biome/Biome;I)I"));
+                method.instructions.insertBefore(node, hook("WaterColor$getWaterColor", "(Lnet/minecraft/world/biome/Biome;I)I"));
                 break;
             }
         }
@@ -258,7 +258,7 @@ class BiomeTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/Minecraft", getName("world", "field_71441_e"), "Lnet/minecraft/client/multiplayer/WorldClient;"));
                         list.add(new VarInsnNode(ALOAD, 14));
                         list.add(new VarInsnNode(ALOAD, 15));
-                        list.add(hook("BiomeColorHander$getWaterFogColor", "(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Lnet/minecraft/util/math/Vec3d;"));
+                        list.add(hook("WaterColor$getWaterFogColor", "(Lnet/minecraft/util/math/Vec3d;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Lnet/minecraft/util/math/Vec3d;"));
                         list.add(new VarInsnNode(ASTORE, 16));
                         method.instructions.insert(node, list);
                         break;

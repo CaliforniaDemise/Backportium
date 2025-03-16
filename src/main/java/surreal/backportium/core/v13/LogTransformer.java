@@ -277,7 +277,7 @@ class LogTransformer extends Transformer {
                     m.visitVarInsn(ALOAD, 0);
                     m.visitMethodInsn(INVOKESPECIAL, cls.name, "<init>", "()V", false);
                     m.visitVarInsn(ALOAD, 0);
-                    m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$isOriginal", "(Ljava/lang/Object;)Z", false);
+                    hook(m, "Logs$isOriginal", "(Ljava/lang/Object;)Z");
                     Label l_con = new Label();
                     m.visitJumpInsn(IFEQ, l_con);
                     m.visitVarInsn(ALOAD, 0);
@@ -310,7 +310,7 @@ class LogTransformer extends Transformer {
                     }
                     m.visitVarInsn(ALOAD, 0);
                     m.visitFieldInsn(GETFIELD, cls.name, "strippedBark", "Lnet/minecraft/block/Block;");
-                    m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$registerBlocks", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V", false);
+                    hook(m, "Logs$registerBlocks", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;)V");
                     m.visitLabel(l_con);
                     m.visitFrame(F_SAME, 0, null, 0, null);
                     m.visitInsn(RETURN);
@@ -340,7 +340,7 @@ class LogTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKESPECIAL, cls.superName, getName("getItemStackDisplayName", "func_77653_i"), "(Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
             m.visitVarInsn(ALOAD, 1);
-            m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getItemStackDisplayName", "(Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Ljava/lang/String;", false);
+            hook(m, "Logs$getItemStackDisplayName", "(Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Ljava/lang/String;");
             m.visitInsn(ARETURN);
         }
         return write(cls);
@@ -432,7 +432,7 @@ class LogTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 1));
                 list.add(new VarInsnNode(ALOAD, 2));
-                list.add(clientHook("Logs$registerBlockStateMapper", "(Lnet/minecraft/client/renderer/block/statemap/BlockStateMapper;Lnet/minecraft/block/Block;Lnet/minecraft/client/renderer/block/statemap/IStateMapper;)V"));
+                list.add(hook("Logs$registerBlockStateMapper", "(Lnet/minecraft/client/renderer/block/statemap/BlockStateMapper;Lnet/minecraft/block/Block;Lnet/minecraft/client/renderer/block/statemap/IStateMapper;)V"));
                 method.instructions.insertBefore(node, list);
                 break;
             }
@@ -497,7 +497,7 @@ class LogTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitFieldInsn(GETFIELD, strippedClsName, "origLog", "Lnet/minecraft/block/Block;");
                 m.visitVarInsn(ALOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I", false);
+                hook(m, "Logs$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I");
                 m.visitInsn(IRETURN);
                 m.visitLabel(l_con);
                 m.visitFrame(F_SAME, 0, null, 0, null);
@@ -516,7 +516,7 @@ class LogTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitFieldInsn(GETFIELD, strippedClsName, "origLog", "Lnet/minecraft/block/Block;");
                 m.visitVarInsn(ILOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;", false);
+                hook(m, "Logs$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;");
                 m.visitInsn(ARETURN);
                 m.visitLabel(l_con);
                 m.visitFrame(F_SAME, 0, null, 0, null);
@@ -611,7 +611,7 @@ class LogTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitFieldInsn(GETFIELD, barkClsName, "origLog", "Lnet/minecraft/block/Block;");
                 m.visitVarInsn(ALOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I", false);
+                hook(m, "Logs$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I");
                 m.visitInsn(IRETURN);
                 m.visitLabel(l_con);
                 m.visitFrame(F_SAME, 0, null, 0, null);
@@ -630,7 +630,7 @@ class LogTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitFieldInsn(GETFIELD, barkClsName, "origLog", "Lnet/minecraft/block/Block;");
                 m.visitVarInsn(ILOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;", false);
+                hook(m, "Logs$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;");
                 m.visitInsn(ARETURN);
                 m.visitLabel(l_con);
                 m.visitFrame(F_SAME, 0, null, 0, null);
@@ -702,7 +702,7 @@ class LogTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitFieldInsn(GETFIELD, strippedClsName, "origLog", "Lnet/minecraft/block/Block;");
                 m.visitVarInsn(ALOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I", false);
+                hook(m, "Logs$getMetaFromState", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;Lnet/minecraft/block/state/IBlockState;)I");
                 m.visitInsn(IRETURN);
                 m.visitLabel(l_con);
                 m.visitFrame(F_SAME, 0, null, 0, null);
@@ -721,7 +721,7 @@ class LogTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitFieldInsn(GETFIELD, strippedClsName, "origLog", "Lnet/minecraft/block/Block;");
                 m.visitVarInsn(ILOAD, 1);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Logs$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;", false);
+                hook(m, "Logs$getStateFromMeta", "(Lnet/minecraft/block/Block;Lnet/minecraft/block/Block;I)Lnet/minecraft/block/state/IBlockState;");
                 m.visitInsn(ARETURN);
                 m.visitLabel(l_con);
                 m.visitFrame(F_SAME, 0, null, 0, null);

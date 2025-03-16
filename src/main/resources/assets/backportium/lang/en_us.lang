@@ -108,6 +108,8 @@ subtitles.block.bubble_column.upwards_inside=Bubbles woosh
 subtitles.block.bubble_column.whirlpool_ambient=Bubbles whirl
 subtitles.block.bubble_column.whirlpool_inside=Bubbles zoom
 
+entity.trident.name=Trident
+
 # Damage Sources
 death.attack.trident=%1$s was impaled by %2$s
 death.attack.trident.item=%1$s was impaled by %2$s using %3$s
@@ -131,7 +133,7 @@ potion.conduit_power=Conduit Power
 
 potion.effect.slow_falling=Potion of Slow Falling
 potion.effect.long_slow_falling=Potion of Slow Falling
-tipped_arrow.effect.long_slow_falling=Arrow of Slow Falling
+tipped_arrow.effect.slow_falling=Arrow of Slow Falling
 tipped_arrow.effect.long_slow_falling=Arrow of Slow Falling
 splash_potion.effect.slow_falling=Splash Potion of Slow Falling
 splash_potion.effect.long_slow_falling=Splash Potion of Slow Falling

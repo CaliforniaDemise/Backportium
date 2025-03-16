@@ -20,93 +20,6 @@ class BubbleColumnTransformer extends Transformer {
             FieldVisitor inColum = cls.visitField(ACC_PROTECTED, "inColumn", "I", null, 0);
             inColum.visitEnd();
         }
-        { // BP$handleBubbleColumn
-            MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "BP$handleBubbleColumn", "(I)I", null, null);
-            m.visitVarInsn(ALOAD, 0);
-            m.visitFieldInsn(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;");
-            m.visitVarInsn(ASTORE, 2);
-            m.visitTypeInsn(NEW, "net/minecraft/util/math/BlockPos");
-            m.visitInsn(DUP);
-            m.visitVarInsn(ALOAD, 0);
-            m.visitMethodInsn(INVOKESPECIAL, "net/minecraft/util/math/BlockPos", "<init>", "(Lnet/minecraft/entity/Entity;)V", false);
-            m.visitInsn(DCONST_0);
-            m.visitVarInsn(ALOAD, 0);
-            m.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getEyeHeight", "func_70047_e"), "()F", false);
-            m.visitInsn(F2D);
-            m.visitInsn(DCONST_0);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("add", "func_177963_a"), "(DDD)Lnet/minecraft/util/math/BlockPos;", false);
-            m.visitVarInsn(ASTORE, 3);
-            m.visitVarInsn(ALOAD, 2);
-            m.visitVarInsn(ALOAD, 3);
-            m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("getBlockState", "func_180495_p"), "(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;", false);
-            m.visitVarInsn(ASTORE, 4);
-            m.visitVarInsn(ALOAD, 4);
-            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getBlock", "func_177230_c"), "()Lnet/minecraft/block/Block;", true);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;"); /// {@link surreal.backportium.block.ModBlocks.BUBBLE_COLUMN}
-            Label l_con_column = new Label();
-            m.visitJumpInsn(IF_ACMPNE, l_con_column);
-            m.visitVarInsn(ALOAD, 4);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/v13/BlockBubbleColumn", "DRAG", "Lnet/minecraft/block/properties/PropertyBool;");
-            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getValue", "func_177229_b"), "(Lnet/minecraft/block/properties/IProperty;)Ljava/lang/Comparable;", true);
-            m.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
-            m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
-            m.visitVarInsn(ISTORE, 5);
-            m.visitVarInsn(ILOAD, 5);
-            Label l_con_upwards = new Label();
-            m.visitJumpInsn(IFEQ, l_con_upwards);
-            {
-                m.visitVarInsn(ILOAD, 1);
-                m.visitInsn(ICONST_1);
-                Label l_con_I = new Label();
-                m.visitJumpInsn(IF_ICMPEQ, l_con_I);
-                m.visitVarInsn(ALOAD, 2);
-                m.visitVarInsn(ALOAD, 0);
-                m.visitFieldInsn(GETFIELD, cls.name, getName("posX", "field_70165_t"), "D");
-                m.visitVarInsn(ALOAD, 0);
-                m.visitFieldInsn(GETFIELD, cls.name, getName("posY", "field_70163_u"), "D");
-                m.visitVarInsn(ALOAD, 0);
-                m.visitFieldInsn(GETFIELD, cls.name, getName("posZ", "field_70161_v"), "D");
-                m.visitFieldInsn(GETSTATIC, "surreal/backportium/sound/ModSounds", "BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE", "Lnet/minecraft/util/SoundEvent;");
-                m.visitFieldInsn(GETSTATIC, "net/minecraft/util/SoundCategory", "BLOCKS", "Lnet/minecraft/util/SoundCategory;");
-                m.visitLdcInsn(0.7F);
-                m.visitInsn(FCONST_1);
-                m.visitInsn(ICONST_0);
-                m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184134_a"), "(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FFZ)V", false);
-                m.visitLabel(l_con_I);
-                m.visitFrame(F_APPEND, 3, new Object[]{"net/minecraft/world/World", "net/minecraft/util/math/BlockPos", "net/minecraft/block/state/IBlockState"}, 0, null);
-            }
-            m.visitInsn(ICONST_1);
-            m.visitInsn(IRETURN);
-            m.visitLabel(l_con_upwards);
-            m.visitFrame(F_APPEND, 1, new Object[]{INTEGER}, 0, null);
-            {
-                m.visitVarInsn(ILOAD, 1);
-                m.visitInsn(ICONST_2);
-                Label l_con_I = new Label();
-                m.visitJumpInsn(IF_ICMPEQ, l_con_I);
-                m.visitVarInsn(ALOAD, 2);
-                m.visitVarInsn(ALOAD, 0);
-                m.visitFieldInsn(GETFIELD, cls.name, getName("posX", "field_70165_t"), "D");
-                m.visitVarInsn(ALOAD, 0);
-                m.visitFieldInsn(GETFIELD, cls.name, getName("posY", "field_70163_u"), "D");
-                m.visitVarInsn(ALOAD, 0);
-                m.visitFieldInsn(GETFIELD, cls.name, getName("posZ", "field_70161_v"), "D");
-                m.visitFieldInsn(GETSTATIC, "surreal/backportium/sound/ModSounds", "BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE", "Lnet/minecraft/util/SoundEvent;");
-                m.visitFieldInsn(GETSTATIC, "net/minecraft/util/SoundCategory", "BLOCKS", "Lnet/minecraft/util/SoundCategory;");
-                m.visitLdcInsn(0.7F);
-                m.visitInsn(FCONST_1);
-                m.visitInsn(ICONST_0);
-                m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184134_a"), "(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FFZ)V", false);
-                m.visitLabel(l_con_I);
-                m.visitFrame(F_CHOP, 1, null, 0, null);
-            }
-            m.visitInsn(ICONST_2);
-            m.visitInsn(IRETURN);
-            m.visitLabel(l_con_column);
-            m.visitFrame(F_SAME, 0, null, 0, null);
-            m.visitInsn(ICONST_0);
-            m.visitInsn(IRETURN);
-        }
         for (MethodNode method : cls.methods) {
             if (method.name.equals(getName("onUpdate", "func_70071_h_"))) {
                 AbstractInsnNode node = method.instructions.getLast();
@@ -116,9 +29,10 @@ class BubbleColumnTransformer extends Transformer {
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "inColumn", "I"));
-                list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "BP$handleBubbleColumn", "(I)I", false));
+                list.add(hook("BubbleColumn$handle", "(Lnet/minecraft/entity/Entity;I)I"));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "inColumn", "I"));
                 method.instructions.insertBefore(node, list);
+                break;
             }
         }
         return write(cls);
@@ -229,7 +143,7 @@ class BubbleColumnTransformer extends Transformer {
             m.visitVarInsn(ASTORE, 2);
             m.visitVarInsn(ALOAD, 2);
             m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getBlock", "func_177230_c"), "()Lnet/minecraft/block/Block;", true);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;");
+            hook(m, "BubbleColumn$block", "()Lnet/minecraft/block/Block;");
             Label l_con_bubbleColumn = new Label();
             m.visitJumpInsn(IF_ACMPNE, l_con_bubbleColumn);
             m.visitVarInsn(ALOAD, 0);
@@ -239,10 +153,7 @@ class BubbleColumnTransformer extends Transformer {
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("isAirBlock", "func_175623_d"), "(Lnet/minecraft/util/math/BlockPos;)Z", false);
             m.visitJumpInsn(IFEQ, l_con_bubbleColumn);
             m.visitVarInsn(ALOAD, 2);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/v13/BlockBubbleColumn", "DRAG", "Lnet/minecraft/block/properties/PropertyBool;");
-            m.visitMethodInsn(INVOKEINTERFACE, "net/minecraft/block/state/IBlockState", getName("getValue", "func_177229_b"), "(Lnet/minecraft/block/properties/IProperty;)Ljava/lang/Comparable;", true);
-            m.visitTypeInsn(CHECKCAST, "java/lang/Boolean");
-            m.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", "()Z", false);
+            hook(m, "BubbleColumn$dragValue", "(Lnet/minecraft/block/state/IBlockState;)Z");
             Label l_con_upwards = new Label();
             m.visitJumpInsn(IFEQ, l_con_upwards);
             m.visitInsn(ICONST_1);
@@ -471,7 +382,6 @@ class BubbleColumnTransformer extends Transformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "setRockingTicks", "(I)V", false));
                 list.add(l_con_isRemote);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
-
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;"));
                 list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/util/EnumParticleTypes", "WATER_SPLASH", "Lnet/minecraft/util/EnumParticleTypes;"));
@@ -502,7 +412,6 @@ class BubbleColumnTransformer extends Transformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "java/util/Random", "nextInt", "()I", false));
                 list.add(new LdcInsnNode(20));
                 list.add(new JumpInsnNode(IF_ICMPNE, l_con_bubbleColumn));
-
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("world", "field_70170_p"), "Lnet/minecraft/world/World;"));
                 list.add(new VarInsnNode(ALOAD, 0));
@@ -525,7 +434,6 @@ class BubbleColumnTransformer extends Transformer {
                 list.add(new InsnNode(FADD));
                 list.add(new InsnNode(ICONST_0));
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184134_a"), "(DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FFZ)V", false));
-
                 list.add(l_con_bubbleColumn);
                 list.add(new FrameNode(F_SAME, 0, null, 0, null));
                 method.instructions.insertBefore(node, list);
@@ -541,7 +449,6 @@ class BubbleColumnTransformer extends Transformer {
                 method.instructions.insertBefore(node, list);
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -557,19 +464,7 @@ class BubbleColumnTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 1));
                         list.add(new VarInsnNode(FLOAD, 3));
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/item/EntityBoat", "getRockingAngle", "(F)F", false));
-                        list.add(new VarInsnNode(FSTORE, 6));
-                        list.add(new VarInsnNode(FLOAD, 6));
-                        list.add(new InsnNode(FCONST_0));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/math/MathHelper", getName("epsilonEquals", "func_180185_a"), "(FF)Z", false));
-                        LabelNode l_con_epsilon = new LabelNode();
-                        list.add(new JumpInsnNode(IFNE, l_con_epsilon));
-                        list.add(new VarInsnNode(FLOAD, 6));
-                        list.add(new InsnNode(FCONST_1));
-                        list.add(new InsnNode(FCONST_0));
-                        list.add(new InsnNode(FCONST_1));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/client/renderer/GlStateManager", getName("rotate", "func_179114_b"), "(FFFF)V", false));
-                        list.add(l_con_epsilon);
-                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                        list.add(hook("BubbleColumn$setupRotation", "(F)V"));
                         method.instructions.insertBefore(node, list);
                         break;
                     }
@@ -577,7 +472,6 @@ class BubbleColumnTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls, 3);
     }
 
@@ -596,7 +490,7 @@ class BubbleColumnTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;");
+            hook(m, "BubbleColumn$block", "()Lnet/minecraft/block/Block;");
             m.visitInsn(ICONST_1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getStateFromMeta", "func_176203_a"), "(I)Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
@@ -683,7 +577,7 @@ class BubbleColumnTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 1);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/util/math/BlockPos", getName("up", "func_177984_a"), "()Lnet/minecraft/util/math/BlockPos;", false);
-            m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "BUBBLE_COLUMN", "Lnet/minecraft/block/Block;");
+            hook(m, "BubbleColumn$block", "()Lnet/minecraft/block/Block;");
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/block/Block", getName("getDefaultState", "func_176223_P"), "()Lnet/minecraft/block/state/IBlockState;", false);
             m.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("setBlockState", "func_175656_a"), "(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", false);
             m.visitInsn(RETURN);

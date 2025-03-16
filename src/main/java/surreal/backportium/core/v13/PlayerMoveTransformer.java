@@ -11,7 +11,6 @@ import java.util.Iterator;
 // TODO Make riptide a capability and create an API for adding Riptide and Swimming like stuff that can change size and model animations.
 // TODO Eating animation
 // TODO Fix Quark animations and swimming animation incompatibility
-// TODO Fix eye height
 
 /**
  * New swimming, crouching etc. mechanics.
@@ -83,7 +82,7 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "getSwimAnimation", "(F)F", false));
                 list.add(new InsnNode(FCONST_0));
                 list.add(new VarInsnNode(FLOAD, 5));
-                list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                list.add(hook("playerMove$lerp", "(FFF)F"));
                 list.add(new InsnNode(FCONST_2));
                 list.add(new InsnNode(FDIV));
                 list.add(new InsnNode(FCONST_1));
@@ -381,7 +380,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
                         list.add(new InsnNode(FCONST_0));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
@@ -399,7 +398,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new LdcInsnNode((float) Math.PI));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
@@ -437,7 +436,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "getArmAngleSq", "(F)F", false));
                         list.add(new InsnNode(FDIV));
                         list.add(new InsnNode(FSUB));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
                         LabelNode l_con_rot = new LabelNode();
                         list.add(new JumpInsnNode(GOTO, l_con_rot));
@@ -474,7 +473,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new LdcInsnNode(((float) Math.PI) / 2.0F));
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
@@ -492,7 +491,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new LdcInsnNode((float) Math.PI));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
@@ -518,7 +517,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
                         list.add(new InsnNode(FADD));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
                         list.add(new JumpInsnNode(GOTO, l_con_rot));
                         list.add(l_con_22);
@@ -557,7 +556,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new VarInsnNode(FLOAD, 12));
                         list.add(new InsnNode(FMUL));
                         list.add(new InsnNode(FSUB));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
@@ -575,7 +574,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new LdcInsnNode((float) Math.PI));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleY", "field_78796_g"), "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedLeftArm", "field_178724_i"), "Lnet/minecraft/client/model/ModelRenderer;"));
@@ -593,7 +592,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedRightArm", "field_178723_h"), "Lnet/minecraft/client/model/ModelRenderer;"));
                         list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
                         list.add(new LdcInsnNode((float) Math.PI));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleZ", "field_78808_h"), "F"));
 
                         list.add(l_con_rot);
@@ -613,7 +612,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new InsnNode(FADD));
                         list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/math/MathHelper", getName("cos", "func_76134_b"), "(F)F", false));
                         list.add(new InsnNode(FMUL));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
 
                         list.add(new VarInsnNode(ALOAD, 0));
@@ -633,7 +632,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/math/MathHelper", getName("cos", "func_76134_b"), "(F)F", false));
                         list.add(new InsnNode(FMUL));
 
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new FieldInsnNode(PUTFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
                     }
                     list.add(l_con_anim);
@@ -1078,7 +1077,7 @@ class PlayerMoveTransformer extends Transformer {
             m.visitFieldInsn(GETFIELD, cls.name, "lastSwimAnimation", "F");
             m.visitVarInsn(ALOAD, 0);
             m.visitFieldInsn(GETFIELD, cls.name, "swimAnimation", "F");
-            m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false);
+            hook(m, "playerMove$lerp", "(FFF)F");
             m.visitInsn(FRETURN);
         }
         { // updateSwimAnimation
@@ -1158,7 +1157,7 @@ class PlayerMoveTransformer extends Transformer {
                 m.visitVarInsn(ALOAD, 0);
                 m.visitTypeInsn(CHECKCAST, "net/minecraft/client/entity/EntityPlayerSP");
                 m.visitInsn(ICONST_0);
-                m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "isPlayerMoving", "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z", false);
+                hook(m, "playerMove$isPlayerMoving", "(Lnet/minecraft/client/entity/EntityPlayerSP;Z)Z");
                 m.visitJumpInsn(IFEQ, l_con_swimming);
                 m.visitLabel(l_jump);
                 m.visitFrame(F_SAME, 0, null, 0, null);
@@ -1327,7 +1326,7 @@ class PlayerMoveTransformer extends Transformer {
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "prevEyeHeight", "F"));
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(new FieldInsnNode(GETFIELD, cls.name, "eyeHeight", "F"));
-                        list.add(new MethodInsnNode(INVOKESTATIC, "surreal/backportium/util/RandomHelper", "lerp", "(FFF)F", false));
+                        list.add(hook("playerMove$lerp", "(FFF)F"));
                         list.add(new VarInsnNode(FSTORE, 3));
                         list.add(l_con_check);
 //                        list.add(new FrameNode(F_SAME, 0, null, 0, null));
