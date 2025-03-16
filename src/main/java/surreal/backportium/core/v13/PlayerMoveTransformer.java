@@ -225,7 +225,7 @@ class PlayerMoveTransformer extends Transformer {
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "swimAnimation", "F"));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new FieldInsnNode(GETFIELD, cls.name, getName("bipedHead", "field_78116_c"), "Lnet/minecraft/client/model/ModelRenderer;"));
-                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "rotateAngleX"), "F"));
+                list.add(new FieldInsnNode(GETFIELD, "net/minecraft/client/model/ModelRenderer", getName("rotateAngleX", "field_78795_f"), "F"));
                 list.add(new VarInsnNode(FLOAD, 6));
                 list.add(new LdcInsnNode(0.017453292F));
                 list.add(new InsnNode(FMUL));
