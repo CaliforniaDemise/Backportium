@@ -1,5 +1,6 @@
 package surreal.backportium.core.v13;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.transformers.Transformer;
@@ -160,8 +161,27 @@ class BiomeTransformer extends Transformer {
                 list.add(hook("WaterColor$defaultWaterColors", "(Lnet/minecraft/world/biome/Biome$BiomeProperties;Ljava/lang/String;)V"));
                 method.instructions.insertBefore(node, list);
             }
-
             else if (method.name.equals(getName("setWaterColor", "func_185402_a"))) {
+                {
+                    Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                    while (iterator.hasNext()) {
+                        AbstractInsnNode node = iterator.next();
+                        if (node.getOpcode() == ALOAD) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new FieldInsnNode(GETFIELD, cls.name, "waterColor", "I"));
+                            list.add(new LdcInsnNode(4159204));
+                            LabelNode l_con = new LabelNode();
+                            list.add(new JumpInsnNode(IF_ICMPEQ, l_con));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new InsnNode(ARETURN));
+                            list.add(l_con);
+                            list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                            method.instructions.insertBefore(node, list);
+                            break;
+                        }
+                    }
+                }
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != PUTFIELD) node = node.getPrevious();
                 method.instructions.insertBefore(node, hook("WaterColor$emulateLegacyColor", "(I)I"));
@@ -184,6 +204,7 @@ class BiomeTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitInsn(ARETURN);
         }
+        writeClass(cls);
         return write(cls);
     }
 

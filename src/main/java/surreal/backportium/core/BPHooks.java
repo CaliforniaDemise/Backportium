@@ -413,16 +413,19 @@ public class BPHooks {
             case "minecraft":
                 switch (name) {
                     case "Swampland":
-                    case "SwamplandM": ext.setActualWaterColor(6388580); ext.setWaterFogColor(2302743); break;
+                    case "Swampland M":
+                        ext.setActualWaterColor(6388580); ext.setWaterFogColor(2302743); break;
                     case "Frozen River":
-                    case "Legacy Frozen Ocean": ext.setActualWaterColor(3750089); break;
+                    case "Legacy Frozen Ocean":
+                        ext.setActualWaterColor(3750089); break;
                     case "Cold Beach":
                     case "Cold Taiga":
                     case "Cold Taiga Hills":
-                    case "Cold Taiga M": ext.setActualWaterColor(4020182); break;
+                    case "Cold Taiga M":
+                        ext.setActualWaterColor(4020182); break;
                 }
-                return;
-            case "integrateddynamcis": ext.setWaterFogColor(5613789); return;
+                break;
+            case "integrateddynamcis": ext.setWaterFogColor(5613789); break;
             case "biomesoplenty":
                 switch (name) {
                     case "Bayou": ext.setActualWaterColor(0x62AF84); ext.setWaterFogColor(0x0C211C); break;
