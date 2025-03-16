@@ -58,13 +58,20 @@ public class GenLayerTest extends GenLayer {
                 int k1 = aint1[index];
                 int deepOcean = Biome.getIdForBiome(Biomes.DEEP_OCEAN);
                 int warmOcean = Biome.getIdForBiome(ModBiomes.WARM_OCEAN);
-                int frozenOcean = Biome.getIdForBiome(ModBiomes.FROZEN_OCEAN);
                 int deepWarmOcean = Biome.getIdForBiome(ModBiomes.DEEP_WARM_OCEAN);
+                int lukewarmOcean = Biome.getIdForBiome(ModBiomes.LUKEWARM_OCEAN);
+                int deepLukewarmOcean = Biome.getIdForBiome(ModBiomes.DEEP_LUKEWARM_OCEAN);
+                int coldOcean = Biome.getIdForBiome(ModBiomes.COLD_OCEAN);
+                int deepColdOcean = Biome.getIdForBiome(ModBiomes.DEEP_COLD_OCEAN);
+                int frozenOcean = Biome.getIdForBiome(ModBiomes.FROZEN_OCEAN);
                 int deepFrozenOcean = Biome.getIdForBiome(ModBiomes.DEEP_FROZEN_OCEAN);
                 if (k == 0 || k == deepOcean) {
                     if (k == deepOcean) {
                         if (k1 == warmOcean) k1 = deepWarmOcean;
+                        else if (k1 == lukewarmOcean) k1 = deepLukewarmOcean;
+                        else if (k1 == coldOcean) k1 = deepColdOcean;
                         else if (k1 == frozenOcean) k1 = deepFrozenOcean;
+                        else k1 = deepOcean;
                     }
                     k = k1;
                 }
@@ -89,8 +96,10 @@ public class GenLayerTest extends GenLayer {
                     int index = j + i * areaWidth;
                     int k = 0;
                     double temp = NOISE.sample((j + areaX) / 8.0, (i + areaY) / 8.0, 0.0, 0.0, 0.0);
-                    if (temp > 0.2) k = Biome.getIdForBiome(ModBiomes.WARM_OCEAN);
+                    if (temp > 0.4) k = Biome.getIdForBiome(ModBiomes.WARM_OCEAN);
+                    else if (temp > 0.2) k = Biome.getIdForBiome(ModBiomes.LUKEWARM_OCEAN);
                     else if (temp < -0.4) k = Biome.getIdForBiome(ModBiomes.FROZEN_OCEAN);
+                    else if (temp < -0.2) k = Biome.getIdForBiome(ModBiomes.COLD_OCEAN);
                     aint[index] = k;
                 }
             }

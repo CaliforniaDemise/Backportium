@@ -8,10 +8,9 @@ import net.minecraft.world.chunk.ChunkPrimer;
 
 import java.util.Random;
 
-// TODO Simple seagrass gen.
-public class BiomeOceanWarm extends BiomeOcean {
+public class BiomeOceanLukewarm extends BiomeOcean {
 
-    public BiomeOceanWarm(BiomeProperties properties) {
+    public BiomeOceanLukewarm(BiomeProperties properties) {
         super(properties);
     }
 

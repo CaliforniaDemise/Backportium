@@ -8,16 +8,17 @@ import net.minecraft.world.chunk.ChunkPrimer;
 
 import java.util.Random;
 
-// TODO Simple seagrass gen.
-public class BiomeOceanWarm extends BiomeOcean {
+public class BiomeOceanCold extends BiomeOcean {
 
-    public BiomeOceanWarm(BiomeProperties properties) {
+    public BiomeOceanCold(BiomeProperties properties) {
         super(properties);
     }
 
+    // TODO Not one to one
     @SuppressWarnings("unused")
     // @Override
     public IBlockState getTheSurface(World world, Random random, ChunkPrimer primer, int x, int y, double noiseVal) {
-        return Blocks.SAND.getDefaultState();
+        if (noiseVal > 2.7) return Blocks.DIRT.getDefaultState();
+        return Blocks.GRAVEL.getDefaultState();
     }
 }
