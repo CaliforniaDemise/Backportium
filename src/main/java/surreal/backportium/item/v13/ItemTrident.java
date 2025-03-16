@@ -44,6 +44,7 @@ public class ItemTrident extends ItemTEISR {
     };
 
     public ItemTrident() {
+        this.setMaxStackSize(1);
         this.setCreativeTab(CreativeTabs.COMBAT);
         this.addPropertyOverride(new ResourceLocation("throwing"), TRIDENT_MODE);
     }

@@ -344,7 +344,7 @@ class BubbleColumnTransformer extends Transformer {
                 list.add(new FieldInsnNode(GETFIELD, cls.name, "rockingIntensity", "F"));
                 list.add(new InsnNode(FCONST_0));
                 list.add(new InsnNode(FCONST_1));
-                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/math/MathHelper", "clamp", "(FFF)F", false));
+                list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/math/MathHelper", getName("clamp", "func_76131_a"), "(FFF)F", false));
                 list.add(new FieldInsnNode(PUTFIELD, cls.name, "rockingIntensity", "F"));
                 list.add(new VarInsnNode(ALOAD, 0));
                 list.add(new VarInsnNode(ALOAD, 0));
@@ -535,7 +535,7 @@ class BubbleColumnTransformer extends Transformer {
                 while (node.getOpcode() != RETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
                 list.add(new LdcInsnNode(Type.getType("Lnet/minecraft/entity/item/EntityBoat;")));
-                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/network/datasync/DataSerializers", "VARINT", "Lnet/minecraft/network/datasync/DataSerializer;"));
+                list.add(new FieldInsnNode(GETSTATIC, "net/minecraft/network/datasync/DataSerializers", getName("VARINT", "field_187192_b"), "Lnet/minecraft/network/datasync/DataSerializer;"));
                 list.add(new MethodInsnNode(INVOKESTATIC, "net/minecraft/network/datasync/EntityDataManager", getName("createKey", "func_187226_a"), "(Ljava/lang/Class;Lnet/minecraft/network/datasync/DataSerializer;)Lnet/minecraft/network/datasync/DataParameter;", false));
                 list.add(new FieldInsnNode(PUTSTATIC, cls.name, "BOAT_ROCKING_TICKS", "Lnet/minecraft/network/datasync/DataParameter;"));
                 method.instructions.insertBefore(node, list);
@@ -578,7 +578,7 @@ class BubbleColumnTransformer extends Transformer {
             }
         }
         writeClass(cls);
-        return write(cls);
+        return write(cls, 3);
     }
 
     protected static byte[] transformSoulSand(byte[] basicClass) {

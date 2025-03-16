@@ -324,7 +324,7 @@ class TridentTransformer extends Transformer {
             m_riptide.visitMethodInsn(INVOKEVIRTUAL, cls.name, getName("getSoundCategory", "func_184176_by"), "()Lnet/minecraft/util/SoundCategory;", false);
             m_riptide.visitInsn(FCONST_1);
             m_riptide.visitInsn(FCONST_1);
-            m_riptide.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184133_a"), "(Lnet/minecraft/entity/player/EntityPlayer;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", false);
+            m_riptide.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/world/World", getName("playSound", "func_184148_a"), "(Lnet/minecraft/entity/player/EntityPlayer;DDDLnet/minecraft/util/SoundEvent;Lnet/minecraft/util/SoundCategory;FF)V", false);
 
             m_riptide.visitInsn(RETURN);
         }

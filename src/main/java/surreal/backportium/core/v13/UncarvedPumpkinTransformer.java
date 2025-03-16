@@ -38,7 +38,7 @@ class UncarvedPumpkinTransformer extends Transformer {
         { // BP$getCrop
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE | ACC_STATIC, "BP$getCrop", "(Lnet/minecraft/block/Block;)Lnet/minecraft/block/Block;", null, null);
             m.visitVarInsn(ALOAD, 0);
-            m.visitFieldInsn(GETSTATIC, "net/minecraft/init/Blocks", getName("PUMPKIN", ""), "Lnet/minecraft/block/Block;");
+            m.visitFieldInsn(GETSTATIC, "net/minecraft/init/Blocks", getName("PUMPKIN", "field_150423_aK"), "Lnet/minecraft/block/Block;");
             Label l_con = new Label();
             m.visitJumpInsn(IF_ACMPNE, l_con);
             m.visitFieldInsn(GETSTATIC, "surreal/backportium/block/ModBlocks", "UNCARVED_PUMPKIN", "Lnet/minecraft/block/Block;");

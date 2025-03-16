@@ -4,6 +4,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 
 import java.lang.reflect.Field;
 import java.util.Random;
@@ -29,7 +30,7 @@ public abstract class WorldGeneratorFoliage extends WorldGenerator {
 
     static {
         try {
-            Field f_GRASS_COLOR_NOISE = Biome.class.getDeclaredField("GRASS_COLOR_NOISE");
+            Field f_GRASS_COLOR_NOISE = Biome.class.getDeclaredField(FMLLaunchHandler.isDeobfuscatedEnvironment() ? "GRASS_COLOR_NOISE" : "field_180281_af");
             f_GRASS_COLOR_NOISE.setAccessible(true);
             GRASS_COLOR_NOISE = (NoiseGeneratorPerlin) f_GRASS_COLOR_NOISE.get(null);
         }
