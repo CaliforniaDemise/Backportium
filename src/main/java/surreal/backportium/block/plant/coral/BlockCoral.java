@@ -10,17 +10,21 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.enums.CoralType;
 import surreal.backportium.block.v13.BlockSeaPickle;
+import surreal.backportium.sound.ModSoundTypes;
 import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
@@ -43,6 +47,7 @@ public abstract class BlockCoral extends BlockBush implements FluidLogged {
         super(material, mapColor);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
         this.setDefaultState(this.getDefaultState().withProperty(ALIVE, true));
+        this.setSoundType(ModSoundTypes.CORAL);
     }
 
     @Nonnull
@@ -99,16 +104,25 @@ public abstract class BlockCoral extends BlockBush implements FluidLogged {
     }
 
     @Override
-    @ParametersAreNonnullByDefault
+    public boolean canBlockStay(@NotNull World worldIn, BlockPos pos, @NotNull IBlockState state) {
+        BlockPos downPos = pos.down();
+        return super.canBlockStay(worldIn, pos, state) && worldIn.getBlockState(downPos).isSideSolid(worldIn, downPos, EnumFacing.UP);
+    }
+
+    @Override
+    public boolean isSideSolid(@NotNull IBlockState state, @NotNull IBlockAccess world, @NotNull BlockPos pos, @NotNull EnumFacing side) {
+        return false;
+    }
+
+    @Override
     protected boolean canSustainBush(IBlockState state) {
-        return true;
+        return state.isTopSolid();
     }
 
     static {
         float twoPix = 1F / 8;
         float fourteenPix = 1F - twoPix;
         float fifteenPix = 1F - (1F / 16);
-
         CORAL_AABB = new AxisAlignedBB(twoPix, 0, twoPix, fourteenPix, fifteenPix, fourteenPix);
     }
 }

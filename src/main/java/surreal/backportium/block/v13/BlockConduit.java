@@ -30,7 +30,7 @@ public class BlockConduit extends BlockTile<TileConduit> implements FluidLogged,
     protected static final AxisAlignedBB CONDUIT_AABB;
 
     public BlockConduit() {
-        super(Material.ROCK, MapColor.ADOBE);
+        super(Material.ROCK, MapColor.DIAMOND);
         this.setCreativeTab(CreativeTabs.DECORATIONS);
         this.setForce(3.0F);
         this.setLightLevel(1F);

@@ -21,6 +21,11 @@ public class ModSounds extends Registry<SoundEvent> {
     @ObjectHolder("backportium:block.bubble_column.upwards_inside") public static final SoundEvent BLOCK_BUBBLE_COLUMN_UPWARDS_INSIDE = null;
     @ObjectHolder("backportium:block.bubble_column.whirlpool_ambient") public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_AMBIENT = null;
     @ObjectHolder("backportium:block.bubble_column.whirlpool_inside") public static final SoundEvent BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE = null;
+    @ObjectHolder("backportium:block.coral_block.break") public static final SoundEvent BLOCK_CORAL_BLOCK_BREAK = null;
+    @ObjectHolder("backportium:block.coral_block.fall") public static final SoundEvent BLOCK_CORAL_BLOCK_FALL = null;
+    @ObjectHolder("backportium:block.coral_block.hit") public static final SoundEvent BLOCK_CORAL_BLOCK_HIT = null;
+    @ObjectHolder("backportium:block.coral_block.place") public static final SoundEvent BLOCK_CORAL_BLOCK_PLACE = null;
+    @ObjectHolder("backportium:block.coral_block.step") public static final SoundEvent BLOCK_CORAL_BLOCK_STEP = null;
 
     @ObjectHolder("backportium:item.armor.equip_turtle") public static final SoundEvent ITEM_ARMOR_EQUIP_TURTLE = null;
     @ObjectHolder("backportium:item.trident.hit") public static final SoundEvent ITEM_TRIDENT_HIT = null;
@@ -67,6 +72,11 @@ public class ModSounds extends Registry<SoundEvent> {
         this.register("block.bubble_column.upwards_inside");
         this.register("block.bubble_column.whirlpool_ambient");
         this.register("block.bubble_column.whirlpool_inside");
+        this.register("block.coral_block.break");
+        this.register("block.coral_block.fall");
+        this.register("block.coral_block.hit");
+        this.register("block.coral_block.place");
+        this.register("block.coral_block.step");
 
         this.register("item.armor.equip_turtle");
         this.register("item.trident.hit");

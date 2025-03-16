@@ -103,14 +103,15 @@ public class WorldHelper {
         if (BPPlugin.FLUIDLOGGED) {
             return WorldHelper.isWater(world, pos);
         } else {
+            int a = 0;
             for (int i = 1; i < 6; i++) {
                 EnumFacing facing = EnumFacing.byIndex(i);
                 BlockPos offset = pos.offset(facing);
                 IBlockState state = world.getBlockState(offset);
-                if (!WorldHelper.isWater(world, offset) && !state.isSideSolid(world, offset, facing.getOpposite()))
-                    return false;
+                if (!WorldHelper.isWater(world, offset) && !(state.getBlock() instanceof FluidLogged) && !state.isSideSolid(world, offset, facing.getOpposite()))
+                   a++;
             }
+            return a < 3;
         }
-        return true;
     }
 }

@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import surreal.backportium.api.enums.CoralType;
 import surreal.backportium.block.BlockDef;
 import surreal.backportium.block.v13.BlockSeaPickle;
+import surreal.backportium.sound.ModSoundTypes;
 import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
@@ -39,6 +40,7 @@ public abstract class BlockCoralBlock extends BlockDef {
         this.setHardness(1.5F).setResistance(6F);
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         this.setDefaultState(this.getDefaultState().withProperty(ALIVE, true));
+        this.setSoundType(ModSoundTypes.CORAL);
     }
 
     @Nonnull

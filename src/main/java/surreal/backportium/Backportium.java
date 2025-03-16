@@ -52,6 +52,7 @@ import surreal.backportium.item.ModItems;
 import surreal.backportium.network.NetworkHandler;
 import surreal.backportium.potion.ModPotions;
 import surreal.backportium.recipe.ModRecipes;
+import surreal.backportium.sound.ModSoundTypes;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.tile.v13.TileConduit;
 import surreal.backportium.world.GenLayerTest;
@@ -178,21 +179,21 @@ public class Backportium {
 
         public void preInit(FMLPreInitializationEvent event) {
             ITEMS.preInit(event);
+            SOUNDS.preInit(event);
             BLOCKS.preInit(event);
             ENTITIES.preInit(event);
             ENCHANTMENTS.preInit(event);
             POTIONS.preInit(event);
-            SOUNDS.preInit(event);
             BIOMES.preInit(event);
         }
 
         public void init(FMLInitializationEvent event) {
             ITEMS.init(event);
+            SOUNDS.init(event);
             BLOCKS.init(event);
             ENTITIES.init(event);
             ENCHANTMENTS.init(event);
             POTIONS.init(event);
-            SOUNDS.init(event);
             BIOMES.init(event);
         }
 

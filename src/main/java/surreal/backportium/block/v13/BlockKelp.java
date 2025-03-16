@@ -2,6 +2,7 @@ package surreal.backportium.block.v13;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoublePlant;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockStateContainer;
@@ -34,7 +35,7 @@ public class BlockKelp extends BlockPlantWater {
     public static final AxisAlignedBB TOP_AABB = new AxisAlignedBB(0F, 0F, 0F, 1F, 0.6F, 1F);
 
     public BlockKelp() {
-        super(Material.GRASS);
+        super(Material.GRASS, MapColor.WATER);
         this.setDefaultState(getDefaultState().withProperty(HALF, BlockDoublePlant.EnumBlockHalf.UPPER));
         this.setCreativeTab(CreativeTabs.DECORATIONS);
         this.setTickRandomly(true);

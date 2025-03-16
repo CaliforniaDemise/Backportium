@@ -22,7 +22,7 @@ import java.util.List;
 public class BlockDoubleSeagrass extends BlockPlantDoubleWater {
 
     public BlockDoubleSeagrass(Material material) {
-        super(material);
+        super(material, MapColor.WATER);
     }
 
     public BlockDoubleSeagrass(Material material, MapColor mapColor) {

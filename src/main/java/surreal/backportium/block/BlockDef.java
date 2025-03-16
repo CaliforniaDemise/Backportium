@@ -17,8 +17,9 @@ public class BlockDef extends Block {
         super(blockMaterial, blockMapColor);
     }
 
-    public void setForce(float force) {
+    public BlockDef setForce(float force) {
         this.setHardness(force).setResistance(force);
+        return this;
     }
 
     @Nonnull

@@ -1,5 +1,6 @@
 package surreal.backportium.block.v13;
 
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,8 +20,8 @@ public class BlockBlueIce extends BlockDef {
     public BlockBlueIce() {
         super(Material.ICE);
         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-        this.setForce(2.8F);
         this.setDefaultSlipperiness(0.989F);
+        this.setSoundType(SoundType.GLASS);
     }
 
     @Nonnull

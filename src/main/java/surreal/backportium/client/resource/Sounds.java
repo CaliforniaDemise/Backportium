@@ -11,6 +11,20 @@ public class Sounds {
         AssetMap map = new AssetMap();
 
         /* BLOCKS */
+        // block.coral_block.break
+        put(map, "dig/coral1");
+        put(map, "dig/coral2");
+        put(map, "dig/coral3");
+        put(map, "dig/coral4");
+
+        // block.coral_block.step
+        put(map, "step/coral1");
+        put(map, "step/coral2");
+        put(map, "step/coral3");
+        put(map, "step/coral4");
+        put(map, "step/coral5");
+        put(map, "step/coral6");
+
         // block.pumpkin.carve
         put(map, "block/pumpkin/carve1");
         put(map, "block/pumpkin/carve2");

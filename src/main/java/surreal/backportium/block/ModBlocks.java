@@ -192,16 +192,16 @@ public class ModBlocks extends Registry<Block> {
             return new ItemSlabDef(block, slab, slab.getDoubleSlab());
         };
 
-        this.register(new BlockBlueIce(), BASIC_ITEM, "blue_ice");
+        this.register(new BlockBlueIce().setForce(2.8F), BASIC_ITEM, "blue_ice");
         this.register(new BlockBubbleColumn(), null, "bubble_column");
         this.register(new BlockPumpkin(), BASIC_ITEM, "pumpkin");
         this.register(new BlockConduit(), BASIC_ITEM_TEISR, "conduit");
         this.register(new BlockKelp(), BASIC_KELP_ITEM, "kelp");
-        this.register(new BlockDef(Material.GRASS, MapColor.BLACK).setSoundType(SoundType.PLANT).setCreativeTab(CreativeTabs.BUILDING_BLOCKS), block -> new ItemBlockBurnable(block, 4000), "dried_kelp_block");
-        this.register(new BlockSeaPickle(Material.GRASS, Material.GRASS.getMaterialMapColor()).setSoundType(SoundType.PLANT), BASIC_CLUSTERED_ITEM, "sea_pickle");
+        this.register(new BlockDef(Material.GRASS, MapColor.GREEN).setSoundType(SoundType.PLANT).setCreativeTab(CreativeTabs.BUILDING_BLOCKS), block -> new ItemBlockBurnable(block, 4000), "dried_kelp_block");
+        this.register(new BlockSeaPickle(Material.GRASS, MapColor.GREEN).setSoundType(SoundType.PLANT), BASIC_CLUSTERED_ITEM, "sea_pickle");
         this.register(new BlockDoubleSeagrass(Material.GRASS), null, "seagrass_double");
-        this.register(new BlockPlantWater(Material.GRASS, Material.GRASS.getMaterialMapColor(), SEAGRASS_DOUBLE), BASIC_ITEM, "seagrass");
-        this.register(new BlockTurtleEgg(Material.SPONGE, Material.SPONGE.getMaterialMapColor()), BASIC_CLUSTERED_ITEM, "turtle_egg");
+        this.register(new BlockPlantWater(Material.GRASS, MapColor.WATER, SEAGRASS_DOUBLE), BASIC_ITEM, "seagrass");
+        this.register(new BlockTurtleEgg(Material.SPONGE, MapColor.SAND), BASIC_CLUSTERED_ITEM, "turtle_egg");
         this.register(new BlockCoralImpl(Material.CORAL), BASIC_CORAL_ITEM, "coral");
         this.register(new BlockCoralBlockImpl(Material.CORAL), BASIC_CORAL_ITEM, "coral_block");
         this.register(new BlockCoralFanImpl(Material.CORAL, TUBE), BASIC_FAN_ITEM, "tube_coral_fan");
