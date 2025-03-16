@@ -169,7 +169,7 @@ class BiomeTransformer extends Transformer {
                         if (node.getOpcode() == ALOAD) {
                             InsnList list = new InsnList();
                             list.add(new VarInsnNode(ALOAD, 0));
-                            list.add(new FieldInsnNode(GETFIELD, cls.name, "waterColor", "I"));
+                            list.add(new FieldInsnNode(GETFIELD, cls.name, getName("waterColor", "field_185417_f"), "I"));
                             list.add(new LdcInsnNode(4159204));
                             LabelNode l_con = new LabelNode();
                             list.add(new JumpInsnNode(IF_ICMPEQ, l_con));
