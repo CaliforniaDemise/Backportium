@@ -5,7 +5,7 @@ public class ClassTransformer13 {
     public static byte[] transformClass(String transformedName, byte[] basicClass) {
         switch (transformedName) {
 
-            case "net.minecraft.entity.EntityLivingBase": return TridentTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(BreathingTransformer.transformEntityLivingBase(basicClass)));
+            case "net.minecraft.entity.EntityLivingBase": return SlowFallingTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(BreathingTransformer.transformEntityLivingBase(basicClass))));
             case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
 
             case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);

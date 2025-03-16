@@ -43,6 +43,7 @@ import surreal.backportium.block.v13.BlockBubbleColumn;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v13.ItemBlockAddLog;
+import surreal.backportium.potion.ModPotions;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.IntegrationHelper;
 import surreal.backportium.util.RandomHelper;
@@ -372,6 +373,15 @@ public class BPHooks {
      **/
     private static boolean Logs$isNonOriginal(Object block) {
         return block instanceof StrippableLog && block.getClass().getName().startsWith("backportium.logs");
+    }
+
+    // Slow Falling
+    public static double SlowFalling$fallingSpeed(double original, EntityLivingBase entity) {
+        if (entity.motionY <= 0.0 && entity.isPotionActive(ModPotions.SLOW_FALLING)) {
+            entity.fallDistance = 0.0F;
+            return original / (8.0 + Objects.requireNonNull(entity.getActivePotionEffect(ModPotions.SLOW_FALLING)).getAmplifier());
+        }
+        return original;
     }
 
     // Biome | Mostly for custom water colors
