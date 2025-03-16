@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.block.ModBlocks;
@@ -27,6 +26,7 @@ import surreal.backportium.client.particle.ParticleBubbleColumnUp;
 import surreal.backportium.client.particle.ParticleCurrentDown;
 import surreal.backportium.entity.v13.EntityTrident;
 import surreal.backportium.sound.ModSounds;
+import surreal.backportium.util.IntegrationHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -47,7 +47,7 @@ public class BlockBubbleColumn extends BlockStaticLiquid {
     @Override
     protected BlockStateContainer createBlockState() {
         BlockStateContainer.Builder builder = new BlockStateContainer.Builder(this).add(LEVEL, DRAG);
-        if(Loader.isModLoaded("fluidlogged_api")) builder = builder.add(BlockFluidBase.FLUID_RENDER_PROPS.toArray(new IUnlistedProperty<?>[0]));
+        if(IntegrationHelper.FLUIDLOGGED) builder = builder.add(BlockFluidBase.FLUID_RENDER_PROPS.toArray(new IUnlistedProperty<?>[0]));
         return builder.build();
     }
 

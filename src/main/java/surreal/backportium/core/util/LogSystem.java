@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import surreal.backportium.client.textures.StrippedSpriteSide;
 import surreal.backportium.client.textures.StrippedSpriteTop;
 import surreal.backportium.client.textures.StrippedSpriteTopTemplate;
+import surreal.backportium.util.IntegrationHelper;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.Tuple;
 
@@ -150,7 +151,7 @@ public class LogSystem {
 
     @SideOnly(Side.CLIENT)
     public void bakeModels(ModelBakeEvent event) {
-        boolean hasForestry = Loader.isModLoaded("forestry");
+        boolean hasForestry = IntegrationHelper.FORESTRY;
         this.forEachBlock(origLog -> {
             Tuple<Block, Block, Block> tuple = this.getLogs(origLog);
             Block stripped = tuple.getFirst();
@@ -171,7 +172,7 @@ public class LogSystem {
 
     @SideOnly(Side.CLIENT)
     public void registerTextures(TextureStitchEvent.Pre event) {
-        boolean hasForestry = Loader.isModLoaded("forestry");
+        boolean hasForestry = IntegrationHelper.FORESTRY;
         this.forEachBlock(origLog -> {
             Tuple<Block, Block, Block> tuple = this.getLogs(origLog);
             if (hasForestry && origLog instanceof BlockForestryLog<?>) {

@@ -47,8 +47,7 @@ class BuoyancyTransformer extends Transformer {
         { // BP$additionalY | For items like AE2 Crystal Seeds
             MethodVisitor m = cls.visitMethod(ACC_PRIVATE, "BP$additionalY", "()D", null, null);
             // AE2
-            m.visitLdcInsn("appliedenergistics2");
-            m.visitMethodInsn(INVOKESTATIC, "net/minecraftforge/fml/common/Loader", "isModLoaded", "(Ljava/lang/String;)Z", false);
+            m.visitMethodInsn(INVOKESTATIC, "surreal/backportium/core/BPHooks", "Buoyancy$isAE2Loaded", "()Z", false);
             Label l_con = new Label();
             m.visitJumpInsn(IFEQ, l_con);
             m.visitMethodInsn(INVOKESTATIC, "appeng/core/AEConfig", "instance", "()Lappeng/core/AEConfig;", false);

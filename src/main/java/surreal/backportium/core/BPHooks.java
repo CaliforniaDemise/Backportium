@@ -36,10 +36,10 @@ import surreal.backportium.api.helper.TridentHelper;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.enchantment.ModEnchantments;
 import surreal.backportium.item.v13.ItemBlockAddLog;
+import surreal.backportium.util.IntegrationHelper;
 import surreal.backportium.util.RandomHelper;
 import surreal.backportium.util.Tuple;
 import surreal.backportium.world.BiomeColorHandler;
-import surreal.backportium.world.biome.ModBiomes;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -56,9 +56,13 @@ public class BPHooks {
         System.out.println(i);
     }
 
+    public static boolean Buoyancy$isAE2Loaded() {
+        return IntegrationHelper.APPLIED_ENERGISTICS;
+    }
+
     // FluidLogging
     public static boolean WorldEntitySpawner$fluidLoggedSpawning(boolean def, IBlockState state) {
-        if (!(state.getBlock() instanceof FluidLogged) || Loader.isModLoaded("fluidlogged_api")) return def;
+        if (!(state.getBlock() instanceof FluidLogged) || IntegrationHelper.FLUIDLOGGED) return def;
         else return false;
     }
 
