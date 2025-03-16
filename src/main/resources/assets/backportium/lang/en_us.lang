@@ -95,6 +95,7 @@ subtitles.block.conduit.ambient=Conduit pulses
 subtitles.block.conduit.attack.target=Conduit attacks
 subtitles.block.conduit.deactivate=Conduit deactivates
 subtitles.item.armor.equip_turtle=Turtle Shell thunks
+subtitles.item.axe.strip=Axes strips
 subtitles.item.trident.hit=Trident stabs
 subtitles.item.trident.hit_ground=Trident vibrates
 subtitles.item.trident.return=Trident returns

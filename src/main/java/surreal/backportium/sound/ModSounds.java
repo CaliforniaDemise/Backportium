@@ -28,6 +28,7 @@ public class ModSounds extends Registry<SoundEvent> {
     @ObjectHolder("backportium:block.coral_block.step") public static final SoundEvent BLOCK_CORAL_BLOCK_STEP = null;
 
     @ObjectHolder("backportium:item.armor.equip_turtle") public static final SoundEvent ITEM_ARMOR_EQUIP_TURTLE = null;
+    @ObjectHolder("backportium:item.axe.strip") public static final SoundEvent ITEM_AXE_STRIP = null;
     @ObjectHolder("backportium:item.trident.hit") public static final SoundEvent ITEM_TRIDENT_HIT = null;
     @ObjectHolder("backportium:item.trident.hit_ground") public static final SoundEvent ITEM_TRIDENT_HIT_GROUND = null;
     @ObjectHolder("backportium:item.trident.return") public static final SoundEvent ITEM_TRIDENT_RETURN = null;
@@ -79,6 +80,7 @@ public class ModSounds extends Registry<SoundEvent> {
         this.register("block.coral_block.step");
 
         this.register("item.armor.equip_turtle");
+        this.register("item.axe.strip");
         this.register("item.trident.hit");
         this.register("item.trident.hit_ground");
         this.register("item.trident.return");

@@ -83,6 +83,12 @@ public class Sounds {
         // item.armor.equip_turtle
         put(map, "mob/turtle/armor");
 
+        // item.axe.strip
+        put(map, "item/axe/strip1");
+        put(map, "item/axe/strip2");
+        put(map, "item/axe/strip3");
+        put(map, "item/axe/strip4");
+
         // item.trident.hit
         put(map, "item/trident/pierce1");
         put(map, "item/trident/pierce2");

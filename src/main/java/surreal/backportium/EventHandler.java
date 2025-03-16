@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.DimensionType;
@@ -31,6 +32,7 @@ import surreal.backportium.block.plant.BlockPlant;
 import surreal.backportium.block.plant.BlockPlantDouble;
 import surreal.backportium.item.ModItems;
 import surreal.backportium.potion.ModPotions;
+import surreal.backportium.sound.ModSounds;
 import surreal.backportium.util.WorldHelper;
 import surreal.backportium.world.biome.BiomeOceanFrozen;
 import surreal.backportium.world.biome.BiomeOceanWarm;
@@ -61,7 +63,6 @@ public class EventHandler {
 
     public static void isPotionApplicable(PotionEvent.PotionApplicableEvent event) {
         PotionEffect effect = event.getPotionEffect();
-
         if (effect.getPotion() == ModPotions.SLOW_FALLING) {
             EntityLivingBase entity = event.getEntityLiving();
             if (!entity.isNonBoss() && !(entity instanceof EntityShulker)) {
@@ -73,7 +74,6 @@ public class EventHandler {
     public static void playNoteBlock(NoteBlockEvent.Play event) {
         World world = event.getWorld();
         BlockPos downPos = event.getPos().down();
-
         IBlockState downState = world.getBlockState(downPos);
         if (downState.getMaterial() == Material.CORAL) {
             event.setInstrument(NoteBlockEvent.Instrument.BASSDRUM);
@@ -82,20 +82,17 @@ public class EventHandler {
 
     public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         World world = event.getWorld();
+        EntityPlayer player = event.getEntityPlayer();
         BlockPos pos = event.getPos();
-
         ItemStack stack = event.getItemStack();
-
         IBlockState state = world.getBlockState(pos);
         Block block = state.getBlock();
-
-        EntityPlayer player = event.getEntityPlayer();
-
         {
             if (block instanceof StrippableLog) {
                 if (stack.getItem().getHarvestLevel(stack, "axe", player, state) <= -1) return;
                 StrippableLog log = (StrippableLog) block;
                 if (log.onStrip(event.getWorld(), event.getEntityPlayer(), event.getHand(), event.getPos(), event.getWorld().getBlockState(event.getPos()), event.getFace(), event.getHitVec())) {
+                    if (!world.isRemote) world.playSound(null, player.posX, player.posY, player.posZ, ModSounds.ITEM_AXE_STRIP, SoundCategory.PLAYERS, 1.0F, 1.0F);
                     player.swingArm(event.getHand());
                     event.setUseItem(Event.Result.ALLOW);
                     event.setResult(Event.Result.ALLOW);
