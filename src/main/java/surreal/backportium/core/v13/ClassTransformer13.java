@@ -58,12 +58,11 @@ public class ClassTransformer13 {
             case "net.minecraftforge.registries.IForgeRegistryEntry$Impl": return LogTransformer.transformForgeRegistryEntry$Impl(basicClass);
             case "net.minecraft.item.ItemBlock": return LogTransformer.transformItemBlock(basicClass);
 
-            // TODO make eye height interpolation work, make collision check work and add crawling -- Player Movement
+            // TODO add crawling -- Player Movement
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(PlayerMoveTransformer.transformModelBiped(basicClass));
             case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass));
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(PlayerMoveTransformer.transformRenderPlayer(basicClass));
 
-            // TODO Use capabilities instead -- Trident
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
 
             case "net.minecraft.world.biome.Biome$BiomeProperties": return BiomeTransformer.transformBiomeProperties(basicClass);
@@ -71,9 +70,8 @@ public class ClassTransformer13 {
             case "net.minecraft.client.renderer.BlockFluidRenderer": return BiomeTransformer.transformBlockFluidRenderer(basicClass);
             case "net.minecraft.client.renderer.ItemRenderer": return BiomeTransformer.transformItemRenderer(basicClass);
             case "net.minecraft.client.renderer.EntityRenderer": return BiomeTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass));
-            case "net.minecraft.world.gen.layer.GenLayerBiomeEdge": return BiomeTransformer.transformGenLayerRiverMix(basicClass);
         }
-        // TODO Proper AoA and DivineRPG support
+        // TODO Proper Traverse, AoA and DivineRPG support
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {
             boolean bewitchmentCheck = transformedName.equals("com.bewitchment.common.block.util.ModBlockPillar"); // Some mods like Bewitchment likes to create logs without extending BlockLog
             boolean techrebornCheck = transformedName.equals("techreborn.blocks.BlockRubberLog");

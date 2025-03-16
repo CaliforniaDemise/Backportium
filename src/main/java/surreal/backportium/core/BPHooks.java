@@ -56,25 +56,10 @@ public class BPHooks {
         System.out.println(i);
     }
 
+    // FluidLogging
     public static boolean WorldEntitySpawner$fluidLoggedSpawning(boolean def, IBlockState state) {
-        boolean check = state.getBlock() instanceof FluidLogged;
-        if (!check || Loader.isModLoaded("fluidlogged_api")) return def;
+        if (!(state.getBlock() instanceof FluidLogged) || Loader.isModLoaded("fluidlogged_api")) return def;
         else return false;
-    }
-
-    public static int GenLayerBiomeEdge$getBiomeId(int def, int i, int j, int areaWidth, int areaHeight, int[] aint, int[] aint1) {
-        if (def == 0) return Biome.getIdForBiome(ModBiomes.WARM_OCEAN);
-        return def;
-    }
-
-    private static int $getTemp(Biome.TempCategory category) {
-        switch (category) {
-            case COLD: return -1;
-            case WARM: return 1;
-            case OCEAN:
-            case MEDIUM:
-            default: return 0;
-        }
     }
 
     // Water Color

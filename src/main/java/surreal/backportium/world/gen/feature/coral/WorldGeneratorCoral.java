@@ -15,6 +15,7 @@ import surreal.backportium.block.plant.coral.BlockCoralBlock;
 import surreal.backportium.block.plant.coral.BlockCoralFan;
 import surreal.backportium.block.v13.BlockSeaPickle;
 import surreal.backportium.util.MutBlockPos;
+import surreal.backportium.util.WorldHelper;
 import surreal.backportium.world.gen.feature.WorldGeneratorFoliage;
 
 import java.util.Random;
@@ -39,12 +40,14 @@ public abstract class WorldGeneratorCoral extends WorldGenerator {
         IBlockState blockState = world.getBlockState(pos);
         if ((blockState.getMaterial() == Material.WATER || blockState.getBlock() instanceof BlockCoralFan || blockState.getBlock() instanceof BlockCoral) && world.getBlockState(blockPos).getMaterial() == Material.WATER) {
             world.setBlockState(pos, state);
-            if (random.nextFloat() < 0.25F) world.setBlockState(blockPos, this.getCoralPiece(random));
-            else if (random.nextFloat() < 0.05F) world.setBlockState(blockPos, ModBlocks.SEA_PICKLE.getDefaultState().withProperty(BlockSeaPickle.AMOUNT, random.nextInt(4)));
+            if (WorldHelper.inWater(world, blockPos)) {
+                if (random.nextFloat() < 0.25F) world.setBlockState(blockPos, this.getCoralPiece(random));
+                else if (random.nextFloat() < 0.05F) world.setBlockState(blockPos, ModBlocks.SEA_PICKLE.getDefaultState().withProperty(BlockSeaPickle.AMOUNT, random.nextInt(4)));
+            }
             for (EnumFacing direction : EnumFacing.HORIZONTALS) {
                 if (random.nextFloat() < 0.2F) {
                     BlockPos blockPos2 = pos.offset(direction);
-                    if (world.getBlockState(blockPos2).getMaterial() == Material.WATER) {
+                    if (WorldHelper.inWater(world,blockPos2)) {
                         world.setBlockState(blockPos2, ModBlocks.getCoralFan(CoralType.byMetadata(random.nextInt(5))).getDefaultState().withProperty(BlockDirectional.FACING, direction));
                     }
                 }

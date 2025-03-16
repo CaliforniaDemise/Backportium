@@ -270,6 +270,7 @@ class BiomeTransformer extends Transformer {
         return write(cls);
     }
 
+    // TODO Fix this
     // Uses I18n for biome properties biomeName
     protected static byte[] transformCyclopsCore$Name(byte[] basicClass) {
         return basicClass;

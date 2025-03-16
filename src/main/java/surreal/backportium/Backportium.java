@@ -54,6 +54,7 @@ import surreal.backportium.potion.ModPotions;
 import surreal.backportium.recipe.ModRecipes;
 import surreal.backportium.sound.ModSounds;
 import surreal.backportium.tile.v13.TileConduit;
+import surreal.backportium.world.GenLayerTest;
 import surreal.backportium.world.WorldTypeBuffet;
 import surreal.backportium.world.biome.ModBiomes;
 
@@ -84,6 +85,7 @@ public class Backportium {
     public void init(FMLInitializationEvent event) {
         this.registries.init(event);
         registerDispenseBehaviours();
+        GenLayerTest.register();
     }
 
     @Mod.EventHandler

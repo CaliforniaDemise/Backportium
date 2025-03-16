@@ -42,7 +42,7 @@ public class ModBiomes extends Registry<Biome> {
         BiomeManager.oceanBiomes.add(frozenOcean);
         BiomeManager.oceanBiomes.add(deepFrozenOcean);
         BiomeManager.oceanBiomes.add(warmOcean);
-        BiomeManager.oceanBiomes.add(deepWarmOcean);
+//        BiomeManager.oceanBiomes.add(deepWarmOcean);
         BiomeDictionary.addTypes(frozenOcean, COLD, OCEAN, SNOWY);
         BiomeDictionary.addTypes(deepFrozenOcean, COLD, OCEAN, SNOWY);
         BiomeDictionary.addTypes(warmOcean, OCEAN);

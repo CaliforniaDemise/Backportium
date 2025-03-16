@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.block.ModBlocks;
 import surreal.backportium.block.plant.BlockPlantDoubleWater;
+import surreal.backportium.util.WorldHelper;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
@@ -39,5 +40,10 @@ public class BlockDoubleSeagrass extends BlockPlantDoubleWater {
     @Override
     public ItemStack getPickBlock(@NotNull IBlockState state, @NotNull RayTraceResult target, @NotNull World world, @NotNull BlockPos pos, @NotNull EntityPlayer player) {
         return new ItemStack(ModBlocks.SEAGRASS);
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(@NotNull World worldIn, @NotNull BlockPos pos) {
+        return super.canPlaceBlockAt(worldIn, pos) && WorldHelper.inWater(worldIn, pos.up());
     }
 }
