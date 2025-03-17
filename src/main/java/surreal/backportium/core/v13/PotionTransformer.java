@@ -38,7 +38,6 @@ public class PotionTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -97,7 +96,6 @@ public class PotionTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -119,7 +117,6 @@ public class PotionTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 }

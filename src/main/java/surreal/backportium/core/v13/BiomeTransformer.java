@@ -131,7 +131,6 @@ class BiomeTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 
@@ -204,7 +203,6 @@ class BiomeTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitInsn(ARETURN);
         }
-        writeClass(cls);
         return write(cls);
     }
 

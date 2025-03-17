@@ -641,7 +641,6 @@ class PlayerMoveTransformer extends Transformer {
                 }
             }
         }
-        writeClass(cls);
         return write(cls, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
     }
 
@@ -781,7 +780,6 @@ class PlayerMoveTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 

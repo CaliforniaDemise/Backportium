@@ -79,7 +79,6 @@ class OurpleShulkerTransformer extends Transformer {
                 break;
             }
         }
-        writeClass(cls);
         return write(cls);
     }
 

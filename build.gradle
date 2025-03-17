@@ -33,8 +33,7 @@ minecraft {
     if (project.coremod_plugin) {
         args << '-Dfml.coreMods.load=' + coremod_plugin
     }
-    args << "-Xms128m"
-    args << "-Xmx2048m"
+    args << "-Xms128m" << "-Xmx2048m"
     extraRunJvmArguments.addAll(args)
 
     // Include and use dependencies' Access Transformer files
