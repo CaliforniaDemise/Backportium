@@ -5,7 +5,7 @@ public class ClassTransformer13 {
     public static byte[] transformClass(String transformedName, byte[] basicClass) {
         switch (transformedName) {
 
-            case "net.minecraft.entity.EntityLivingBase": return SlowFallingTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(BreathingTransformer.transformEntityLivingBase(basicClass))));
+            case "net.minecraft.entity.EntityLivingBase": return PotionTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(BreathingTransformer.transformEntityLivingBase(basicClass))));
             case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
 
             case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);
@@ -51,7 +51,7 @@ public class ClassTransformer13 {
 //            case "cpw.mods.ironchest.common.items.shulker.ItemShulkerBoxChanger": return OurpleShulkerTransformer.transformItemShulkerBoxChanger(basicClass); TODO Unfinished
 //            case "cpw.mods.ironchest.client.renderer.shulker.TileEntityIronShulkerBoxRenderer": return OurpleShulkerTransformer.transformTileEntityIronShulkerBoxRenderer(basicClass);
 
-            case "net.minecraft.block.Block": return LogTransformer.transformBlock(basicClass); // TODO Purple Shulker Box
+            case "net.minecraft.block.Block": return PotionTransformer.transformBlock(LogTransformer.transformBlock(basicClass)); // TODO Purple Shulker Box
             case "net.minecraft.item.Item": return LogTransformer.transformItem(basicClass); // TODO Purple Shulker Box
             case "net.minecraft.client.renderer.block.statemap.BlockStateMapper": return LogTransformer.transformBlockStateMapper(basicClass);
             case "net.minecraftforge.registries.ForgeRegistry": return LogTransformer.transformForgeRegistry(basicClass);
@@ -69,7 +69,7 @@ public class ClassTransformer13 {
             case "net.minecraft.world.biome.BiomeColorHelper$3": return BiomeTransformer.transformBiomeColorHelper$WaterColor(basicClass);
             case "net.minecraft.client.renderer.BlockFluidRenderer": return BiomeTransformer.transformBlockFluidRenderer(basicClass);
             case "net.minecraft.client.renderer.ItemRenderer": return BiomeTransformer.transformItemRenderer(basicClass);
-            case "net.minecraft.client.renderer.EntityRenderer": return BiomeTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass));
+            case "net.minecraft.client.renderer.EntityRenderer": return PotionTransformer.transformEntityRenderer(BiomeTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass)));
         }
         // TODO Proper Traverse, AoA and DivineRPG support
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

@@ -1,13 +1,11 @@
 package surreal.backportium.potion.v13;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.MobEffects;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import surreal.backportium.Tags;
 import surreal.backportium.potion.PotionBasic;
 import surreal.backportium.tile.v13.TileConduit;
-
-import javax.annotation.Nonnull;
 
 public class PotionConduitPower extends PotionBasic {
 
@@ -23,12 +21,7 @@ public class PotionConduitPower extends PotionBasic {
         return TEXTURE;
     }
 
-    @Override
-    public void performEffect(@Nonnull EntityLivingBase entity, int amplifier) {
-        if (TileConduit.shouldApplyToEntity(entity)) {
-            MobEffects.NIGHT_VISION.performEffect(entity, amplifier);
-            MobEffects.WATER_BREATHING.performEffect(entity, amplifier);
-            MobEffects.HASTE.performEffect(entity, amplifier);
-        }
+    public boolean shouldApply(@NotNull EntityLivingBase entity) {
+        return TileConduit.shouldApplyToEntity(entity);
     }
 }

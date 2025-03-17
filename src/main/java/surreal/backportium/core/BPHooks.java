@@ -3,6 +3,7 @@ package surreal.backportium.core;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
@@ -13,10 +14,12 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -33,6 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import surreal.backportium.Backportium;
 import surreal.backportium.api.block.FluidLogged;
 import surreal.backportium.api.block.StrippableLog;
@@ -381,6 +385,41 @@ public class BPHooks {
             entity.fallDistance = 0.0F;
             return original / (8.0 + Objects.requireNonNull(entity.getActivePotionEffect(ModPotions.SLOW_FALLING)).getAmplifier());
         }
+        return original;
+    }
+
+    // Conduit Power
+
+    public static boolean ConduitPower$isActive(boolean original, EntityLivingBase entity) {
+        return original || (entity.isPotionActive(ModPotions.CONDUIT_POWER) && ModPotions.CONDUIT_POWER.shouldApply(entity));
+    }
+
+    /**
+     * Night vision
+     **/
+    @SideOnly(Side.CLIENT)
+    public static boolean ConduitPower$isActive(boolean original) {
+        EntityPlayer player = Minecraft.getMinecraft().player;
+        return original || (player.isPotionActive(ModPotions.CONDUIT_POWER) && ModPotions.CONDUIT_POWER.shouldApply(player));
+    }
+
+    /**
+     * Night vision
+     **/
+    @SideOnly(Side.CLIENT)
+    public static PotionEffect ConduitPower$getPotionEffect(@Nullable PotionEffect effect, EntityLivingBase entity) {
+        PotionEffect effect1 = entity.getActivePotionEffect(ModPotions.CONDUIT_POWER);
+        if (effect == null) return effect1;
+        else if (effect1 == null) return effect;
+        else return effect.getDuration() > effect1.getDuration() ? effect : effect1;
+    }
+
+    /**
+     * Night vision
+     **/
+    @SideOnly(Side.CLIENT)
+    public static int ConduitPower$getNightVisionTime(EntityLivingBase entity, int original) {
+        if (entity.isPotionActive(ModPotions.CONDUIT_POWER)) return 201;
         return original;
     }
 

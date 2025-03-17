@@ -3,6 +3,7 @@ package surreal.backportium.tile.v13;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPrismarine;
 import net.minecraft.block.BlockSeaLantern;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
@@ -344,7 +345,8 @@ public class TileConduit extends TileEntity implements ITickable {
     }
 
     public static boolean shouldApplyToEntity(EntityLivingBase entity) {
-        return entity.isInWater() || entity.world.isRainingAt(new BlockPos(entity));
+        BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+        return entity.isInWater() || entity.world.isRainingAt(pos) || entity.world.getBlockState(pos).getMaterial() == Material.WATER;
     }
 
     protected boolean shouldAttack() {
