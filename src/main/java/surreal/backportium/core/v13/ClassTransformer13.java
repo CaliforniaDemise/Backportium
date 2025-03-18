@@ -4,11 +4,10 @@ public class ClassTransformer13 {
 
     public static byte[] transformClass(String transformedName, byte[] basicClass) {
         switch (transformedName) {
-
             case "net.minecraft.entity.EntityLivingBase": return PotionTransformer.transformEntityLivingBase(TridentTransformer.transformEntityLivingBase(PlayerMoveTransformer.transformEntityLivingBase(BreathingTransformer.transformEntityLivingBase(basicClass))));
             case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
 
-            case "net.minecraft.world.biome.Biome": return BiomeTransformer.transformBiome(basicClass);
+            case "net.minecraft.world.biome.Biome": return WaterTransformer.transformBiome(BiomeTransformer.transformBiome(basicClass));
 
             // TODO Implement actual waterlogging -- Waterlogging
             case "net.minecraftforge.fluids.BlockFluidBase": return WaterLoggingTransformer.transformBlockFluidBase(basicClass);
@@ -60,16 +59,19 @@ public class ClassTransformer13 {
 
             // TODO add crawling -- Player Movement
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(PlayerMoveTransformer.transformModelBiped(basicClass));
-            case "net.minecraft.entity.player.EntityPlayer": return PotionTransformer.transformEntityPlayer(TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass)));
+            case "net.minecraft.entity.player.EntityPlayer": return WaterTransformer.transformEntityPlayer(PotionTransformer.transformEntityPlayer(TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass))));
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(PlayerMoveTransformer.transformRenderPlayer(basicClass));
 
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
 
-            case "net.minecraft.world.biome.Biome$BiomeProperties": return BiomeTransformer.transformBiomeProperties(basicClass);
-            case "net.minecraft.world.biome.BiomeColorHelper$3": return BiomeTransformer.transformBiomeColorHelper$WaterColor(basicClass);
-            case "net.minecraft.client.renderer.BlockFluidRenderer": return BiomeTransformer.transformBlockFluidRenderer(basicClass);
-            case "net.minecraft.client.renderer.ItemRenderer": return BiomeTransformer.transformItemRenderer(basicClass);
-            case "net.minecraft.client.renderer.EntityRenderer": return PotionTransformer.transformEntityRenderer(BiomeTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass)));
+            // Water Colors
+            case "net.minecraft.world.biome.Biome$BiomeProperties": return WaterTransformer.transformBiomeProperties(basicClass);
+            case "net.minecraft.world.biome.BiomeColorHelper$3": return WaterTransformer.transformBiomeColorHelper$WaterColor(basicClass);
+            case "net.minecraft.client.renderer.BlockFluidRenderer": return WaterTransformer.transformBlockFluidRenderer(basicClass);
+            case "net.minecraft.client.renderer.ItemRenderer": return WaterTransformer.transformItemRenderer(basicClass);
+            case "net.minecraft.client.renderer.EntityRenderer": return PotionTransformer.transformEntityRenderer(WaterTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass)));
+            case "thaumcraft.client.renderers.tile.TileCrucibleRenderer": return WaterTransformer.transformTileCrucibleRenderer(basicClass);
+
         }
         // TODO Proper Traverse, AoA and DivineRPG support
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {

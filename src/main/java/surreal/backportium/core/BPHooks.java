@@ -440,18 +440,53 @@ public class BPHooks {
         return BiomeColorHandler.getWaterColor(biome, oldColor);
     }
 
+    @SideOnly(Side.CLIENT)
+    public static String getBlockTexture(IBlockState state, String defTexture) {
+        Block block = state.getBlock();
+        if (block == Blocks.WATER || block == Blocks.FLOWING_WATER) return "backportium:blocks/water_still";
+        return defTexture;
+    }
+
     /**
      * Hook for reaching {@link BiomeColorHandler#getWaterFogColor(Biome)} from class transformers.
      * It additionally turns the given int value to Vec3d.
      * See
      **/
-    public static Vec3d WaterColor$getWaterFogColor(Vec3d oldColor, World world, BlockPos pos, IBlockState state) {
+    private static int targetFogColor = -1;
+    private static int prevFogColor = -1;
+    private static long fogAdjustTime = -1;
+    public static Vec3d WaterColor$getWaterFogColor(Vec3d oldColor, World world, BlockPos pos, IBlockState state, float f6) {
         if (state.getMaterial() == Material.WATER) {
+            long i = System.nanoTime() / 1000000L;
             int fogColor = BiomeColorHandler.getWaterFogColor(world.getBiome(pos));
-            int r = (fogColor & 0xff0000) >> 16;
-            int g = (fogColor & 0x00ff00) >> 8;
-            int b = (fogColor & 0x0000ff);
-            return new Vec3d((double) r / 255D, (double) g / 255D, (double) b / 255D);
+            if (fogAdjustTime < 0) {
+                targetFogColor = fogColor;
+                prevFogColor = fogColor;
+                fogAdjustTime = i;
+            }
+            int k = targetFogColor >> 16 & 255;
+            int l = targetFogColor >> 8 & 255;
+            int i1 = targetFogColor & 255;
+            int j1 = prevFogColor >> 16 & 255;
+            int k1 = prevFogColor >> 8 & 255;
+            int l1 = prevFogColor & 255;
+            float f = MathHelper.clamp((float)(i - fogAdjustTime) / 5000.0F, 0.0F, 1.0F);
+            float f1 = RandomHelper.lerp(f, (float)j1, (float)k);
+            float f2 = RandomHelper.lerp(f, (float)k1, (float)l);
+            float f3 = RandomHelper.lerp(f, (float)l1, (float)i1);
+            double r = f1 / 255.0;
+            double g = f2 / 255.0;
+            double b = f3 / 255.0;
+            if (targetFogColor != fogColor) {
+                targetFogColor = fogColor;
+                prevFogColor = MathHelper.floor(f1) << 16 | MathHelper.floor(f2) << 8 | MathHelper.floor(f3);
+                fogAdjustTime = i;
+            }
+            double f9 = Math.min(1.0 / r, Math.min(1.0 / g, 1.0 / b));
+            r = r * (1.0 - f6) + r * f9 * f6;
+            g = g * (1.0 - f6) + g * f9 * f6;
+            b = b * (1.0 - f6) + b * f9 * f6;
+            return new Vec3d(r, g, b);
         }
         return oldColor;
     }

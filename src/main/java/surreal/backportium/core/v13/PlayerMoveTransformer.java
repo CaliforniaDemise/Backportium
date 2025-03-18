@@ -1033,7 +1033,7 @@ class PlayerMoveTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitFieldInsn(GETFIELD, cls.name, "timeUnderwater", "F");
             m.visitInsn(FCONST_0);
-            m.visitInsn(FCMPG);
+            m.visitInsn(FCMPL);
             m.visitJumpInsn(IFLE, l_con);
             m.visitVarInsn(ALOAD, 0);
             m.visitVarInsn(ALOAD, 0);
@@ -1055,9 +1055,6 @@ class PlayerMoveTransformer extends Transformer {
             m.visitVarInsn(ALOAD, 0);
             m.visitMethodInsn(INVOKEVIRTUAL, cls.name, "updateSwimAnimation", "()V", false);
             m.visitInsn(RETURN);
-        }
-        { // getWaterVision
-
         }
         { // canForceCrawling
 
