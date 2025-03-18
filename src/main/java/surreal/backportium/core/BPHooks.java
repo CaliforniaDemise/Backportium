@@ -389,7 +389,16 @@ public class BPHooks {
     }
 
     // Conduit Power
+    public static PotionEffect ConduitPower$getAmplifier(@Nullable PotionEffect original, EntityLivingBase entity) {
+        PotionEffect conduitPower = entity.getActivePotionEffect(ModPotions.CONDUIT_POWER);
+        if (original == null) return conduitPower;
+        else if (conduitPower == null) return original;
+        else return original.getAmplifier() > conduitPower.getAmplifier() ? original : conduitPower;
+    }
 
+    /**
+     *
+     **/
     public static boolean ConduitPower$isActive(boolean original, EntityLivingBase entity) {
         return original || (entity.isPotionActive(ModPotions.CONDUIT_POWER) && ModPotions.CONDUIT_POWER.shouldApply(entity));
     }

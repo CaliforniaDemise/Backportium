@@ -23,6 +23,27 @@ public class PotionTransformer extends Transformer {
                     }
                 }
             }
+            else if (method.name.equals(getName("getArmSwingAnimationEnd", "func_82166_i"))) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL) {
+                        if (((MethodInsnNode) node).name.equals(getName("isPotionActive", "func_70644_a"))) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(hook("ConduitPower$isActive", "(ZLnet/minecraft/entity/EntityLivingBase;)Z"));
+                            method.instructions.insert(node, list);
+                        }
+                        else if (((MethodInsnNode) node).name.equals(getName("getActivePotionEffect", "func_70660_b"))) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(hook("ConduitPower$getAmplifier", "(Lnet/minecraft/potion/PotionEffect;Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/potion/PotionEffect;"));
+                            method.instructions.insert(node, list);
+                            break;
+                        }
+                    }
+                }
+            }
             else if (method.name.equals(getName("travel", "func_191986_a"))) {
                 Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
                 while (iterator.hasNext()) {
@@ -33,6 +54,35 @@ public class PotionTransformer extends Transformer {
                         list.add(new VarInsnNode(ALOAD, 0));
                         list.add(hook("SlowFalling$fallingSpeed", "(DLnet/minecraft/entity/EntityLivingBase;)D"));
                         method.instructions.insertBefore(node, list);
+                    }
+                }
+                break;
+            }
+        }
+        return write(cls);
+    }
+
+    public static byte[] transformEntityPlayer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("getDigSpeed")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL) {
+                        if (((MethodInsnNode) node).name.equals(getName("isPotionActive", "func_70644_a"))) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(hook("ConduitPower$isActive", "(ZLnet/minecraft/entity/EntityLivingBase;)Z"));
+                            method.instructions.insert(node, list);
+                        }
+                        else if (((MethodInsnNode) node).name.equals(getName("getActivePotionEffect", "func_70660_b"))) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(hook("ConduitPower$getAmplifier", "(Lnet/minecraft/potion/PotionEffect;Lnet/minecraft/entity/EntityLivingBase;)Lnet/minecraft/potion/PotionEffect;"));
+                            method.instructions.insert(node, list);
+                            break;
+                        }
                     }
                 }
                 break;

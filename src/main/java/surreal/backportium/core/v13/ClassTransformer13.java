@@ -60,7 +60,7 @@ public class ClassTransformer13 {
 
             // TODO add crawling -- Player Movement
             case "net.minecraft.client.model.ModelBiped": return TridentTransformer.transformModelBiped(PlayerMoveTransformer.transformModelBiped(basicClass));
-            case "net.minecraft.entity.player.EntityPlayer": return TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass));
+            case "net.minecraft.entity.player.EntityPlayer": return PotionTransformer.transformEntityPlayer(TridentTransformer.transformEntityPlayer(PlayerMoveTransformer.transformEntityPlayer(basicClass)));
             case "net.minecraft.client.renderer.entity.RenderPlayer": return TridentTransformer.transformRenderPlayer(PlayerMoveTransformer.transformRenderPlayer(basicClass));
 
             case "net.minecraft.client.renderer.entity.RenderLivingBase": return TridentTransformer.transformRenderLivingBase(basicClass);
