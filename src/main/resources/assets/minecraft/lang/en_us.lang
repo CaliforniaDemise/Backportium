@@ -1,2 +1,33 @@
+# Blocks
 tile.pumpkin.name=Carved Pumpkin
 tile.shulkerBox.name=Shulker Box
+
+# Biomes
+biome.frozen_ocean.name=Frozen Ocean
+biome.frozen_river.name=Frozen River
+biome.mushroom_island.name=Mushroom Island
+biome.desert_hills.name=Desert Hills
+biome.forest_hills.name=Forest Hills
+biome.taiga_hills.name=Taiga Hills
+biome.jungle_hills.name=Jungle Hills
+biome.jungle_edge.name=Jungle Edge
+biome.mesa.name=Badlands
+biome.mesa_plateau_f.name=Wooded Badlands Plateau
+biome.mesa_plateau=Badlands Plateau
+biome.desert_m.name=Mutated Desert
+biome.extreme_hills_m.name=Mutated Extreme Hills
+biome.taiga_m.name=Mutated Taiga
+biome.swampland_m.name=Mutated Swampland
+biome.jungle_m.name=Mutated Jungle
+biome.birch_forest_m.name=Mutated Birch Forest
+biome.birch_forest_hills_m.name=Mutated Birch Forest Hills
+biome.roofed_forest_m.name=Mutated Roofed Forest
+biome.cold_taiga_m.name=Mutated Cold Taiga
+biome.mega_spruce_taiga.name=Mutated Mega Taiga
+biome.redwood_taiga_hills_m.name=Mutated Mega Taiga Hills
+biome.extreme_hills+_m.name=Mutated Extreme Hills+
+biome.savanna_m.name=Mutated Savanna
+biome.savanna_plateau_m.name=Mutated Savanna Plateau
+biome.mesa_(bryce).name=Mutated Badlands (Bryce)
+biome.mesa_plateau_f_m.name=Mutated Wooded Badlands Plateau
+biome.mesa_plateau_m.name=Mutated Badlands Plateau

@@ -8,6 +8,7 @@ public class ClassTransformer13 {
             case "net.minecraftforge.client.GuiIngameForge": return BreathingTransformer.transformGuiIngameForge(basicClass);
 
             case "net.minecraft.world.biome.Biome": return WaterTransformer.transformBiome(BiomeTransformer.transformBiome(basicClass));
+            case "org.cyclops.cyclopscore.config.configurable.ConfigurableBiome": return BiomeTransformer.transformConfigurableBiome(basicClass);
 
             // TODO Implement actual waterlogging -- Waterlogging
             case "net.minecraftforge.fluids.BlockFluidBase": return WaterLoggingTransformer.transformBlockFluidBase(basicClass);

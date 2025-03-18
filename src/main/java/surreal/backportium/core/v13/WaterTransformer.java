@@ -15,7 +15,7 @@ class WaterTransformer extends Transformer {
         if (cls.interfaces == null) cls.interfaces = new ArrayList<>();
         cls.interfaces.add("surreal/backportium/api/extension/BiomeExtension");
         { // waterFogColor
-            cls.visitField(ACC_PRIVATE, "waterFogColor", "I", null, 0);
+            cls.visitField(ACC_PRIVATE | ACC_FINAL, "waterFogColor", "I", null, null);
         }
         { // getWaterFogColor
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "getWaterFogColor", "()I", null, null);
@@ -338,12 +338,6 @@ class WaterTransformer extends Transformer {
             }
         }
         return write(cls, 3);
-    }
-
-    // TODO Fix this
-    // Uses I18n for biome properties biomeName
-    protected static byte[] transformCyclopsCore$Name(byte[] basicClass) {
-        return basicClass;
     }
 
     protected static byte[] transformBlockLiquid(byte[] basicClass) {

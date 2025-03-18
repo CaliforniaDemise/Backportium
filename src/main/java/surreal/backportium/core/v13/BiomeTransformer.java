@@ -1,23 +1,23 @@
 package surreal.backportium.core.v13;
 
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.tree.*;
 import surreal.backportium.core.transformers.Transformer;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Adds way to change temperature based on block pos and fixes biome names.
- * This will most likely get changed when I backport new world generation.
- * Might separate biome name fix too.
+ * Adds a way to easily change biome surface and temperature because I'm lazy.
+ * It also adds way to translate biomes.
  **/
 // TODO Expand upon it
 class BiomeTransformer extends Transformer {
 
     protected static byte[] transformBiome(byte[] basicClass) {
         ClassNode cls = read(basicClass);
+        { // translationKey
+            cls.visitField(ACC_PRIVATE | ACC_FINAL, "translationKey", "Ljava/lang/String;", null, null);
+        }
         { // getTheSurface - Used specifically for changing ocean surface. Pretty naive approach
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "getTheSurface", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/world/chunk/ChunkPrimer;IID)Lnet/minecraft/block/state/IBlockState;", null, null);
             m.visitFieldInsn(GETSTATIC, "net/minecraft/world/biome/Biome", getName("GRAVEL", "field_185368_d"), "Lnet/minecraft/block/state/IBlockState;");
@@ -35,7 +35,18 @@ class BiomeTransformer extends Transformer {
             m.visitInsn(RETURN);
         }
         for (MethodNode method : cls.methods) {
-             if (method.name.equals(getName("getTemperature", "func_180626_a"))) {
+            if (method.name.equals("<init>")) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != RETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("biomeName", "field_76791_y"), "Ljava/lang/String;"));
+                list.add(hook("Biome$getTranslationKey", "(Ljava/lang/String;)Ljava/lang/String;"));
+                list.add(new FieldInsnNode(PUTFIELD, cls.name, "translationKey", "Ljava/lang/String;"));
+                method.instructions.insertBefore(node, list);
+            }
+            else if (method.name.equals(getName("getTemperature", "func_180626_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != INVOKEVIRTUAL) node = node.getPrevious();
                 InsnList list = new InsnList();
@@ -78,32 +89,62 @@ class BiomeTransformer extends Transformer {
                 list.add(new MethodInsnNode(INVOKEVIRTUAL, cls.name, "generateTerrain", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/world/chunk/ChunkPrimer;Lnet/minecraft/util/math/BlockPos$MutableBlockPos;IID)V", false));
                 method.instructions.insertBefore(node, list);
             }
-//            else if (method.name.equals(getName("registerBiomes", "func_185358_q"))) {
-//                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
-//                while (iterator.hasNext()) {
-//                    AbstractInsnNode node = iterator.next();
-//                    if (node.getOpcode() == DUP) {
-//                        node = iterator.next();
-//                        if (node instanceof LdcInsnNode) {
-//                            LdcInsnNode ldc = (LdcInsnNode) node;
-//                            String str = (String) ldc.cst;
-//                            if (str.equals("FrozenOcean")) {
-//                                ldc.cst = "Legacy Frozen Ocean";
-//                                continue;
-//                            }
-//                            StringBuilder builder = new StringBuilder(str.length());
-//                            for (int i = 0; i < str.length(); i++) {
-//                                char c = str.charAt(i);
-//                                if (Character.isUpperCase(c) && i != 0 && str.charAt(i - 1) != ' ') {
-//                                    builder.append(' ').append(c);
-//                                } else builder.append(c);
-//                            }
-//                            ldc.cst = builder.toString();
-//                        }
-//                    }
-//                }
-//                break;
-//            }
+            else if (method.name.equals(getName("getBiomeName", "func_185359_l"))) {
+                AbstractInsnNode node = method.instructions.getLast();
+                while (node.getOpcode() != ARETURN) node = node.getPrevious();
+                InsnList list = new InsnList();
+                list.add(new VarInsnNode(ALOAD, 0));
+                list.add(new FieldInsnNode(GETFIELD, cls.name, "translationKey", "Ljava/lang/String;"));
+                list.add(hook("Biome$getLocalizedName", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"));
+                method.instructions.insertBefore(node, list);
+                break;
+            }
+        }
+        return write(cls);
+    }
+
+    // Uses I18n for biome properties biomeName
+    /**
+     * kroeser thought doing this would stop me.
+     * But he doesn't know Mojang had my back in 2011 and added
+     * a way to format to en us regardless of language that's chosen.
+     * Not saying that would stop me, but it makes everything easier :+1:
+     **/
+    protected static byte[] transformConfigurableBiome(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("constructProperties")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKESTATIC) {
+                        method.instructions.insertBefore(node, new MethodInsnNode(INVOKESTATIC, "net/minecraft/util/text/translation/I18n", getName("translateToFallback", "func_150826_b"), "(Ljava/lang/String;)Ljava/lang/String;", false));
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+        return basicClass;
+    }
+
+    protected static byte[] transformGuiOverlayDebug(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("call")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKEVIRTUAL && ((MethodInsnNode) node).name.equals(getName("getBiomeName", "func_185359_l"))) {
+                        InsnList list = new InsnList();
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/world/biome/Biome", "getRegistryName", "()Lnet/minecraft/util/ResourceLocation;", false));
+                        list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/util/ResourceLocation", "toString", "()Ljava/lang/String;", false));
+                        method.instructions.insertBefore(node, list);
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
         }
         return write(cls);
     }
