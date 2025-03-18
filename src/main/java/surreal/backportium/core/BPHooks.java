@@ -29,6 +29,7 @@ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -489,6 +490,15 @@ public class BPHooks {
             return new Vec3d(r, g, b);
         }
         return oldColor;
+    }
+
+    public static float WaterColor$getFogDensity(float density, Entity entity, float waterVision) {
+        GlStateManager.setFog(GlStateManager.FogMode.EXP2);
+        density -= 0.05F;
+        Biome biome = entity.world.getBiome(new BlockPos(entity));
+        if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) density += 0.005F;
+        density -= waterVision * waterVision * 0.03F;
+        return density;
     }
 
     public static int WaterColor$emulateLegacyColor(int color) {

@@ -306,10 +306,38 @@ class WaterTransformer extends Transformer {
                         break;
                     }
                 }
-                break;
+            }
+            else if (method.name.equals(getName("setupFog", "func_78468_a"))) {
+                int i = 0;
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == INVOKESTATIC && ((MethodInsnNode) node).name.equals(getName("setFogDensity", "func_179095_a"))) {
+                        i++;
+                        if (i == 4) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 3));
+                            list.add(new VarInsnNode(ALOAD, 3));
+                            list.add(new TypeInsnNode(INSTANCEOF, "net/minecraft/entity/player/EntityPlayer"));
+                            LabelNode l_con = new LabelNode();
+                            LabelNode l_goto = new LabelNode();
+                            list.add(new JumpInsnNode(IFEQ, l_con));
+                            list.add(new VarInsnNode(ALOAD, 3));
+                            list.add(new TypeInsnNode(CHECKCAST, "net/minecraft/entity/player/EntityPlayer"));
+                            list.add(new MethodInsnNode(INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "getWaterVision", "()F", false));
+                            list.add(new JumpInsnNode(GOTO, l_goto));
+                            list.add(l_con);
+                            list.add(new InsnNode(FCONST_0));
+                            list.add(l_goto);
+                            list.add(hook("WaterColor$getFogDensity", "(FLnet/minecraft/entity/Entity;F)F"));
+                            method.instructions.insertBefore(node, list);
+                            break;
+                        }
+                    }
+                }
             }
         }
-        return write(cls);
+        return write(cls, 3);
     }
 
     // TODO Fix this
