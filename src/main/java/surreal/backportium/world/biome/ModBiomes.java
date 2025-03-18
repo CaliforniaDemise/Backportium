@@ -34,8 +34,8 @@ public class ModBiomes extends Registry<Biome> {
 
     @Override
     public void registerEntries(RegistryEvent.Register<Biome> event) {
-        Biome frozenOcean = this.register(new BiomeOceanFrozen(new Biome.BiomeProperties("Frozen Ocean").setBaseHeight(-1.0F).setHeightVariation(0.1F).setTemperature(0.0F).setRainfall(0.5F).setSnowEnabled()), "frozen_ocean");
-        Biome deepFrozenOcean = this.register(new BiomeOceanFrozen(new Biome.BiomeProperties("Deep Frozen Ocean").setBaseHeight(-1.8F).setHeightVariation(0.1F).setRainfall(0.5F).setSnowEnabled()), "deep_frozen_ocean");
+        Biome frozenOcean = this.register(new BiomeOceanFrozen(new BiomePropertiesExt("Frozen Ocean").setActualWaterColor(0x3938C9).setBaseHeight(-1.0F).setHeightVariation(0.1F).setTemperature(0.0F).setRainfall(0.5F).setSnowEnabled()), "frozen_ocean");
+        Biome deepFrozenOcean = this.register(new BiomeOceanFrozen(new BiomePropertiesExt("Deep Frozen Ocean").setActualWaterColor(0x3938C9).setBaseHeight(-1.8F).setHeightVariation(0.1F).setRainfall(0.5F).setSnowEnabled()), "deep_frozen_ocean");
         Biome warmOcean = this.register(new BiomeOceanWarm(new BiomePropertiesExt("Warm Ocean").setActualWaterColor(0x43D5EE).setWaterFogColor(0x041F33).setBaseHeight(-1.0F).setHeightVariation(0.1F).setTemperature(0.5F).setRainfall(0.5F)), "warm_ocean");
         Biome deepWarmOcean = this.register(new BiomeOceanWarm(new BiomePropertiesExt("Deep Warm Ocean").setActualWaterColor(0x43D5EE).setWaterFogColor(0x041F33).setBaseHeight(-1.8F).setHeightVariation(0.1F).setTemperature(0.5F).setRainfall(0.5F)), "deep_warm_ocean");
         Biome lukewarmOcean = this.register(new BiomeOceanLukewarm(new BiomePropertiesExt("Lukewarm Ocean").setActualWaterColor(0x45ADF2).setWaterFogColor(0x041633).setBaseHeight(-1.0F).setHeightVariation(0.1F).setTemperature(0.5F).setRainfall(0.5F)), "lukewarm_ocean");

@@ -1,4 +1,4 @@
-package surreal.backportium.world.biome;
+package surreal.backportium.world.biome.decorator;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;

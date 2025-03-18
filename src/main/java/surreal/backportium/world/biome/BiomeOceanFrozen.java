@@ -7,6 +7,7 @@ import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeOcean;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
+import surreal.backportium.world.biome.decorator.BiomeDecoratorOceanFrozen;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
 
 import javax.annotation.Nonnull;
@@ -32,12 +33,6 @@ public class BiomeOceanFrozen extends BiomeOcean {
     @Override
     public int getModdedBiomeFoliageColor(int original) {
         return 0x60A17B;
-    }
-
-    // TODO Handle underwater fog, maybe find a way to change the whole water color
-    @Override
-    public int getWaterColorMultiplier() {
-        return 0x3938C9;
     }
 
     @Nonnull

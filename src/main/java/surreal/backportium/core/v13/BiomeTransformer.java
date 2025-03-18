@@ -128,6 +128,7 @@ class BiomeTransformer extends Transformer {
         return basicClass;
     }
 
+    // TODO Change naming to use registry names instead of biome names
     protected static byte[] transformGuiOverlayDebug(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         for (MethodNode method : cls.methods) {
