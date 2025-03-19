@@ -149,4 +149,34 @@ class BiomeTransformer extends Transformer {
         }
         return write(cls);
     }
+
+    protected static byte[] transformChunkGeneratorSettings$Serializer(byte[] basicClass) {
+        ClassNode cls = read(basicClass);
+        for (MethodNode method : cls.methods) {
+            if (method.name.equals("deserialize")) {
+                Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                int i = 0;
+                while (iterator.hasNext()) {
+                    AbstractInsnNode node = iterator.next();
+                    if (node.getOpcode() == BIPUSH) {
+                        method.instructions.insertBefore(node, new LdcInsnNode(Integer.MIN_VALUE));
+                        iterator.remove();
+                    }
+                    else if (node.getOpcode() == ICONST_M1) {
+                        i++;
+                        if (i == 2) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 5));
+                            list.add(new FieldInsnNode(GETFIELD, "net/minecraft/world/gen/ChunkGeneratorSettings$Factory", getName("fixedBiome", "field_177869_G"), "I"));
+                            list.add(hook("Buffet$getBiomeId", "(I)I"));
+                            method.instructions.insertBefore(node, list);
+                            iterator.remove();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return write(cls);
+    }
 }

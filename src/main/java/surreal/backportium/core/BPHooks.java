@@ -15,6 +15,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -434,6 +435,15 @@ public class BPHooks {
     }
 
     // Biome | Mostly for custom water colors
+    public static int Buffet$getBiomeId(int fixedBiome) {
+        if (fixedBiome < 0) fixedBiome = -1;
+        else {
+            Biome biome = Biome.getBiomeForId(fixedBiome);
+            if (biome == null) fixedBiome = -1;
+        }
+        return fixedBiome;
+    }
+
     public static String Biome$getTranslationKey(String name) {
         StringBuilder builder = new StringBuilder("biome.");
         {

@@ -153,3 +153,8 @@ splash_potion.effect.long_turtle_master=Splash Potion of Turtle Master
 lingering_potion.effect.turtle_master=Lingering Potion of Turtle Master
 lingering_potion.effect.strong_turtle_master=Lingering Potion of Turtle Master
 lingering_potion.effect.long_turtle_master=Lingering Potion of Turtle Master
+
+generator.buffet=Buffet
+createWorld.customize.buffet.title=Buffet world customization
+createWorld.customize.buffet.generatorType=Please select a generator type
+createWorld.customize.buffet.biome=Please select a biome

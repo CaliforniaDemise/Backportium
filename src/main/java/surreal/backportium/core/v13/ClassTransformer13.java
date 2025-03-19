@@ -73,6 +73,7 @@ public class ClassTransformer13 {
             case "net.minecraft.client.renderer.EntityRenderer": return PotionTransformer.transformEntityRenderer(WaterTransformer.transformEntityRenderer(PlayerMoveTransformer.transformEntityRenderer(basicClass)));
             case "thaumcraft.client.renderers.tile.TileCrucibleRenderer": return WaterTransformer.transformTileCrucibleRenderer(basicClass);
 
+            case "net.minecraft.world.gen.ChunkGeneratorSettings$Serializer": return BiomeTransformer.transformChunkGeneratorSettings$Serializer(basicClass);
         }
         // TODO Proper Traverse, AoA and DivineRPG support
         if (!transformedName.startsWith("net.minecraftforge") && !transformedName.endsWith("$Debarked")) {
