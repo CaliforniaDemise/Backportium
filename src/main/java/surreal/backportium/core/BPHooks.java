@@ -444,24 +444,17 @@ public class BPHooks {
         return fixedBiome;
     }
 
-    public static String Biome$getTranslationKey(String name) {
-        StringBuilder builder = new StringBuilder("biome.");
-        {
-            ModContainer container = Loader.instance().activeModContainer();
-            if (container != null && container != Loader.instance().getMinecraftModContainer()) builder.append(container.getModId()).append('.');
-        }
-        for (int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-            if (c == ' ') builder.append('_');
-            else builder.append(Character.toLowerCase(c));
-        }
-        builder.append(".name");
-        return builder.toString();
+    public static String Biome$getTranslationKey(Biome biome) {
+        ResourceLocation location = Objects.requireNonNull(biome.getRegistryName());
+        String out = "biome.";
+        if (!location.getNamespace().equals("minecraft")) out += location.getNamespace() + ".";
+        return out + location.getPath() + ".name";
     }
 
     @SideOnly(Side.CLIENT)
     public static String Biome$getLocalizedName(String original, String key) {
         String localizedName = net.minecraft.client.resources.I18n.format(key);
+        System.out.println(key);
         if (localizedName.equals(key)) return original;
         return localizedName;
     }

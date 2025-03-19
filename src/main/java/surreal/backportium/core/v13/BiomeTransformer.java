@@ -16,7 +16,7 @@ class BiomeTransformer extends Transformer {
     protected static byte[] transformBiome(byte[] basicClass) {
         ClassNode cls = read(basicClass);
         { // translationKey
-            cls.visitField(ACC_PRIVATE | ACC_FINAL, "translationKey", "Ljava/lang/String;", null, null);
+            cls.visitField(ACC_PRIVATE, "translationKey", "Ljava/lang/String;", null, null);
         }
         { // getTheSurface - Used specifically for changing ocean surface. Pretty naive approach
             MethodVisitor m = cls.visitMethod(ACC_PUBLIC, "getTheSurface", "(Lnet/minecraft/world/World;Ljava/util/Random;Lnet/minecraft/world/chunk/ChunkPrimer;IID)Lnet/minecraft/block/state/IBlockState;", null, null);
@@ -35,18 +35,7 @@ class BiomeTransformer extends Transformer {
             m.visitInsn(RETURN);
         }
         for (MethodNode method : cls.methods) {
-            if (method.name.equals("<init>")) {
-                AbstractInsnNode node = method.instructions.getLast();
-                while (node.getOpcode() != RETURN) node = node.getPrevious();
-                InsnList list = new InsnList();
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new VarInsnNode(ALOAD, 0));
-                list.add(new FieldInsnNode(GETFIELD, cls.name, getName("biomeName", "field_76791_y"), "Ljava/lang/String;"));
-                list.add(hook("Biome$getTranslationKey", "(Ljava/lang/String;)Ljava/lang/String;"));
-                list.add(new FieldInsnNode(PUTFIELD, cls.name, "translationKey", "Ljava/lang/String;"));
-                method.instructions.insertBefore(node, list);
-            }
-            else if (method.name.equals(getName("getTemperature", "func_180626_a"))) {
+            if (method.name.equals(getName("getTemperature", "func_180626_a"))) {
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != INVOKEVIRTUAL) node = node.getPrevious();
                 InsnList list = new InsnList();
@@ -90,6 +79,27 @@ class BiomeTransformer extends Transformer {
                 method.instructions.insertBefore(node, list);
             }
             else if (method.name.equals(getName("getBiomeName", "func_185359_l"))) {
+                {
+                    Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
+                    while (iterator.hasNext()) {
+                        AbstractInsnNode node = iterator.next();
+                        if (node.getOpcode() == ALOAD) {
+                            InsnList list = new InsnList();
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new FieldInsnNode(GETFIELD, cls.name, "translationKey", "Ljava/lang/String;"));
+                            LabelNode l_con_null = new LabelNode();
+                            list.add(new JumpInsnNode(IFNONNULL, l_con_null));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(new VarInsnNode(ALOAD, 0));
+                            list.add(hook("Biome$getTranslationKey", "(Lnet/minecraft/world/biome/Biome;)Ljava/lang/String;"));
+                            list.add(new FieldInsnNode(PUTFIELD, cls.name, "translationKey", "Ljava/lang/String;"));
+                            list.add(l_con_null);
+                            list.add(new FrameNode(F_SAME, 0, null, 0, null));
+                            method.instructions.insertBefore(node, list);
+                            break;
+                        }
+                    }
+                }
                 AbstractInsnNode node = method.instructions.getLast();
                 while (node.getOpcode() != ARETURN) node = node.getPrevious();
                 InsnList list = new InsnList();
