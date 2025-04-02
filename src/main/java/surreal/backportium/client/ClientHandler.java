@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -34,10 +36,13 @@ import surreal.backportium.client.resource.Models;
 import surreal.backportium.client.resource.Sounds;
 import surreal.backportium.client.resource.Textures;
 import surreal.backportium.client.textures.AnimatedSpriteStill;
+import surreal.backportium.client.textures.GrayScaleSprite;
 import surreal.backportium.core.BPPlugin;
 import surreal.backportium.core.util.LogSystem;
 import surreal.backportium.entity.v13.EntityPhantom;
 import surreal.backportium.entity.v13.EntityTrident;
+
+import java.io.IOException;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
@@ -101,9 +106,21 @@ public class ClientHandler {
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/dolphins_grace"));
         map.registerSprite(new ResourceLocation(Tags.MOD_ID, "mob_effect/slow_falling"));
 
-//        map.registerSprite(new ResourceLocation("blocks/shulker_top"));
-        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "blocks/water_still"));
-        map.registerSprite(new ResourceLocation(Tags.MOD_ID, "blocks/water_flow"));
+        IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
+        try {
+            IResource resource = manager.getResource(new ResourceLocation("textures/blocks/water_still.png"));
+            if (resource.getResourcePackName().endsWith("Minecraft Forge")) {
+                map.registerSprite(new ResourceLocation(Tags.MOD_ID, "blocks/water_still"));
+                map.registerSprite(new ResourceLocation(Tags.MOD_ID, "blocks/water_flow"));
+            }
+            else {
+                map.setTextureEntry(new GrayScaleSprite(Tags.MOD_ID + ":blocks/water_still", new ResourceLocation("blocks/water_still")));
+                map.setTextureEntry(new GrayScaleSprite(Tags.MOD_ID + ":blocks/water_flow", new ResourceLocation("blocks/water_flow")));
+            }
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         map.setTextureEntry(new AnimatedSpriteStill(new ResourceLocation(Tags.MOD_ID, "blocks/seagrass"), Tags.MOD_ID + ":items/seagrass"));
 

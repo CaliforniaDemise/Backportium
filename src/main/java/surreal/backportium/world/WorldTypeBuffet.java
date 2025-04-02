@@ -199,7 +199,6 @@ public class WorldTypeBuffet extends WorldType {
 
         public BiomeProviderBuffet(WorldInfo info) {
             super(info);
-            System.out.println(info.getGeneratorOptions());
             WorldSettings settings = new WorldSettings(info.getSeed(), info.getGameType(), info.isMapFeaturesEnabled(), info.isHardcoreModeEnabled(), Backportium.TYPE_BUFFET);
             settings.setGeneratorOptions(info.getGeneratorOptions());
             info.populateFromWorldSettings(settings);
