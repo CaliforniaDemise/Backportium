@@ -15,7 +15,6 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -66,8 +65,11 @@ import java.util.*;
 public class BPHooks {
 
     // Testing
-    public static void debugPrint(Object obj) { System.out.println(obj); }
-    public static void debugPrint(int i) { System.out.println(i); }
+    public static void debug(Object obj) { System.out.println(obj); }
+    public static void debug(int i) { System.out.println(i); }
+    public static void debug(long l) { System.out.println(l); }
+    public static void debug(float f) { System.out.println(f); }
+    public static void debug(double d) { System.out.println(d); }
 
     // Breathing
     /**
@@ -83,6 +85,10 @@ public class BPHooks {
     }
 
     // Bubble Column
+    /**
+     * Play sound when player gets inside bubble column.
+     * See BubbleColumnTransformer#transformEntityLivingBase
+     **/
     @SideOnly(Side.CLIENT)
     public static int BubbleColumn$handle(Entity entity, int i) {
         World world = entity.world;
@@ -106,19 +112,28 @@ public class BPHooks {
         return i;
     }
 
+    /**
+     * For rocking the boat when it's on Bubble Column.
+     * See BubbleColumnTransformer#transformRenderBoat
+     **/
+    @SideOnly(Side.CLIENT)
     public static void BubbleColumn$setupRotation(float rockingAngle) {
         if (!MathHelper.epsilonEquals(rockingAngle, 0.0F)) {
             GlStateManager.rotate(rockingAngle, 1F, 0F, 1F);
         }
     }
 
+    /**
+     * Both of these are used for transforming EntityBoat.
+     * I'm too lazy to revert back to using hooks for better readability.
+     * It will most likely not going to create crashes either.
+     **/
     public static Block BubbleColumn$block() { return ModBlocks.BUBBLE_COLUMN; }
     public static boolean BubbleColumn$dragValue(IBlockState state) { return state.getValue(BlockBubbleColumn.DRAG); }
 
     // Buoyancy
     /**
-     * Fixes an issue that occurs with AE2 crystals and buoyancy.
-     * See BuoyancyTransformer#transformEntityItem(byte[])
+     * Fixes AE2 crystal seeds can't grow in water because of buoyancy.
      **/
     public static boolean Buoyancy$isAE2Loaded() {
         return IntegrationHelper.APPLIED_ENERGISTICS;

@@ -36,6 +36,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import org.jetbrains.annotations.NotNull;
+import surreal.backportium.client.ClientHandler;
 import surreal.backportium.client.textures.StrippedSpriteSide;
 import surreal.backportium.client.textures.StrippedSpriteTop;
 import surreal.backportium.client.textures.StrippedSpriteTopTemplate;
@@ -172,6 +173,11 @@ public class LogSystem {
 
     @SideOnly(Side.CLIENT)
     public void registerTextures(TextureStitchEvent.Pre event) {
+        ModelManager manager = ClientHandler.getModelManager();
+        if (manager == null) {
+            System.out.println("wtf...");
+            return;
+        }
         boolean hasForestry = IntegrationHelper.FORESTRY;
         this.forEachBlock(origLog -> {
             Tuple<Block, Block, Block> tuple = this.getLogs(origLog);
@@ -182,7 +188,7 @@ public class LogSystem {
             else {
                 Block stripped = tuple.getFirst();
                 if (stripped != null) {
-                    Map<IBlockState, ModelResourceLocation> modelLocations = Minecraft.getMinecraft().modelManager.getBlockModelShapes().getBlockStateMapper().getVariants(origLog);
+                    Map<IBlockState, ModelResourceLocation> modelLocations = manager.getBlockModelShapes().getBlockStateMapper().getVariants(origLog);
                     for (Map.Entry<IBlockState, ModelResourceLocation> entry : modelLocations.entrySet()) {
                         IModel originalModel;
                         try { originalModel = ModelLoaderRegistry.getModel(entry.getValue()); } catch (Exception e) { return; }

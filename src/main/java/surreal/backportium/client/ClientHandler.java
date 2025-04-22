@@ -21,6 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium.Backportium;
@@ -43,12 +44,15 @@ import surreal.backportium.entity.v13.EntityPhantom;
 import surreal.backportium.entity.v13.EntityTrident;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import static net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler;
 
 @SuppressWarnings("unused")
 @SideOnly(Side.CLIENT)
 public class ClientHandler {
+
+    private static ModelManager MODEL_MANAGER;
 
     public static void construction(FMLConstructionEvent event) {
         MinecraftForge.EVENT_BUS.register(ClientHandler.class);
@@ -212,5 +216,18 @@ public class ClientHandler {
         if (state.getBlock() instanceof FluidLogged) {
             event.setFOV(event.getFOV() * 60.0F / 70.0F);
         }
+    }
+
+    public static ModelManager getModelManager() {
+        if (MODEL_MANAGER != null) return MODEL_MANAGER;
+        try {
+            Field f_modelManager = Minecraft.class.getDeclaredField(FMLLaunchHandler.isDeobfuscatedEnvironment() ? "modelManager" : "field_175617_aL");
+            f_modelManager.setAccessible(true);
+            MODEL_MANAGER = (ModelManager) f_modelManager.get(Minecraft.getMinecraft());
+        }
+        catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Problem occurred while getting Minecraft#modelManager", e);
+        }
+        return MODEL_MANAGER;
     }
 }
