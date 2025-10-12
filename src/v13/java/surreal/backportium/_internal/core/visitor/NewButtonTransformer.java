@@ -6,17 +6,31 @@ import net.minecraft.block.state.BlockStateContainer;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
+import surreal.backportium._internal.bytecode.traverse.ClassBytes;
+import surreal.backportium._internal.bytecode.traverse.ClassTraverser;
 import surreal.backportium.block.properties.button.NewButton;
 import surreal.backportium.block.state.ButtonContainer;
 
+import java.util.function.Function;
+
 import static surreal.backportium.block.properties.button.NewButtonProperties.*;
 
-public final class NewButtonVisitor {
+public final class NewButtonTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/NewButtonVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/NewButtonTransformer$Hooks";
     private static final String NEW_BUTTON = "surreal/backportium/block/properties/button/NewButton";
 
-    public static class BlockVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        if (transformedName.equals("net.minecraft.block.Block")) return BlockVisitor::new;
+        if (transformedName.equals("net.minecraft.block.BlockButton")) return BlockButtonVisitor::new;
+        else {
+            int[] constantTable = ClassBytes.getConstantJumpTable(bytes);
+            if (ClassTraverser.get().isSuper(bytes, constantTable, "net/minecraft/block/BlockButton")) return BlockButtonChildVisitor::new;
+        }
+        return null;
+    }
+
+    private static class BlockVisitor extends LeClassVisitor {
 
         private boolean check = false;
 
@@ -52,7 +66,7 @@ public final class NewButtonVisitor {
     }
 
 
-    public static class BlockButtonVisitor extends LeClassVisitor {
+    private static class BlockButtonVisitor extends LeClassVisitor {
 
         private String className;
 
@@ -130,7 +144,7 @@ public final class NewButtonVisitor {
         }
     }
 
-    public static class BlockButtonChildVisitor extends LeClassVisitor {
+    private static class BlockButtonChildVisitor extends LeClassVisitor {
 
         private String superName = null;
 
@@ -193,5 +207,5 @@ public final class NewButtonVisitor {
         }
     }
 
-    private NewButtonVisitor() {}
+    private NewButtonTransformer() {}
 }

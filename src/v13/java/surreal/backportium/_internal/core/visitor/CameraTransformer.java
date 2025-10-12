@@ -8,14 +8,21 @@ import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium.util.NewMathHelper;
 
+import java.util.function.Function;
+
 /**
  * Interpolates eye height changes and allows block overlays to be rendered when player is in water
  */
-public final class CameraVisitor {
+public final class CameraTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/CameraVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/CameraTransformer$Hooks";
 
-    public static class EntityRendererVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        if (transformedName.equals("net.minecraft.client.renderer.EntityRenderer")) return EntityRendererVisitor::new;
+        return null;
+    }
+
+    private static class EntityRendererVisitor extends LeClassVisitor {
 
         public EntityRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -149,5 +156,5 @@ public final class CameraVisitor {
         }
     }
 
-    private CameraVisitor() {}
+    private CameraTransformer() {}
 }

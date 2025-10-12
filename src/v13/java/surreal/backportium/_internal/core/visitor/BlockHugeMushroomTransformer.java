@@ -12,12 +12,19 @@ import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium.init.ModBlocks;
 
-public final class BlockHugeMushroomVisitor extends LeClassVisitor {
+import java.util.function.Function;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BlockHugeMushroomVisitor$Hooks";
+public final class BlockHugeMushroomTransformer extends LeClassVisitor {
 
-    public BlockHugeMushroomVisitor(ClassVisitor cv) {
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BlockHugeMushroomTransformer$Hooks";
+
+    private BlockHugeMushroomTransformer(ClassVisitor cv) {
         super(cv);
+    }
+
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        if (transformedName.equals("net.minecraft.block.BlockHugeMushroom")) return BlockHugeMushroomTransformer::new;
+        return null;
     }
 
     @Override

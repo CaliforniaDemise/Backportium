@@ -29,14 +29,28 @@ import surreal.backportium.init.ModSounds;
 import surreal.backportium._internal.entity.RockableBoat;
 
 import java.util.Random;
+import java.util.function.Function;
 
-public final class BubbleColumnVisitor {
+public final class BubbleColumnTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BubbleColumnVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BubbleColumnTransformer$Hooks";
     private static final String BUBBLE_COLUMN_INTERACTABLE = "surreal/backportium/api/entity/BubbleColumnInteractable";
     private static final String ROCKABLE_BOAT = "surreal/backportium/_internal/entity/RockableBoat";
 
-    public static class BlockColumnPlacerVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.block.BlockSoulSand": return cv -> new BlockColumnPlacerVisitor(cv, true);
+            case "net.minecraft.block.BlockMagma": return cv -> new BlockColumnPlacerVisitor(cv, false);
+            case "net.minecraft.entity.Entity": return EntityVisitor::new;
+            case "net.minecraft.client.entity.EntityPlayerSP": return EntityPlayerSPVisitor::new;
+            case "net.minecraft.entity.projectile.EntityThrowable": return EntityThrowableVisitor::new;
+            case "net.minecraft.entity.item.EntityBoat": return EntityBoatVisitor::new;
+            case "net.minecraft.client.renderer.entity.RenderBoat": return RenderBoatVisitor::new;
+        }
+        return null;
+    }
+
+    private static class BlockColumnPlacerVisitor extends LeClassVisitor {
 
         private final boolean upwards;
 
@@ -93,7 +107,7 @@ public final class BubbleColumnVisitor {
         }
     }
 
-    public static class EntityVisitor extends LeClassVisitor {
+    private static class EntityVisitor extends LeClassVisitor {
 
         public EntityVisitor(ClassVisitor cv) {
             super(cv);
@@ -106,7 +120,7 @@ public final class BubbleColumnVisitor {
         }
     }
 
-    public static class EntityPlayerSPVisitor extends LeClassVisitor {
+    private static class EntityPlayerSPVisitor extends LeClassVisitor {
 
         public EntityPlayerSPVisitor(ClassVisitor cv) {
             super(cv);
@@ -147,7 +161,7 @@ public final class BubbleColumnVisitor {
         }
     }
 
-    public static class EntityThrowableVisitor extends LeClassVisitor {
+    private static class EntityThrowableVisitor extends LeClassVisitor {
 
         private boolean check = false;
 
@@ -222,7 +236,7 @@ public final class BubbleColumnVisitor {
         }
     }
 
-    public static class EntityBoatVisitor extends LeClassVisitor {
+    private static class EntityBoatVisitor extends LeClassVisitor {
 
         private String className;
 
@@ -406,7 +420,7 @@ public final class BubbleColumnVisitor {
         }
     }
 
-    public static class RenderBoatVisitor extends LeClassVisitor {
+    private static class RenderBoatVisitor extends LeClassVisitor {
 
         public RenderBoatVisitor(ClassVisitor cv) {
             super(cv);
@@ -552,5 +566,5 @@ public final class BubbleColumnVisitor {
         }
     }
 
-    private BubbleColumnVisitor() {}
+    private BubbleColumnTransformer() {}
 }

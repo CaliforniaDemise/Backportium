@@ -7,18 +7,35 @@ import net.minecraft.block.state.BlockStateContainer;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
+import surreal.backportium._internal.bytecode.traverse.ClassBytes;
+import surreal.backportium._internal.bytecode.traverse.ClassTraverser;
 import surreal.backportium.block.properties.wall.NewWall;
 import surreal.backportium.block.state.WallContainer;
 
+import java.util.function.Function;
+
 import static surreal.backportium.block.properties.wall.NewWallProperties.*;
 
-public final class NewWallVisitor {
+public final class NewWallTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/NewWallVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/NewWallTransformer$Hooks";
     private static final String NEW_WALL = "surreal/backportium/block/properties/wall/NewWall";
 
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        if (transformedName.equals("net.minecraft.block.BlockWall")) return BlockWallVisitor::new;
+        else {
+            if (transformedName.equals("vazkii.quark.base.block.BlockQuarkWall")) return QuarkWallVisitor::new;
+//            if (transformedName.equals("paulevs.betternether.blocks.BNWall")) return NewWallVisitor.BlockWallVisitor::new;
+            if (transformedName.equals("net.minecraft.block.BlockPane")) return BlockPaneVisitor::new;
+            int[] constantTable = ClassBytes.getConstantJumpTable(bytes);
+            if (ClassTraverser.get().isSuper(bytes, constantTable, "net/minecraft/block/BlockWall")) return BlockWallChildVisitor::new;
+        }
+        if (transformedName.equals("net.minecraft.block.Block")) return BlockVisitor::new;
+        return null;
+    }
+
     // Vazkii, why are you being such a retard?
-    public static class QuarkWallVisitor extends BlockWallVisitor {
+    private static class QuarkWallVisitor extends BlockWallVisitor {
 
         public QuarkWallVisitor(ClassVisitor cv) {
             super(cv);
@@ -40,7 +57,7 @@ public final class NewWallVisitor {
         }
     }
 
-    public static class BlockVisitor extends LeClassVisitor {
+    private static class BlockVisitor extends LeClassVisitor {
 
         private boolean check = false;
 
@@ -75,7 +92,7 @@ public final class NewWallVisitor {
         }
     }
 
-    public static class BlockWallVisitor extends LeClassVisitor {
+    private static class BlockWallVisitor extends LeClassVisitor {
 
         private String className;
 
@@ -109,7 +126,7 @@ public final class NewWallVisitor {
         }
     }
 
-    public static class BlockWallChildVisitor extends LeClassVisitor {
+    private static class BlockWallChildVisitor extends LeClassVisitor {
 
         private String superName = null;
 
@@ -161,7 +178,7 @@ public final class NewWallVisitor {
         }
     }
 
-    public static class BlockPaneVisitor extends LeClassVisitor {
+    private static class BlockPaneVisitor extends LeClassVisitor {
 
         public BlockPaneVisitor(ClassVisitor cv) {
             super(cv);
@@ -206,5 +223,5 @@ public final class NewWallVisitor {
         }
     }
 
-    private NewWallVisitor() {}
+    private NewWallTransformer() {}
 }

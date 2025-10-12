@@ -22,13 +22,23 @@ import surreal.backportium.client.entity.render.layer.LayerRiptide;
 import surreal.backportium.init.ModEnchantments;
 
 import java.util.List;
+import java.util.function.Function;
 
-public final class TridentVisitor {
+public final class TridentTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/TridentVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/TridentTransformer$Hooks";
     private static final String RIPTIDE_ENTITY = "surreal/backportium/api/entity/RiptideEntity";
 
-    public static class EntityLivingBaseVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
+            case "net.minecraft.client.renderer.entity.RenderLivingBase": return RenderLivingBaseVisitor::new;
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderPlayerVisitor::new;
+        }
+        return null;
+    }
+
+    private static class EntityLivingBaseVisitor extends LeClassVisitor {
 
         public EntityLivingBaseVisitor(ClassVisitor cv) {
             super(cv);
@@ -84,7 +94,7 @@ public final class TridentVisitor {
         }
     }
 
-    public static class RenderLivingBaseVisitor extends LeClassVisitor {
+    private static class RenderLivingBaseVisitor extends LeClassVisitor {
 
         public RenderLivingBaseVisitor(ClassVisitor cv) {
             super(cv);
@@ -115,7 +125,7 @@ public final class TridentVisitor {
         }
     }
 
-    public static class RenderPlayerVisitor extends LeClassVisitor {
+    private static class RenderPlayerVisitor extends LeClassVisitor {
 
         public RenderPlayerVisitor(ClassVisitor cv) {
             super(cv);
@@ -234,5 +244,5 @@ public final class TridentVisitor {
         }
     }
 
-    private TridentVisitor() {}
+    private TridentTransformer() {}
 }

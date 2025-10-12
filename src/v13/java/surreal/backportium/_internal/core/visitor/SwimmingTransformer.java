@@ -24,15 +24,28 @@ import surreal.backportium.api.entity.RiptideEntity;
 import surreal.backportium.api.entity.SwimmingEntity;
 import surreal.backportium.util.NewMathHelper;
 
+import java.util.function.Function;
+
 // TODO Fix capes
 // TODO Crawling and other collision stuff
-public final class SwimmingVisitor {
+public final class SwimmingTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/SwimmingVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/SwimmingTransformer$Hooks";
     private static final String SWIMMING_ENTITY = "surreal/backportium/api/entity/SwimmingEntity";
     private static final String MODEL_BIPED_SWIMMING = "surreal/backportium/_internal/client/model/ModelBipedSwimming";
 
-    public static class EntityLivingBaseVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
+            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayerVisitor::new;
+            case "net.minecraft.client.model.ModelBiped": return ModelBipedVisitor::new;
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderPlayerVisitor::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
+        }
+        return null;
+    }
+
+    private static class EntityLivingBaseVisitor extends LeClassVisitor {
 
         public EntityLivingBaseVisitor(ClassVisitor cv) {
             super(cv);
@@ -127,7 +140,7 @@ public final class SwimmingVisitor {
         }
     }
 
-    public static class EntityPlayerVisitor extends LeClassVisitor {
+    private static class EntityPlayerVisitor extends LeClassVisitor {
 
         public EntityPlayerVisitor(ClassVisitor cv) {
             super(cv);
@@ -215,7 +228,7 @@ public final class SwimmingVisitor {
         }
     }
 
-    public static class EntityRendererVisitor extends LeClassVisitor {
+    private static class EntityRendererVisitor extends LeClassVisitor {
 
         public EntityRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -248,7 +261,7 @@ public final class SwimmingVisitor {
     }
 
     // TODO Add a way to change head pitch and stuff to EntityMove
-    public static class ModelBipedVisitor extends LeClassVisitor {
+    private static class ModelBipedVisitor extends LeClassVisitor {
 
         private boolean hasSetLivingAnimations = false;
 
@@ -337,7 +350,7 @@ public final class SwimmingVisitor {
         }
     }
 
-    public static class RenderPlayerVisitor extends LeClassVisitor {
+    private static class RenderPlayerVisitor extends LeClassVisitor {
 
         public RenderPlayerVisitor(ClassVisitor cv) {
             super(cv);
@@ -487,5 +500,5 @@ public final class SwimmingVisitor {
         }
     }
 
-    private SwimmingVisitor() {}
+    private SwimmingTransformer() {}
 }

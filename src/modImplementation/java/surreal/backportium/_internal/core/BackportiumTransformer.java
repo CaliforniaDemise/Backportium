@@ -35,6 +35,7 @@ public final class BackportiumTransformer implements IClassTransformer {
 
     private static Function<ClassVisitor, ClassVisitor> getVisitors(String name, String transformedName, byte[] bytes) {
         Function<ClassVisitor, ClassVisitor> function = TransformerV13.getVisitor(name, transformedName, bytes);
+        function = mix(function, TransformerV15.getVisitor(name, transformedName, bytes));
         function = mix(function, TransformerV16.getVisitor(name, transformedName, bytes));
         return function;
     }

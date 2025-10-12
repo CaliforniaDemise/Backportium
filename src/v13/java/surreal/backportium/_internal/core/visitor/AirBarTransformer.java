@@ -10,11 +10,21 @@ import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium.init.ModBlocks;
 
-public final class AirBarVisitor {
+import java.util.function.Function;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/AirBarVisitor$Hooks";
+public final class AirBarTransformer {
 
-    public static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/AirBarTransformer$Hooks";
+
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
+            case "net.minecraftforge.client.GuiIngameForge": return GuiIngameForgeVisitor::new;
+        }
+        return null;
+    }
+
+    private static class EntityLivingBaseVisitor extends LeClassVisitor {
 
         public EntityLivingBaseVisitor(ClassVisitor cv) {
             super(cv);
@@ -54,7 +64,7 @@ public final class AirBarVisitor {
         }
     }
 
-    public static class GuiIngameForgeVisitor extends LeClassVisitor {
+    private static class GuiIngameForgeVisitor extends LeClassVisitor {
 
         public GuiIngameForgeVisitor(ClassVisitor cv) {
             super(cv);
@@ -104,5 +114,5 @@ public final class AirBarVisitor {
         }
     }
 
-    private AirBarVisitor() {}
+    private AirBarTransformer() {}
 }

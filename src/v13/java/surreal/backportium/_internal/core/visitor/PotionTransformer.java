@@ -12,12 +12,23 @@ import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium.init.ModPotions;
 
 import java.util.Objects;
+import java.util.function.Function;
 
-public final class PotionVisitor {
+public final class PotionTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/PotionVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/PotionTransformer$Hooks";
 
-    public static class EntityLivingBaseVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
+            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayerVisitor::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
+            case "net.minecraft.block.Block": return BlockVisitor::new;
+        }
+        return null;
+    }
+
+    private static class EntityLivingBaseVisitor extends LeClassVisitor {
 
         public EntityLivingBaseVisitor(ClassVisitor cv) {
             super(cv);
@@ -91,7 +102,7 @@ public final class PotionVisitor {
         }
     }
 
-    public static class EntityPlayerVisitor extends LeClassVisitor {
+    private static class EntityPlayerVisitor extends LeClassVisitor {
 
         public EntityPlayerVisitor(ClassVisitor cv) {
             super(cv);
@@ -127,7 +138,7 @@ public final class PotionVisitor {
         }
     }
 
-    public static class EntityRendererVisitor extends LeClassVisitor {
+    private static class EntityRendererVisitor extends LeClassVisitor {
 
         public EntityRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -230,7 +241,7 @@ public final class PotionVisitor {
         }
     }
 
-    public static class BlockVisitor extends LeClassVisitor {
+    private static class BlockVisitor extends LeClassVisitor {
 
         public BlockVisitor(ClassVisitor cv) {
             super(cv);
@@ -303,5 +314,5 @@ public final class PotionVisitor {
         }
     }
 
-    private PotionVisitor() {}
+    private PotionTransformer() {}
 }

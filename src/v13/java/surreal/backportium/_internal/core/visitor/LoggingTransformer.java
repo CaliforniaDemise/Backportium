@@ -30,14 +30,41 @@ import surreal.backportium._internal.world.chunk.LoggingMap;
 import surreal.backportium.api.block.Loggable;
 import surreal.backportium.util.FluidUtil;
 
-public final class LoggingVisitor {
+import java.util.function.Function;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/LoggingVisitor$Hooks";
+public final class LoggingTransformer {
+
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/LoggingTransformer$Hooks";
     private static final String LOGGED_ACCESS = "surreal/backportium/_internal/world/LoggedAccess";
     private static final String LOGGABLE_CHUNK = "surreal/backportium/_internal/world/chunk/LoggableChunk";
     private static final String LOGGING_MAP = "surreal/backportium/_internal/world/chunk/LoggingMap";
 
-    public static class ChunkVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.world.chunk.Chunk": return ChunkVisitor::new;
+            case "net.minecraft.world.chunk.storage.AnvilChunkLoader": return AnvilChunkLoaderVisitor::new;
+            case "net.minecraft.network.play.server.SPacketChunkData": return SPacketChunkDataVisitor::new;
+            case "net.minecraft.client.network.NetHandlerPlayClient": return NetHandlerPlayClientVisitor::new;
+            case "net.minecraft.world.IBlockAccess": return IBlockAccessVisitor::new;
+            case "net.minecraft.world.World": return WorldVisitor::new;
+            case "net.minecraft.world.ChunkCache": return ChunkCacheVisitor::new;
+            case "net.minecraft.client.renderer.chunk.RenderChunk": return RenderChunkVisitor::new;
+            case "net.minecraft.client.renderer.BlockFluidRenderer": return BlockFluidRendererVisitor::new;
+            case "net.minecraft.block.BlockLiquid": return BlockLiquidVisitor::new;
+            case "net.minecraft.block.BlockDynamicLiquid": return BlockDynamicLiquidVisitor::new;
+            case "net.minecraft.block.BlockStaticLiquid": return BlockStaticLiquidVisitor::new;
+            case "net.minecraft.world.WorldServer": return WorldServerVisitor::new;
+            case "net.minecraft.network.play.server.SPacketBlockChange": return SPacketBlockChangeVisitor::new;
+            case "net.minecraft.world.WorldEntitySpawner": return WorldEntitySpawnerVisitor::new;
+            case "net.minecraft.entity.Entity": return EntityVisitor::new;
+            case "net.minecraft.client.renderer.ActiveRenderInfo": return ActiveRenderInfoVisitor::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
+            case "net.minecraftforge.common.ForgeHooks": return ForgeHooks::new;
+        }
+        return null;
+    }
+
+    private static class ChunkVisitor extends LeClassVisitor {
 
         public ChunkVisitor(ClassVisitor cv) {
             super(cv);
@@ -96,7 +123,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class AnvilChunkLoaderVisitor extends LeClassVisitor {
+    private static class AnvilChunkLoaderVisitor extends LeClassVisitor {
 
         public AnvilChunkLoaderVisitor(ClassVisitor cv) {
             super(cv);
@@ -147,7 +174,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class SPacketChunkDataVisitor extends LeClassVisitor {
+    private static class SPacketChunkDataVisitor extends LeClassVisitor {
 
         public SPacketChunkDataVisitor(ClassVisitor cv) {
             super(cv);
@@ -219,7 +246,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class NetHandlerPlayClientVisitor extends LeClassVisitor {
+    private static class NetHandlerPlayClientVisitor extends LeClassVisitor {
 
         public NetHandlerPlayClientVisitor(ClassVisitor cv) {
             super(cv);
@@ -273,7 +300,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class IBlockAccessVisitor extends LeClassVisitor {
+    private static class IBlockAccessVisitor extends LeClassVisitor {
 
         public IBlockAccessVisitor(ClassVisitor cv) {
             super(cv);
@@ -285,7 +312,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class WorldVisitor extends LeClassVisitor {
+    private static class WorldVisitor extends LeClassVisitor {
 
         public WorldVisitor(ClassVisitor cv) {
             super(cv);
@@ -431,7 +458,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class ChunkCacheVisitor extends LeClassVisitor {
+    private static class ChunkCacheVisitor extends LeClassVisitor {
 
         public ChunkCacheVisitor(ClassVisitor cv) {
             super(cv);
@@ -462,7 +489,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class RenderChunkVisitor extends LeClassVisitor {
+    private static class RenderChunkVisitor extends LeClassVisitor {
 
         public RenderChunkVisitor(ClassVisitor cv) {
             super(cv);
@@ -541,7 +568,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class BlockFluidRendererVisitor extends LeClassVisitor {
+    private static class BlockFluidRendererVisitor extends LeClassVisitor {
 
         public BlockFluidRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -570,7 +597,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class BlockLiquidVisitor extends LeClassVisitor {
+    private static class BlockLiquidVisitor extends LeClassVisitor {
 
         public BlockLiquidVisitor(ClassVisitor cv) {
             super(cv);
@@ -653,7 +680,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class BlockDynamicLiquidVisitor extends LeClassVisitor {
+    private static class BlockDynamicLiquidVisitor extends LeClassVisitor {
 
         public BlockDynamicLiquidVisitor(ClassVisitor cv) {
             super(cv);
@@ -740,7 +767,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class BlockStaticLiquidVisitor extends LeClassVisitor {
+    private static class BlockStaticLiquidVisitor extends LeClassVisitor {
 
         public BlockStaticLiquidVisitor(ClassVisitor cv) {
             super(cv);
@@ -771,7 +798,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class WorldServerVisitor extends LeClassVisitor {
+    private static class WorldServerVisitor extends LeClassVisitor {
 
         public WorldServerVisitor(ClassVisitor cv) {
             super(cv);
@@ -821,7 +848,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class SPacketBlockChangeVisitor extends LeClassVisitor {
+    private static class SPacketBlockChangeVisitor extends LeClassVisitor {
 
         public SPacketBlockChangeVisitor(ClassVisitor cv) {
             super(cv);
@@ -916,7 +943,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class WorldEntitySpawnerVisitor extends LeClassVisitor {
+    private static class WorldEntitySpawnerVisitor extends LeClassVisitor {
 
         public WorldEntitySpawnerVisitor(ClassVisitor cv) {
             super(cv);
@@ -957,7 +984,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class EntityVisitor extends LeClassVisitor {
+    private static class EntityVisitor extends LeClassVisitor {
 
         public EntityVisitor(ClassVisitor cv) {
             super(cv);
@@ -995,7 +1022,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class ForgeHooks extends LeClassVisitor {
+    private static class ForgeHooks extends LeClassVisitor {
 
         public ForgeHooks(ClassVisitor cv) {
             super(cv);
@@ -1026,7 +1053,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class EntityRendererVisitor extends LeClassVisitor {
+    private static class EntityRendererVisitor extends LeClassVisitor {
 
         public EntityRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -1056,7 +1083,7 @@ public final class LoggingVisitor {
         }
     }
 
-    public static class ActiveRenderInfoVisitor extends LeClassVisitor {
+    private static class ActiveRenderInfoVisitor extends LeClassVisitor {
 
         public ActiveRenderInfoVisitor(ClassVisitor cv) {
             super(cv);
@@ -1259,5 +1286,5 @@ public final class LoggingVisitor {
         }
     }
 
-    private LoggingVisitor() {}
+    private LoggingTransformer() {}
 }

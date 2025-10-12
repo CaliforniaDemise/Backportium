@@ -10,12 +10,19 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 
-public final class BuoyancyVisitor {
+import java.util.function.Function;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BuoyancyVisitor$Hooks";
+public final class ItemEntityBuoyancyTransformer {
+
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/ItemEntityBuoyancyTransformer$Hooks";
     private static final String MOD_LIST = "surreal/backportium/integration/ModList";
 
-    public static class EntityItemVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        if (transformedName.equals("net.minecraft.entity.item.EntityItem")) return EntityItemVisitor::new;
+        return null;
+    }
+
+    private static class EntityItemVisitor extends LeClassVisitor {
 
         public EntityItemVisitor(ClassVisitor cv) {
             super(cv);
@@ -104,5 +111,5 @@ public final class BuoyancyVisitor {
         }
     }
 
-    private BuoyancyVisitor() {}
+    private ItemEntityBuoyancyTransformer() {}
 }

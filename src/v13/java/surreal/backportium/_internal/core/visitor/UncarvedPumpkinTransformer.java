@@ -11,11 +11,25 @@ import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium.init.ModBlocks;
 
-public final class UncarvedPumpkinVisitor {
+import java.util.function.Function;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/UncarvedPumpkinVisitor$Hooks";
+public final class UncarvedPumpkinTransformer {
 
-    public static class BlockFenceLikeVisitor extends LeClassVisitor {
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/UncarvedPumpkinTransformer$Hooks";
+
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.block.BlockFence": return cv -> new BlockFenceLikeVisitor(cv, "func_194142_e");
+            case "net.minecraft.block.BlockWall": return cv -> new BlockFenceLikeVisitor(cv, "func_194143_e");
+            case "net.minecraft.block.BlockPane": return cv -> new BlockFenceLikeVisitor(cv, "func_193394_e");
+            case "net.minecraft.block.BlockStem": return BlockStemVisitor::new;
+            case "net.minecraft.stats.StatList": return StatListVisitor::new;
+            case "net.minecraft.world.gen.feature.WorldGenPumpkin": return WorldGenPumpkinVisitor::new;
+        }
+        return null;
+    }
+
+    private static class BlockFenceLikeVisitor extends LeClassVisitor {
 
         private final String srgName;
 
@@ -49,7 +63,7 @@ public final class UncarvedPumpkinVisitor {
         }
     }
 
-    public static class BlockStemVisitor extends LeClassVisitor {
+    private static class BlockStemVisitor extends LeClassVisitor {
 
         public BlockStemVisitor(ClassVisitor cv) {
             super(cv);
@@ -95,7 +109,7 @@ public final class UncarvedPumpkinVisitor {
         }
     }
 
-    public static class StatListVisitor extends LeClassVisitor {
+    private static class StatListVisitor extends LeClassVisitor {
 
         public StatListVisitor(ClassVisitor cv) {
             super(cv);
@@ -129,7 +143,7 @@ public final class UncarvedPumpkinVisitor {
         }
     }
 
-    public static class WorldGenPumpkinVisitor extends LeClassVisitor {
+    private static class WorldGenPumpkinVisitor extends LeClassVisitor {
 
         public WorldGenPumpkinVisitor(ClassVisitor cv) {
             super(cv);
@@ -187,5 +201,5 @@ public final class UncarvedPumpkinVisitor {
         }
     }
 
-    private UncarvedPumpkinVisitor() {}
+    private UncarvedPumpkinTransformer() {}
 }

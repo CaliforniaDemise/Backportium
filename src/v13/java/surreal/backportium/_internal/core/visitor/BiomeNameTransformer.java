@@ -1,5 +1,6 @@
 package surreal.backportium._internal.core.visitor;
 
+import net.minecraft.client.gui.GuiOverlayDebug;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
@@ -14,6 +15,7 @@ import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium.api.world.biome.Translatable;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * Make biome names translatable. This doesn't change how biomeName behaves. If I18n doesn't have the key set, it will use default name instead.
@@ -22,15 +24,25 @@ import java.util.Objects;
  * - Change debug info to show both registry name and biome name.
  * Transforms {@link Biome}, {@link GameData}, {@link GuiOverlayDebug} and {@link org.cyclops.cyclopscore.config.configurable.ConfigurableBiome}
  */
-public final class BiomeNameVisitor {
+public final class BiomeNameTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BiomeNameVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BiomeNameTransformer$Hooks";
     private static final String TRANSLATABLE = "surreal/backportium/api/world/biome/Translatable";
+
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.world.biome.Biome": return BiomeVisitor::new;
+            case "net.minecraftforge.registries.GameData": return GameDataVisitor::new;
+            case "net.minecraft.client.gui.GuiOverlayDebug": return GuiOverlayDebug::new;
+            case "org.cyclops.cyclopscore.config.configurable.ConfigurableBiome": return ConfigurableBiomeVisitor::new;
+        }
+        return null;
+    }
 
     /**
      * Adds translationKey field and getter and setter for it and adds {@link Translatable} to Biomes interface list.
      */
-    public static class BiomeVisitor extends LeClassVisitor {
+    private static class BiomeVisitor extends LeClassVisitor {
 
         public BiomeVisitor(ClassVisitor cv) {
             super(cv);
@@ -108,7 +120,7 @@ public final class BiomeNameVisitor {
     /**
      * Transform GameData to add a callback to set translation key based on biome registry name
      */
-    public static class GameDataVisitor extends LeClassVisitor {
+    private static class GameDataVisitor extends LeClassVisitor {
 
         public GameDataVisitor(ClassVisitor cv) {
             super(cv);
@@ -145,7 +157,7 @@ public final class BiomeNameVisitor {
     /**
      * Replace basic getBiomeName() call with 'registryName (biomeName)' in debug info gui (F3)
      */
-    public static class GuiOverlayDebug extends LeClassVisitor {
+    private static class GuiOverlayDebug extends LeClassVisitor {
 
         public GuiOverlayDebug(ClassVisitor cv) {
             super(cv);
@@ -179,7 +191,7 @@ public final class BiomeNameVisitor {
      * Fixes Meneglin and other Cyclops Team mods' biomes translating biome names. Too stupid.
      */
     // From Cyclops Core
-    public static class ConfigurableBiomeVisitor extends LeClassVisitor {
+    private static class ConfigurableBiomeVisitor extends LeClassVisitor {
 
         public ConfigurableBiomeVisitor(ClassVisitor cv) {
             super(cv);
@@ -252,5 +264,5 @@ public final class BiomeNameVisitor {
         }
     }
 
-    private BiomeNameVisitor() {}
+    private BiomeNameTransformer() {}
 }

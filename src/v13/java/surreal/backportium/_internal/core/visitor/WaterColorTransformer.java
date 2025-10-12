@@ -26,13 +26,27 @@ import surreal.backportium.util.NewMathHelper;
 import surreal.backportium.util.WaterUtil;
 
 import java.util.Objects;
+import java.util.function.Function;
 
-public final class WaterColorVisitor {
+public final class WaterColorTransformer {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/WaterColorVisitor$Hooks";
+    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/WaterColorTransformer$Hooks";
     private static final String CUSTOM_WATER_COLOR = "surreal/backportium/api/world/biome/CustomWaterColor";
 
-    public static class BiomeVisitor extends LeClassVisitor {
+    public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
+        switch (transformedName) {
+            case "net.minecraft.world.biome.Biome": return BiomeVisitor::new;
+            case "net.minecraft.world.biome.BiomeColorHelper$3": return BiomeColorHelper$WaterColorVisitor::new;
+            case "net.minecraft.client.renderer.BlockFluidRenderer": return BlockFluidRendererVisitor::new;
+            case "net.minecraft.client.renderer.ItemRenderer": return ItemRendererVisitor::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
+            case "net.minecraft.block.BlockLiquid": return BlockLiquidVisitor::new;
+            case "net.minecraftforge.registries.GameData": return GameDataVisitor::new;
+        }
+        return null;
+    }
+
+    private static class BiomeVisitor extends LeClassVisitor {
 
         public BiomeVisitor(ClassVisitor cv) {
             super(cv);
@@ -112,7 +126,7 @@ public final class WaterColorVisitor {
         }
     }
 
-    public static class BiomeColorHelper$WaterColorVisitor extends LeClassVisitor {
+    private static class BiomeColorHelper$WaterColorVisitor extends LeClassVisitor {
 
         public BiomeColorHelper$WaterColorVisitor(ClassVisitor cv) {
             super(cv);
@@ -140,7 +154,7 @@ public final class WaterColorVisitor {
         }
     }
 
-    public static class BlockFluidRendererVisitor extends LeClassVisitor {
+    private static class BlockFluidRendererVisitor extends LeClassVisitor {
 
         public BlockFluidRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -194,7 +208,7 @@ public final class WaterColorVisitor {
     }
 
     // HMM
-    public static class TileCrucibleRendererVisitor extends LeClassVisitor {
+    private static class TileCrucibleRendererVisitor extends LeClassVisitor {
 
         public TileCrucibleRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -223,7 +237,7 @@ public final class WaterColorVisitor {
         }
     }
 
-    public static class ItemRendererVisitor extends LeClassVisitor {
+    private static class ItemRendererVisitor extends LeClassVisitor {
 
         public ItemRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -250,7 +264,7 @@ public final class WaterColorVisitor {
         }
     }
 
-    public static class EntityRendererVisitor extends LeClassVisitor {
+    private static class EntityRendererVisitor extends LeClassVisitor {
 
         public EntityRendererVisitor(ClassVisitor cv) {
             super(cv);
@@ -309,7 +323,7 @@ public final class WaterColorVisitor {
         }
     }
 
-    public static class BlockLiquidVisitor extends LeClassVisitor {
+    private static class BlockLiquidVisitor extends LeClassVisitor {
 
         public BlockLiquidVisitor(ClassVisitor cv) {
             super(cv);
@@ -330,7 +344,7 @@ public final class WaterColorVisitor {
     /**
      * Transform GameData to add a callback to set water color based on biome registry name
      */
-    public static class GameDataVisitor extends LeClassVisitor {
+    private static class GameDataVisitor extends LeClassVisitor {
 
         public GameDataVisitor(ClassVisitor cv) {
             super(cv);
@@ -524,5 +538,5 @@ public final class WaterColorVisitor {
         }
     }
 
-    private WaterColorVisitor() {}
+    private WaterColorTransformer() {}
 }
