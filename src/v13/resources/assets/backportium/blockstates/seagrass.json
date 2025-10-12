@@ -1,0 +1,12 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "backportium:template_seagrass",
+    "textures": {
+      "texture": "backportium:blocks/seagrass"
+    }
+  },
+  "variants": {
+    "normal": [{}]
+  }
+}

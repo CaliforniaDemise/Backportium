@@ -1,0 +1,17 @@
+{
+  "parent": "backportium:item/trident_in_hand",
+  "overrides": [
+    {
+      "predicate": { "throwing": -1 },
+      "model": "backportium:item/trident_inv"
+    },
+    {
+      "predicate": { "throwing": 0 },
+      "model": "backportium:item/trident_in_hand"
+    },
+    {
+      "predicate": { "throwing": 1 },
+      "model": "backportium:item/trident_throwing"
+    }
+  ]
+}

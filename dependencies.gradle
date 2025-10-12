@@ -1,0 +1,31 @@
+repositories {
+    maven {
+        name 'CurseMaven'
+        url 'https://curse.cleanroommc.com'
+    }
+    maven {
+        name 'CleanroomMC Maven'
+        url 'https://maven.cleanroommc.com'
+    }
+}
+
+dependencies {
+    var assetmover = "com.cleanroommc:assetmover:$project.version_assetmover"
+    compileOnly assetmover
+    if (project.enable_assetmover.toBoolean()) runtimeOnly assetmover
+
+    var mixinBooter = "zone.rong:mixinbooter:$project.version_mixinbooter"
+    compileOnly mixinBooter
+    if (project.enable_mixinbooter.toBoolean()) {
+        var mixins = modUtils.enableMixins(mixinBooter)
+        api (mixins) {
+            transitive = false
+        }
+        annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+        annotationProcessor 'com.google.guava:guava:32.1.2-jre'
+        annotationProcessor 'com.google.code.gson:gson:2.8.9'
+        annotationProcessor (mixins) {
+            transitive = false
+        }
+    }
+}

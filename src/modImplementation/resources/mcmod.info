@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "${modid}",
+    "name": "${modname}",
+    "description": "Backport 1.13 and up to 1.12.2",
+    "version": "${modversion}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [ "Surreal" ],
+    "logoFile": ""
+  }
+]

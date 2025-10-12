@@ -1,0 +1,15 @@
+1.13
+Map Markers: Right click on a banner with map to add it as marker. Right click again to remove it. It shows color and name of the banner.
+Swimming: Obvious.
+Commands:
+- Command Completion
+- Local Coordinates '^': (?) Basically ~ but uses player orientation for facings.
+- /bossbar: Creating boss bars.
+- /data: changing nbts of entities, tile entities etc.
+- /locate: Locating structures
+- /scoreboard: Some changes
+- /teleport facing: 'facing' value which allows the teleported entity to face an entity or location.
+- /time: Added noon and midnight
+
+1.14
+Illager Patrols: 5 mobs consisting of pillagers and vindicators that spawn randomly in world. One of them is patrol leader.

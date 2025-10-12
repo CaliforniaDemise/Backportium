@@ -1,0 +1,100 @@
+plugins {
+    id 'java'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.4.6'
+}
+
+//tasks.decompressDecompiledSources.enabled false
+
+group = project.maven_group
+version = project.mod_version
+base {
+    archivesName = project.archives_base_name
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = targetCompatibility = 8
+}
+
+minecraft {
+    mcVersion = "1.12.2"
+    username = 'Developer'
+    useDependencyAccessTransformers = true
+
+    injectedTags.put("MOD_ID", project.mod_id)
+    injectedTags.put("MOD_NAME", project.mod_name)
+    injectedTags.put("MOD_VERSION", project.version)
+
+    extraRunJvmArguments.addAll(
+            "-ea:$project.maven_group",
+            "-Dfml.coreMods.load=$project.coremod_class",
+            "-Xms128m", "-Xmx2048m"
+    )
+}
+
+tasks.injectTags.configure {
+    outputClassName.set("$project.tag_class")
+}
+tasks.build.dependsOn(tasks.injectTags)
+
+sourceSets {
+    'modApi' {
+        compileClasspath += main.compileClasspath
+    }
+    'v13' {
+        compileClasspath += modApi.compileClasspath + modApi.output
+    }
+    'v14' {
+        compileClasspath += modApi.compileClasspath + modApi.output
+    }
+    'v15' {
+        compileClasspath += modApi.compileClasspath + modApi.output
+    }
+    'v16' {
+        compileClasspath += modApi.compileClasspath + modApi.output
+    }
+    'modImplementation' {
+        compileClasspath += main.compileClasspath + modApi.output + v13.output + v14.output + v15.output + v16.output
+    }
+    main {
+        compileClasspath += modImplementation.compileClasspath + modImplementation.output
+        runtimeClasspath += modApi.output + modImplementation.output + v13.output + v14.output + v15.output + v16.output
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnlyApi 'org.jetbrains:annotations:24.1.0'
+}
+
+apply from: 'dependencies.gradle'
+
+processResources {
+    dependsOn(tasks.processModApiResources, tasks.processModImplementationResources, tasks.processV13Resources, tasks.processV14Resources, tasks.processV15Resources, tasks.processV16Resources)
+    from sourceSets.modImplementation.output.resourcesDir, sourceSets.v13.output.resourcesDir, sourceSets.v14.output.resourcesDir, sourceSets.v15.output.resourcesDir, sourceSets.v16.output.resourcesDir
+    inputs.property 'modversion', project.version
+    inputs.property 'mcversion', project.minecraft.version
+    filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
+        fcd.expand(
+                'modid' : project.mod_id,
+                'modname' : project.mod_name,
+                'modversion' : project.mod_version,
+                'mcversion' : project.minecraft.version
+        )
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
+jar {
+    from sourceSets.modApi.output.classesDirs + sourceSets.modImplementation.output.classesDirs + sourceSets.v13.output.classesDirs + sourceSets.v14.output.classesDirs + sourceSets.v15.output.classesDirs + sourceSets.v16.output.classesDirs
+    manifest {
+        attributes([
+                'FMLCorePlugin' : project.coremod_class,
+                'FMLCorePluginContainsFMLMod' : true,
+                'ForceLoadAsMod' : project.gradle.startParameter.taskNames[0] == "build"
+        ])
+    }
+}

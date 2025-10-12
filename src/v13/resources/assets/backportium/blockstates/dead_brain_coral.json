@@ -1,0 +1,12 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cross",
+    "textures": {
+      "cross": "backportium:blocks/dead_brain_coral"
+    }
+  },
+  "variants": {
+    "normal": [{}]
+  }
+}

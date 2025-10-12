@@ -1,0 +1,18 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "half_slab",
+    "textures": {
+      "top": "blocks/prismarine_rough",
+      "side": "blocks/prismarine_rough",
+      "bottom": "blocks/prismarine_rough"
+    }
+  },
+  "variants": {
+    "half": {
+      "top": { "model": "upper_slab" },
+      "bottom": { "model": "half_slab" }
+    },
+    "inventory": [{}]
+  }
+}

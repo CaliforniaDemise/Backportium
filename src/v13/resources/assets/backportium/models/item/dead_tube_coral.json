@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "backportium:blocks/dead_tube_coral"
+  }
+}
