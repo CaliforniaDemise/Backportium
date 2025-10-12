@@ -12,7 +12,7 @@ public class ModItems {
     public static Item DEBUG_STICK;
     public static Item DRIED_KELP;
     public static Item MOB_BUCKET;
-    public static Item SEA_HEART;
+    public static Item HEART_OF_THE_SEA;
     public static Item NAUTILUS_SHELL;
     public static Item PHANTOM_MEMBRANE;
     public static Item TURTLE_SCUTE;
@@ -133,7 +133,7 @@ public class ModItems {
         DEBUG_STICK = item("debug_stick");
         DRIED_KELP = item("dried_kelp");
         MOB_BUCKET = item("mob_bucket");
-        SEA_HEART = item("sea_heart");
+        HEART_OF_THE_SEA = item("heart_of_the_sea");
         NAUTILUS_SHELL = item("nautilus_shell");
         PHANTOM_MEMBRANE = item("phantom_membrane");
         TURTLE_SCUTE = item("turtle_scute");

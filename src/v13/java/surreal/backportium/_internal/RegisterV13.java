@@ -19,12 +19,15 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.potion.PotionHelper;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium._internal.block.*;
@@ -41,12 +44,14 @@ import surreal.backportium._internal.item.ItemTrident;
 import surreal.backportium._internal.potion.PotionConduitPower;
 import surreal.backportium._internal.potion.PotionDolphinsGrace;
 import surreal.backportium._internal.potion.PotionSlowFalling;
+import surreal.backportium._internal.recipe.OreIngredientPredicate;
 import surreal.backportium._internal.registry.*;
 import surreal.backportium.api.entity.EntityState;
 import surreal.backportium.api.entity.RiptideEntity;
 import surreal.backportium.api.entity.SwimmingEntity;
 import surreal.backportium.api.item.UseAction;
 import surreal.backportium.init.*;
+import surreal.backportium.util.BlockUtil;
 import surreal.backportium.world.biome.BiomeOceanCold;
 import surreal.backportium.world.biome.BiomeOceanFrozen;
 import surreal.backportium.world.biome.BiomeOceanLukewarm;
@@ -55,6 +60,8 @@ import surreal.backportium.block.*;
 import surreal.backportium.item.ItemBlockClustered;
 import surreal.backportium.item.ItemBlockKelp;
 import surreal.backportium.util.NewMathHelper;
+
+import java.util.Objects;
 
 public class RegisterV13 {
 
@@ -510,5 +517,43 @@ public class RegisterV13 {
         registry.register("turtle_master", b -> b.effect(MobEffects.SLOWNESS, 1200, 3).effect(MobEffects.RESISTANCE, 1200, 2));
         registry.register("long_turtle_master", b -> b.effect(MobEffects.SLOWNESS, 3600, 3).effect(MobEffects.RESISTANCE, 3600, 2));
         registry.register("strong_turtle_master", b -> b.effect(MobEffects.SLOWNESS, 1200, 5).effect(MobEffects.RESISTANCE, 1200, 3));
+    }
+
+    protected static void registerRecipes(Recipes registry) {
+        registry.shaped("blue_ice", new ItemStack(ModBlocks.BLUE_ICE), "AAA", "AAA", "AAA", 'A', net.minecraft.init.Blocks.PACKED_ICE);
+        registry.shaped("packed_ice", new ItemStack(net.minecraft.init.Blocks.PACKED_ICE), "AAA", "AAA", "AAA", 'A', net.minecraft.init.Blocks.ICE);
+        registry.shaped("conduit", new ItemStack(ModBlocks.CONDUIT), "AAA", "ABA", "AAA", 'A', ModItems.NAUTILUS_SHELL, 'B', ModItems.HEART_OF_THE_SEA);
+        registry.shaped("turtle_shell", new ItemStack(ModItems.TURTLE_SHELL), "AAA", "A A", 'A', ModItems.TURTLE_SCUTE);
+        registry.shaped("dried_kelp_block", new ItemStack(ModBlocks.DRIED_KELP_BLOCK), "AAA", "AAA", "AAA", 'A', ModItems.DRIED_KELP);
+        registry.shapeless("dried_kelp_unpacking", new ItemStack(ModItems.DRIED_KELP, 9), ModBlocks.DRIED_KELP_BLOCK);
+        registry.shapeless("spruce_button", new ItemStack(ModBlocks.SPRUCE_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 1));
+        registry.shapeless("birch_button", new ItemStack(ModBlocks.BIRCH_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 2));
+        registry.shapeless("jungle_button", new ItemStack(ModBlocks.JUNGLE_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 3));
+        registry.shapeless("acacia_button", new ItemStack(ModBlocks.ACACIA_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 4));
+        registry.shapeless("dark_oak_button", new ItemStack(ModBlocks.DARK_OAK_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 5));
+        registry.shaped("spruce_pressure_plate", new ItemStack(ModBlocks.SPRUCE_PRESSURE_PLATE), "AA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 1));
+        registry.shaped("birch_pressure_plate", new ItemStack(ModBlocks.BIRCH_PRESSURE_PLATE), "AA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 2));
+        registry.shaped("jungle_pressure_plate", new ItemStack(ModBlocks.JUNGLE_PRESSURE_PLATE), "AA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 3));
+        registry.shaped("acacia_pressure_plate", new ItemStack(ModBlocks.ACACIA_PRESSURE_PLATE), "AA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 4));
+        registry.shaped("dark_oak_pressure_plate", new ItemStack(ModBlocks.DARK_OAK_PRESSURE_PLATE), "AA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 5));
+        registry.shaped("spruce_trapdoor", new ItemStack(ModBlocks.SPRUCE_TRAPDOOR), "AAA", "AAA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 1));
+        registry.shaped("birch_trapdoor", new ItemStack(ModBlocks.BIRCH_TRAPDOOR), "AAA", "AAA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 2));
+        registry.shaped("jungle_trapdoor", new ItemStack(ModBlocks.JUNGLE_TRAPDOOR), "AAA", "AAA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 3));
+        registry.shaped("acacia_trapdoor", new ItemStack(ModBlocks.ACACIA_TRAPDOOR), "AAA", "AAA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 4));
+        registry.shaped("dark_oak_trapdoor", new ItemStack(ModBlocks.DARK_OAK_TRAPDOOR), "AAA", "AAA", 'A', new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 5));
+        OreIngredientPredicate ingredient = new OreIngredientPredicate("plankWood", s -> s.getMetadata() == 0 || !Objects.requireNonNull(s.getItem().getRegistryName()).getNamespace().equals("minecraft"));
+        registry.shapeless(net.minecraft.init.Blocks.WOODEN_BUTTON.getRegistryName(), new ItemStack(net.minecraft.init.Blocks.WOODEN_BUTTON), ingredient);
+        registry.shaped(net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE.getRegistryName(), new ItemStack(net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE), "AA", 'A', ingredient);
+        registry.shaped(net.minecraft.init.Blocks.TRAPDOOR.getRegistryName(), new ItemStack(net.minecraft.init.Blocks.TRAPDOOR), "AAA", "AAA", 'A', ingredient);
+
+        // Furnace
+        GameRegistry.addSmelting(BlockUtil.getItemFromBlock(ModBlocks.KELP), new ItemStack(ModItems.DRIED_KELP), 0.1F);
+
+        // Potion Mixing
+        Ingredient redstoneIng = Ingredient.fromItem(net.minecraft.init.Items.REDSTONE);
+        PotionHelper.addMix(net.minecraft.init.PotionTypes.AWKWARD, ModItems.PHANTOM_MEMBRANE, ModPotionTypes.SLOW_FALLING);
+        PotionHelper.addMix(ModPotionTypes.SLOW_FALLING, redstoneIng, ModPotionTypes.LONG_SLOW_FALLING);
+        PotionHelper.addMix(ModPotionTypes.TURTLE_MASTER, redstoneIng, ModPotionTypes.LONG_TURTLE_MASTER);
+        PotionHelper.addMix(ModPotionTypes.TURTLE_MASTER, net.minecraft.init.Items.GLOWSTONE_DUST, ModPotionTypes.STRONG_TURTLE_MASTER);
     }
 }

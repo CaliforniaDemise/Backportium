@@ -144,6 +144,7 @@ public class Backportium {
     @SubscribeEvent
     public void registerRecipes(RegistryEvent.Register<IRecipe> event) {
         this.manager.recipes.registerAll(event);
+        Register.registerRecipes(this.manager.recipes);
     }
 
     @SideOnly(Side.CLIENT) @SubscribeEvent public void registerModels(ModelRegistryEvent event) { this.manager.registerModels(event); }

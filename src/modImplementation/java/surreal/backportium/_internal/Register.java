@@ -17,7 +17,10 @@ public class Register {
         registerEnchantments(manager.enchantments);
         registerProfessions(manager.professions);
         registerEntities(manager.entities);
-        registerRecipes(manager.recipes);
+    }
+
+    public static void registerRecipes(Recipes registry) {
+        RegisterV13.registerRecipes(registry);
     }
 
     private static void registerEntityMoves() {
@@ -65,8 +68,5 @@ public class Register {
 
     private static void registerEntities(Entities registry) {
         RegisterV13.registerEntities(registry);
-    }
-
-    private static void registerRecipes(Recipes registry) {
     }
 }

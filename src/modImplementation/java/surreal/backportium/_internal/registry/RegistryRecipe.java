@@ -31,7 +31,7 @@ public class RegistryRecipe extends Registry<IRecipe> implements Recipes {
     }
 
     public void shapeless(String name, ItemStack output, Object... inputs) {
-        shaped(new ResourceLocation(manager.getModId()), output, inputs);
+        shapeless(new ResourceLocation(manager.getModId()), output, inputs);
     }
 
     private static Ingredient[] ingredients(Object[] objects) {
