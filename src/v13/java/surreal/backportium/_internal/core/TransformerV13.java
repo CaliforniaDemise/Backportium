@@ -26,6 +26,7 @@ public final class TransformerV13 {
         function = mix(function, SwimmingTransformer.visit(name, transformedName, bytes));
         function = mix(function, CameraTransformer.visit(name, transformedName, bytes));
         function = mix(function, UncarvedPumpkinTransformer.visit(name, transformedName, bytes));
+        function = mix(function, BedExplosionTransformer.visit(name, transformedName, bytes));
 
         // Fixes
         function = mix(function, BannerSoundTransformer.visit(name, transformedName, bytes));
