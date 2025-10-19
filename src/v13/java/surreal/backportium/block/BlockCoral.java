@@ -49,7 +49,7 @@ public class BlockCoral extends BlockBush implements Loggable, ModelProvider {
     @NotNull
     @Override
     public SoundType getSoundType(@NotNull IBlockState state, @NotNull World world, @NotNull BlockPos pos, @Nullable Entity entity) {
-        if (state.getBlock() == this.getDeadVariant()) return SoundType.STONE;
+        if (this.getAliveVariant() != Blocks.AIR) return SoundType.STONE;
         return super.getSoundType(state, world, pos, entity);
     }
 
