@@ -30,6 +30,9 @@ import surreal.backportium.integration.ModList;
 
 import java.util.Random;
 
+// TODO Fix issues it with colored waters.
+// TODO Fix issues with OptiFine.
+// TODO Add a fluidlogged version
 public class BlockBubbleColumn extends BlockStaticLiquid implements StateMapProvider {
 
     public static final PropertyBool DRAG = PropertyBool.create("drag"); /* true: upwards, false: downwards */

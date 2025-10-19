@@ -4,12 +4,14 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import surreal.backportium._internal.ConfigValues;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium._internal.entity.SetSize;
 import surreal.backportium.api.entity.EntityState;
@@ -17,6 +19,7 @@ import surreal.backportium.api.entity.EntityWithState;
 import surreal.backportium.api.entity.RiptideEntity;
 import surreal.backportium.api.entity.SwimmingEntity;
 import surreal.backportium.event.LivingMoveEvent;
+import surreal.backportium.init.ModEntityStates;
 
 import java.util.function.Function;
 
@@ -25,7 +28,7 @@ import static surreal.backportium.init.ModEntityStates.*;
 public final class EntityStateVisitor {
 
     private static final String HOOKS = "surreal/backportium/_internal/core/visitor/EntityStateVisitor$Hooks";
-    private static final String MOVING_ENTITY = "surreal/backportium/api/entity/EntityWithState";
+    private static final String ENTITY_WITH_STATE = "surreal/backportium/api/entity/EntityWithState";
     private static final String SET_SIZE = "surreal/backportium/_internal/entity/SetSize";
 
     @Nullable
@@ -41,7 +44,7 @@ public final class EntityStateVisitor {
         return null;
     }
 
-    public static class EntityVisitor extends LeClassVisitor {
+    private static class EntityVisitor extends LeClassVisitor {
 
         public EntityVisitor(ClassVisitor cv) {
             super(cv);
@@ -59,7 +62,7 @@ public final class EntityStateVisitor {
         }
     }
 
-    public static class EntityPlayerVisitor extends LeClassVisitor {
+    private static class EntityPlayerVisitor extends LeClassVisitor {
 
         public EntityPlayerVisitor(ClassVisitor cv) {
             super(cv);
@@ -106,7 +109,7 @@ public final class EntityStateVisitor {
         }
     }
 
-    public static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static class EntityLivingBaseVisitor extends LeClassVisitor {
 
         private boolean hasEyeHeight = false;
 
@@ -116,7 +119,7 @@ public final class EntityStateVisitor {
 
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            super.visit(version, access, name, signature, superName, getInterfaces(interfaces, MOVING_ENTITY));
+            super.visit(version, access, name, signature, superName, getInterfaces(interfaces, ENTITY_WITH_STATE));
         }
 
         @Override
@@ -184,7 +187,7 @@ public final class EntityStateVisitor {
         }
     }
 
-    public static class ModelBipedVisitor extends LeClassVisitor {
+    private static class ModelBipedVisitor extends LeClassVisitor {
 
         public ModelBipedVisitor(ClassVisitor cv) {
             super(cv);
@@ -221,7 +224,7 @@ public final class EntityStateVisitor {
         }
     }
 
-    public static class RenderVisitor extends LeClassVisitor {
+    private static class RenderVisitor extends LeClassVisitor {
 
         private boolean player;
 
@@ -273,11 +276,29 @@ public final class EntityStateVisitor {
         @Nullable
         public static EntityState EntityLivingBase$getMove(EntityLivingBase entity) {
             EntityState move = null;
-            if (entity.isPlayerSleeping()) move = SLEEPING;
-            if (RiptideEntity.cast(entity).inRiptide()) move = RIPTIDE;
-            if (entity.isElytraFlying()) move = FLYING;
-            if (entity.isSneaking()) move = SNEAKING;
-            if (SwimmingEntity.cast(entity).isSwimming()) move = SWIMMING;
+            SwimmingEntity swimming = SwimmingEntity.cast(entity);
+            if (entity.isPlayerSleeping()) {
+                move = SLEEPING;
+            }
+            else if (SwimmingTransformer.Hooks.isStateClear(entity, CRAWLING)) {
+                if (entity.isElytraFlying()) {
+                    move = FLYING;
+                }
+                else if (swimming.isSwimming()) {
+                    move = CRAWLING;
+                }
+                else if (entity.isSneaking() && (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isFlying) && (entity.onGround || !entity.isInWater()) && !entity.isOnLadder()) {
+                    move = SNEAKING;
+                }
+            }
+            if (!entity.noClip && !entity.isRiding() && entity instanceof EntityPlayer && !SwimmingTransformer.Hooks.isStateClear(entity, move == null ? STANDING : move)) {
+                if (SwimmingTransformer.Hooks.isStateClear(entity, SNEAKING)) {
+                    move = SNEAKING;
+                }
+                else if (ConfigValues.enableCrawling) {
+                    move = CRAWLING;
+                }
+            }
             {
                 LivingMoveEvent event = new LivingMoveEvent(entity, move);
                 if (MinecraftForge.EVENT_BUS.post(event)) {

@@ -132,7 +132,7 @@ public class RegisterV13 {
                 }
             }
         };
-        ModEntityStates.SWIMMING = new EntityState() {
+        ModEntityStates.CRAWLING = new EntityState() {
 
             @Override
             public float getHeight(EntityLivingBase entity, float defaultValue) {

@@ -6,6 +6,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import surreal.backportium._internal.core.visitor.*;
+import surreal.backportium._internal.core.visitor.additional.BetterShoulderEntitiesTransformer;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,13 +31,21 @@ public final class BackportiumTransformer implements IClassTransformer {
         function = mix(function, DynamicModelLoadingVisitor.getClassVisitor(name, transformedName));
         function = mix(function, EntityStateVisitor.getClassVisitor(name, transformedName));
         function = mix(function, BiomeOverrideVisitor.getClassVisitor(name, transformedName));
+        function = mix(function, getAdditionalVisitors(name, transformedName, bytes));
         return apply(function, bytes, 3);
     }
 
     private static Function<ClassVisitor, ClassVisitor> getVisitors(String name, String transformedName, byte[] bytes) {
-        Function<ClassVisitor, ClassVisitor> function = TransformerV13.getVisitor(name, transformedName, bytes);
+        Function<ClassVisitor, ClassVisitor> function = null;
+        function = TransformerV13.getVisitor(name, transformedName, bytes);
         function = mix(function, TransformerV15.getVisitor(name, transformedName, bytes));
         function = mix(function, TransformerV16.getVisitor(name, transformedName, bytes));
+        return function;
+    }
+
+    private static Function<ClassVisitor, ClassVisitor> getAdditionalVisitors(String name, String transformedName, byte[] bytes) {
+        Function<ClassVisitor, ClassVisitor> function = null;
+        function = mix(function, BetterShoulderEntitiesTransformer.visit(name, transformedName, bytes));
         return function;
     }
 
