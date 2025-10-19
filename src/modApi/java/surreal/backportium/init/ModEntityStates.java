@@ -23,18 +23,18 @@ public class ModEntityStates {
     static {
         STANDING = new EntityState() {
             @Override
-            public float getHeight(EntityLivingBase entity, float defaultValue) {
-                return defaultValue;
+            public float getHeight(EntityLivingBase entity) {
+                return 1.8F;
             }
 
             @Override
-            public float getWidth(EntityLivingBase entity, float defaultValue) {
-                return defaultValue;
+            public float getWidth(EntityLivingBase entity) {
+                return 0.6F;
             }
 
             @Override
-            public float getEyeHeight(EntityLivingBase entity, float defaultValue) {
-                return defaultValue;
+            public float getEyeHeight(EntityLivingBase entity) {
+                return 1.62F;
             }
 
             @Override
@@ -54,18 +54,18 @@ public class ModEntityStates {
         };
         SNEAKING = new EntityState() {
             @Override
-            public float getHeight(EntityLivingBase entity, float defaultValue) {
+            public float getHeight(EntityLivingBase entity) {
                 return 1.5F;
             }
 
             @Override
-            public float getWidth(EntityLivingBase entity, float defaultValue) {
+            public float getWidth(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getEyeHeight(EntityLivingBase entity, float defaultValue) {
-                return defaultValue - 0.35F; // - 0.08F old
+            public float getEyeHeight(EntityLivingBase entity) {
+                return 1.62F - 0.35F; // - 0.08F old
             }
 
             @Override
@@ -81,17 +81,17 @@ public class ModEntityStates {
         };
         SLEEPING = new EntityState() {
             @Override
-            public float getHeight(EntityLivingBase entity, float defaultValue) {
+            public float getHeight(EntityLivingBase entity) {
                 return 0.2F;
             }
 
             @Override
-            public float getWidth(EntityLivingBase entity, float defaultValue) {
+            public float getWidth(EntityLivingBase entity) {
                 return 0.2F;
             }
 
             @Override
-            public float getEyeHeight(EntityLivingBase entity, float defaultValue) {
+            public float getEyeHeight(EntityLivingBase entity) {
                 return 0.2F;
             }
 
@@ -108,17 +108,17 @@ public class ModEntityStates {
         };
         FLYING = new EntityState() {
             @Override
-            public float getHeight(EntityLivingBase entity, float defaultValue) {
+            public float getHeight(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getWidth(EntityLivingBase entity, float defaultValue) {
+            public float getWidth(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getEyeHeight(EntityLivingBase entity, float defaultValue) {
+            public float getEyeHeight(EntityLivingBase entity) {
                 return 0.4F;
             }
 

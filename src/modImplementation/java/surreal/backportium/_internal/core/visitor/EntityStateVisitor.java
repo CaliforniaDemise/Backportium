@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -16,10 +17,8 @@ import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium._internal.entity.SetSize;
 import surreal.backportium.api.entity.EntityState;
 import surreal.backportium.api.entity.EntityWithState;
-import surreal.backportium.api.entity.RiptideEntity;
 import surreal.backportium.api.entity.SwimmingEntity;
 import surreal.backportium.event.LivingMoveEvent;
-import surreal.backportium.init.ModEntityStates;
 
 import java.util.function.Function;
 
@@ -56,9 +55,17 @@ public final class EntityStateVisitor {
         }
 
         @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            if (name.equals(getName("setSize", "func_70105_a"))) access = setAccess(access, ACC_PUBLIC);
-            return super.visitMethod(access, name, desc, signature, exceptions);
+        public void visitEnd() {
+            super.visitEnd();
+            { // _setSize
+                MethodVisitor mv = super.visitMethod(ACC_PUBLIC | ACC_FINAL, "_setSize", "(FF)V", null, null);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(FLOAD, 1);
+                mv.visitVarInsn(FLOAD, 2);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/entity/Entity", getName("setSize", "func_70105_a"), "(FF)V", false);
+                mv.visitInsn(RETURN);
+                mv.visitMaxs(3, 0);
+            }
         }
     }
 
@@ -136,10 +143,10 @@ public final class EntityStateVisitor {
         @Override
         public void visitEnd() {
             super.visitEnd();
-            { // getMove
-                MethodVisitor mv = super.visitMethod(ACC_PUBLIC, "getMove", "()Lsurreal/backportium/api/entity/EntityState;", null, null);
+            { // getState
+                MethodVisitor mv = super.visitMethod(ACC_PUBLIC, "getState", "()Lsurreal/backportium/api/entity/EntityState;", null, null);
                 mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKESTATIC, HOOKS, "EntityLivingBase$getMove", "(Lnet/minecraft/entity/EntityLivingBase;)Lsurreal/backportium/api/entity/EntityState;", false);
+                mv.visitMethodInsn(INVOKESTATIC, HOOKS, "EntityLivingBase$getState", "(Lnet/minecraft/entity/EntityLivingBase;)Lsurreal/backportium/api/entity/EntityState;", false);
                 mv.visitInsn(ARETURN);
                 mv.visitMaxs(1, 0);
             }
@@ -161,12 +168,10 @@ public final class EntityStateVisitor {
             }
 
             @Override
-            public void visitInsn(int opcode) {
-                if (opcode == RETURN) {
-                    super.visitVarInsn(ALOAD, 0);
-                    super.visitMethodInsn(INVOKESTATIC, HOOKS, "EntityLivingBase$updateSize", "(Lnet/minecraft/entity/EntityLivingBase;)V", false);
-                }
-                super.visitInsn(opcode);
+            public void visitCode() {
+                super.visitCode();
+                super.visitVarInsn(ALOAD, 0);
+                super.visitMethodInsn(INVOKESTATIC, HOOKS, "EntityLivingBase$updateSize", "(Lnet/minecraft/entity/EntityLivingBase;)V", false);
             }
         }
 
@@ -273,14 +278,14 @@ public final class EntityStateVisitor {
     @SuppressWarnings("unused")
     public static class Hooks {
 
-        @Nullable
-        public static EntityState EntityLivingBase$getMove(EntityLivingBase entity) {
-            EntityState move = null;
+        @NotNull
+        public static EntityState EntityLivingBase$getState(EntityLivingBase entity) {
+            EntityState move = STANDING;
             SwimmingEntity swimming = SwimmingEntity.cast(entity);
             if (entity.isPlayerSleeping()) {
                 move = SLEEPING;
             }
-            else if (SwimmingTransformer.Hooks.isStateClear(entity, CRAWLING)) {
+            else if (CRAWLING.isStateClear(entity)) {
                 if (entity.isElytraFlying()) {
                     move = FLYING;
                 }
@@ -291,8 +296,8 @@ public final class EntityStateVisitor {
                     move = SNEAKING;
                 }
             }
-            if (!entity.noClip && !entity.isRiding() && entity instanceof EntityPlayer && !SwimmingTransformer.Hooks.isStateClear(entity, move == null ? STANDING : move)) {
-                if (SwimmingTransformer.Hooks.isStateClear(entity, SNEAKING)) {
+            if (!entity.noClip && !entity.isRiding() && entity instanceof EntityPlayer && !move.isStateClear(entity)) {
+                if (SNEAKING.isStateClear(entity)) {
                     move = SNEAKING;
                 }
                 else if (ConfigValues.enableCrawling) {
@@ -309,28 +314,18 @@ public final class EntityStateVisitor {
         }
 
         public static void EntityPlayer$setSize(EntityLivingBase entity, float width, float height) {
-            EntityState move = EntityWithState.cast(entity).getMove();
-            if (move != null) {
-                SetSize.cast(entity).setSize(move.getWidth(entity, width), move.getHeight(entity, height));
-            }
-            else {
-                SetSize.cast(entity).setSize(width, height);
-            }
+            EntityState move = EntityWithState.cast(entity).getState();
+            SetSize.cast(entity)._setSize(move.getWidth(entity), move.getHeight(entity));
         }
 
         public static void EntityLivingBase$updateSize(EntityLivingBase entity) {
-            EntityState move = EntityWithState.cast(entity).getMove();
-            if (move != null) {
-                SetSize.cast(entity).setSize(move.getWidth(entity, entity.width), move.getHeight(entity, entity.height));
-            }
+            EntityState move = EntityWithState.cast(entity).getState();
+            SetSize.cast(entity)._setSize(move.getWidth(entity), move.getHeight(entity));
         }
 
         public static float EntityLivingBase$getEyeHeight(float defaultValue, EntityLivingBase entity) {
-            EntityState move = EntityWithState.cast(entity).getMove();
-            if (move != null) {
-                return move.getEyeHeight(entity, defaultValue);
-            }
-            return defaultValue;
+            EntityState move = EntityWithState.cast(entity).getState();
+            return move.getEyeHeight(entity);
         }
 
 
@@ -338,19 +333,15 @@ public final class EntityStateVisitor {
         public static void ModelBiped$setRotationAngles(ModelBiped model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
             if (entityIn instanceof EntityLivingBase) {
                 EntityLivingBase living = (EntityLivingBase) entityIn;
-                EntityState move = EntityWithState.cast(living).getMove();
-                if (move != null) {
-                    move.applyModelRotations(model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-                }
+                EntityState move = EntityWithState.cast(living).getState();
+                move.applyModelRotations(model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
             }
         }
 
         @SideOnly(Side.CLIENT)
         public static <T extends EntityLivingBase> void RenderLiving$applyRotations(RenderLivingBase<T> render, T living, float ageInTicks, float rotationYaw, float partialTicks, boolean player) {
-            EntityState move = EntityWithState.cast(living).getMove();
-            if (move != null) {
-                move.applyRenderRotations(render, living, ageInTicks, rotationYaw, partialTicks, player);
-            }
+            EntityState move = EntityWithState.cast(living).getState();
+            move.applyRenderRotations(render, living, ageInTicks, rotationYaw, partialTicks, player);
         }
     }
 

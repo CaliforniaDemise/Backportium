@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import surreal.backportium._internal.ConfigValues;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import surreal.backportium._internal.client.entity.player.ClientPlayerSwimming;
 import surreal.backportium._internal.client.model.ModelBipedSwimming;
@@ -659,7 +658,7 @@ public final class SwimmingTransformer {
         }
 
         public static boolean EntityPlayer$isActuallySwimming(EntityPlayer player) {
-            EntityState state = EntityWithState.cast(player).getMove();
+            EntityState state = EntityWithState.cast(player).getState();
             boolean isFlying = !player.isElytraFlying() && state == ModEntityStates.FLYING;
             return state == ModEntityStates.CRAWLING || isFlying;
         }
@@ -788,10 +787,10 @@ public final class SwimmingTransformer {
         }
 
         public static boolean EntityPlayerSP$isCrouching(EntityPlayerSP player) {
-            final boolean cantStand = !isStateClear(player, ModEntityStates.STANDING);
+            final boolean cantStand = !ModEntityStates.STANDING.isStateClear(player);
             if ((!player.capabilities.isFlying || !cantStand) && player.getTicksElytraFlying() <= 4) {
                 if (!SwimmingEntity.cast(player).isSwimming() && (player.onGround || !player.isInWater())) {
-                    if (!player.isOnLadder() && isStateClear(player, ModEntityStates.SNEAKING) || player.noClip) {
+                    if (!player.isOnLadder() && ModEntityStates.SNEAKING.isStateClear(player) || player.noClip) {
                         return player.movementInput.sneak || !player.isPlayerSleeping() && cantStand;
                     }
                 }
@@ -870,15 +869,6 @@ public final class SwimmingTransformer {
         public static boolean EntityRenderer$shouldApplyBobbing() {
             Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
             return !(entity instanceof EntityPlayer) || !SwimmingEntity.cast((EntityPlayer) entity).isSwimming();
-        }
-
-        public static boolean isStateClear(EntityLivingBase entity, EntityState state) {
-            return entity.world.getCollisionBoxes(entity, getBoundingBox(entity, state)).isEmpty();
-        }
-
-        private static AxisAlignedBB getBoundingBox(EntityLivingBase entity, EntityState state) {
-            float f = state.getWidth(entity, 0.0F) / 2.0F;
-            return new AxisAlignedBB(entity.posX - (double) f, entity.posY, entity.posZ - (double) f, entity.posX + (double) f, entity.posY, entity.posZ + (double) f);
         }
     }
 

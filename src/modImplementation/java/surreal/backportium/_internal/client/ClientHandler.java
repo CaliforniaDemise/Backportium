@@ -67,7 +67,7 @@ public class ClientHandler {
             event.setCanceled(true);
         }
         else {
-            EntityState move = EntityWithState.cast(mc.player).getMove();
+            EntityState move = EntityWithState.cast(mc.player).getState();
             if (move != null) {
                 if (move.renderHand(mc.world, mc.player, stack, event.getHand(), mc.getItemRenderer(), event.getEquipProgress(), stack.getMaxItemUseDuration() - (mc.player.getItemInUseCount() - event.getPartialTicks() + 1.0F), event.getPartialTicks(), (event.getHand() == EnumHand.MAIN_HAND ? mc.player.getPrimaryHand() : mc.player.getPrimaryHand().opposite()) == EnumHandSide.RIGHT)) {
                     event.setCanceled(true);

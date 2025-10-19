@@ -69,17 +69,17 @@ public class RegisterV13 {
         ModEntityStates.RIPTIDE = new EntityState() {
 
             @Override
-            public float getHeight(EntityLivingBase entity, float defaultValue) {
+            public float getHeight(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getWidth(EntityLivingBase entity, float defaultValue) {
+            public float getWidth(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getEyeHeight(EntityLivingBase entity, float defaultValue) {
+            public float getEyeHeight(EntityLivingBase entity) {
                 return 0.4F;
             }
 
@@ -135,17 +135,17 @@ public class RegisterV13 {
         ModEntityStates.CRAWLING = new EntityState() {
 
             @Override
-            public float getHeight(EntityLivingBase entity, float defaultValue) {
+            public float getHeight(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getWidth(EntityLivingBase entity, float defaultValue) {
+            public float getWidth(EntityLivingBase entity) {
                 return 0.6F;
             }
 
             @Override
-            public float getEyeHeight(EntityLivingBase entity, float defaultValue) {
+            public float getEyeHeight(EntityLivingBase entity) {
                 return 0.4F;
             }
 
@@ -161,7 +161,7 @@ public class RegisterV13 {
                     float swimAnim = ModelBipedSwimming.cast(model).getSwimAnimation();
                     boolean elytra = ((EntityLivingBase) entity).getTicksElytraFlying() > 4;
                     if (!elytra && swimAnim > 0.0F) {
-                        if (swimming.isSwimming()) {
+                        if (swimming.isActuallySwimming()) {
                             float f1 = limbSwing % 26.0F;
                             EnumHandSide handside = ((EntityLivingBase) entity).getPrimaryHand();
                             if (((EntityLivingBase) entity).swingingHand != EnumHand.MAIN_HAND) {
@@ -211,7 +211,7 @@ public class RegisterV13 {
                     float f3 = entity.isInWater() ? -90.0F - entity.rotationPitch : -90.0F;
                     float f4 = NewMathHelper.lerp(f, 0.0F, f3);
                     GlStateManager.rotate(f4, 1.0F, 0.0F, 0.0F);
-                    if (swimming.isSwimming()) {
+                    if (swimming.isActuallySwimming()) {
                         GlStateManager.translate(0.0F, -1.0, 0.3F);
                     }
                 }
