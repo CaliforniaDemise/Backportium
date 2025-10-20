@@ -2,11 +2,10 @@ package surreal.backportium.init;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import surreal.backportium.Tags;
 
-@GameRegistry.ObjectHolder(Tags.MOD_ID)
 public class ModBiomes {
 
     // 1.13
@@ -49,6 +48,8 @@ public class ModBiomes {
 
     // 1.20
     public static Biome CHERRY_GROOVE;
+
+    public static final BiomeDictionary.Type FROZEN = BiomeDictionary.Type.getType("FROZEN", BiomeDictionary.Type.COLD, BiomeDictionary.Type.SNOWY);
 
     public static void init() {
         SMALL_END_ISLANDS = biome("small_end_islands");

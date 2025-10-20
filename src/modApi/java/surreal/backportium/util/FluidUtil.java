@@ -11,6 +11,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 import org.jetbrains.annotations.Nullable;
+import surreal.backportium.api.block.Loggable;
 import surreal.backportium.integration.ModList;
 
 public final class FluidUtil {
@@ -22,13 +23,12 @@ public final class FluidUtil {
             if (facing == EnumFacing.UP && world.isAirBlock(facingPos)) continue;
             IBlockState facingState = world.getBlockState(facingPos);
             if (facingState.getMaterial() != Material.WATER && !facingState.isSideSolid(world, facingPos, facing.getOpposite())) {
-//                Block facingBlock = facingState.getBlock();
-//                if (facingBlock instanceof Loggable) {
-//                    facingState = Loggable.cast(facingBlock).getLoggedState(world, facingPos, facingState);
-//                    if (facingState.getMaterial() != Material.WATER && !facingState.isSideSolid(world, facingPos, facing.getOpposite())) return false;
-//                }
-//                else return false;
-                return false;
+                Block facingBlock = facingState.getBlock();
+                if (facingBlock instanceof Loggable) {
+                    facingState = Loggable.cast(facingBlock).getLoggedState(world, facingPos, facingState);
+                    if (facingState.getMaterial() != Material.WATER && !facingState.isSideSolid(world, facingPos, facing.getOpposite())) return false;
+                }
+                else return false;
             }
         }
         return true;

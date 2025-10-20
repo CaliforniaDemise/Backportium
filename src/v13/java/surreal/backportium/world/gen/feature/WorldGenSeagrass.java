@@ -41,7 +41,7 @@ public class WorldGenSeagrass extends WorldGenerator {
                 blockPos.move(EnumFacing.DOWN);
             }
             blockPos.move(EnumFacing.UP);
-            if (this.isTall(worldIn, blockPos, rand) && ((BlockPlant) ModBlocks.SEAGRASS).canGrow(worldIn, blockPos, worldIn.getBlockState(blockPos), worldIn.isRemote)) {
+            if (this.isTall(worldIn, blockPos, rand) && ModBlocks.TALL_SEAGRASS.canPlaceBlockAt(worldIn, blockPos) && ((BlockPlant) ModBlocks.SEAGRASS).canGrow(worldIn, blockPos, worldIn.getBlockState(blockPos), worldIn.isRemote)) {
                 ((BlockPlant) ModBlocks.SEAGRASS).grow(worldIn, rand, blockPos, SEAGRASS_STATE);
             }
             else if (ModBlocks.SEAGRASS.canPlaceBlockAt(worldIn, blockPos)) {

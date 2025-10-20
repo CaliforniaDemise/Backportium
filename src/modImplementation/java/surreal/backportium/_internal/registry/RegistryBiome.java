@@ -27,7 +27,7 @@ public class RegistryBiome extends Registry<Biome> implements Biomes {
         consumer.accept(properties);
         T biome = function.apply(properties);
         biome.setRegistryName(name);
-        return biome;
+        return this.register(biome);
     }
 
     @Override

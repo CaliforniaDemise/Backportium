@@ -5,17 +5,21 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
+import net.minecraftforge.common.BiomeDictionary;
 import org.jetbrains.annotations.NotNull;
+import surreal.backportium._internal.world.biome.BiomeTypeProvider;
 import surreal.backportium.api.biome.Overridable;
 import surreal.backportium.api.world.biome.CustomWaterColor;
+import surreal.backportium.init.ModBiomes;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
 
 import java.util.Objects;
 import java.util.Random;
 
-public class BiomeOceanFrozen extends Biome implements Overridable, CustomWaterColor {
+public class BiomeOceanFrozen extends Biome implements Overridable, CustomWaterColor, BiomeTypeProvider {
 
     private static final NoiseGeneratorSimplex FROZEN_NOISE = new NoiseGeneratorSimplex(new Random(3456L));
     private static NoiseGeneratorDoublePerlin ICEBERG_SURFACE_NOISE = null;
@@ -35,6 +39,12 @@ public class BiomeOceanFrozen extends Biome implements Overridable, CustomWaterC
     @Override
     public int getModdedBiomeFoliageColor(int original) {
         return 0x60A17B;
+    }
+
+    @NotNull
+    @Override
+    public BiomeDecorator getModdedBiomeDecorator(@NotNull BiomeDecorator original) {
+        return new BiomeDecoratorOceanFrozen();
     }
 
     @Override
@@ -104,5 +114,10 @@ public class BiomeOceanFrozen extends Biome implements Overridable, CustomWaterC
             }
         }
         super.genTerrainBlocks(worldIn, rand, primer, x, z, noiseVal);
+    }
+
+    @Override
+    public void addTypes() {
+        BiomeDictionary.addTypes(this, ModBiomes.FROZEN, BiomeDictionary.Type.OCEAN);
     }
 }

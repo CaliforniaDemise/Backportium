@@ -21,7 +21,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import surreal.backportium._internal.world.LoggedAccess;
 import surreal.backportium.api.block.Loggable;
 import surreal.backportium.init.ModSoundTypes;
 import surreal.backportium.integration.ModList;

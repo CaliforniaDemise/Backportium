@@ -20,7 +20,6 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fluids.FluidRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import surreal.backportium._internal.world.LoggedAccess;
 import surreal.backportium.api.block.Loggable;
 import surreal.backportium.block.state.DoublePlantContainer;
 import surreal.backportium.init.ModSoundTypes;

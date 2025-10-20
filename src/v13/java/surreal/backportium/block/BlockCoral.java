@@ -9,7 +9,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -106,7 +105,7 @@ public class BlockCoral extends BlockBush implements Loggable, ModelProvider {
 
     @Override
     public boolean isSideSolid(@Nullable IBlockState base_state, @Nullable IBlockAccess world, @Nullable BlockPos pos, @Nullable EnumFacing side) {
-        return true;
+        return false;
     }
 
     @Override
