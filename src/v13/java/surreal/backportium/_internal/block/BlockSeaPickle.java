@@ -24,6 +24,7 @@ import surreal.backportium._internal.client.renderer.model.ModelProvider;
 import surreal.backportium.api.block.Loggable;
 import surreal.backportium.block.BlockClustered;
 import surreal.backportium.integration.ModList;
+import surreal.backportium.tag.AllTags;
 import surreal.backportium.util.BlockUtil;
 import surreal.backportium.util.FluidUtil;
 import surreal.backportium.util.WorldUtil;
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-// TODO Might want to make sea pickle growable blocks an interface, or something else.
 @SuppressWarnings("deprecation")
 public class BlockSeaPickle extends BlockClustered implements Loggable, IGrowable, ModelProvider {
 
@@ -138,7 +138,7 @@ public class BlockSeaPickle extends BlockClustered implements Loggable, IGrowabl
         if (!isPlaceable(worldIn, pos)) pos = pos.down();
         if (!isPlaceable(worldIn, pos)) return;
         IBlockState stateDown = worldIn.getBlockState(pos.down());
-        if (stateDown.getMaterial() == Material.CORAL) {
+        if (AllTags.BLOCK_TAG.contains(AllTags.BLOCK_SEA_PICKLE_GROWABLE, stateDown)) {
             int amount = rand.nextInt(5);
             if (amount > 0) {
                 handleEntities(worldIn, rand, pos);

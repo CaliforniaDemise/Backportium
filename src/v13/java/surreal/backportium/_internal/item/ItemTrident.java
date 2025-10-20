@@ -148,8 +148,8 @@ public class ItemTrident extends Item implements Trident, ItemRender {
     @Override
     public boolean onLeftClickEntity(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull Entity entity) {
         int impaling = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.IMPALING, stack);
-        if (impaling > 0 && EnchantmentImpaling.canImpale(entity)) {
-            float damageAdd = EnchantmentImpaling.handleImpaling(0.0F, impaling);
+        if (impaling > 0 && EnchantmentImpaling.canApplyTo(entity)) {
+            float damageAdd = EnchantmentImpaling.handle(0.0F, impaling);
             entity.attackEntityFrom(DamageSource.causePlayerDamage(player), damageAdd);
         }
         return false;

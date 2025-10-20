@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import surreal.backportium._internal.client.renderer.model.ModelProvider;
 import surreal.backportium.block.BlockClustered;
 import surreal.backportium.init.ModSounds;
+import surreal.backportium.tag.AllTags;
 import surreal.backportium.util.BlockUtil;
 import surreal.backportium.util.WorldUtil;
 
@@ -59,7 +60,7 @@ public class BlockTurtleEgg extends BlockClustered implements ModelProvider {
         int hatch = state.getValue(HATCH);
         if (hatch < 2) {
             long time = worldIn.getWorldTime();
-            if (((time >= 21600 && time <= 22550) || random.nextInt(500) == 1) && worldIn.getBlockState(pos.down()).getBlock() instanceof BlockSand) {
+            if (((time >= 21600 && time <= 22550) || random.nextInt(500) == 1) && AllTags.BLOCK_TAG.contains(AllTags.BLOCK_TURTLE_EGG_HATCHABLE, worldIn.getBlockState(pos.down()))) {
                 worldIn.setBlockState(pos, state.withProperty(AMOUNT, hatch + 1));
                 spawnParticles(worldIn, pos, state);
                 if (worldIn.isRemote) worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), ModSounds.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 0.7F, worldIn.rand.nextBoolean() ? 1.1F : 0.9F, false);
@@ -91,7 +92,7 @@ public class BlockTurtleEgg extends BlockClustered implements ModelProvider {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, @NotNull IBlockState state, @NotNull EntityLivingBase placer, @NotNull ItemStack stack) {
-        if (worldIn.getBlockState(pos.down()).getBlock() instanceof BlockSand) {
+        if (AllTags.BLOCK_TAG.contains(AllTags.BLOCK_TURTLE_EGG_HATCHABLE, worldIn.getBlockState(pos.down()))) {
             spawnParticles(worldIn, pos, state);
         }
     }

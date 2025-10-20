@@ -6,6 +6,7 @@ import net.minecraft.world.biome.BiomeOcean;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.event.RegistryEvent;
+import surreal.backportium._internal.world.biome.BiomeTypeProvider;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,7 +36,8 @@ public class RegistryBiome extends Registry<Biome> implements Biomes {
         this.list.forEach(biome -> {
             event.getRegistry().register(biome);
             if (biome instanceof BiomeOcean) BiomeManager.oceanBiomes.add(biome);
-            BiomeDictionary.makeBestGuess(biome);
+            if (biome instanceof BiomeTypeProvider) ((BiomeTypeProvider) biome).addTypes();
+            else BiomeDictionary.makeBestGuess(biome);
         });
     }
 }

@@ -20,6 +20,10 @@ public class WorldGenIceberg extends WorldGenerator {
         this.state = state;
     }
 
+    public WorldGenIceberg(IBlockState state) {
+        this(false, state);
+    }
+
     @Override
     @ParametersAreNonnullByDefault
     public boolean generate(World world, Random rand, BlockPos pos) {

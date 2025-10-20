@@ -1,9 +1,6 @@
 package surreal.backportium._internal.tile;
 
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockPrismarine;
-import net.minecraft.block.BlockSeaLantern;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -31,6 +28,7 @@ import surreal.backportium.client.particle.ParticleNautilus;
 import surreal.backportium.integration.ModList;
 import surreal.backportium.init.ModPotions;
 import surreal.backportium.init.ModSounds;
+import surreal.backportium.tag.AllTags;
 import surreal.backportium.util.FluidUtil;
 import surreal.backportium.util.WorldUtil;
 
@@ -123,7 +121,7 @@ public class TileConduit extends TileEntity implements ITickable {
                         if (entity instanceof EntityPlayer) {
                             entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, 13 * 20, 0, true, false));
                         }
-                        else if (this.toAttack == null && this.shouldAttack() && entity instanceof EntityMob) {
+                        else if (this.toAttack == null && this.shouldAttack() && AllTags.ENTITY_TAG.contains(AllTags.ENTITY_BLOCK_CONDUIT_ATTACK, entity)) {
                             if (this.getDistanceSq(entity.posX, entity.posY, entity.posZ) <= 64) {
                                 this.toAttack = entity;
                             }
@@ -300,8 +298,8 @@ public class TileConduit extends TileEntity implements ITickable {
     }
 
     protected boolean isBlock(World world, BlockPos pos) {
-        Block block = world.getBlockState(pos).getBlock();
-        return block instanceof BlockPrismarine || block instanceof BlockSeaLantern;
+        IBlockState state = world.getBlockState(pos);
+        return AllTags.BLOCK_TAG.contains(AllTags.BLOCK_CONDUIT_BUILDING_BLOCKS, state);
     }
 
     protected int getPowerFromBlocks() {

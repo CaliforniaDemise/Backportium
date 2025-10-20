@@ -2,10 +2,8 @@ package surreal.backportium.world.biome;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import net.minecraftforge.common.BiomeDictionary;
@@ -41,14 +39,8 @@ public class BiomeOceanFrozen extends Biome implements Overridable, CustomWaterC
         return 0x60A17B;
     }
 
-    @NotNull
     @Override
-    public BiomeDecorator getModdedBiomeDecorator(@NotNull BiomeDecorator original) {
-        return new BiomeDecoratorOceanFrozen();
-    }
-
-    @Override
-    public float getTemperature(IBlockAccess world, Random random, BlockPos pos) {
+    public float getDefaultTemperature(BlockPos pos) {
         double frozenVal = 0.0D;
         double folVal = GRASS_COLOR_NOISE.getValue((double) pos.getX() * 0.2, (double) pos.getZ() * 0.2D);
         {

@@ -195,9 +195,9 @@ public final class TridentTransformer {
                 ItemStack stack = entity.getActiveItemStack();
                 float add = 0F;
                 Entity e = entities.get(0);
-                if (!stack.isEmpty() && EnchantmentImpaling.canImpale(e)) {
+                if (!stack.isEmpty() && EnchantmentImpaling.canApplyTo(e)) {
                     int impaling = EnchantmentHelper.getEnchantmentLevel(ModEnchantments.IMPALING, stack);
-                    add = EnchantmentImpaling.handleImpaling(add, impaling);
+                    add = EnchantmentImpaling.handle(add, impaling);
                 }
                 e.attackEntityFrom(DamageSource.GENERIC, 8.0F + add);
                 entity.motionX = -entity.motionX / 2F;

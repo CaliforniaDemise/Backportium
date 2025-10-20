@@ -52,10 +52,7 @@ import surreal.backportium.api.entity.SwimmingEntity;
 import surreal.backportium.api.item.UseAction;
 import surreal.backportium.init.*;
 import surreal.backportium.util.BlockUtil;
-import surreal.backportium.world.biome.BiomeOceanCold;
-import surreal.backportium.world.biome.BiomeOceanFrozen;
-import surreal.backportium.world.biome.BiomeOceanLukewarm;
-import surreal.backportium.world.biome.BiomeOceanWarm;
+import surreal.backportium.world.biome.*;
 import surreal.backportium.block.*;
 import surreal.backportium.item.ItemBlockClustered;
 import surreal.backportium.item.ItemBlockKelp;
@@ -389,7 +386,7 @@ public class RegisterV13 {
         registry.register(BiomeOceanWarm::new, "deep_warm_ocean", "Deep Warm Ocean", properties -> properties.setBaseHeight(-1.8F).setHeightVariation(0.1F).setTemperature(0.5F).setRainfall(0.5F));
         registry.register(BiomeOceanLukewarm::new, "deep_lukewarm_ocean", "Deep Lukewarm Ocean", properties -> properties.setBaseHeight(-1.8F).setHeightVariation(0.1F).setTemperature(0.5F).setRainfall(0.5F));
         registry.register(BiomeOceanCold::new, "deep_cold_ocean", "Deep Cold Ocean", properties -> properties.setBaseHeight(-1.8F).setHeightVariation(0.1F).setTemperature(0.5F).setRainfall(0.5F));
-        registry.register(BiomeOceanFrozen::new, "deep_frozen_ocean", "Deep Frozen Ocean", properties -> properties.setBaseHeight(-1.8F).setHeightVariation(0.1F).setTemperature(0.0F).setRainfall(0.5F).setSnowEnabled());
+        registry.register(BiomeDeepOceanFrozen::new, "deep_frozen_ocean", "Deep Frozen Ocean", properties -> properties.setBaseHeight(-1.8F).setHeightVariation(0.1F).setTemperature(0.0F).setRainfall(0.5F).setSnowEnabled());
     }
 
     protected static void registerSounds(Sounds registry) {

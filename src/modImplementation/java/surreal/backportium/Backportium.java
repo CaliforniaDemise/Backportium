@@ -30,6 +30,7 @@ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import surreal.backportium._internal.EventHandler;
+import surreal.backportium._internal.OreGenHandler;
 import surreal.backportium._internal.Register;
 import surreal.backportium._internal.TerrainGenEvents;
 import surreal.backportium._internal.client.ClientHandler;
@@ -54,6 +55,7 @@ public class Backportium {
     @Mod.EventHandler
     public void construction(FMLConstructionEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.ORE_GEN_BUS.register(new OreGenHandler());
         if (FMLLaunchHandler.side().isClient()) {
             this.client.construction(event);
         }
@@ -82,6 +84,7 @@ public class Backportium {
     @SubscribeEvent public void isPotionApplicable(PotionEvent.PotionApplicableEvent event) { EventHandler.isPotionApplicable(event); }
     @SubscribeEvent public void playNoteBlock(NoteBlockEvent.Play event) { EventHandler.playNoteBlock(event); }
     @SubscribeEvent public void applyBonemeal(BonemealEvent event) { EventHandler.applyBonemeal(event); }
+    @SubscribeEvent public void decorateBiomePre(DecorateBiomeEvent.Pre event) { EventHandler.decorateBiomePre(event); }
     @SubscribeEvent public void decorateBiomePost(DecorateBiomeEvent.Post event) { EventHandler.decorateBiomePost(event); }
 
     @SideOnly(Side.CLIENT) @SubscribeEvent public void getSplashTexts(MainMenuEvent.SplashText event) { EventHandler.getSplashTexts(event); }

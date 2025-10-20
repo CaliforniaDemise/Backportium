@@ -5,6 +5,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.Objects;
 
@@ -12,6 +13,14 @@ public class ItemTag extends Tag<ItemStack> {
 
     public ItemTag() {
         super(ITEM_STRATEGY);
+    }
+
+    @Override
+    public void add(String name, ItemStack object) {
+        if (object.getMetadata() == OreDictionary.WILDCARD_VALUE) {
+            this.add(name, object.getItem());
+        }
+        else super.add(name, object);
     }
 
     public void add(String name, Item item) {

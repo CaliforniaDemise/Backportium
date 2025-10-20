@@ -31,6 +31,7 @@ public final class BackportiumTransformer implements IClassTransformer {
         function = mix(function, DynamicModelLoadingVisitor.getClassVisitor(name, transformedName));
         function = mix(function, EntityStateVisitor.getClassVisitor(name, transformedName));
         function = mix(function, BiomeOverrideVisitor.getClassVisitor(name, transformedName));
+        function = mix(function, TagTransformer.getVisitor(name, transformedName, bytes));
         function = mix(function, getAdditionalVisitors(name, transformedName, bytes));
         return apply(function, bytes, 3);
     }

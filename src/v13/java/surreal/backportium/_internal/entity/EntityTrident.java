@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.jetbrains.annotations.NotNull;
+import surreal.backportium._internal.enchantment.EnchantmentChanneling;
 import surreal.backportium._internal.enchantment.EnchantmentImpaling;
 import surreal.backportium.client.entity.model.ModelTrident;
 import surreal.backportium.client.entity.render.RenderTrident;
@@ -127,7 +128,7 @@ public class EntityTrident extends EntityItemThrowable implements RenderProvider
     @Override
     public float getHitDamage(Entity entity, float original) {
         float add = 0F;
-        if (this.impalingLvl > 0 && EnchantmentImpaling.canImpale(entity)) add = EnchantmentImpaling.handleImpaling(add, this.impalingLvl);
+        if (this.impalingLvl > 0 && EnchantmentImpaling.canApplyTo(entity)) add = EnchantmentImpaling.handle(add, this.impalingLvl);
         return 9 + add;
     }
 
@@ -168,9 +169,8 @@ public class EntityTrident extends EntityItemThrowable implements RenderProvider
 
     @Override
     protected void onHitEntity(Entity entity) {
-        if (!this.world.isRemote && this.channelingLvl > 0 && this.world.isThundering() && !entity.isInWater()) {
-            this.world.playSound(null, this.posX, this.posY, this.posZ, ModSounds.ITEM_TRIDENT_THUNDER, SoundCategory.NEUTRAL, 5.0F, 1.0F);
-            this.world.addWeatherEffect(new EntityLightningBolt(this.world, entity.posX, entity.posY, entity.posZ, false));
+        if (this.channelingLvl > 0 && EnchantmentChanneling.canApplyTo(entity)) {
+            EnchantmentChanneling.handle(entity, this.channelingLvl);
         }
     }
 

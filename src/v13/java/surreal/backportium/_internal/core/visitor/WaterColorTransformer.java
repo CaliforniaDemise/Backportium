@@ -448,8 +448,9 @@ public final class WaterColorTransformer {
             GlStateManager.setFog(GlStateManager.FogMode.EXP2);
             density -= 0.05F;
             Biome biome = entity.world.getBiome(new BlockPos(entity));
-            density = CustomWaterColor.cast(biome).getWaterFogDensity((EntityLivingBase) entity, density);
-            if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) density += 0.005F;
+            float newDensity = CustomWaterColor.cast(biome).getWaterFogDensity((EntityLivingBase) entity, density);
+            if (newDensity != density) density = newDensity;
+            else if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) density += 0.005F;
             density -= f6 * f6 * 0.03F;
             return density;
         }

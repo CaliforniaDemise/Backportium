@@ -3,6 +3,7 @@ package surreal.backportium._internal;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent;
+import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import surreal.backportium.event.MainMenuEvent;
 
@@ -27,6 +28,10 @@ public class EventHandler {
 
     public static void applyBonemeal(BonemealEvent event) {
         EventHandlerV13.applyBonemeal(event);
+    }
+
+    public static void decorateBiomePre(DecorateBiomeEvent.Pre event) {
+        EventHandlerV13.decorateBiomePre(event);
     }
 
     public static void decorateBiomePost(DecorateBiomeEvent.Post event) {

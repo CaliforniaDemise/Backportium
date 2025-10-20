@@ -58,7 +58,7 @@ public class ModBiomes {
         WARM_OCEAN = biome("warm_ocean");
         LUKEWARM_OCEAN = biome("lukewarm_ocean");
         COLD_OCEAN = biome("cold_ocean");
-        FROZEN_OCEAN = biome("frozen_ocean");
+        FROZEN_OCEAN = biome("minecraft", "frozen_ocean");
         DEEP_WARM_OCEAN = biome("deep_warm_ocean");
         DEEP_LUKEWARM_OCEAN = biome("deep_lukewarm_ocean");
         DEEP_COLD_OCEAN = biome("deep_cold_ocean");
@@ -89,5 +89,9 @@ public class ModBiomes {
 
     private static Biome biome(String name) {
         return ForgeRegistries.BIOMES.getValue(new ResourceLocation(Tags.MOD_ID, name));
+    }
+
+    private static Biome biome(String modid, String name) {
+        return ForgeRegistries.BIOMES.getValue(new ResourceLocation(modid, name));
     }
 }
