@@ -4,12 +4,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import surreal.backportium.api.annotations.Extension;
 import surreal.backportium.api.annotations.Final;
-import surreal.backportium._internal.item.ItemTrident;
 
 /**
  * Extension for {@link EntityLivingBase} for Trident Riptide effect.
  * This is done for riptide animations and for other stuff.
- * To handle riptide effect properly, see {@link ItemTrident#handleRiptide(EntityLivingBase, ItemStack)}
  */
 @Extension(EntityLivingBase.class)
 public interface RiptideEntity {

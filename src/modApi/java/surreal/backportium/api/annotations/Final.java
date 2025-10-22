@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A method that you can't override because it's final
+ * The method implementation is final, you can't override the method
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)

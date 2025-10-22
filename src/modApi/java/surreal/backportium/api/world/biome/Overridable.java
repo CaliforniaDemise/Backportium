@@ -1,4 +1,4 @@
-package surreal.backportium.api.biome;
+package surreal.backportium.api.world.biome;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;

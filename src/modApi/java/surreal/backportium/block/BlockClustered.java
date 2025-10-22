@@ -13,11 +13,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import surreal.backportium.api.block.Loggable;
 
 import java.util.Random;
 
 @SuppressWarnings("deprecation")
-public class BlockClustered extends Block {
+public class BlockClustered extends Block implements Loggable {
 
     public static final PropertyInteger AMOUNT = PropertyInteger.create("amount", 0, 3);
 

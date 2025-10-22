@@ -9,7 +9,7 @@ import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import net.minecraftforge.common.BiomeDictionary;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium._internal.world.biome.BiomeTypeProvider;
-import surreal.backportium.api.biome.Overridable;
+import surreal.backportium.api.world.biome.Overridable;
 import surreal.backportium.api.world.biome.CustomWaterColor;
 import surreal.backportium.init.ModBiomes;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;

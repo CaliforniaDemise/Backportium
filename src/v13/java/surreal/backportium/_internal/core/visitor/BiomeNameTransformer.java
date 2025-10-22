@@ -1,6 +1,5 @@
 package surreal.backportium._internal.core.visitor;
 
-import net.minecraft.client.gui.GuiOverlayDebug;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;

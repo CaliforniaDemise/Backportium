@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
-import surreal.backportium.api.biome.Overridable;
+import surreal.backportium.api.world.biome.Overridable;
 
 import java.util.Random;
 import java.util.function.Function;
@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class BiomeOverrideVisitor extends LeClassVisitor {
 
     private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BiomeOverrideVisitor$Hooks";
-    private static final String OVERRIDABLE = "surreal/backportium/api/biome/Overridable";
+    private static final String OVERRIDABLE = "surreal/backportium/api/world/biome/Overridable";
 
     private BiomeOverrideVisitor(ClassVisitor cv) {
         super(cv);

@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.Random;
 
 @SuppressWarnings("deprecation")
-public class BlockSeaPickle extends BlockClustered implements Loggable, IGrowable, ModelProvider {
+public class BlockSeaPickle extends BlockClustered implements IGrowable, ModelProvider {
 
     public static final PropertyBool ALIVE = PropertyBool.create("alive");
 

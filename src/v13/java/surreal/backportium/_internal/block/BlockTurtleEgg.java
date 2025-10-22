@@ -1,6 +1,5 @@
 package surreal.backportium._internal.block;
 
-import net.minecraft.block.BlockSand;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -29,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium._internal.client.renderer.model.ModelProvider;
+import surreal.backportium.api.block.Loggable;
 import surreal.backportium.block.BlockClustered;
 import surreal.backportium.init.ModSounds;
 import surreal.backportium.tag.AllTags;
@@ -60,7 +60,7 @@ public class BlockTurtleEgg extends BlockClustered implements ModelProvider {
         int hatch = state.getValue(HATCH);
         if (hatch < 2) {
             long time = worldIn.getWorldTime();
-            if (((time >= 21600 && time <= 22550) || random.nextInt(500) == 1) && AllTags.BLOCK_TAG.contains(AllTags.BLOCK_TURTLE_EGG_HATCHABLE, worldIn.getBlockState(pos.down()))) {
+            if (((time >= 21600 && time <= 22550) || random.nextInt(500) == 1) && canHatch(worldIn, pos)) {
                 worldIn.setBlockState(pos, state.withProperty(AMOUNT, hatch + 1));
                 spawnParticles(worldIn, pos, state);
                 if (worldIn.isRemote) worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), ModSounds.ENTITY_TURTLE_EGG_CRACK, SoundCategory.BLOCKS, 0.7F, worldIn.rand.nextBoolean() ? 1.1F : 0.9F, false);
@@ -92,7 +92,7 @@ public class BlockTurtleEgg extends BlockClustered implements ModelProvider {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, @NotNull IBlockState state, @NotNull EntityLivingBase placer, @NotNull ItemStack stack) {
-        if (AllTags.BLOCK_TAG.contains(AllTags.BLOCK_TURTLE_EGG_HATCHABLE, worldIn.getBlockState(pos.down()))) {
+        if (canHatch(worldIn, pos)) {
             spawnParticles(worldIn, pos, state);
         }
     }
@@ -198,6 +198,12 @@ public class BlockTurtleEgg extends BlockClustered implements ModelProvider {
     public void registerModels() {
         Item item = BlockUtil.getItemFromBlock(this);
         ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(Objects.requireNonNull(this.getRegistryName()), "inventory"));
+    }
+
+    private boolean canHatch(World world, BlockPos pos) {
+        IBlockState state = world.getBlockState(pos.down());
+        IBlockState loggedState = Loggable.cast(this).getLoggedState(world, pos, state);
+        return AllTags.BLOCK_TAG.contains(AllTags.BLOCK_TURTLE_EGG_HATCHABLE, state) && loggedState.getBlock().isAir(loggedState, world, pos);
     }
 
     static {

@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeOcean;
 import net.minecraft.world.chunk.ChunkPrimer;
 import org.jetbrains.annotations.NotNull;
-import surreal.backportium.api.biome.Overridable;
+import surreal.backportium.api.world.biome.Overridable;
 import surreal.backportium.api.world.biome.CustomWaterColor;
 
 import java.util.Random;
