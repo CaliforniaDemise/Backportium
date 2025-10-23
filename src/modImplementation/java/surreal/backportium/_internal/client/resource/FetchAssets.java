@@ -5,14 +5,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import surreal.backportium.integration.ModList;
 
+// TODO Assets doesn't load properly on first start (?)
 public class FetchAssets {
 
-    private static final String VERSION = "1.21.4";
+    // Last version before the armor texture path change
+    private static final String VERSION = "1.21.1";
 
     public static void readAssets() {
         Logger logger = LogManager.getLogger("Backportium/Assets");
         if (!ModList.ASSETMOVER) {
-            logger.warn("AssetMover is not installed. You should install it, if you don't have a resource pack.");
+            logger.warn("AssetMover is not installed. You should install it if you don't have a resource pack installed.");
             return;
         }
         logger.info("Fetching assets from {}", VERSION);

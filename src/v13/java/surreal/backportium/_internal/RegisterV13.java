@@ -16,6 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -37,10 +38,7 @@ import surreal.backportium._internal.enchantment.EnchantmentImpaling;
 import surreal.backportium._internal.enchantment.EnchantmentLoyalty;
 import surreal.backportium._internal.enchantment.EnchantmentRiptide;
 import surreal.backportium._internal.entity.EntityTrident;
-import surreal.backportium._internal.item.ItemBlockDriedKelp;
-import surreal.backportium._internal.item.ItemConduit;
-import surreal.backportium._internal.item.ItemDebugStick;
-import surreal.backportium._internal.item.ItemTrident;
+import surreal.backportium._internal.item.*;
 import surreal.backportium._internal.potion.PotionConduitPower;
 import surreal.backportium._internal.potion.PotionDolphinsGrace;
 import surreal.backportium._internal.potion.PotionSlowFalling;
@@ -372,7 +370,7 @@ public class RegisterV13 {
         registry.register(new Item().setCreativeTab(CreativeTabs.MATERIALS), "phantom_membrane");
         registry.register(new Item().setCreativeTab(CreativeTabs.MATERIALS), "turtle_scute");
         registry.register(new ItemTrident().setCreativeTab(CreativeTabs.COMBAT), "trident");
-        registry.register(new Item().setCreativeTab(CreativeTabs.COMBAT), "turtle_helmet");
+        registry.register(new ItemArmorTurtle(EntityEquipmentSlot.HEAD), "turtle_helmet");
     }
 
     protected static void registerBiomes(Biomes registry) {
@@ -520,7 +518,7 @@ public class RegisterV13 {
         registry.shaped("blue_ice", new ItemStack(ModBlocks.BLUE_ICE), "AAA", "AAA", "AAA", 'A', net.minecraft.init.Blocks.PACKED_ICE);
         registry.shaped("packed_ice", new ItemStack(net.minecraft.init.Blocks.PACKED_ICE), "AAA", "AAA", "AAA", 'A', net.minecraft.init.Blocks.ICE);
         registry.shaped("conduit", new ItemStack(ModBlocks.CONDUIT), "AAA", "ABA", "AAA", 'A', ModItems.NAUTILUS_SHELL, 'B', ModItems.HEART_OF_THE_SEA);
-        registry.shaped("turtle_shell", new ItemStack(ModItems.TURTLE_SHELL), "AAA", "A A", 'A', ModItems.TURTLE_SCUTE);
+        registry.shaped("turtle_shell", new ItemStack(ModItems.TURTLE_HELMET), "AAA", "A A", 'A', ModItems.TURTLE_SCUTE);
         registry.shaped("dried_kelp_block", new ItemStack(ModBlocks.DRIED_KELP_BLOCK), "AAA", "AAA", "AAA", 'A', ModItems.DRIED_KELP);
         registry.shapeless("dried_kelp_unpacking", new ItemStack(ModItems.DRIED_KELP, 9), ModBlocks.DRIED_KELP_BLOCK);
         registry.shapeless("spruce_button", new ItemStack(ModBlocks.SPRUCE_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 1));

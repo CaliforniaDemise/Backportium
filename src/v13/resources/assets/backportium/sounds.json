@@ -1132,6 +1132,20 @@
     ],
     "subtitle": "subtitles.entity.husk.converted_to_zombie"
   },
+  "item.armor.equip_turtle": {
+    "sounds": [
+      "mob/turtle/armor",
+      {
+        "name": "mob/turtle/armor",
+        "pitch": 0.85
+      },
+      {
+        "name": "mob/turtle/armor",
+        "pitch": 1.1
+      }
+    ],
+    "subtitle": "subtitles.item.armor.equip_turtle"
+  },
   "item.axe.strip": {
     "sounds": [
       {

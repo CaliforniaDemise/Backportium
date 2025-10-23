@@ -93,6 +93,7 @@ public class ModSounds {
     public static SoundEvent ENTITY_TURTLE_SWIM;
     public static SoundEvent ENTITY_SQUID_SQUIRT;
     public static SoundEvent ENTITY_HUSK_CONVERTED_TO_ZOMBIE;
+    public static SoundEvent ITEM_ARMOR_EQUIP_TURTLE;
     public static SoundEvent ITEM_AXE_STRIP;
     public static SoundEvent ITEM_TRIDENT_HIT;
     public static SoundEvent ITEM_TRIDENT_HIT_GROUND;
@@ -188,6 +189,7 @@ public class ModSounds {
         ENTITY_TURTLE_SWIM = soundEvent("entity.turtle.swim");
         ENTITY_SQUID_SQUIRT = soundEvent("entity.squid.squirt");
         ENTITY_HUSK_CONVERTED_TO_ZOMBIE = soundEvent("entity.husk.converted_to_zombie");
+        ITEM_ARMOR_EQUIP_TURTLE = soundEvent("item_armor_equip_turtle");
         ITEM_AXE_STRIP = soundEvent("item.axe.strip");
         ITEM_TRIDENT_HIT = soundEvent("item.trident.hit");
         ITEM_TRIDENT_HIT_GROUND = soundEvent("item.trident.hit_ground");

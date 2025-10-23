@@ -124,9 +124,7 @@ public class FetchAssetsV13 {
         // Trident
         assets.assets(
             new String[] {
-                "entity/trident",
-                "entity/trident_riptide",
-                "item/trident"
+                "entity/trident", "entity/trident_riptide", "item/trident"
             },
             null,
             new String[] {
@@ -138,10 +136,11 @@ public class FetchAssetsV13 {
                 "item/trident/thunder1", "item/trident/thunder2",
             }
         );
+        // Turtle Armor
         assets.assets(
             new String[] {
-                "entity/equipment/humanoid/turtle_scute",
-                "item/turtle_helmet"
+//                "entity/equipment/humanoid/turtle_scute",
+                "models/armor/turtle_layer_1", "item/turtle_helmet"
             },
             null,
             new String[] {
@@ -244,7 +243,7 @@ public class FetchAssetsV13 {
         assets.sounds("mob/husk/convert1", "mob/husk/convert2");
         /* OTHER TEXTURES */
         // Entity Item Enchantment Glint
-        assets.textures("misc/enchanted_glint_entity", "misc/enchanted_glint_entity.png.mcmeta");
+        assets.textures("misc/enchanted_glint_entity" /*, "misc/enchanted_glint_entity.png.mcmeta" */);
         /* OTHER SOUNDS */
         // Underwater Ambient
         assets.sounds(

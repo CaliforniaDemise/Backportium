@@ -17,7 +17,7 @@ public class ModItems {
     public static Item PHANTOM_MEMBRANE;
     public static Item TURTLE_SCUTE;
     public static Item TRIDENT;
-    public static Item TURTLE_SHELL;
+    public static Item TURTLE_HELMET;
 
     // 1.14
     public static Item BANNER_PATTERN;
@@ -138,7 +138,7 @@ public class ModItems {
         PHANTOM_MEMBRANE = item("phantom_membrane");
         TURTLE_SCUTE = item("turtle_scute");
         TRIDENT = item("trident");
-        TURTLE_SHELL = item("turtle_shell");
+        TURTLE_HELMET = item("turtle_helmet");
 
         BANNER_PATTERN = item("banner_pattern");
         CROSSBOW = item("crossbow");
