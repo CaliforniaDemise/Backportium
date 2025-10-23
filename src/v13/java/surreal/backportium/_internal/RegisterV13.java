@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -28,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -59,6 +61,10 @@ import surreal.backportium.util.NewMathHelper;
 import java.util.Objects;
 
 public class RegisterV13 {
+
+    protected static void registerArmorMaterials() {
+        ModArmorMaterials.TURTLE = Objects.requireNonNull(EnumHelper.addArmorMaterial("TURTLE", "turtle", 275, new int[] { 2, 5, 6, 2 }, 9, ModSounds.ITEM_ARMOR_EQUIP_TURTLE, 0.0F));
+    }
 
     protected static void registerEntityStates() {
         ModEntityStates.RIPTIDE = new EntityState() {
@@ -550,5 +556,9 @@ public class RegisterV13 {
         PotionHelper.addMix(ModPotionTypes.SLOW_FALLING, redstoneIng, ModPotionTypes.LONG_SLOW_FALLING);
         PotionHelper.addMix(ModPotionTypes.TURTLE_MASTER, redstoneIng, ModPotionTypes.LONG_TURTLE_MASTER);
         PotionHelper.addMix(ModPotionTypes.TURTLE_MASTER, net.minecraft.init.Items.GLOWSTONE_DUST, ModPotionTypes.STRONG_TURTLE_MASTER);
+    }
+
+    protected static void postRegister() {
+        ModArmorMaterials.TURTLE.setRepairItem(new ItemStack(ModItems.TURTLE_SCUTE));
     }
 }

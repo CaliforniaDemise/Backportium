@@ -8,6 +8,7 @@ public class Register {
         registerEntityMoves();
         registerActions();
         registerSoundTypes();
+        registerArmorMaterials();
         registerBlocks(manager.blocks);
         registerItems(manager.items);
         registerPotions(manager.potions);
@@ -17,6 +18,7 @@ public class Register {
         registerEnchantments(manager.enchantments);
         registerProfessions(manager.professions);
         registerEntities(manager.entities);
+        postRegister();
     }
 
     public static void registerRecipes(Recipes registry) {
@@ -33,6 +35,10 @@ public class Register {
 
     private static void registerSoundTypes() {
         RegisterV13.registerSoundTypes();
+    }
+
+    private static void registerArmorMaterials() {
+        RegisterV13.registerArmorMaterials();
     }
 
     private static void registerBlocks(Blocks registry) {
@@ -68,5 +74,9 @@ public class Register {
 
     private static void registerEntities(Entities registry) {
         RegisterV13.registerEntities(registry);
+    }
+
+    private static void postRegister() {
+        RegisterV13.postRegister();
     }
 }
