@@ -524,7 +524,7 @@ public class RegisterV13 {
         registry.shaped("blue_ice", new ItemStack(ModBlocks.BLUE_ICE), "AAA", "AAA", "AAA", 'A', net.minecraft.init.Blocks.PACKED_ICE);
         registry.shaped("packed_ice", new ItemStack(net.minecraft.init.Blocks.PACKED_ICE), "AAA", "AAA", "AAA", 'A', net.minecraft.init.Blocks.ICE);
         registry.shaped("conduit", new ItemStack(ModBlocks.CONDUIT), "AAA", "ABA", "AAA", 'A', ModItems.NAUTILUS_SHELL, 'B', ModItems.HEART_OF_THE_SEA);
-        registry.shaped("turtle_shell", new ItemStack(ModItems.TURTLE_HELMET), "AAA", "A A", 'A', ModItems.TURTLE_SCUTE);
+        registry.shaped("turtle_helmet", new ItemStack(ModItems.TURTLE_HELMET), "AAA", "A A", 'A', ModItems.TURTLE_SCUTE);
         registry.shaped("dried_kelp_block", new ItemStack(ModBlocks.DRIED_KELP_BLOCK), "AAA", "AAA", "AAA", 'A', ModItems.DRIED_KELP);
         registry.shapeless("dried_kelp_unpacking", new ItemStack(ModItems.DRIED_KELP, 9), ModBlocks.DRIED_KELP_BLOCK);
         registry.shapeless("spruce_button", new ItemStack(ModBlocks.SPRUCE_BUTTON), new ItemStack(net.minecraft.init.Blocks.PLANKS, 1, 1));
