@@ -33,6 +33,7 @@ import surreal.backportium._internal.EventHandler;
 import surreal.backportium._internal.OreGenHandler;
 import surreal.backportium._internal.Register;
 import surreal.backportium._internal.TerrainGenEvents;
+import surreal.backportium._internal.bytecode.traverse.ClassTraverser;
 import surreal.backportium._internal.client.ClientHandler;
 import surreal.backportium._internal.registry.RegistryManager;
 import surreal.backportium.event.MainMenuEvent;
@@ -78,6 +79,7 @@ public class Backportium {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         this.manager = null;
+        ClassTraverser.clear();
     }
 
     // Events
