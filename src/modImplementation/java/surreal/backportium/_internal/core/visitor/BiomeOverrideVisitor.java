@@ -14,7 +14,7 @@ import surreal.backportium.api.world.biome.Overridable;
 import java.util.Random;
 import java.util.function.Function;
 
-public class BiomeOverrideVisitor extends LeClassVisitor {
+public final class BiomeOverrideVisitor extends LeClassVisitor {
 
     private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BiomeOverrideVisitor$Hooks";
     private static final String OVERRIDABLE = "surreal/backportium/api/world/biome/Overridable";

@@ -65,7 +65,9 @@ public final class BubbleColumnTransformer {
             if (name.equals(getName("onBlockAdded", "func_176213_c"))) return null;
             if (name.equals(getName("tickRate", "func_149738_a"))) return null;
             if (name.equals(getName("updateTick", "func_180650_b"))) return null;
-            return super.visitMethod(access, name, desc, signature, exceptions);
+            MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+            if (name.equals("<init>")) return new InitVisitor(mv);
+            return mv;
         }
 
         @Override
@@ -106,10 +108,25 @@ public final class BubbleColumnTransformer {
                 mv.visitMaxs(5, 0);
             }
         }
+
+        private static class InitVisitor extends MethodVisitor {
+
+            public InitVisitor(MethodVisitor mv) {
+                super(ASM5, mv);
+            }
+
+            @Override
+            public void visitInsn(int opcode) {
+                if (opcode == ICONST_1) {
+                    super.visitInsn(ICONST_0);
+                    return;
+                }
+                super.visitInsn(opcode);
+            }
+        }
     }
 
     private static class EntityVisitor extends LeClassVisitor {
-
         public EntityVisitor(ClassVisitor cv) {
             super(cv);
         }
@@ -465,16 +482,14 @@ public final class BubbleColumnTransformer {
         }
 
         public static void $scheduleUpdate(World world, BlockPos pos, Block block) {
-            if (!world.provider.doesWaterVaporize()) {
+            if (!world.provider.doesWaterVaporize() && world.getBlockState(pos.up()).getMaterial() == Material.WATER) {
                 world.scheduleUpdate(pos, block, block.tickRate(world));
             }
         }
 
         public static void $placeColumn(World world, BlockPos belowPos, boolean upwards) {
             BlockPos offset = belowPos.up();
-            if (!world.provider.doesWaterVaporize() && world.getBlockState(offset).getMaterial() == Material.WATER) {
-                world.setBlockState(offset, ModBlocks.BUBBLE_COLUMN.getDefaultState().withProperty(BlockBubbleColumn.DRAG, upwards), Constants.BlockFlags.SEND_TO_CLIENTS);
-            }
+            world.setBlockState(offset, ModBlocks.BUBBLE_COLUMN.getDefaultState().withProperty(BlockBubbleColumn.DRAG, upwards), Constants.BlockFlags.SEND_TO_CLIENTS);
         }
 
         public static int $getRockingTicks(Entity entity, DataParameter<Integer> parameter) { return entity.getDataManager().get(parameter); }
