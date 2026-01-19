@@ -1,8 +1,8 @@
 package surreal.backportium._internal.core.visitor;
 
 import com.google.gson.Gson;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateContainer;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -13,28 +13,31 @@ import surreal.backportium.block.state.ButtonContainer;
 
 import java.util.function.Function;
 
+import static _mod.Constants.C_NEW_BUTTON;
 import static surreal.backportium.block.properties.button.NewButtonProperties.*;
+import static _mod.Constants.V_NEW_BUTTON_STATES;
 
-public final class NewButtonTransformer {
+public final class NewButtonStates {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/NewButtonTransformer$Hooks";
-    private static final String NEW_BUTTON = "surreal/backportium/block/properties/button/NewButton";
+    private static final String HOOKS = V_NEW_BUTTON_STATES + "$Hooks";
+    private static final String NEW_BUTTON = C_NEW_BUTTON;
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
-        if (transformedName.equals("net.minecraft.block.Block")) return BlockVisitor::new;
-        if (transformedName.equals("net.minecraft.block.BlockButton")) return BlockButtonVisitor::new;
+        if (transformedName.equals("net.minecraft.block.Block")) return Block::new;
+        if (transformedName.equals("net.minecraft.block.BlockButton")) return BlockButton::new;
         else {
             int[] constantTable = ClassBytes.getConstantJumpTable(bytes);
-            if (ClassTraverser.get().isSuper(bytes, constantTable, "net/minecraft/block/BlockButton")) return BlockButtonChildVisitor::new;
+            if (ClassTraverser.get().isSuper(bytes, constantTable, "net/minecraft/block/BlockButton")) return BlockButtonChild::new;
         }
         return null;
     }
 
-    private static class BlockVisitor extends LeClassVisitor {
+    private static final class Block extends LeClassVisitor {
 
         private boolean check = false;
 
-        public BlockVisitor(ClassVisitor cv) {
+        public Block(ClassVisitor cv) {
             super(cv);
         }
 
@@ -43,14 +46,14 @@ public final class NewButtonTransformer {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
             if (!check && name.equals("<init>")) {
                 check = true;
-                return new InitVisitor(mv);
+                return new Init(mv);
             }
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -66,11 +69,11 @@ public final class NewButtonTransformer {
     }
 
 
-    private static class BlockButtonVisitor extends LeClassVisitor {
+    private static final class BlockButton extends LeClassVisitor {
 
         private String className;
 
-        public BlockButtonVisitor(ClassVisitor cv) {
+        public BlockButton(ClassVisitor cv) {
             super(cv);
         }
 
@@ -87,7 +90,7 @@ public final class NewButtonTransformer {
             if (name.equals(getName("getMetaFromState", "func_176201_c"))) return null;
             if (name.equals(getName("getStateFromMeta", "func_176203_a"))) return null;
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("getBoundingBox", "func_185496_a"))) return new GetBoundingBoxVisitor(mv);
+            if (name.equals(getName("getBoundingBox", "func_185496_a"))) return new GetBoundingBox(mv);
             return mv;
         }
 
@@ -122,9 +125,9 @@ public final class NewButtonTransformer {
             }
         }
 
-        private static class GetBoundingBoxVisitor extends MethodVisitor {
+        private static final class GetBoundingBox extends MethodVisitor {
 
-            public GetBoundingBoxVisitor(MethodVisitor mv) {
+            public GetBoundingBox(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -144,11 +147,11 @@ public final class NewButtonTransformer {
         }
     }
 
-    private static class BlockButtonChildVisitor extends LeClassVisitor {
+    private static final class BlockButtonChild extends LeClassVisitor {
 
         private String superName = null;
 
-        public BlockButtonChildVisitor(ClassVisitor cv) {
+        public BlockButtonChild(ClassVisitor cv) {
             super(cv);
         }
 
@@ -163,16 +166,16 @@ public final class NewButtonTransformer {
             if (name.equals(getName("getMetaFromState", "func_176201_c"))) return null;
             if (name.equals(getName("getStateFromMeta", "func_176203_a"))) return null;
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("getStateForPlacement", "func_180642_a"))) return new GetStateForPlacementVisitor(mv, this.superName);
+            if (name.equals(getName("getStateForPlacement", "func_180642_a"))) return new GetStateForPlacement(mv, this.superName);
             return mv;
         }
 
-        private static class GetStateForPlacementVisitor extends MethodVisitor {
+        private static final class GetStateForPlacement extends MethodVisitor {
 
             private final String superName;
             private boolean hasSuperCall = false;
 
-            public GetStateForPlacementVisitor(MethodVisitor mv, String superName) {
+            public GetStateForPlacement(MethodVisitor mv, String superName) {
                 super(ASM5, mv);
                 this.superName = superName;
             }
@@ -197,15 +200,17 @@ public final class NewButtonTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         private static final Gson gson = new Gson();
 
-        public static BlockStateContainer $createBlockState(BlockStateContainer oldContainer, Block block) {
+        public static BlockStateContainer $createBlockState(BlockStateContainer oldContainer, net.minecraft.block.Block block) {
            if (!(block instanceof NewButton)) return oldContainer;
            return new ButtonContainer(block, oldContainer, POWERED, FACE, FACING);
         }
+
+        private Hooks() {}
     }
 
-    private NewButtonTransformer() {}
+    private NewButtonStates() {}
 }

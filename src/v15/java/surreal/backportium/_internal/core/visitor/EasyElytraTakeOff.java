@@ -1,34 +1,36 @@
 package surreal.backportium._internal.core.visitor;
 
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 
 import java.util.function.Function;
 
-public final class ElytraVisitor {
+public final class EasyElytraTakeOff {
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
-        if (name.equals("net.minecraft.network.NetHandlerPlayServer")) return NetHandlerPlayServerVisitor::new;
+        if (name.equals("net.minecraft.network.NetHandlerPlayServer")) return NetHandlerPlayServer::new;
         return null;
     }
 
-    private static class NetHandlerPlayServerVisitor extends LeClassVisitor {
+    private static final class NetHandlerPlayServer extends LeClassVisitor {
 
-        public NetHandlerPlayServerVisitor(ClassVisitor cv) {
+        public NetHandlerPlayServer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("processEntityAction", "func_147357_a"))) return new ProcessEntityActionVisitor(mv);
+            if (name.equals(getName("processEntityAction", "func_147357_a"))) return new ProcessEntityAction(mv);
             return mv;
         }
 
-        private static class ProcessEntityActionVisitor extends MethodVisitor {
+        private static final class ProcessEntityAction extends MethodVisitor {
 
-            public ProcessEntityActionVisitor(MethodVisitor mv) {
+            public ProcessEntityAction(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -43,5 +45,5 @@ public final class ElytraVisitor {
         }
     }
 
-    private ElytraVisitor() {}
+    private EasyElytraTakeOff() {}
 }

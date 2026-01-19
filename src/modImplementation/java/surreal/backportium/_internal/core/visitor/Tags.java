@@ -1,5 +1,6 @@
 package surreal.backportium._internal.core.visitor;
 
+import _mod.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPrismarine;
 import net.minecraft.block.BlockSeaLantern;
@@ -13,6 +14,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -22,36 +24,37 @@ import java.util.function.Function;
 
 import static surreal.backportium.tag.AllTags.*;
 
-public final class TagTransformer {
+public final class Tags {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/TagTransformer$Hooks";
+    private static final String HOOKS = Constants.V_TAGS + "$Hooks";
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> getVisitor(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraftforge.registries.GameData": return GameDataVisitor::new;
-            case "net.minecraftforge.common.ForgeModContainer": return ForgeModContainerVisitor::new;
+            case "net.minecraftforge.registries.GameData": return GameData::new;
+            case "net.minecraftforge.common.ForgeModContainer": return ForgeModContainer::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class GameDataVisitor extends LeClassVisitor {
+    private static final class GameData extends LeClassVisitor {
 
-        public GameDataVisitor(ClassVisitor cv) {
+        public GameData(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("init")) return new InitVisitor(mv);
+            if (name.equals("init")) return new Init(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
             private int count = 0;
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -70,9 +73,9 @@ public final class TagTransformer {
             }
         }
     }
-    private static class ForgeModContainerVisitor extends LeClassVisitor {
+    private static final class ForgeModContainer extends LeClassVisitor {
 
-        public ForgeModContainerVisitor(ClassVisitor cv) {
+        public ForgeModContainer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -83,7 +86,7 @@ public final class TagTransformer {
             return mv;
         }
 
-        private static class RegisterAllBiomesAndGenerateEvents extends MethodVisitor {
+        private static final class RegisterAllBiomesAndGenerateEvents extends MethodVisitor {
 
             public RegisterAllBiomesAndGenerateEvents(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -101,19 +104,19 @@ public final class TagTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static RegistryBuilder<Block> GameData$addAddCallbackBlock(RegistryBuilder<Block> builder) {
             return builder.add((IForgeRegistry.AddCallback<Block>) (owner, stage, id, obj, oldObj) -> {
                 obj.getBlockState().getValidStates().forEach(state -> {
                     if (state.getMaterial() == Material.CORAL) {
-                        BLOCK_TAG.add(BLOCK_SEA_PICKLE_GROWABLE, state);
+                        BLOCK_TAG.add(BLOCK_CAN_GROW_SEA_PICKLE, state);
                     }
                     if (obj instanceof BlockPrismarine || obj instanceof BlockSeaLantern) {
                         BLOCK_TAG.add(BLOCK_CONDUIT_BUILDING_BLOCKS, state);
                     }
                     if (state.getMaterial() == Material.SAND) {
-                        BLOCK_TAG.add(BLOCK_TURTLE_EGG_HATCHABLE, state);
+                        BLOCK_TAG.add(BLOCK_CAN_HATCH_TURTLE_EGG, state);
                     }
                 });
             });
@@ -123,10 +126,10 @@ public final class TagTransformer {
             return builder.add((IForgeRegistry.AddCallback<EntityEntry>) (owner, stage, id, obj, oldObj) -> {
                 Class<? extends Entity> entityClass = obj.getEntityClass();
                 if (EntityWaterMob.class.isAssignableFrom(entityClass) || EntityGuardian.class.isAssignableFrom(entityClass)) {
-                    ENTITY_TAG.add(ENTITY_IMPALING_WHITELIST, obj);
+                    ENTITY_TAG.add(ENTITY_IMPALING_SENSITIVE, obj);
                 }
                 if (EntityMob.class.isAssignableFrom(entityClass)) {
-                    ENTITY_TAG.add(ENTITY_BLOCK_CONDUIT_ATTACK, obj);
+                    ENTITY_TAG.add(ENTITY_CONDUIT_ATTACKS, obj);
                 }
             });
         }
@@ -151,7 +154,9 @@ public final class TagTransformer {
                 BIOME_TAG.add(BIOME_GENERATION_BLUE_ICE, biome);
             }
         }
+
+        private Hooks() {}
     }
 
-    private TagTransformer() {}
+    private Tags() {}
 }

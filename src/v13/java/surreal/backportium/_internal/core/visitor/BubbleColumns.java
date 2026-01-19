@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.util.EnumParticleTypes;
@@ -18,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -31,30 +31,33 @@ import surreal.backportium._internal.entity.RockableBoat;
 import java.util.Random;
 import java.util.function.Function;
 
-public final class BubbleColumnTransformer {
+import static _mod.Constants.*;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BubbleColumnTransformer$Hooks";
-    private static final String BUBBLE_COLUMN_INTERACTABLE = "surreal/backportium/api/entity/BubbleColumnInteractable";
-    private static final String ROCKABLE_BOAT = "surreal/backportium/_internal/entity/RockableBoat";
+public final class BubbleColumns {
 
+    private static final String HOOKS = V_BUBBLE_COLUMNS + "$Hooks";
+    private static final String BUBBLE_COLUMN_INTERACTABLE = A_BUBBLE_COLUMN_INTERACTABLE;
+    private static final String ROCKABLE_BOAT = A_ROCKABLE_BOAT;
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.block.BlockSoulSand": return cv -> new BlockColumnPlacerVisitor(cv, true);
-            case "net.minecraft.block.BlockMagma": return cv -> new BlockColumnPlacerVisitor(cv, false);
-            case "net.minecraft.entity.Entity": return EntityVisitor::new;
-            case "net.minecraft.client.entity.EntityPlayerSP": return EntityPlayerSPVisitor::new;
-            case "net.minecraft.entity.projectile.EntityThrowable": return EntityThrowableVisitor::new;
-            case "net.minecraft.entity.item.EntityBoat": return EntityBoatVisitor::new;
-            case "net.minecraft.client.renderer.entity.RenderBoat": return RenderBoatVisitor::new;
+            case "net.minecraft.block.BlockSoulSand": return cv -> new BubbleColumnPlacerBlock(cv, true);
+            case "net.minecraft.block.BlockMagma": return cv -> new BubbleColumnPlacerBlock(cv, false);
+            case "net.minecraft.entity.Entity": return Entity::new;
+            case "net.minecraft.client.entity.EntityPlayerSP": return EntityPlayerSP::new;
+            case "net.minecraft.entity.projectile.EntityThrowable": return EntityThrowable::new;
+            case "net.minecraft.entity.item.EntityBoat": return EntityBoat::new;
+            case "net.minecraft.client.renderer.entity.RenderBoat": return RenderBoat::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class BlockColumnPlacerVisitor extends LeClassVisitor {
+    private static final class BubbleColumnPlacerBlock extends LeClassVisitor {
 
         private final boolean upwards;
 
-        public BlockColumnPlacerVisitor(ClassVisitor cv, boolean upwards) {
+        public BubbleColumnPlacerBlock(ClassVisitor cv, boolean upwards) {
             super(cv);
             this.upwards = upwards;
         }
@@ -66,7 +69,7 @@ public final class BubbleColumnTransformer {
             if (name.equals(getName("tickRate", "func_149738_a"))) return null;
             if (name.equals(getName("updateTick", "func_180650_b"))) return null;
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>")) return new InitVisitor(mv);
+            if (name.equals("<init>")) return new Init(mv);
             return mv;
         }
 
@@ -109,9 +112,9 @@ public final class BubbleColumnTransformer {
             }
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -126,8 +129,9 @@ public final class BubbleColumnTransformer {
         }
     }
 
-    private static class EntityVisitor extends LeClassVisitor {
-        public EntityVisitor(ClassVisitor cv) {
+    private static final class Entity extends LeClassVisitor {
+
+        public Entity(ClassVisitor cv) {
             super(cv);
         }
 
@@ -138,9 +142,9 @@ public final class BubbleColumnTransformer {
         }
     }
 
-    private static class EntityPlayerSPVisitor extends LeClassVisitor {
+    private static final class EntityPlayerSP extends LeClassVisitor {
 
-        public EntityPlayerSPVisitor(ClassVisitor cv) {
+        public EntityPlayerSP(ClassVisitor cv) {
             super(cv);
         }
 
@@ -153,13 +157,13 @@ public final class BubbleColumnTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdateVisitor(mv);
+            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdate(mv);
             return mv;
         }
 
-        private static class OnUpdateVisitor extends MethodVisitor {
+        private static final class OnUpdate extends MethodVisitor {
 
-            public OnUpdateVisitor(MethodVisitor mv) {
+            public OnUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -179,11 +183,11 @@ public final class BubbleColumnTransformer {
         }
     }
 
-    private static class EntityThrowableVisitor extends LeClassVisitor {
+    private static final class EntityThrowable extends LeClassVisitor {
 
         private boolean check = false;
 
-        public EntityThrowableVisitor(ClassVisitor cv) {
+        public EntityThrowable(ClassVisitor cv) {
             super(cv);
         }
 
@@ -198,15 +202,15 @@ public final class BubbleColumnTransformer {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
             if (!check && name.equals("<init>")) {
                 check = true;
-                return new InitVisitor(mv);
+                return new Init(mv);
             }
-            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdateVisitor(mv);
+            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdate(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -222,9 +226,9 @@ public final class BubbleColumnTransformer {
             }
         }
 
-        private static class OnUpdateVisitor extends MethodVisitor {
+        private static final class OnUpdate extends MethodVisitor {
 
-            public OnUpdateVisitor(MethodVisitor mv) {
+            public OnUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -254,11 +258,11 @@ public final class BubbleColumnTransformer {
         }
     }
 
-    private static class EntityBoatVisitor extends LeClassVisitor {
+    private static final class EntityBoat extends LeClassVisitor {
 
         private String className;
 
-        public EntityBoatVisitor(ClassVisitor cv) {
+        public EntityBoat(ClassVisitor cv) {
             super(cv);
         }
 
@@ -277,9 +281,9 @@ public final class BubbleColumnTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("entityInit", "func_70088_a"))) return new EntityInitVisitor(mv, this.className);
-            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdateVisitor(mv);
-            if (name.equals("<clinit>")) return new ClinitVisitor(mv, this.className);
+            if (name.equals(getName("entityInit", "func_70088_a"))) return new EntityInit(mv, this.className);
+            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdate(mv);
+            if (name.equals("<clinit>")) return new Clinit(mv, this.className);
             return mv;
         }
 
@@ -377,11 +381,11 @@ public final class BubbleColumnTransformer {
             }
         }
 
-        private static class EntityInitVisitor extends MethodVisitor {
+        private static final class EntityInit extends MethodVisitor {
 
             private final String className;
 
-            public EntityInitVisitor(MethodVisitor mv, String className) {
+            public EntityInit(MethodVisitor mv, String className) {
                 super(ASM5, mv);
                 this.className = className;
             }
@@ -397,11 +401,11 @@ public final class BubbleColumnTransformer {
             }
         }
 
-        private static class OnUpdateVisitor extends MethodVisitor {
+        private static final class OnUpdate extends MethodVisitor {
 
             private boolean check = false;
 
-            public OnUpdateVisitor(MethodVisitor mv) {
+            public OnUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -416,11 +420,11 @@ public final class BubbleColumnTransformer {
             }
         }
 
-        private static class ClinitVisitor extends MethodVisitor {
+        private static final class Clinit extends MethodVisitor {
 
             private final String className;
 
-            public ClinitVisitor(MethodVisitor mv, String className) {
+            public Clinit(MethodVisitor mv, String className) {
                 super(ASM5, mv);
                 this.className = className;
             }
@@ -438,24 +442,24 @@ public final class BubbleColumnTransformer {
         }
     }
 
-    private static class RenderBoatVisitor extends LeClassVisitor {
+    private static final class RenderBoat extends LeClassVisitor {
 
-        public RenderBoatVisitor(ClassVisitor cv) {
+        public RenderBoat(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("setupRotation", "func_188311_a"))) return new SetupRotationVisitor(mv);
+            if (name.equals(getName("setupRotation", "func_188311_a"))) return new SetupRotation(mv);
             return mv;
         }
 
-        private static class SetupRotationVisitor extends MethodVisitor {
+        private static final class SetupRotation extends MethodVisitor {
 
             private boolean check = false;
 
-            public SetupRotationVisitor(MethodVisitor mv) {
+            public SetupRotation(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -473,7 +477,7 @@ public final class BubbleColumnTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static void $neighborChanged(World world, BlockPos pos, Block block, BlockPos fromPos) {
             if (!world.provider.doesWaterVaporize() && fromPos.getY() > pos.getY() && world.getBlockState(fromPos).getMaterial() == Material.WATER) {
@@ -492,10 +496,10 @@ public final class BubbleColumnTransformer {
             world.setBlockState(offset, ModBlocks.BUBBLE_COLUMN.getDefaultState().withProperty(BlockBubbleColumn.DRAG, upwards), Constants.BlockFlags.SEND_TO_CLIENTS);
         }
 
-        public static int $getRockingTicks(Entity entity, DataParameter<Integer> parameter) { return entity.getDataManager().get(parameter); }
-        public static void $setRockingTicks(Entity entity, DataParameter<Integer> parameter, int value) { entity.getDataManager().set(parameter, value); }
+        public static int $getRockingTicks(net.minecraft.entity.Entity entity, DataParameter<Integer> parameter) { return entity.getDataManager().get(parameter); }
+        public static void $setRockingTicks(net.minecraft.entity.Entity entity, DataParameter<Integer> parameter, int value) { entity.getDataManager().set(parameter, value); }
 
-        public static void $onBubbleColumn_EntityBoat(Entity entity, Random entityRand, SoundEvent splashSound, boolean downwards) {
+        public static void $onBubbleColumn_EntityBoat(net.minecraft.entity.Entity entity, Random entityRand, SoundEvent splashSound, boolean downwards) {
             if (!entity.world.isRemote) {
                 RockableBoat rockable = (RockableBoat) entity;
                 rockable.setRocking(downwards ? 2 : 1);
@@ -507,11 +511,11 @@ public final class BubbleColumnTransformer {
             }
         }
 
-        public static void $registerBoatData(Entity entity, DataParameter<Integer> parameter) {
+        public static void $registerBoatData(net.minecraft.entity.Entity entity, DataParameter<Integer> parameter) {
             entity.getDataManager().register(parameter, 0);
         }
 
-        public static void $onUpdate_EntityBoat(Entity entity) {
+        public static void $onUpdate_EntityBoat(net.minecraft.entity.Entity entity) {
             RockableBoat rockable = (RockableBoat) entity;
             if (entity.world.isRemote) {
                 int i = rockable.getTicks();
@@ -542,14 +546,14 @@ public final class BubbleColumnTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static void $rockBoat(Entity entity, float partialTicks) {
+        public static void $rockBoat(net.minecraft.entity.Entity entity, float partialTicks) {
             RockableBoat rockable = (RockableBoat) entity;
             float angle = rockable.getPrevAngle() + (rockable.getAngle() - rockable.getPrevAngle()) * partialTicks;
             if (!MathHelper.epsilonEquals(angle, 0.0F)) GlStateManager.rotate(angle, 1.0F, 0.0F, 1.0F);
         }
 
         @SideOnly(Side.CLIENT)
-        public static int $handleBubbleColumnClient(Entity entity, int inColumn) {
+        public static int $handleBubbleColumnClient(net.minecraft.entity.Entity entity, int inColumn) {
             World world = entity.world;
             BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
             IBlockState state = world.getBlockState(pos);
@@ -572,7 +576,7 @@ public final class BubbleColumnTransformer {
         }
 
         // TODO A config maybe?
-        public static boolean EntityThrowable$isEligible(Entity entity) {
+        public static boolean EntityThrowable$isEligible(net.minecraft.entity.Entity entity) {
             return entity.getClass().getName().startsWith("net.minecraft.");
         }
 
@@ -581,15 +585,17 @@ public final class BubbleColumnTransformer {
             return world.rayTraceBlocks(start, end);
         }
 
-        private static boolean isPlayerRiding(Entity entity) {
-            for(Entity passenger : entity.getPassengers()) {
+        private static boolean isPlayerRiding(net.minecraft.entity.Entity entity) {
+            for(net.minecraft.entity.Entity passenger : entity.getPassengers()) {
                 if (EntityPlayer.class.isAssignableFrom(passenger.getClass())) {
                     return true;
                 }
             }
             return false;
         }
+
+        private Hooks() {}
     }
 
-    private BubbleColumnTransformer() {}
+    private BubbleColumns() {}
 }

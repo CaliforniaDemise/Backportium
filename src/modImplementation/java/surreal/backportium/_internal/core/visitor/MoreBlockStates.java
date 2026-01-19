@@ -1,6 +1,5 @@
 package surreal.backportium._internal.core.visitor;
 
-import net.minecraft.world.chunk.NibbleArray;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
@@ -12,10 +11,12 @@ import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 import java.util.Arrays;
 import java.util.function.Function;
 
-public final class MoreStates {
+import static _mod.Constants.V_MORE_BLOCK_STATES;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/MoreStates$Hooks";
-    private static final String NIBBLEST_ARRAY = "surreal/backportium/_internal/core/visitor/MoreStates$NibblestArray";
+public final class MoreBlockStates {
+
+    private static final String HOOKS = V_MORE_BLOCK_STATES + "$Hooks";
+    private static final String NIBBLEST_ARRAY = V_MORE_BLOCK_STATES + "$NibblestArray";
     private static final int MAX_STATES = 255;
     private static final int MAX_ID = 1048575;
 
@@ -23,36 +24,36 @@ public final class MoreStates {
     public static Function<ClassVisitor, ClassVisitor> getClassVisitor(String name, String transformedName) {
         if (FMLLaunchHandler.isDeobfuscatedEnvironment() && transformedName.equals("net.minecraftforge.registries.GameData")) return cv -> cv;
         switch (transformedName) {
-            case "net.minecraft.block.Block": return BlockVisitor::new;
-            case "net.minecraftforge.registries.GameData$BlockCallbacks": return GameData$BlockCallbacksVisitor::new;
-            case "net.minecraft.client.network.NetHandlerPlayClient": return NetHandlerPlayClientVisitor::new;
-            case "net.minecraft.world.chunk.ChunkPrimer": return ChunkPrimerVisitor::new;
-            case "net.minecraft.world.chunk.NibbleArray": return NibbleArrayVisitor::new;
-            case "net.minecraft.world.chunk.storage.AnvilChunkLoader": return AnvilChunkLoaderVisitor::new;
-            case "net.minecraft.world.chunk.BlockStateContainer": return BlockStateContainerVisitor::new;
+            case "net.minecraft.block.Block": return Block::new;
+            case "net.minecraftforge.registries.GameData$BlockCallbacks": return GameData$BlockCallbacks::new;
+            case "net.minecraft.client.network.NetHandlerPlayClient": return NetHandlerPlayClient::new;
+            case "net.minecraft.world.chunk.ChunkPrimer": return ChunkPrimer::new;
+            case "net.minecraft.world.chunk.NibbleArray": return NibbleArray::new;
+            case "net.minecraft.world.chunk.storage.AnvilChunkLoader": return AnvilChunkLoader::new;
+            case "net.minecraft.world.chunk.BlockStateContainer": return BlockStateContainer::new;
+            default: return null;
         }
-        return null;
     }
 
-    public static class BlockVisitor extends LeClassVisitor {
+    public static final class Block extends LeClassVisitor {
 
         private boolean initCheck = false;
 
-        public BlockVisitor(ClassVisitor cv) {
+        public Block(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (!initCheck && name.equals("<init>")) { initCheck = true; return new InitVisitor(mv); }
-            if (name.equals(getName("getStateById", "func_176220_d"))) return new GetStateByIdVisitor(mv);
+            if (!initCheck && name.equals("<init>")) { initCheck = true; return new Init(mv); }
+            if (name.equals(getName("getStateById", "func_176220_d"))) return new GetStateById(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -76,9 +77,9 @@ public final class MoreStates {
             }
         }
 
-        private static class GetStateByIdVisitor extends MethodVisitor {
+        private static final class GetStateById extends MethodVisitor {
 
-            public GetStateByIdVisitor(MethodVisitor mv) {
+            public GetStateById(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -93,22 +94,22 @@ public final class MoreStates {
         }
     }
 
-    public static class GameData$BlockCallbacksVisitor extends LeClassVisitor {
+    public static final class GameData$BlockCallbacks extends LeClassVisitor {
 
-        public GameData$BlockCallbacksVisitor(ClassVisitor cv) {
+        public GameData$BlockCallbacks(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("onAdd")) return new OnAddVisitor(mv);
+            if (name.equals("onAdd")) return new OnAdd(mv);
             return mv;
         }
 
-        private static class OnAddVisitor extends MethodVisitor {
+        private static final class OnAdd extends MethodVisitor {
 
-            public OnAddVisitor(MethodVisitor mv) {
+            public OnAdd(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -129,22 +130,22 @@ public final class MoreStates {
         }
     }
 
-    public static class NetHandlerPlayClientVisitor extends LeClassVisitor {
+    public static final class NetHandlerPlayClient extends LeClassVisitor {
 
-        public NetHandlerPlayClientVisitor(ClassVisitor cv) {
+        public NetHandlerPlayClient(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("handleSpawnObject", "func_147235_a"))) return new HandleSpawnObjectVisitor(mv);
+            if (name.equals(getName("handleSpawnObject", "func_147235_a"))) return new HandleSpawnObject(mv);
             return mv;
         }
 
-        private static class HandleSpawnObjectVisitor extends MethodVisitor {
+        private static final class HandleSpawnObject extends MethodVisitor {
 
-            public HandleSpawnObjectVisitor(MethodVisitor mv) {
+            public HandleSpawnObject(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -156,9 +157,9 @@ public final class MoreStates {
         }
     }
 
-    public static class ChunkPrimerVisitor extends LeClassVisitor {
+    public static final class ChunkPrimer extends LeClassVisitor {
 
-        public ChunkPrimerVisitor(ClassVisitor cv) {
+        public ChunkPrimer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -171,16 +172,16 @@ public final class MoreStates {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>")) return new ArrayReplaceVisitor(mv);
-            if (name.equals(getName("getBlockState", "func_177856_a"))) return new ArrayReplaceVisitor(mv);
-            if (name.equals(getName("setBlockState", "func_177855_a"))) return new ArrayReplaceVisitor(mv);
-            if (name.equals(getName("findGroundBlockIdx", "func_186138_a"))) return new ArrayReplaceVisitor(mv);
+            if (name.equals("<init>")) return new ArrayReplace(mv);
+            if (name.equals(getName("getBlockState", "func_177856_a"))) return new ArrayReplace(mv);
+            if (name.equals(getName("setBlockState", "func_177855_a"))) return new ArrayReplace(mv);
+            if (name.equals(getName("findGroundBlockIdx", "func_186138_a"))) return new ArrayReplace(mv);
             return mv;
         }
 
-        private static class ArrayReplaceVisitor extends MethodVisitor {
+        private static final class ArrayReplace extends MethodVisitor {
 
-            public ArrayReplaceVisitor(MethodVisitor mv) {
+            public ArrayReplace(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -208,22 +209,22 @@ public final class MoreStates {
         }
     }
 
-    public static class NibbleArrayVisitor extends LeClassVisitor {
+    public static final class NibbleArray extends LeClassVisitor {
 
-        public NibbleArrayVisitor(ClassVisitor cv) {
+        public NibbleArray(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>") && desc.startsWith("([B")) return new InitVisitor(mv);
+            if (name.equals("<init>") && desc.startsWith("([B")) return new Init(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -241,24 +242,24 @@ public final class MoreStates {
         }
     }
 
-    private static class AnvilChunkLoaderVisitor extends LeClassVisitor {
+    private static final class AnvilChunkLoader extends LeClassVisitor {
 
-        public AnvilChunkLoaderVisitor(ClassVisitor cv) {
+        public AnvilChunkLoader(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("writeChunkToNBT", "func_75820_a"))) return new WriteChunkToNBTVisitor(mv);
+            if (name.equals(getName("writeChunkToNBT", "func_75820_a"))) return new WriteChunkToNBT(mv);
             if (name.equals(getName("readChunkFromNBT", "func_75823_a"))) return new ReadChunkFromNBT(mv);
             return mv;
         }
 
-        private static class WriteChunkToNBTVisitor extends MethodVisitor {
+        private static final class WriteChunkToNBT extends MethodVisitor {
 
 
-            public WriteChunkToNBTVisitor(MethodVisitor mv) {
+            public WriteChunkToNBT(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -281,7 +282,7 @@ public final class MoreStates {
             }
         }
 
-        private static class ReadChunkFromNBT extends MethodVisitor {
+        private static final class ReadChunkFromNBT extends MethodVisitor {
 
             private boolean check = false;
 
@@ -306,25 +307,25 @@ public final class MoreStates {
         }
     }
 
-    public static class BlockStateContainerVisitor extends LeClassVisitor {
+    public static final class BlockStateContainer extends LeClassVisitor {
 
-        public BlockStateContainerVisitor(ClassVisitor cv) {
+        public BlockStateContainer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("getDataForNBT", "func_186017_a"))) return new GetDataForNBTVisitor(mv);
-            if (name.equals(getName("setDataFromNBT", "func_186019_a"))) return new SetDataFromNBTVisitor(mv);
+            if (name.equals(getName("getDataForNBT", "func_186017_a"))) return new GetDataForNBT(mv);
+            if (name.equals(getName("setDataFromNBT", "func_186019_a"))) return new SetDataFromNBT(mv);
             return mv;
         }
 
-        private static class GetDataForNBTVisitor extends MethodVisitor {
+        private static final class GetDataForNBT extends MethodVisitor {
 
             private int count = 0;
 
-            public GetDataForNBTVisitor(MethodVisitor mv) {
+            public GetDataForNBT(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -354,11 +355,11 @@ public final class MoreStates {
             }
         }
 
-        private static class SetDataFromNBTVisitor extends MethodVisitor {
+        private static final class SetDataFromNBT extends MethodVisitor {
 
             private boolean saw12 = false;
 
-            public SetDataFromNBTVisitor(MethodVisitor mv) {
+            public SetDataFromNBT(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -385,15 +386,17 @@ public final class MoreStates {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static void $initHarvestLevelArray(int[] harvestLevel) {
             Arrays.fill(harvestLevel, -1);
         }
+
+        private Hooks() {}
     }
 
     @SuppressWarnings("unused")
-    public static class NibblestArray extends NibbleArray {
+    public static final class NibblestArray extends net.minecraft.world.chunk.NibbleArray {
 
         public NibblestArray() {
             super(new byte[4096]);
@@ -414,5 +417,5 @@ public final class MoreStates {
         }
     }
 
-    private MoreStates() {}
+    private MoreBlockStates() {}
 }

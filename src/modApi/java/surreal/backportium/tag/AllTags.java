@@ -1,16 +1,7 @@
 package surreal.backportium.tag;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockPrismarine;
-import net.minecraft.block.BlockSeaLantern;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityGuardian;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityWaterMob;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.fml.common.registry.EntityEntry;
 
 /**
  *
@@ -23,13 +14,30 @@ public class AllTags {
     public static final EntityTag ENTITY_TAG = new EntityTag();
     public static final Tag<Biome> BIOME_TAG = new Tag<>(null);
 
-    public static final String BLOCK_CONDUIT_BUILDING_BLOCKS = "backportium:block/conduit_building_blocks";
-    public static final String BLOCK_SEA_PICKLE_GROWABLE = "backportium:block/sea_pickle_growable";
-    public static final String BLOCK_TURTLE_EGG_HATCHABLE = "backportium:block/turtle_egg_hatchable";
+    // GLOBAL
+    public static final String ENTITY_BOAT = "all:boat";
+    public static final String ENTITY_AQUATIC = "all:aquatic";
+    public static final String ENTITY_ARTHROPOD = "all:arthropod";
+    public static final String ENTITY_UNDEAD = "all:undead";
+    public static final String ENTITY_ZOMBIE = "all:zombie";
+    public static final String ENTITY_SKELETON = "all:skeleton";
 
-    public static final String ENTITY_IMPALING_WHITELIST = "backportium:entity/enchantment/impaling_whitelist";
-    public static final String ENTITY_CHANNELING_BLACKLIST = "backportium:entity/enchantment/channeling_blacklist";
-    public static final String ENTITY_BLOCK_CONDUIT_ATTACK = "backportium:entity/block/conduit_attack";
+    // VANILLA
+    /* POTION IMMUNITY */
+    /* DAMAGE TYPE IMMUNITY */
+    public static final String ENTITY_WITHER_ALLY = "minecraft:wither_friend";
+    public static final String ENTITY_ENDERMAN_ENEMY = "minecraft:enderman_enemy"; // Endermite
+    public static final String ENTITY_BANE_OF_ARTHROPODS_SENSITIVE = "minecraft:bane_of_arthropods_sensitive";
+
+    // 1.13
+    public static final String BLOCK_CONDUIT_BUILDING_BLOCKS = "backportium:conduit/building_blocks";
+    public static final String BLOCK_CAN_GROW_SEA_PICKLE = "backportium:can_grow_sea_pickle";
+    public static final String BLOCK_CAN_HATCH_TURTLE_EGG = "backportium:can_hatch_turtle_egg";
+    public static final String BLOCK_CHANNELING_SENSITIVE = "backportium:channeling_sensitive";
+
+    public static final String ENTITY_IMPALING_SENSITIVE = "backportium:impaling_sensitive";
+    public static final String ENTITY_CONDUIT_ATTACKS = "backportium:conduit/attacks";
+    public static final String ENTITY_CONDUIT_GIVES_EFFECT = "backportium:conduit/gives_effect";
 
     // TODO Better world generation handling (?)
     public static final String BIOME_GENERATION_WARM_VEGETATION = "backportium:biome/generation/warm_vegetation";

@@ -3,21 +3,16 @@ package surreal.backportium._internal.core.visitor;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldEntitySpawner;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
@@ -32,41 +27,44 @@ import surreal.backportium.util.FluidUtil;
 
 import java.util.function.Function;
 
-public final class LoggingTransformer {
+import static _mod.Constants.*;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/LoggingTransformer$Hooks";
-    private static final String LOGGED_ACCESS = "surreal/backportium/_internal/world/LoggedAccess";
-    private static final String LOGGABLE_CHUNK = "surreal/backportium/_internal/world/chunk/LoggableChunk";
-    private static final String LOGGING_MAP = "surreal/backportium/_internal/world/chunk/LoggingMap";
+public final class WaterLogging {
 
+    private static final String HOOKS = V_WATER_LOGGING + "$Hooks";
+    private static final String LOGGED_ACCESS = A_LOGGED_ACCESS;
+    private static final String LOGGABLE_CHUNK = A_LOGGABLE_CHUNK;
+    private static final String LOGGING_MAP = C_LOGGING_MAP;
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.world.chunk.Chunk": return ChunkVisitor::new;
-            case "net.minecraft.world.chunk.storage.AnvilChunkLoader": return AnvilChunkLoaderVisitor::new;
-            case "net.minecraft.network.play.server.SPacketChunkData": return SPacketChunkDataVisitor::new;
-            case "net.minecraft.client.network.NetHandlerPlayClient": return NetHandlerPlayClientVisitor::new;
-            case "net.minecraft.world.IBlockAccess": return IBlockAccessVisitor::new;
-            case "net.minecraft.world.World": return WorldVisitor::new;
-            case "net.minecraft.world.ChunkCache": return ChunkCacheVisitor::new;
-            case "net.minecraft.client.renderer.chunk.RenderChunk": return RenderChunkVisitor::new;
-            case "net.minecraft.client.renderer.BlockFluidRenderer": return BlockFluidRendererVisitor::new;
-            case "net.minecraft.block.BlockLiquid": return BlockLiquidVisitor::new;
-            case "net.minecraft.block.BlockDynamicLiquid": return BlockDynamicLiquidVisitor::new;
-            case "net.minecraft.block.BlockStaticLiquid": return BlockStaticLiquidVisitor::new;
-            case "net.minecraft.world.WorldServer": return WorldServerVisitor::new;
-            case "net.minecraft.network.play.server.SPacketBlockChange": return SPacketBlockChangeVisitor::new;
-            case "net.minecraft.world.WorldEntitySpawner": return WorldEntitySpawnerVisitor::new;
-            case "net.minecraft.entity.Entity": return EntityVisitor::new;
-            case "net.minecraft.client.renderer.ActiveRenderInfo": return ActiveRenderInfoVisitor::new;
-            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
+            case "net.minecraft.world.chunk.Chunk": return Chunk::new;
+            case "net.minecraft.world.chunk.storage.AnvilChunkLoader": return AnvilChunkLoader::new;
+            case "net.minecraft.network.play.server.SPacketChunkData": return SPacketChunkData::new;
+            case "net.minecraft.client.network.NetHandlerPlayClient": return NetHandlerPlayClient::new;
+            case "net.minecraft.world.IBlockAccess": return IBlockAccess::new;
+            case "net.minecraft.world.World": return World::new;
+            case "net.minecraft.world.ChunkCache": return ChunkCache::new;
+            case "net.minecraft.client.renderer.chunk.RenderChunk": return RenderChunk::new;
+            case "net.minecraft.client.renderer.BlockFluidRenderer": return BlockFluidRenderer::new;
+            case "net.minecraft.block.BlockLiquid": return BlockLiquid::new;
+            case "net.minecraft.block.BlockDynamicLiquid": return BlockDynamicLiquid::new;
+            case "net.minecraft.block.BlockStaticLiquid": return BlockStaticLiquid::new;
+            case "net.minecraft.world.WorldServer": return WorldServer::new;
+            case "net.minecraft.network.play.server.SPacketBlockChange": return SPacketBlockChange::new;
+            case "net.minecraft.world.WorldEntitySpawner": return WorldEntitySpawner::new;
+            case "net.minecraft.entity.Entity": return Entity::new;
+            case "net.minecraft.client.renderer.ActiveRenderInfo": return ActiveRenderInfo::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRenderer::new;
             case "net.minecraftforge.common.ForgeHooks": return ForgeHooks::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class ChunkVisitor extends LeClassVisitor {
+    private static final class Chunk extends LeClassVisitor {
 
-        public ChunkVisitor(ClassVisitor cv) {
+        public Chunk(ClassVisitor cv) {
             super(cv);
         }
 
@@ -79,7 +77,7 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>")) return new InitVisitor(mv);
+            if (name.equals("<init>")) return new Init(mv);
             return mv;
         }
 
@@ -103,9 +101,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -123,9 +121,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class AnvilChunkLoaderVisitor extends LeClassVisitor {
+    private static final class AnvilChunkLoader extends LeClassVisitor {
 
-        public AnvilChunkLoaderVisitor(ClassVisitor cv) {
+        public AnvilChunkLoader(ClassVisitor cv) {
             super(cv);
         }
 
@@ -137,7 +135,7 @@ public final class LoggingTransformer {
             return mv;
         }
 
-        private static class WriteChunkToNBT extends MethodVisitor {
+        private static final class WriteChunkToNBT extends MethodVisitor {
 
             public WriteChunkToNBT(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -155,7 +153,7 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class ReadChunkFromNBT extends MethodVisitor {
+        private static final class ReadChunkFromNBT extends MethodVisitor {
 
             public ReadChunkFromNBT(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -174,9 +172,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class SPacketChunkDataVisitor extends LeClassVisitor {
+    private static final class SPacketChunkData extends LeClassVisitor {
 
-        public SPacketChunkDataVisitor(ClassVisitor cv) {
+        public SPacketChunkData(ClassVisitor cv) {
             super(cv);
         }
 
@@ -189,15 +187,15 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>") && !desc.equals("()V")) return new InitVisitor(mv);
-            if (name.equals(getName("readPacketData", "func_148837_a"))) return new ReadPacketDataVisitor(mv);
-            if (name.equals(getName("writePacketData", "func_148840_b"))) return new WritePacketDataVisitor(mv);
+            if (name.equals("<init>") && !desc.equals("()V")) return new Init(mv);
+            if (name.equals(getName("readPacketData", "func_148837_a"))) return new ReadPacketData(mv);
+            if (name.equals(getName("writePacketData", "func_148840_b"))) return new WritePacketData(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -213,9 +211,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class ReadPacketDataVisitor extends MethodVisitor {
+        private static final class ReadPacketData extends MethodVisitor {
 
-            public ReadPacketDataVisitor(MethodVisitor mv) {
+            public ReadPacketData(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -229,9 +227,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class WritePacketDataVisitor extends MethodVisitor {
+        private static final class WritePacketData extends MethodVisitor {
 
-            public WritePacketDataVisitor(MethodVisitor mv) {
+            public WritePacketData(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -246,23 +244,23 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class NetHandlerPlayClientVisitor extends LeClassVisitor {
+    private static final class NetHandlerPlayClient extends LeClassVisitor {
 
-        public NetHandlerPlayClientVisitor(ClassVisitor cv) {
+        public NetHandlerPlayClient(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("handleChunkData", "func_147263_a"))) return new HandleChunkDataVisitor(mv);
-            if (name.equals(getName("handleBlockChange", "func_147234_a"))) return new HandleBlockChangeVisitor(mv);
+            if (name.equals(getName("handleChunkData", "func_147263_a"))) return new HandleChunkData(mv);
+            if (name.equals(getName("handleBlockChange", "func_147234_a"))) return new HandleBlockChange(mv);
             return mv;
         }
 
-        private static class HandleChunkDataVisitor extends MethodVisitor {
+        private static final class HandleChunkData extends MethodVisitor {
 
-            public HandleChunkDataVisitor(MethodVisitor mv) {
+            public HandleChunkData(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -278,9 +276,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class HandleBlockChangeVisitor extends MethodVisitor {
+        private static final class HandleBlockChange extends MethodVisitor {
 
-            public HandleBlockChangeVisitor(MethodVisitor mv) {
+            public HandleBlockChange(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -300,9 +298,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class IBlockAccessVisitor extends LeClassVisitor {
+    private static final class IBlockAccess extends LeClassVisitor {
 
-        public IBlockAccessVisitor(ClassVisitor cv) {
+        public IBlockAccess(ClassVisitor cv) {
             super(cv);
         }
 
@@ -312,9 +310,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class WorldVisitor extends LeClassVisitor {
+    private static final class World extends LeClassVisitor {
 
-        public WorldVisitor(ClassVisitor cv) {
+        public World(ClassVisitor cv) {
             super(cv);
         }
 
@@ -327,9 +325,9 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("setBlockState", "func_180501_a"))) return new SetBlockStateVisitor(mv);
-            if (name.equals(getName("handleMaterialAcceleration", "func_72918_a"))) return new HandleMaterialAccelerationVisitor(mv);
-            if (name.equals(getName("neighborChanged", "func_190524_a"))) return new NeighborChangedVisitor(mv);
+            if (name.equals(getName("setBlockState", "func_180501_a"))) return new SetBlockState(mv);
+            if (name.equals(getName("handleMaterialAcceleration", "func_72918_a"))) return new HandleMaterialAcceleration(mv);
+            if (name.equals(getName("neighborChanged", "func_190524_a"))) return new NeighborChanged(mv);
             return mv;
         }
 
@@ -355,9 +353,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class SetBlockStateVisitor extends MethodVisitor {
+        private static final class SetBlockState extends MethodVisitor {
 
-            public SetBlockStateVisitor(MethodVisitor mv) {
+            public SetBlockState(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -376,13 +374,13 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class HandleMaterialAccelerationVisitor extends MethodVisitor {
+        private static final class HandleMaterialAcceleration extends MethodVisitor {
 
             private boolean check = false;
             private final Label l_con_start = new Label();
             private Label l_con_check;
 
-            public HandleMaterialAccelerationVisitor(MethodVisitor mv) {
+            public HandleMaterialAcceleration(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -433,9 +431,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class NeighborChangedVisitor extends MethodVisitor {
+        private static final class NeighborChanged extends MethodVisitor {
 
-            public NeighborChangedVisitor(MethodVisitor mv) {
+            public NeighborChanged(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -458,9 +456,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class ChunkCacheVisitor extends LeClassVisitor {
+    private static final class ChunkCache extends LeClassVisitor {
 
-        public ChunkCacheVisitor(ClassVisitor cv) {
+        public ChunkCache(ClassVisitor cv) {
             super(cv);
         }
 
@@ -489,9 +487,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class RenderChunkVisitor extends LeClassVisitor {
+    private static final class RenderChunk extends LeClassVisitor {
 
-        public RenderChunkVisitor(ClassVisitor cv) {
+        public RenderChunk(ClassVisitor cv) {
             super(cv);
         }
 
@@ -504,16 +502,16 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("rebuildChunk", "func_178581_b"))) return new RebuildChunkVisitor(mv);
+            if (name.equals(getName("rebuildChunk", "func_178581_b"))) return new RebuildChunk(mv);
             return mv;
         }
 
-        private static class RebuildChunkVisitor extends MethodVisitor {
+        private static final class RebuildChunk extends MethodVisitor {
 
             private boolean check = false;
             private Label label = null;
 
-            public RebuildChunkVisitor(MethodVisitor mv) {
+            public RebuildChunk(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -568,22 +566,22 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class BlockFluidRendererVisitor extends LeClassVisitor {
+    private static final class BlockFluidRenderer extends LeClassVisitor {
 
-        public BlockFluidRendererVisitor(ClassVisitor cv) {
+        public BlockFluidRenderer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("renderFluid", "func_178270_a"))) return new RenderFluidVisitor(mv);
+            if (name.equals(getName("renderFluid", "func_178270_a"))) return new RenderFluid(mv);
             return mv;
         }
 
-        private static class RenderFluidVisitor extends MethodVisitor {
+        private static final class RenderFluid extends MethodVisitor {
 
-            public RenderFluidVisitor(MethodVisitor mv) {
+            public RenderFluid(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -597,9 +595,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class BlockLiquidVisitor extends LeClassVisitor {
+    private static final class BlockLiquid extends LeClassVisitor {
 
-        public BlockLiquidVisitor(ClassVisitor cv) {
+        public BlockLiquid(ClassVisitor cv) {
             super(cv);
         }
 
@@ -611,14 +609,14 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("modifyAcceleration", "func_176197_a"))) return new ModifyAccelerationVisitor(mv);
-            if (name.equals(getName("getFlow", "func_189543_a"))) return new GetFlowVisitor(mv);
+            if (name.equals(getName("modifyAcceleration", "func_176197_a"))) return new ModifyAcceleration(mv);
+            if (name.equals(getName("getFlow", "func_189543_a"))) return new GetFlow(mv);
             return mv;
         }
 
-        private static class ModifyAccelerationVisitor extends MethodVisitor {
+        private static final class ModifyAcceleration extends MethodVisitor {
 
-            public ModifyAccelerationVisitor(MethodVisitor mv) {
+            public ModifyAcceleration(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -638,11 +636,11 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class GetFlowVisitor extends MethodVisitor {
+        private static final class GetFlow extends MethodVisitor {
 
             private int count = 0;
 
-            public GetFlowVisitor(MethodVisitor mv) {
+            public GetFlow(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -680,24 +678,24 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class BlockDynamicLiquidVisitor extends LeClassVisitor {
+    private static final class BlockDynamicLiquid extends LeClassVisitor {
 
-        public BlockDynamicLiquidVisitor(ClassVisitor cv) {
+        public BlockDynamicLiquid(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("placeStaticBlock", "func_180690_f"))) return new PlaceStaticBlockVisitor(mv);
-            if (name.equals(getName("updateTick", "func_180650_b"))) return new UpdateTickVisitor(mv);
-            if (name.equals(getName("checkAdjacentBlock", "func_176371_a"))) return new CheckAdjacentBlockVisitor(mv);
+            if (name.equals(getName("placeStaticBlock", "func_180690_f"))) return new PlaceStaticBlock(mv);
+            if (name.equals(getName("updateTick", "func_180650_b"))) return new UpdateTick(mv);
+            if (name.equals(getName("checkAdjacentBlock", "func_176371_a"))) return new CheckAdjacentBlock(mv);
             return mv;
         }
 
-        private static class PlaceStaticBlockVisitor extends MethodVisitor {
+        private static final class PlaceStaticBlock extends MethodVisitor {
 
-            public PlaceStaticBlockVisitor(MethodVisitor mv) {
+            public PlaceStaticBlock(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -713,12 +711,12 @@ public final class LoggingTransformer {
         }
 
         // TODO Handle the checkAdjacentSourceBlocks >= 2 with logging
-        private static class UpdateTickVisitor extends MethodVisitor {
+        private static final class UpdateTick extends MethodVisitor {
 
             private int setBlockState_counter = 0;
             private int getBlockState_counter = 0;
 
-            public UpdateTickVisitor(MethodVisitor mv) {
+            public UpdateTick(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -750,9 +748,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class CheckAdjacentBlockVisitor extends MethodVisitor {
+        private static final class CheckAdjacentBlock extends MethodVisitor {
 
-            public CheckAdjacentBlockVisitor(MethodVisitor mv) {
+            public CheckAdjacentBlock(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -767,22 +765,22 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class BlockStaticLiquidVisitor extends LeClassVisitor {
+    private static final class BlockStaticLiquid extends LeClassVisitor {
 
-        public BlockStaticLiquidVisitor(ClassVisitor cv) {
+        public BlockStaticLiquid(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateLiquid", "func_176370_f"))) return new UpdateLiquidVisitor(mv);
+            if (name.equals(getName("updateLiquid", "func_176370_f"))) return new UpdateLiquid(mv);
             return mv;
         }
 
-        private static class UpdateLiquidVisitor extends MethodVisitor {
+        private static final class UpdateLiquid extends MethodVisitor {
 
-            public UpdateLiquidVisitor(MethodVisitor mv) {
+            public UpdateLiquid(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -798,23 +796,23 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class WorldServerVisitor extends LeClassVisitor {
+    private static final class WorldServer extends LeClassVisitor {
 
-        public WorldServerVisitor(ClassVisitor cv) {
+        public WorldServer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateBlockTick", "func_175654_a"))) return new UpdateBlockTickVisitor(mv);
-            if (name.equals(getName("tickUpdates", "func_72955_a"))) return new TickUpdatesVisitor(mv);
+            if (name.equals(getName("updateBlockTick", "func_175654_a"))) return new UpdateBlockTick(mv);
+            if (name.equals(getName("tickUpdates", "func_72955_a"))) return new TickUpdates(mv);
             return mv;
         }
 
-        private static class UpdateBlockTickVisitor extends MethodVisitor {
+        private static final class UpdateBlockTick extends MethodVisitor {
 
-            public UpdateBlockTickVisitor(MethodVisitor mv) {
+            public UpdateBlockTick(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -829,9 +827,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class TickUpdatesVisitor extends MethodVisitor {
+        private static final class TickUpdates extends MethodVisitor {
 
-            public TickUpdatesVisitor(MethodVisitor mv) {
+            public TickUpdates(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -848,9 +846,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class SPacketBlockChangeVisitor extends LeClassVisitor {
+    private static final class SPacketBlockChange extends LeClassVisitor {
 
-        public SPacketBlockChangeVisitor(ClassVisitor cv) {
+        public SPacketBlockChange(ClassVisitor cv) {
             super(cv);
         }
 
@@ -863,8 +861,8 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>") && !desc.equals("()V")) return new InitVisitor(mv);
-            if (name.equals(getName("readPacketData", "func_148837_a"))) return new ReadPacketDataVisitor(mv);
+            if (name.equals("<init>") && !desc.equals("()V")) return new Init(mv);
+            if (name.equals(getName("readPacketData", "func_148837_a"))) return new ReadPacketData(mv);
             if (name.equals(getName("writePacketData", "func_148840_b"))) return new WritePacketData(mv);
             return mv;
         }
@@ -885,9 +883,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -904,9 +902,9 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class ReadPacketDataVisitor extends MethodVisitor {
+        private static final class ReadPacketData extends MethodVisitor {
 
-            public ReadPacketDataVisitor(MethodVisitor mv) {
+            public ReadPacketData(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -923,7 +921,7 @@ public final class LoggingTransformer {
             }
         }
 
-        private static class WritePacketData extends MethodVisitor {
+        private static final class WritePacketData extends MethodVisitor {
 
             public WritePacketData(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -943,24 +941,24 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class WorldEntitySpawnerVisitor extends LeClassVisitor {
+    private static final class WorldEntitySpawner extends LeClassVisitor {
 
-        public WorldEntitySpawnerVisitor(ClassVisitor cv) {
+        public WorldEntitySpawner(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("canCreatureTypeSpawnBody")) return new CanCreatureTypeSpawnBodyVisitor(mv);
+            if (name.equals("canCreatureTypeSpawnBody")) return new CanCreatureTypeSpawnBody(mv);
             return mv;
         }
 
-        private static class CanCreatureTypeSpawnBodyVisitor extends MethodVisitor {
+        private static final class CanCreatureTypeSpawnBody extends MethodVisitor {
 
             private int isValidEmptySpawnBlock_counter = 0;
 
-            public CanCreatureTypeSpawnBodyVisitor(MethodVisitor mv) {
+            public CanCreatureTypeSpawnBody(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -984,9 +982,9 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class EntityVisitor extends LeClassVisitor {
+    private static final class Entity extends LeClassVisitor {
 
-        public EntityVisitor(ClassVisitor cv) {
+        public Entity(ClassVisitor cv) {
             super(cv);
         }
 
@@ -997,7 +995,7 @@ public final class LoggingTransformer {
             return mv;
         }
 
-        private static class IsInsideOfMaterial extends MethodVisitor {
+        private static final class IsInsideOfMaterial extends MethodVisitor {
 
             private int iconst0_counter = 0;
 
@@ -1022,7 +1020,7 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class ForgeHooks extends LeClassVisitor {
+    private static final class ForgeHooks extends LeClassVisitor {
 
         public ForgeHooks(ClassVisitor cv) {
             super(cv);
@@ -1031,13 +1029,13 @@ public final class LoggingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("isInsideOfMaterial")) return new IsInsideOfMaterialVisitor(mv);
+            if (name.equals("isInsideOfMaterial")) return new IsInsideOfMaterial(mv);
             return mv;
         }
 
-        private static class IsInsideOfMaterialVisitor extends MethodVisitor {
+        private static final class IsInsideOfMaterial extends MethodVisitor {
 
-            public IsInsideOfMaterialVisitor(MethodVisitor mv) {
+            public IsInsideOfMaterial(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -1053,22 +1051,22 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class EntityRendererVisitor extends LeClassVisitor {
+    private static final class EntityRenderer extends LeClassVisitor {
 
-        public EntityRendererVisitor(ClassVisitor cv) {
+        public EntityRenderer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateFogColor", "func_78466_h"))) return new UpdateFogColorVisitor(mv);
+            if (name.equals(getName("updateFogColor", "func_78466_h"))) return new UpdateFogColor(mv);
             return mv;
         }
 
-        private static class UpdateFogColorVisitor extends MethodVisitor {
+        private static final class UpdateFogColor extends MethodVisitor {
 
-            public UpdateFogColorVisitor(MethodVisitor mv) {
+            public UpdateFogColor(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -1083,22 +1081,22 @@ public final class LoggingTransformer {
         }
     }
 
-    private static class ActiveRenderInfoVisitor extends LeClassVisitor {
+    private static final class ActiveRenderInfo extends LeClassVisitor {
 
-        public ActiveRenderInfoVisitor(ClassVisitor cv) {
+        public ActiveRenderInfo(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("getBlockStateAtEntityViewpoint", "func_186703_a"))) return new GetBlockStateAtEntityViewpointVisitor(mv);
+            if (name.equals(getName("getBlockStateAtEntityViewpoint", "func_186703_a"))) return new GetBlockStateAtEntityViewpoint(mv);
             return mv;
         }
 
-        private static class GetBlockStateAtEntityViewpointVisitor extends MethodVisitor {
+        private static final class GetBlockStateAtEntityViewpoint extends MethodVisitor {
 
-            public GetBlockStateAtEntityViewpointVisitor(MethodVisitor mv) {
+            public GetBlockStateAtEntityViewpoint(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -1114,16 +1112,16 @@ public final class LoggingTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
-        public static IBlockState World$getLoggedState(World world, BlockPos pos) {
-            Chunk chunk = world.getChunk(pos);
+        public static IBlockState World$getLoggedState(net.minecraft.world.World world, BlockPos pos) {
+            net.minecraft.world.chunk.Chunk chunk = world.getChunk(pos);
             LoggingMap map = LoggableChunk.cast(chunk).getLoggingMap();
             return map.getLoggedState(pos.getX(), pos.getY(), pos.getZ());
         }
 
-        public static void World$setLoggedState(World world, BlockPos pos, IBlockState state) {
-            Chunk chunk = world.getChunk(pos);
+        public static void World$setLoggedState(net.minecraft.world.World world, BlockPos pos, IBlockState state) {
+            net.minecraft.world.chunk.Chunk chunk = world.getChunk(pos);
             LoggingMap map = LoggableChunk.cast(chunk).getLoggingMap();
             map.setLoggedState(pos.getX(), pos.getY(), pos.getZ(), state);
         }
@@ -1133,11 +1131,11 @@ public final class LoggingTransformer {
             return block instanceof Loggable;
         }
 
-        public static IBlockState RenderChunk$getLoggedState(IBlockAccess world, BlockPos pos, IBlockState state) {
+        public static IBlockState RenderChunk$getLoggedState(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state) {
             return Loggable.cast(state.getBlock()).getLoggedState(world, pos, state);
         }
 
-        public static IBlockState World$setBlockState(World world, BlockPos pos, IBlockState oldState, IBlockState newState, BlockSnapshot snapshot) {
+        public static IBlockState World$setBlockState(net.minecraft.world.World world, BlockPos pos, IBlockState oldState, IBlockState newState, BlockSnapshot snapshot) {
             LoggedAccess logged = LoggedAccess.cast(world);
             Block oldBlock = oldState.getBlock();
             Block newBlock = newState.getBlock();
@@ -1173,18 +1171,18 @@ public final class LoggingTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static IBlockAccess BlockFluidRenderer$getWorld(IBlockAccess parent) {
+        public static net.minecraft.world.IBlockAccess BlockFluidRenderer$getWorld(net.minecraft.world.IBlockAccess parent) {
             return new LoggedWorld(parent);
         }
 
-        public static IBlockState $getLoggedState(IBlockAccess world, BlockPos pos, IBlockState state) {
+        public static IBlockState $getLoggedState(net.minecraft.world.IBlockAccess world, BlockPos pos, IBlockState state) {
             if (state.getBlock() instanceof Loggable) {
                 return Loggable.cast(state.getBlock()).getLoggedState(world, pos, state);
             }
             return Blocks.AIR.getDefaultState();
         }
 
-        public static IBlockState $getLoggedOrNormal(IBlockAccess world, BlockPos pos) {
+        public static IBlockState $getLoggedOrNormal(net.minecraft.world.IBlockAccess world, BlockPos pos) {
             IBlockState state = world.getBlockState(pos);
             if (FluidUtil.getFluid(state) == null) {
                 return LoggedAccess.cast(world).getLoggedState(pos);
@@ -1192,7 +1190,7 @@ public final class LoggingTransformer {
             return state;
         }
 
-        public static IBlockState $getLoggedOrNormal2(IBlockAccess world, BlockPos pos) {
+        public static IBlockState $getLoggedOrNormal2(net.minecraft.world.IBlockAccess world, BlockPos pos) {
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() instanceof Loggable) {
                 return LoggedAccess.cast(world).getLoggedState(pos);
@@ -1200,7 +1198,7 @@ public final class LoggingTransformer {
             return state;
         }
 
-        public static boolean BlockLiquid$placeBlock(World world, BlockPos pos, IBlockState toSet, int flags, Block blockLiquid) {
+        public static boolean BlockLiquid$placeBlock(net.minecraft.world.World world, BlockPos pos, IBlockState toSet, int flags, Block blockLiquid) {
             IBlockState actualState = world.getBlockState(pos);
             if (actualState.getBlock() != blockLiquid) {
                 LoggedAccess logged = LoggedAccess.cast(world);
@@ -1213,7 +1211,7 @@ public final class LoggingTransformer {
             }
         }
 
-        public static boolean BlockDynamicLiquid$setBlockToAir(World world, BlockPos pos, Block blockLiquid) {
+        public static boolean BlockDynamicLiquid$setBlockToAir(net.minecraft.world.World world, BlockPos pos, Block blockLiquid) {
             IBlockState actualState = world.getBlockState(pos);
             if (actualState.getBlock() != blockLiquid) {
                 LoggedAccess logged = LoggedAccess.cast(world);
@@ -1226,7 +1224,7 @@ public final class LoggingTransformer {
             }
         }
 
-        public static IBlockState World$getStateFromBlock(World world, BlockPos pos, Block block) {
+        public static IBlockState World$getStateFromBlock(net.minecraft.world.World world, BlockPos pos, Block block) {
             IBlockState state = world.getBlockState(pos);
             if (state.getBlock() != block && state.getBlock() instanceof Loggable) {
                 state = LoggedAccess.cast(world).getLoggedState(pos);
@@ -1234,14 +1232,14 @@ public final class LoggingTransformer {
             return state;
         }
 
-        public static boolean WorldEntitySpawner$isValidBlock(boolean defaultValue, World world, BlockPos pos) {
+        public static boolean WorldEntitySpawner$isValidBlock(boolean defaultValue, net.minecraft.world.World world, BlockPos pos) {
             IBlockState loggedState = LoggedAccess.cast(world).getLoggedState(pos.down());
             Block loggedBlock = loggedState.getBlock();
             boolean flag = loggedBlock != Blocks.BEDROCK && loggedBlock != Blocks.BARRIER;
-            return defaultValue && flag && WorldEntitySpawner.isValidEmptySpawnBlock(loggedState) && WorldEntitySpawner.isValidEmptySpawnBlock(LoggedAccess.cast(world).getLoggedState(pos.up()));
+            return defaultValue && flag && net.minecraft.world.WorldEntitySpawner.isValidEmptySpawnBlock(loggedState) && net.minecraft.world.WorldEntitySpawner.isValidEmptySpawnBlock(LoggedAccess.cast(world).getLoggedState(pos.up()));
         }
 
-        public static boolean WorldEntitySpawner$isValidBlockWater(boolean defaultValue, World world, BlockPos pos) {
+        public static boolean WorldEntitySpawner$isValidBlockWater(boolean defaultValue, net.minecraft.world.World world, BlockPos pos) {
             if (defaultValue) return true;
             LoggedAccess loggedWorld = LoggedAccess.cast(world);
             IBlockState loggedState = loggedWorld.getLoggedState(pos);
@@ -1250,7 +1248,7 @@ public final class LoggingTransformer {
             return (FluidUtil.getFluid(world.getBlockState(pos)) == FluidRegistry.WATER || FluidUtil.getFluid(loggedState) == FluidRegistry.WATER) && (FluidUtil.getFluid(world.getBlockState(downPos)) == FluidRegistry.WATER || FluidUtil.getFluid(loggedWorld.getLoggedState(downPos)) == FluidRegistry.WATER) && (!world.getBlockState(upPos).isNormalCube() && !loggedWorld.getLoggedState(upPos).isNormalCube());
         }
 
-        public static boolean Entity$isInsideOfMaterial(Entity entity, Material material, BlockPos pos) {
+        public static boolean Entity$isInsideOfMaterial(net.minecraft.entity.Entity entity, Material material, BlockPos pos) {
             LoggedAccess logged = LoggedAccess.cast(entity.world);
             IBlockState loggedState = logged.getLoggedState(pos);
             Boolean result = loggedState.getBlock().isEntityInsideMaterial(entity.world, pos, loggedState, entity, entity.posY + (double) entity.getEyeHeight(), material, true);
@@ -1264,13 +1262,13 @@ public final class LoggingTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static Vec3d EntityRenderer$addLoggedFogColor(Block block, World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks) {
+        public static Vec3d EntityRenderer$addLoggedFogColor(Block block, net.minecraft.world.World world, BlockPos pos, IBlockState state, net.minecraft.entity.Entity entity, Vec3d originalColor, float partialTicks) {
             Vec3d vec3d = block.getFogColor(world, pos, state, entity, originalColor, partialTicks);
             IBlockState loggedState = LoggedAccess.cast(world).getLoggedState(pos);
             return vec3d.add(loggedState.getBlock().getFogColor(world, pos, loggedState, entity, originalColor, partialTicks));
         }
 
-        public static IBlockState ForgeHooks$getBlockState(World world, BlockPos pos, Material material) {
+        public static IBlockState ForgeHooks$getBlockState(net.minecraft.world.World world, BlockPos pos, Material material) {
             IBlockState state = world.getBlockState(pos);
             if (state.getMaterial() != material && state.getBlock() instanceof Loggable) {
                 state = LoggedAccess.cast(world).getLoggedState(pos);
@@ -1278,13 +1276,15 @@ public final class LoggingTransformer {
             return state;
         }
 
-        private static void notifyClient(World world, BlockPos pos, int flags) {
+        private static void notifyClient(net.minecraft.world.World world, BlockPos pos, int flags) {
             if (!world.isRemote) {
                 world.markAndNotifyBlock(pos, world.getChunk(pos), world.getBlockState(pos), world.getBlockState(pos), flags);
-                world.playerEntities.forEach(p -> ((EntityPlayerMP) p).connection.sendPacket(new SPacketBlockChange(world, pos)));
+                world.playerEntities.forEach(p -> ((EntityPlayerMP) p).connection.sendPacket(new net.minecraft.network.play.server.SPacketBlockChange(world, pos)));
             }
         }
+
+        private Hooks() {}
     }
 
-    private LoggingTransformer() {}
+    private WaterLogging() {}
 }

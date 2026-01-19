@@ -2,10 +2,8 @@ package surreal.backportium._internal.core.visitor;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntitySelectors;
@@ -13,6 +11,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -24,23 +23,26 @@ import surreal.backportium.init.ModEnchantments;
 import java.util.List;
 import java.util.function.Function;
 
-public final class TridentTransformer {
+import static _mod.Constants.A_RIPTIDE_ENTITY;
+import static _mod.Constants.V_TRIDENT_IMPLEMENTATION;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/TridentTransformer$Hooks";
-    private static final String RIPTIDE_ENTITY = "surreal/backportium/api/entity/RiptideEntity";
+public final class TridentImplementation {
 
+    private static final String HOOKS = V_TRIDENT_IMPLEMENTATION + "$Hooks";
+    private static final String RIPTIDE_ENTITY = A_RIPTIDE_ENTITY;
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
-            case "net.minecraft.client.renderer.entity.RenderLivingBase": return RenderLivingBaseVisitor::new;
-            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderPlayerVisitor::new;
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBase::new;
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderPlayer::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static final class EntityLivingBase extends LeClassVisitor {
 
-        public EntityLivingBaseVisitor(ClassVisitor cv) {
+        public EntityLivingBase(ClassVisitor cv) {
             super(cv);
         }
 
@@ -53,13 +55,13 @@ public final class TridentTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdateVisitor(mv);
+            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdate(mv);
             return mv;
         }
 
-        private static class OnUpdateVisitor extends MethodVisitor {
+        private static final class OnUpdate extends MethodVisitor {
 
-            public OnUpdateVisitor(MethodVisitor mv) {
+            public OnUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -94,9 +96,9 @@ public final class TridentTransformer {
         }
     }
 
-    private static class RenderLivingBaseVisitor extends LeClassVisitor {
+    private static final class RenderLivingBase extends LeClassVisitor {
 
-        public RenderLivingBaseVisitor(ClassVisitor cv) {
+        public RenderLivingBase(ClassVisitor cv) {
             super(cv);
         }
 
@@ -107,9 +109,9 @@ public final class TridentTransformer {
             return mv;
         }
 
-        private static class ApplyRotationsVisitor extends MethodVisitor {
+        private static final class ApplyRotations extends MethodVisitor {
 
-            public ApplyRotationsVisitor(MethodVisitor mv) {
+            public ApplyRotations(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -125,9 +127,9 @@ public final class TridentTransformer {
         }
     }
 
-    private static class RenderPlayerVisitor extends LeClassVisitor {
+    private static final class RenderPlayer extends LeClassVisitor {
 
-        public RenderPlayerVisitor(ClassVisitor cv) {
+        public RenderPlayer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -139,7 +141,7 @@ public final class TridentTransformer {
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class InitVisitor extends MethodVisitor {
 
             public InitVisitor(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -155,9 +157,9 @@ public final class TridentTransformer {
             }
         }
 
-        private static class ApplyRotationsVisitor extends MethodVisitor {
+        private static final class ApplyRotations extends MethodVisitor {
 
-            public ApplyRotationsVisitor(MethodVisitor mv) {
+            public ApplyRotations(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -174,9 +176,9 @@ public final class TridentTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
-        public static void EntityLivingBase$OnUpdate(EntityLivingBase entity) {
+        public static void EntityLivingBase$OnUpdate(net.minecraft.entity.EntityLivingBase entity) {
             RiptideEntity riptide = RiptideEntity.cast(entity);
             if (riptide.inRiptide()) {
                 if ($handleCollision(entity)) {
@@ -188,9 +190,9 @@ public final class TridentTransformer {
             }
         }
 
-        private static boolean $handleCollision(EntityLivingBase entity) {
+        private static boolean $handleCollision(net.minecraft.entity.EntityLivingBase entity) {
             World world = entity.world;
-            List<Entity> entities = world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox(), e -> e instanceof EntityLivingBase && e.canBeCollidedWith() && EntitySelectors.NOT_SPECTATING.apply(e));
+            List<Entity> entities = world.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox(), e -> e instanceof net.minecraft.entity.EntityLivingBase && e.canBeCollidedWith() && EntitySelectors.NOT_SPECTATING.apply(e));
             if (!entities.isEmpty()) {
                 ItemStack stack = entity.getActiveItemStack();
                 float add = 0F;
@@ -209,7 +211,7 @@ public final class TridentTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static void RenderLivingBase$applyRotations(EntityLivingBase entity, float partialTicks) {
+        public static void RenderLivingBase$applyRotations(net.minecraft.entity.EntityLivingBase entity, float partialTicks) {
             RiptideEntity riptide = RiptideEntity.cast(entity);
             if (riptide.inRiptide()) {
                 float yRotation = 72F * (riptide.getRiptideTimeLeft() - partialTicks + 1.0F);
@@ -229,7 +231,7 @@ public final class TridentTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static void RenderPlayer$fixElytraRotations(EntityLivingBase entity, float partialTicks) {
+        public static void RenderPlayer$fixElytraRotations(net.minecraft.entity.EntityLivingBase entity, float partialTicks) {
             RiptideEntity riptide = RiptideEntity.cast(entity);
             if (entity.isElytraFlying() && riptide.inRiptide()) {
                 float rotate = 72F * (riptide.getRiptideTimeLeft() - partialTicks + 1.0F);
@@ -239,10 +241,12 @@ public final class TridentTransformer {
 
         @SuppressWarnings("unchecked")
         @SideOnly(Side.CLIENT)
-        public static void RenderPlayer$addRiptideLayer(RenderPlayer render) {
-            render.addLayer(new LayerRiptide((Render<EntityLivingBase>) (Object) render));
+        public static void RenderPlayer$addRiptideLayer(net.minecraft.client.renderer.entity.RenderPlayer render) {
+            render.addLayer(new LayerRiptide((Render<net.minecraft.entity.EntityLivingBase>) (Object) render));
         }
+
+        private Hooks() {}
     }
 
-    private TridentTransformer() {}
+    private TridentImplementation() {}
 }

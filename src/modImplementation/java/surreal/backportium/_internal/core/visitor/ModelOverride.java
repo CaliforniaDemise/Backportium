@@ -20,17 +20,19 @@ import surreal.backportium._internal.client.renderer.model.ModelBlockDefinitionP
 import java.io.Reader;
 import java.util.function.Function;
 
-public final class DynamicModelLoadingVisitor extends LeClassVisitor {
+import static _mod.Constants.V_MODEL_OVERRIDE;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/DynamicModelLoadingVisitor$Hooks";
+public final class ModelOverride extends LeClassVisitor {
 
-    private DynamicModelLoadingVisitor(ClassVisitor cv) {
+    private static final String HOOKS = V_MODEL_OVERRIDE + "$Hooks";
+
+    private ModelOverride(ClassVisitor cv) {
         super(cv);
     }
 
     @Nullable
     public static Function<ClassVisitor, ClassVisitor> getClassVisitor(String name, String transformedName) {
-        if (transformedName.equals("net.minecraft.client.renderer.block.model.ModelBakery")) return DynamicModelLoadingVisitor::new;
+        if (transformedName.equals("net.minecraft.client.renderer.block.model.ModelBakery")) return ModelOverride::new;
         return null;
     }
 
@@ -43,14 +45,14 @@ public final class DynamicModelLoadingVisitor extends LeClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (name.equals("loadBlock")) return new LoadBlockVisitor(mv);
-        if (name.equals("loadModelBlockDefinition")) return new LoadModelBlockDefinitionVisitor(mv);
+        if (name.equals("loadBlock")) return new LoadBlock(mv);
+        if (name.equals("loadModelBlockDefinition")) return new LoadModelBlockDefinition(mv);
         return mv;
     }
 
-    private static class LoadBlockVisitor extends MethodVisitor {
+    private static final class LoadBlock extends MethodVisitor {
 
-        public LoadBlockVisitor(MethodVisitor mv) {
+        public LoadBlock(MethodVisitor mv) {
             super(ASM5, mv);
         }
 
@@ -61,11 +63,11 @@ public final class DynamicModelLoadingVisitor extends LeClassVisitor {
         }
     }
 
-    private static class LoadModelBlockDefinitionVisitor extends MethodVisitor {
+    private static final class LoadModelBlockDefinition extends MethodVisitor {
 
         private boolean check = false;
 
-        public LoadModelBlockDefinitionVisitor(MethodVisitor mv) {
+        public LoadModelBlockDefinition(MethodVisitor mv) {
             super(ASM5, mv);
         }
 
@@ -85,7 +87,7 @@ public final class DynamicModelLoadingVisitor extends LeClassVisitor {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         private static final Gson gson;
 
@@ -101,5 +103,7 @@ public final class DynamicModelLoadingVisitor extends LeClassVisitor {
             if (FMLLaunchHandler.isDeobfuscatedEnvironment()) builder.setPrettyPrinting();
             gson = builder.disableHtmlEscaping().create();
         }
+
+        private Hooks() {}
     }
 }

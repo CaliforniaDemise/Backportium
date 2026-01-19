@@ -4,13 +4,8 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelPlayer;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -38,33 +33,35 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import static _mod.Constants.*;
 import static net.minecraft.entity.EntityLivingBase.SWIM_SPEED;
 
 // TODO Easy elytra take-off
 // TODO Slowdown sneak flying?
 // TODO No double tap sprinting
-public final class SwimmingTransformer {
+public final class SwimmingState {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/SwimmingTransformer$Hooks";
-    private static final String SWIMMING_ENTITY = "surreal/backportium/api/entity/SwimmingEntity";
-    private static final String MODEL_BIPED_SWIMMING = "surreal/backportium/_internal/client/model/ModelBipedSwimming";
-    private static final String CLIENT_PLAYER_SWIMMING = "surreal/backportium/_internal/client/entity/player/ClientPlayerSwimming";
+    private static final String HOOKS = V_SWIMMING_STATE + "$Hooks";
+    private static final String SWIMMING_ENTITY = A_SWIMMING_ENTITY;
+    private static final String MODEL_BIPED_SWIMMING = A_MODEL_BIPED_SWIMMING;
+    private static final String CLIENT_PLAYER_SWIMMING = A_CLIENT_PLAYER_SWIMMING;
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
-            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayerVisitor::new;
-            case "net.minecraft.client.entity.EntityPlayerSP": return EntityPlayerSPVisitor::new;
-            case "net.minecraft.client.model.ModelBiped": return ModelBipedVisitor::new;
-            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderPlayerVisitor::new;
-            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBase::new;
+            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayer::new;
+            case "net.minecraft.client.entity.EntityPlayerSP": return EntityPlayerSP::new;
+            case "net.minecraft.client.model.ModelBiped": return ModelBiped::new;
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderPlayer::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRenderer::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static final class EntityLivingBase extends LeClassVisitor {
 
-        public EntityLivingBaseVisitor(ClassVisitor cv) {
+        public EntityLivingBase(ClassVisitor cv) {
             super(cv);
         }
 
@@ -76,16 +73,16 @@ public final class SwimmingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("travel", "func_191986_a"))) return new TravelVisitor(mv);
+            if (name.equals(getName("travel", "func_191986_a"))) return new Travel(mv);
             return mv;
         }
 
-        private static class TravelVisitor extends MethodVisitor {
+        private static final class Travel extends MethodVisitor {
 
             private int getWaterSlowDown_counter = 0;
             private int move_counter = 0;
 
-            public TravelVisitor(MethodVisitor mv) {
+            public Travel(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -143,9 +140,9 @@ public final class SwimmingTransformer {
         }
     }
 
-    private static class EntityPlayerVisitor extends LeClassVisitor {
+    private static final class EntityPlayer extends LeClassVisitor {
 
-        public EntityPlayerVisitor(ClassVisitor cv) {
+        public EntityPlayer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -160,7 +157,7 @@ public final class SwimmingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnEntityUpdateVisitor(mv);
+            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnEntityUpdate(mv);
             return mv;
         }
 
@@ -259,9 +256,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class OnEntityUpdateVisitor extends MethodVisitor {
+        private static final class OnEntityUpdate extends MethodVisitor {
 
-            public OnEntityUpdateVisitor(MethodVisitor mv) {
+            public OnEntityUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -282,9 +279,9 @@ public final class SwimmingTransformer {
         }
     }
 
-    private static class EntityPlayerSPVisitor extends LeClassVisitor {
+    private static final class EntityPlayerSP extends LeClassVisitor {
 
-        public EntityPlayerSPVisitor(ClassVisitor cv) {
+        public EntityPlayerSP(ClassVisitor cv) {
             super(cv);
         }
 
@@ -298,10 +295,10 @@ public final class SwimmingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onUpdateWalkingPlayer", "func_175161_p"))) return new OnUpdateWalkingPlayerVisitor(mv);
-            if (name.equals(getName("isSneaking", "func_70093_af"))) return new IsSneakingVisitor(mv);
-            if (name.equals(getName("onLivingUpdate", "func_70636_d"))) return new OnLivingUpdateVisitor(mv);
-            if (name.equals(getName("pushOutOfBlocks", "func_145771_j"))) return new PushOutOfBlocksVisitor(mv);
+            if (name.equals(getName("onUpdateWalkingPlayer", "func_175161_p"))) return new OnUpdateWalkingPlayer(mv);
+            if (name.equals(getName("isSneaking", "func_70093_af"))) return new IsSneaking(mv);
+            if (name.equals(getName("onLivingUpdate", "func_70636_d"))) return new OnLivingUpdate(mv);
+            if (name.equals(getName("pushOutOfBlocks", "func_145771_j"))) return new PushOutOfBlocks(mv);
             return mv;
         }
 
@@ -346,9 +343,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class OnUpdateWalkingPlayerVisitor extends MethodVisitor {
+        private static final class OnUpdateWalkingPlayer extends MethodVisitor {
 
-            public OnUpdateWalkingPlayerVisitor(MethodVisitor mv) {
+            public OnUpdateWalkingPlayer(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -362,9 +359,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class IsSneakingVisitor extends MethodVisitor {
+        private static final class IsSneaking extends MethodVisitor {
 
-            public IsSneakingVisitor(MethodVisitor mv) {
+            public IsSneaking(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -383,9 +380,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class OnLivingUpdateVisitor extends MethodVisitor {
+        private static final class OnLivingUpdate extends MethodVisitor {
 
-            public OnLivingUpdateVisitor(MethodVisitor mv) {
+            public OnLivingUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -428,9 +425,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class PushOutOfBlocksVisitor extends MethodVisitor {
+        private static final class PushOutOfBlocks extends MethodVisitor {
 
-            public PushOutOfBlocksVisitor(MethodVisitor mv) {
+            public PushOutOfBlocks(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -452,11 +449,11 @@ public final class SwimmingTransformer {
         }
     }
 
-    private static class ModelBipedVisitor extends LeClassVisitor {
+    private static final class ModelBiped extends LeClassVisitor {
 
         private boolean hasSetLivingAnimations = false;
 
-        public ModelBipedVisitor(ClassVisitor cv) {
+        public ModelBiped(ClassVisitor cv) {
             super(cv);
         }
 
@@ -469,10 +466,10 @@ public final class SwimmingTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("setRotationAngles", "func_78087_a"))) return new SetRotationAnglesVisitor(mv);
+            if (name.equals(getName("setRotationAngles", "func_78087_a"))) return new SetRotationAngles(mv);
             if (name.equals(getName("setLivingAnimations", "func_78086_a"))) {
                 hasSetLivingAnimations = true;
-                return new SetLivingAnimationsVisitor(mv);
+                return new SetLivingAnimations(mv);
             }
             return mv;
         }
@@ -506,9 +503,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class SetRotationAnglesVisitor extends MethodVisitor {
+        private static final class SetRotationAngles extends MethodVisitor {
 
-            public SetRotationAnglesVisitor(MethodVisitor mv) {
+            public SetRotationAngles(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -523,9 +520,9 @@ public final class SwimmingTransformer {
             }
         }
 
-        private static class SetLivingAnimationsVisitor extends MethodVisitor {
+        private static final class SetLivingAnimations extends MethodVisitor {
 
-            public SetLivingAnimationsVisitor(MethodVisitor mv) {
+            public SetLivingAnimations(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -541,9 +538,9 @@ public final class SwimmingTransformer {
         }
     }
 
-    private static class RenderPlayerVisitor extends LeClassVisitor {
+    private static final class RenderPlayer extends LeClassVisitor {
 
-        public RenderPlayerVisitor(ClassVisitor cv) {
+        public RenderPlayer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -551,13 +548,13 @@ public final class SwimmingTransformer {
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
             if (name.equals(getName("renderRightArm", "func_177138_b"))
-                || name.equals(getName("renderLeftArm", "func_177139_c"))) return new ResetSwimAnimationVisitor(mv);
+                || name.equals(getName("renderLeftArm", "func_177139_c"))) return new ResetSwimAnimation(mv);
             return mv;
         }
 
-        private static class ResetSwimAnimationVisitor extends MethodVisitor {
+        private static final class ResetSwimAnimation extends MethodVisitor {
 
-            public ResetSwimAnimationVisitor(MethodVisitor mv) {
+            public ResetSwimAnimation(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -570,22 +567,22 @@ public final class SwimmingTransformer {
         }
     }
 
-    private static class EntityRendererVisitor extends LeClassVisitor {
+    private static final class EntityRenderer extends LeClassVisitor {
 
-        public EntityRendererVisitor(ClassVisitor cv) {
+        public EntityRenderer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("applyBobbing", "func_78475_f"))) return new ApplyBobbingVisitor(mv);
+            if (name.equals(getName("applyBobbing", "func_78475_f"))) return new ApplyBobbing(mv);
             return mv;
         }
 
-        private static class ApplyBobbingVisitor extends MethodVisitor {
+        private static final class ApplyBobbing extends MethodVisitor {
 
-            public ApplyBobbingVisitor(MethodVisitor mv) {
+            public ApplyBobbing(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -603,7 +600,7 @@ public final class SwimmingTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static void EntityLivingBase$travel(net.minecraft.entity.EntityLivingBase entity, boolean isJumping) {
             SwimmingEntity swimming = SwimmingEntity.cast(entity);
@@ -617,7 +614,7 @@ public final class SwimmingTransformer {
             }
         }
 
-        public static void EntityLivingBase$applyGravity(EntityLivingBase entity) {
+        public static void EntityLivingBase$applyGravity(net.minecraft.entity.EntityLivingBase entity) {
             if (!SwimmingEntity.cast(entity).isSwimming()) {
                 if (entity.motionY <= 0.0 && Math.abs(entity.motionY - 0.005) >= 0.003 && Math.abs(entity.motionY - 0.08 / 16.0) < 0.003) {
                     entity.motionY = -0.003;
@@ -627,7 +624,7 @@ public final class SwimmingTransformer {
             }
         }
 
-        public static float EntityLivingBase$getWaterSlowDown(float defaultValue, EntityLivingBase entity) {
+        public static float EntityLivingBase$getWaterSlowDown(float defaultValue, net.minecraft.entity.EntityLivingBase entity) {
             if (SwimmingEntity.cast(entity).isSwimming()) {
                 return 0.9F;
             }
@@ -639,7 +636,7 @@ public final class SwimmingTransformer {
             return defaultValue;
         }
 
-        public static void EntityPlayer$updateSwimming(EntityPlayer player) {
+        public static void EntityPlayer$updateSwimming(net.minecraft.entity.player.EntityPlayer player) {
             SwimmingEntity swimming = SwimmingEntity.cast(player);
             if (player.capabilities.isFlying) {
                 swimming.setSwimming(false);
@@ -652,26 +649,26 @@ public final class SwimmingTransformer {
             }
         }
 
-        public static boolean EntityPlayer$isSwimming(EntityPlayer player, boolean swimFlag) {
+        public static boolean EntityPlayer$isSwimming(net.minecraft.entity.player.EntityPlayer player, boolean swimFlag) {
             SwimmingEntity swimming = SwimmingEntity.cast(player);
             return !player.capabilities.isFlying && !player.isSpectator() && swimFlag;
         }
 
-        public static boolean EntityPlayer$isActuallySwimming(EntityPlayer player) {
+        public static boolean EntityPlayer$isActuallySwimming(net.minecraft.entity.player.EntityPlayer player) {
             EntityState state = EntityWithState.cast(player).getState();
             boolean isFlying = !player.isElytraFlying() && state == ModEntityStates.FLYING;
             return state == ModEntityStates.CRAWLING || isFlying;
         }
 
-        public static float EntityPlayer$getSwimAnimation(EntityPlayer player, float swimAnimation, float lastSwimAnimation, float partialTicks) {
+        public static float EntityPlayer$getSwimAnimation(net.minecraft.entity.player.EntityPlayer player, float swimAnimation, float lastSwimAnimation, float partialTicks) {
             return NewMathHelper.lerp(partialTicks, lastSwimAnimation, swimAnimation);
         }
 
-        public static boolean EntityPlayer$isEyesInWater(EntityPlayer player) {
+        public static boolean EntityPlayer$isEyesInWater(net.minecraft.entity.player.EntityPlayer player) {
             return player.isInsideOfMaterial(Material.WATER);
         }
 
-        public static float EntityPlayer$updateSwimmingAnimation(EntityPlayer player, float swimAnimation) {
+        public static float EntityPlayer$updateSwimmingAnimation(net.minecraft.entity.player.EntityPlayer player, float swimAnimation) {
             SwimmingEntity entity = SwimmingEntity.cast(player);
             if (entity.isActuallySwimming()) {
                 return Math.min(1.0F, swimAnimation + 0.09F);
@@ -681,16 +678,16 @@ public final class SwimmingTransformer {
             }
         }
 
-        public static boolean EntityPlayerSP$isActuallySneaking(EntityPlayerSP player) {
+        public static boolean EntityPlayerSP$isActuallySneaking(net.minecraft.client.entity.EntityPlayerSP player) {
             return player.movementInput != null && player.movementInput.sneak;
         }
 
-        public static boolean EntityPlayerSP$isForcedDown(EntityPlayerSP player) {
+        public static boolean EntityPlayerSP$isForcedDown(net.minecraft.client.entity.EntityPlayerSP player) {
             SwimmingEntity swimming = SwimmingEntity.cast(player);
             return !player.capabilities.isFlying ? player.isSneaking() || swimming.isVisuallySwimming() : swimming.isActuallySwimming();
         }
 
-        public static boolean EntityPlayerSP$isUsingSwimmingAnimation(EntityPlayerSP player) {
+        public static boolean EntityPlayerSP$isUsingSwimmingAnimation(net.minecraft.client.entity.EntityPlayerSP player) {
             SwimmingEntity swimming = SwimmingEntity.cast(player);
             ClientPlayerSwimming playerSwimming = ClientPlayerSwimming.cast(player);
             if (swimming.canSwim()) {
@@ -714,7 +711,7 @@ public final class SwimmingTransformer {
             return false;
         }
 
-        public static boolean EntityPlayerSP$pushOutOfBlocks(EntityPlayerSP player, double x, double y, double z) {
+        public static boolean EntityPlayerSP$pushOutOfBlocks(net.minecraft.client.entity.EntityPlayerSP player, double x, double y, double z) {
             if (!player.noClip) {
                 BlockPos blockpos = new BlockPos(x, player.posY, z);
                 if (shouldBlockPushPlayer(player, blockpos)) {
@@ -745,7 +742,7 @@ public final class SwimmingTransformer {
             return false;
         }
 
-        public static void EntityPlayerSP$updatePlayerMoveState(EntityPlayerSP player) {
+        public static void EntityPlayerSP$updatePlayerMoveState(net.minecraft.client.entity.EntityPlayerSP player) {
             ClientPlayerSwimming playerSwimming = ClientPlayerSwimming.cast(player);
             if (!player.movementInput.sneak && playerSwimming.isForcedDown()) {
                 player.movementInput.moveStrafe = (float) ((double) player.movementInput.moveStrafe * 0.3);
@@ -757,7 +754,7 @@ public final class SwimmingTransformer {
             }
         }
 
-        public static int EntityPlayerSP$updateSprintToggleTimer(EntityPlayerSP player, int defaultValue) {
+        public static int EntityPlayerSP$updateSprintToggleTimer(net.minecraft.client.entity.EntityPlayerSP player, int defaultValue) {
             if (player.movementInput.sneak) {
                 return 0;
             }
@@ -770,7 +767,7 @@ public final class SwimmingTransformer {
             return defaultValue;
         }
 
-        private static boolean shouldBlockPushPlayer(EntityPlayerSP player, BlockPos pos) {
+        private static boolean shouldBlockPushPlayer(net.minecraft.client.entity.EntityPlayerSP player, BlockPos pos) {
             double minY = player.getEntityBoundingBox().minY;
             double maxY = player.getEntityBoundingBox().maxY;
             AxisAlignedBB aabb = new AxisAlignedBB(pos.getX(), minY, pos.getZ(), pos.getX() + 1.0, maxY, pos.getZ() + 1.0);
@@ -786,7 +783,7 @@ public final class SwimmingTransformer {
             return StreamSupport.stream(new AxisAlignedBBSpliterator(world, entity, aabb), false);
         }
 
-        public static boolean EntityPlayerSP$isCrouching(EntityPlayerSP player) {
+        public static boolean EntityPlayerSP$isCrouching(net.minecraft.client.entity.EntityPlayerSP player) {
             final boolean cantStand = !ModEntityStates.STANDING.isStateClear(player);
             if ((!player.capabilities.isFlying || !cantStand) && player.getTicksElytraFlying() <= 4) {
                 if (!SwimmingEntity.cast(player).isSwimming() && (player.onGround || !player.isInWater())) {
@@ -798,13 +795,13 @@ public final class SwimmingTransformer {
             return false;
         }
 
-        public static void EntityPlayerSP$handleWaterSneaking(EntityPlayerSP player) {
+        public static void EntityPlayerSP$handleWaterSneaking(net.minecraft.client.entity.EntityPlayerSP player) {
             if (player.isInWater() && player.movementInput.sneak && !player.capabilities.isFlying) {
                 player.motionY -= 0.03999999910593033 * player.getEntityAttribute(SWIM_SPEED).getAttributeValue();
             }
         }
 
-        public static void EntityPlayerSP$handleSprinting(EntityPlayerSP player, int sprintToggleTimer) {
+        public static void EntityPlayerSP$handleSprinting(net.minecraft.client.entity.EntityPlayerSP player, int sprintToggleTimer) {
             final boolean isSaturated = (float) player.getFoodStats().getFoodLevel() > 6.0F || player.capabilities.allowFlying;
             ClientPlayerSwimming playerSwimming = ClientPlayerSwimming.cast(player);
             boolean wasSneaking = player.movementInput.sneak;
@@ -836,9 +833,9 @@ public final class SwimmingTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static float ModelBiped$getHeadPitch(ModelBiped model, Entity entity, float headPitch) {
-            if (entity instanceof EntityLivingBase) {
-                EntityLivingBase living = (EntityLivingBase) entity;
+        public static float ModelBiped$getHeadPitch(net.minecraft.client.model.ModelBiped model, Entity entity, float headPitch) {
+            if (entity instanceof net.minecraft.entity.EntityLivingBase) {
+                net.minecraft.entity.EntityLivingBase living = (net.minecraft.entity.EntityLivingBase) entity;
                 SwimmingEntity swimming = SwimmingEntity.cast(living);
                 boolean elytra = living.getTicksElytraFlying() > 4;
                 float swimAnim = ModelBipedSwimming.cast(model).getSwimAnimation();
@@ -855,12 +852,12 @@ public final class SwimmingTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static void ModelBiped$setSwimAnimation(ModelBiped model, EntityLivingBase entity, float partialTicks) {
+        public static void ModelBiped$setSwimAnimation(net.minecraft.client.model.ModelBiped model, net.minecraft.entity.EntityLivingBase entity, float partialTicks) {
             ModelBipedSwimming.cast(model).setSwimAnimation(SwimmingEntity.cast(entity).getSwimAnimation(partialTicks));
         }
 
         @SideOnly(Side.CLIENT)
-        public static void RenderPlayer$resetSwimAnimation(RenderPlayer render) {
+        public static void RenderPlayer$resetSwimAnimation(net.minecraft.client.renderer.entity.RenderPlayer render) {
             ModelPlayer model = render.getMainModel();
             ModelBipedSwimming.cast(model).setSwimAnimation(0.0F);
         }
@@ -868,9 +865,11 @@ public final class SwimmingTransformer {
         @SideOnly(Side.CLIENT)
         public static boolean EntityRenderer$shouldApplyBobbing() {
             Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-            return !(entity instanceof EntityPlayer) || !SwimmingEntity.cast((EntityPlayer) entity).isSwimming();
+            return !(entity instanceof net.minecraft.entity.player.EntityPlayer) || !SwimmingEntity.cast((net.minecraft.entity.player.EntityPlayer) entity).isSwimming();
         }
+
+        private Hooks() {}
     }
 
-    private SwimmingTransformer() {}
+    private SwimmingState() {}
 }

@@ -2,7 +2,7 @@ package surreal.backportium._internal.core.visitor;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.ConfigValues;
@@ -11,37 +11,40 @@ import surreal.backportium.util.NewMathHelper;
 
 import java.util.function.Function;
 
+import static _mod.Constants.V_INTERPOLATED_CAMERA_MOVEMENT;
+
 /**
  * Interpolates eye height changes and allows block overlays to be rendered when player is in water
  */
-public final class CameraTransformer {
+public final class InterpolatedCameraMovement {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/CameraTransformer$Hooks";
+    private static final String HOOKS = V_INTERPOLATED_CAMERA_MOVEMENT + "$Hooks";
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
-            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayerVisitor::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRenderer::new;
+            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayer::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class EntityPlayerVisitor extends LeClassVisitor {
+    private static final class EntityPlayer extends LeClassVisitor {
 
-        public EntityPlayerVisitor(ClassVisitor cv) {
+        public EntityPlayer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onLivingUpdate", "func_70636_d"))) return new OnLivingUpdateVisitor(mv);
+            if (name.equals(getName("onLivingUpdate", "func_70636_d"))) return new OnLivingUpdate(mv);
             return mv;
         }
 
-        private static class OnLivingUpdateVisitor extends MethodVisitor {
+        private static final class OnLivingUpdate extends MethodVisitor {
 
-            public OnLivingUpdateVisitor(MethodVisitor mv) {
+            public OnLivingUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -55,9 +58,9 @@ public final class CameraTransformer {
         }
     }
 
-    private static class EntityRendererVisitor extends LeClassVisitor {
+    private static final class EntityRenderer extends LeClassVisitor {
 
-        public EntityRendererVisitor(ClassVisitor cv) {
+        public EntityRenderer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -73,15 +76,15 @@ public final class CameraTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("renderWorldPass", "func_175068_a"))) return new RenderWorldPassVisitor(mv);
-            if (name.equals(getName("updateRenderer", "func_78464_a"))) return new UpdateRendererVisitor(mv);
-            if (name.equals(getName("orientCamera", "func_78467_g"))) return new OrientCameraVisitor(mv);
+            if (name.equals(getName("renderWorldPass", "func_175068_a"))) return new RenderWorldPass(mv);
+            if (name.equals(getName("updateRenderer", "func_78464_a"))) return new UpdateRenderer(mv);
+            if (name.equals(getName("orientCamera", "func_78467_g"))) return new OrientCamera(mv);
             return mv;
         }
 
-        private static class UpdateRendererVisitor extends MethodVisitor {
+        private static final class UpdateRenderer extends MethodVisitor {
 
-            public UpdateRendererVisitor(MethodVisitor mv) {
+            public UpdateRenderer(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -109,11 +112,11 @@ public final class CameraTransformer {
             }
         }
 
-        private static class OrientCameraVisitor extends MethodVisitor {
+        private static final class OrientCamera extends MethodVisitor {
 
             private boolean check = false;
 
-            public OrientCameraVisitor(MethodVisitor mv) {
+            public OrientCamera(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -153,9 +156,9 @@ public final class CameraTransformer {
             }
         }
 
-        private static class RenderWorldPassVisitor extends MethodVisitor {
+        private static final class RenderWorldPass extends MethodVisitor {
 
-            public RenderWorldPassVisitor(MethodVisitor mv) {
+            public RenderWorldPass(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -171,7 +174,7 @@ public final class CameraTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static boolean EntityRenderer$empty(Entity entity, Material material) {
             return false;
@@ -182,7 +185,7 @@ public final class CameraTransformer {
 //            if (!(entity instanceof EntityPlayer) || IntegrationManager.isRandomPatchesEnabled()) {
 //                return eyeHeight;
 //            }
-            if (!(entity instanceof EntityPlayer)) {
+            if (!(entity instanceof net.minecraft.entity.player.EntityPlayer)) {
                 return defaultValue;
             }
             return NewMathHelper.lerp(partialTicks, previousEyeHeight, eyeHeight);
@@ -191,7 +194,9 @@ public final class CameraTransformer {
         public static float EntityPlayer$getCameraPitch(float defaultValue) {
             return ConfigValues.disablePitchBobbing ? 0.0F : defaultValue;
         }
+
+        private Hooks() {}
     }
 
-    private CameraTransformer() {}
+    private InterpolatedCameraMovement() {}
 }

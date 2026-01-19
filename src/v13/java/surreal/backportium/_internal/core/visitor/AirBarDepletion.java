@@ -2,9 +2,9 @@ package surreal.backportium._internal.core.visitor;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -12,34 +12,37 @@ import surreal.backportium.init.ModBlocks;
 
 import java.util.function.Function;
 
-public final class AirBarTransformer {
+import static _mod.Constants.V_AIR_BAR_DEPLETION;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/AirBarTransformer$Hooks";
+public final class AirBarDepletion {
 
+    private static final String HOOKS = V_AIR_BAR_DEPLETION + "$Hooks";
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
-            case "net.minecraftforge.client.GuiIngameForge": return GuiIngameForgeVisitor::new;
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBase::new;
+            case "net.minecraftforge.client.GuiIngameForge": return GuiIngameForge::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static final class EntityLivingBase extends LeClassVisitor {
 
-        public EntityLivingBaseVisitor(ClassVisitor cv) {
+        public EntityLivingBase(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onEntityUpdate", "func_70030_z"))) return new OnEntityUpdateVisitor(mv);
+            if (name.equals(getName("onEntityUpdate", "func_70030_z"))) return new OnEntityUpdate(mv);
             return mv;
         }
 
-        private static class OnEntityUpdateVisitor extends MethodVisitor {
+        private static final class OnEntityUpdate extends MethodVisitor {
 
-            public OnEntityUpdateVisitor(MethodVisitor mv) {
+            public OnEntityUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -64,22 +67,22 @@ public final class AirBarTransformer {
         }
     }
 
-    private static class GuiIngameForgeVisitor extends LeClassVisitor {
+    private static final class GuiIngameForge extends LeClassVisitor {
 
-        public GuiIngameForgeVisitor(ClassVisitor cv) {
+        public GuiIngameForge(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("renderAir")) return new RenderAirVisitor(mv);
+            if (name.equals("renderAir")) return new RenderAir(mv);
             return mv;
         }
 
-        private static class RenderAirVisitor extends MethodVisitor {
+        private static final class RenderAir extends MethodVisitor {
 
-            public RenderAirVisitor(MethodVisitor mv) {
+            public RenderAir(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -95,14 +98,14 @@ public final class AirBarTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static int EntityLivingBase$getIncreasedAir(Entity entity) {
             int air = Math.max(entity.getAir(), 0);
             return Math.min(air + 4, 300);
         }
 
-        public static boolean EntityLivingBase$shouldDeplete(boolean insideWater, EntityLivingBase entity) {
+        public static boolean EntityLivingBase$shouldDeplete(boolean insideWater, net.minecraft.entity.EntityLivingBase entity) {
             if (entity.canBreatheUnderwater()) return false;
             if (entity.isPotionActive(MobEffects.WATER_BREATHING)) return false;
             if (ModBlocks.BUBBLE_COLUMN == null) return insideWater;
@@ -112,7 +115,9 @@ public final class AirBarTransformer {
         public static boolean GuiIngameForge$shouldRender(Entity player, Material water) {
             return player.getAir() != 300;
         }
+
+        private Hooks() {}
     }
 
-    private AirBarTransformer() {}
+    private AirBarDepletion() {}
 }

@@ -14,18 +14,21 @@ import surreal.backportium.api.world.biome.Overridable;
 import java.util.Random;
 import java.util.function.Function;
 
-public final class BiomeOverrideVisitor extends LeClassVisitor {
+import static _mod.Constants.V_MORE_BIOME_OVERRIDE;
+import static _mod.Constants.A_OVERRIDABLE_BIOME;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BiomeOverrideVisitor$Hooks";
-    private static final String OVERRIDABLE = "surreal/backportium/api/world/biome/Overridable";
+public final class MoreBiomeOverride extends LeClassVisitor {
 
-    private BiomeOverrideVisitor(ClassVisitor cv) {
+    private static final String HOOKS = V_MORE_BIOME_OVERRIDE + "$Hooks";
+    private static final String OVERRIDABLE = A_OVERRIDABLE_BIOME;
+
+    private MoreBiomeOverride(ClassVisitor cv) {
         super(cv);
     }
 
     @Nullable
     public static Function<ClassVisitor, ClassVisitor> getClassVisitor(String name, String transformedName) {
-        if (transformedName.equals("net.minecraft.world.biome.Biome")) return BiomeOverrideVisitor::new;
+        if (transformedName.equals("net.minecraft.world.biome.Biome")) return MoreBiomeOverride::new;
         return null;
     }
 
@@ -37,14 +40,14 @@ public final class BiomeOverrideVisitor extends LeClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (name.equals(getName("getTemperature", "func_180626_a"))) return new GetTemperatureVisitor(mv);
-        if (name.equals(getName("generateBiomeTerrain", "func_180628_b"))) return new GenerateBiomeTerrainVisitor(mv);
+        if (name.equals(getName("getTemperature", "func_180626_a"))) return new GetTemperature(mv);
+        if (name.equals(getName("generateBiomeTerrain", "func_180628_b"))) return new GenerateBiomeTerrain(mv);
         return mv;
     }
 
-    private static class GetTemperatureVisitor extends MethodVisitor {
+    private static final class GetTemperature extends MethodVisitor {
 
-        public GetTemperatureVisitor(MethodVisitor mv) {
+        public GetTemperature(MethodVisitor mv) {
             super(ASM5, mv);
         }
 
@@ -59,9 +62,9 @@ public final class BiomeOverrideVisitor extends LeClassVisitor {
         }
     }
 
-    private static class GenerateBiomeTerrainVisitor extends MethodVisitor {
+    private static final class GenerateBiomeTerrain extends MethodVisitor {
 
-        public GenerateBiomeTerrainVisitor(MethodVisitor mv) {
+        public GenerateBiomeTerrain(MethodVisitor mv) {
             super(ASM5, mv);
         }
 
@@ -82,11 +85,13 @@ public final class BiomeOverrideVisitor extends LeClassVisitor {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static void Biome$setBlockState(ChunkPrimer primer, int x, int y, int z, IBlockState state, Biome biome, World world, Random random, int chunkX, int chunkY, double noiseVal) {
             state = Overridable.cast(biome).getTerrainBlock(world, random, primer, chunkX, chunkY, new BlockPos(x, y, z), noiseVal, state);
             primer.setBlockState(x, y, z, state);
         }
+
+        private Hooks() {}
     }
 }

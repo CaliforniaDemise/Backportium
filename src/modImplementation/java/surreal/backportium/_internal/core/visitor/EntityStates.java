@@ -1,10 +1,6 @@
 package surreal.backportium._internal.core.visitor;
 
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,29 +19,32 @@ import surreal.backportium.event.LivingMoveEvent;
 import java.util.function.Function;
 
 import static surreal.backportium.init.ModEntityStates.*;
+import static _mod.Constants.V_ENTITY_STATES;
+import static _mod.Constants.A_ENTITY_WITH_STATE;
+import static _mod.Constants.A_SET_SIZE;
 
-public final class EntityStateVisitor {
+public final class EntityStates {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/EntityStateVisitor$Hooks";
-    private static final String ENTITY_WITH_STATE = "surreal/backportium/api/entity/EntityWithState";
-    private static final String SET_SIZE = "surreal/backportium/_internal/entity/SetSize";
+    private static final String HOOKS = V_ENTITY_STATES + "$Hooks";
+    private static final String ENTITY_WITH_STATE = A_ENTITY_WITH_STATE;
+    private static final String SET_SIZE = A_SET_SIZE;
 
     @Nullable
     public static Function<ClassVisitor, ClassVisitor> getClassVisitor(String name, String transformedName) {
         switch (transformedName) {
-            case "net.minecraft.entity.Entity": return EntityVisitor::new;
-            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayerVisitor::new;
-            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
-            case "net.minecraft.client.model.ModelBiped": return ModelBipedVisitor::new;
+            case "net.minecraft.entity.Entity": return Entity::new;
+            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayer::new;
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBase::new;
+            case "net.minecraft.client.model.ModelBiped": return ModelBiped::new;
             case "net.minecraft.client.renderer.entity.RenderLivingBase":
-            case "net.minecraft.client.renderer.entity.RenderPlayer": return RenderVisitor::new;
+            case "net.minecraft.client.renderer.entity.RenderPlayer": return Render::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class EntityVisitor extends LeClassVisitor {
+    private static final class Entity extends LeClassVisitor {
 
-        public EntityVisitor(ClassVisitor cv) {
+        public Entity(ClassVisitor cv) {
             super(cv);
         }
 
@@ -69,23 +68,23 @@ public final class EntityStateVisitor {
         }
     }
 
-    private static class EntityPlayerVisitor extends LeClassVisitor {
+    private static final class EntityPlayer extends LeClassVisitor {
 
-        public EntityPlayerVisitor(ClassVisitor cv) {
+        public EntityPlayer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateSize", "func_184808_cD"))) return new UpdateSizeVisitor(mv);
-            if (name.equals(getName("getEyeHeight", "func_70047_e"))) return new GetEyeHeightVisitor(mv);
+            if (name.equals(getName("updateSize", "func_184808_cD"))) return new UpdateSize(mv);
+            if (name.equals(getName("getEyeHeight", "func_70047_e"))) return new GetEyeHeight(mv);
             return mv;
         }
 
-        private static class UpdateSizeVisitor extends MethodVisitor {
+        private static final class UpdateSize extends MethodVisitor {
 
-            public UpdateSizeVisitor(MethodVisitor mv) {
+            public UpdateSize(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -99,9 +98,9 @@ public final class EntityStateVisitor {
             }
         }
 
-        private static class GetEyeHeightVisitor extends MethodVisitor {
+        private static final class GetEyeHeight extends MethodVisitor {
 
-            public GetEyeHeightVisitor(MethodVisitor mv) {
+            public GetEyeHeight(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -116,11 +115,11 @@ public final class EntityStateVisitor {
         }
     }
 
-    private static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static final class EntityLivingBase extends LeClassVisitor {
 
         private boolean hasEyeHeight = false;
 
-        public EntityLivingBaseVisitor(ClassVisitor cv) {
+        public EntityLivingBase(ClassVisitor cv) {
             super(cv);
         }
 
@@ -135,7 +134,7 @@ public final class EntityStateVisitor {
             if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdate(mv);
             if (name.equals(getName("getEyeHeight", "func_70047_e"))) {
                 hasEyeHeight = true;
-                return new GetEyeHeightVisitor(mv);
+                return new GetEyeHeight(mv);
             }
             return mv;
         }
@@ -161,7 +160,7 @@ public final class EntityStateVisitor {
             }
         }
 
-        private static class OnUpdate extends MethodVisitor {
+        private static final class OnUpdate extends MethodVisitor {
 
             public OnUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -175,9 +174,9 @@ public final class EntityStateVisitor {
             }
         }
 
-        private static class GetEyeHeightVisitor extends MethodVisitor {
+        private static final class GetEyeHeight extends MethodVisitor {
 
-            public GetEyeHeightVisitor(MethodVisitor mv) {
+            public GetEyeHeight(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -192,22 +191,22 @@ public final class EntityStateVisitor {
         }
     }
 
-    private static class ModelBipedVisitor extends LeClassVisitor {
+    private static final class ModelBiped extends LeClassVisitor {
 
-        public ModelBipedVisitor(ClassVisitor cv) {
+        public ModelBiped(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("setRotationAngles", "func_78087_a"))) return new SetRotationAnglesVisitor(mv);
+            if (name.equals(getName("setRotationAngles", "func_78087_a"))) return new SetRotationAngles(mv);
             return mv;
         }
 
-        private static class SetRotationAnglesVisitor extends MethodVisitor {
+        private static final class SetRotationAngles extends MethodVisitor {
 
-            public SetRotationAnglesVisitor(MethodVisitor mv) {
+            public SetRotationAngles(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -229,11 +228,11 @@ public final class EntityStateVisitor {
         }
     }
 
-    private static class RenderVisitor extends LeClassVisitor {
+    private static final class Render extends LeClassVisitor {
 
         private boolean player;
 
-        public RenderVisitor(ClassVisitor cv) {
+        public Render(ClassVisitor cv) {
             super(cv);
         }
 
@@ -246,15 +245,15 @@ public final class EntityStateVisitor {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("applyRotations", "func_77043_a"))) return new ApplyRotationsVisitor(mv, player);
+            if (name.equals(getName("applyRotations", "func_77043_a"))) return new ApplyRotations(mv, player);
             return mv;
         }
 
-        private static class ApplyRotationsVisitor extends MethodVisitor {
+        private static final class ApplyRotations extends MethodVisitor {
 
             private final boolean player;
 
-            public ApplyRotationsVisitor(MethodVisitor mv, boolean player) {
+            public ApplyRotations(MethodVisitor mv, boolean player) {
                 super(ASM5, mv);
                 this.player = player;
             }
@@ -276,10 +275,10 @@ public final class EntityStateVisitor {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         @NotNull
-        public static EntityState EntityLivingBase$getState(EntityLivingBase entity) {
+        public static EntityState EntityLivingBase$getState(net.minecraft.entity.EntityLivingBase entity) {
             EntityState move = STANDING;
             SwimmingEntity swimming = SwimmingEntity.cast(entity);
             if (entity.isPlayerSleeping()) {
@@ -292,11 +291,11 @@ public final class EntityStateVisitor {
                 else if (swimming.isSwimming()) {
                     move = CRAWLING;
                 }
-                else if (entity.isSneaking() && (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).capabilities.isFlying) && (entity.onGround || !entity.isInWater()) && !entity.isOnLadder()) {
+                else if (entity.isSneaking() && (!(entity instanceof net.minecraft.entity.player.EntityPlayer) || !((net.minecraft.entity.player.EntityPlayer) entity).capabilities.isFlying) && (entity.onGround || !entity.isInWater()) && !entity.isOnLadder()) {
                     move = SNEAKING;
                 }
             }
-            if (!entity.noClip && !entity.isRiding() && entity instanceof EntityPlayer && !move.isStateClear(entity)) {
+            if (!entity.noClip && !entity.isRiding() && entity instanceof net.minecraft.entity.player.EntityPlayer && !move.isStateClear(entity)) {
                 if (SNEAKING.isStateClear(entity)) {
                     move = SNEAKING;
                 }
@@ -313,37 +312,39 @@ public final class EntityStateVisitor {
             return move;
         }
 
-        public static void EntityPlayer$setSize(EntityLivingBase entity, float width, float height) {
+        public static void EntityPlayer$setSize(net.minecraft.entity.EntityLivingBase entity, float width, float height) {
             EntityState move = EntityWithState.cast(entity).getState();
             SetSize.cast(entity)._setSize(move.getWidth(entity), move.getHeight(entity));
         }
 
-        public static void EntityLivingBase$updateSize(EntityLivingBase entity) {
+        public static void EntityLivingBase$updateSize(net.minecraft.entity.EntityLivingBase entity) {
             EntityState move = EntityWithState.cast(entity).getState();
             SetSize.cast(entity)._setSize(move.getWidth(entity), move.getHeight(entity));
         }
 
-        public static float EntityLivingBase$getEyeHeight(float defaultValue, EntityLivingBase entity) {
+        public static float EntityLivingBase$getEyeHeight(float defaultValue, net.minecraft.entity.EntityLivingBase entity) {
             EntityState move = EntityWithState.cast(entity).getState();
             return move.getEyeHeight(entity);
         }
 
 
         @SideOnly(Side.CLIENT)
-        public static void ModelBiped$setRotationAngles(ModelBiped model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
-            if (entityIn instanceof EntityLivingBase) {
-                EntityLivingBase living = (EntityLivingBase) entityIn;
+        public static void ModelBiped$setRotationAngles(net.minecraft.client.model.ModelBiped model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, net.minecraft.entity.Entity entityIn) {
+            if (entityIn instanceof net.minecraft.entity.EntityLivingBase) {
+                net.minecraft.entity.EntityLivingBase living = (net.minecraft.entity.EntityLivingBase) entityIn;
                 EntityState move = EntityWithState.cast(living).getState();
                 move.applyModelRotations(model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
             }
         }
 
         @SideOnly(Side.CLIENT)
-        public static <T extends EntityLivingBase> void RenderLiving$applyRotations(RenderLivingBase<T> render, T living, float ageInTicks, float rotationYaw, float partialTicks, boolean player) {
+        public static <T extends net.minecraft.entity.EntityLivingBase> void RenderLiving$applyRotations(RenderLivingBase<T> render, T living, float ageInTicks, float rotationYaw, float partialTicks, boolean player) {
             EntityState move = EntityWithState.cast(living).getState();
             move.applyRenderRotations(render, living, ageInTicks, rotationYaw, partialTicks, player);
         }
+
+        private Hooks() {}
     }
 
-    private EntityStateVisitor() {}
+    private EntityStates() {}
 }

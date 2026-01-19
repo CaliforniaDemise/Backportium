@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -14,23 +15,26 @@ import surreal.backportium.init.ModBlocks;
 
 import java.util.function.Function;
 
-public final class BlockHugeMushroomTransformer extends LeClassVisitor {
+import static _mod.Constants.V_BLOCK_HUGE_MUSHROOM_ALIAS;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BlockHugeMushroomTransformer$Hooks";
+public final class BlockHugeMushroomAlias extends LeClassVisitor {
 
-    private BlockHugeMushroomTransformer(ClassVisitor cv) {
+    private static final String HOOKS = V_BLOCK_HUGE_MUSHROOM_ALIAS + "$Hooks";
+
+    private BlockHugeMushroomAlias(ClassVisitor cv) {
         super(cv);
     }
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
-        if (transformedName.equals("net.minecraft.block.BlockHugeMushroom")) return BlockHugeMushroomTransformer::new;
+        if (transformedName.equals("net.minecraft.block.BlockHugeMushroom")) return BlockHugeMushroomAlias::new;
         return null;
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (name.equals(getName("getItemDropped", "func_180660_a"))) return new GetItemDroppedVisitor(mv);
+        if (name.equals(getName("getItemDropped", "func_180660_a"))) return new GetItemDropped(mv);
         return mv;
     }
 
@@ -61,9 +65,9 @@ public final class BlockHugeMushroomTransformer extends LeClassVisitor {
         }
     }
 
-    private static class GetItemDroppedVisitor extends MethodVisitor {
+    private static final class GetItemDropped extends MethodVisitor {
 
-        public GetItemDroppedVisitor(MethodVisitor mv) {
+        public GetItemDropped(MethodVisitor mv) {
             super(ASM5, mv);
         }
 
@@ -78,7 +82,7 @@ public final class BlockHugeMushroomTransformer extends LeClassVisitor {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static Item $getItem(Item defaultItem, IBlockState state) {
             BlockHugeMushroom.EnumType type = state.getValue(BlockHugeMushroom.VARIANT);
@@ -93,5 +97,7 @@ public final class BlockHugeMushroomTransformer extends LeClassVisitor {
             if (block == Blocks.BROWN_MUSHROOM_BLOCK) return new ItemStack(ModBlocks.BROWN_MUSHROOM_BLOCK);
             return ItemStack.EMPTY;
         }
+
+        private Hooks() {}
     }
 }

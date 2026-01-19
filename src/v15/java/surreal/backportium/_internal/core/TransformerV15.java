@@ -2,7 +2,7 @@ package surreal.backportium._internal.core;
 
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
-import surreal.backportium._internal.core.visitor.ElytraVisitor;
+import surreal.backportium._internal.core.visitor.EasyElytraTakeOff;
 
 import java.util.function.Function;
 
@@ -15,7 +15,7 @@ public final class TransformerV15 {
         Function<ClassVisitor, ClassVisitor> function = null;
 
         // Fixes
-        function = mix(function, ElytraVisitor.visit(name, transformedName, bytes));
+        function = mix(function, EasyElytraTakeOff.visit(name, transformedName, bytes));
 
         return function;
     }

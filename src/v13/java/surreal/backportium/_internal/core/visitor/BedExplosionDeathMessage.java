@@ -3,6 +3,7 @@ package surreal.backportium._internal.core.visitor;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -10,18 +11,21 @@ import surreal.backportium._internal.world.ExplosionGameDesign;
 
 import java.util.function.Function;
 
-public final class BedExplosionTransformer {
+import static _mod.Constants.V_BED_EXPLOSION_DEATH_MESSAGE;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BedExplosionTransformer$Hooks";
+public final class BedExplosionDeathMessage {
 
+    private static final String HOOKS = V_BED_EXPLOSION_DEATH_MESSAGE + "$Hooks";
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
-        if (transformedName.equals("net.minecraft.block.BlockBed")) return BlockBedVisitor::new;
+        if (transformedName.equals("net.minecraft.block.BlockBed")) return BlockBed::new;
         return null;
     }
 
-    private static class BlockBedVisitor extends LeClassVisitor {
+    private static final class BlockBed extends LeClassVisitor {
 
-        public BlockBedVisitor(ClassVisitor cv) {
+        public BlockBed(ClassVisitor cv) {
             super(cv);
         }
 
@@ -32,7 +36,7 @@ public final class BedExplosionTransformer {
             return mv;
         }
 
-        private static class OnBlockActivated extends MethodVisitor {
+        private static final class OnBlockActivated extends MethodVisitor {
 
             public OnBlockActivated(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -50,7 +54,7 @@ public final class BedExplosionTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static Explosion BlockBed$newExplosion(World world, Entity entity, double x, double y, double z, float strength, boolean causesFire, boolean damagesTerrain) {
             ExplosionGameDesign explosion = new ExplosionGameDesign(world, entity, x, y, z, strength, causesFire, damagesTerrain);
@@ -59,7 +63,9 @@ public final class BedExplosionTransformer {
             explosion.doExplosionB(true);
             return explosion;
         }
+
+        private Hooks() {}
     }
 
-    private BedExplosionTransformer() {}
+    private BedExplosionDeathMessage() {}
 }

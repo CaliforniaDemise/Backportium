@@ -9,7 +9,6 @@ import net.minecraft.world.World;
 import surreal.backportium.init.ModEnchantmentTypes;
 import surreal.backportium.init.ModEnchantments;
 import surreal.backportium.init.ModSounds;
-import surreal.backportium.tag.AllTags;
 
 import javax.annotation.Nonnull;
 
@@ -31,6 +30,6 @@ public class EnchantmentChanneling extends EnchantmentDefault {
     }
 
     public static boolean canApplyTo(Entity entity) {
-        return !entity.world.isRemote && entity.world.isThundering() && !entity.isInWater() && !AllTags.ENTITY_TAG.contains(AllTags.ENTITY_CHANNELING_BLACKLIST, entity);
+        return !entity.world.isRemote && entity.world.isThundering() && !entity.isInWater();
     }
 }

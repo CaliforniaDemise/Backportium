@@ -14,7 +14,7 @@ import surreal.backportium.util.WaterUtil;
  * Allows warm oceans to have teal colored waters and of course, changing water fog color.
  */
 @Extension(Biome.class)
-public interface CustomWaterColor {
+public interface BetterWaterColor {
 
     /**
      * An extension of {@link Biome#getWaterColorMultiplier()}
@@ -43,5 +43,5 @@ public interface CustomWaterColor {
     @Final
     default void setWaterFogColor(int fogColor) {}
 
-    static CustomWaterColor cast(Biome biome) { return (CustomWaterColor) biome; }
+    static BetterWaterColor cast(Biome biome) { return (BetterWaterColor) biome; }
 }

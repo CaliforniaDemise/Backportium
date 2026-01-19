@@ -6,42 +6,46 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 
 import java.util.function.Function;
 
+import static _mod.Constants.V_FIX_BANNER_SOUND;
+
 /**
  * Fix Banners not having a placing sound.
  **/
-public final class BannerSoundTransformer {
+public final class FixBannerSound {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BannerSoundTransformer$Hooks";
+    private static final String HOOKS = V_FIX_BANNER_SOUND + "$Hooks";
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
-        if (transformedName.equals("net.minecraft.item.ItemBanner")) return ItemBannerVisitor::new;
+        if (transformedName.equals("net.minecraft.item.ItemBanner")) return ItemBanner::new;
         return null;
     }
 
-    private static class ItemBannerVisitor extends LeClassVisitor {
+    private static final class ItemBanner extends LeClassVisitor {
 
-        public ItemBannerVisitor(ClassVisitor cv) {
+        public ItemBanner(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onItemUse", "func_180614_a"))) return new OnItemUseVisitor(mv);
+            if (name.equals(getName("onItemUse", "func_180614_a"))) return new OnItemUse(mv);
             return mv;
         }
 
-        private static class OnItemUseVisitor extends MethodVisitor {
+        private static final class OnItemUse extends MethodVisitor {
 
             private int count = 0;
 
-            public OnItemUseVisitor(MethodVisitor mv) {
+            public OnItemUse(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -62,11 +66,14 @@ public final class BannerSoundTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
+
         public static void $playSound(EntityPlayer player, World world, BlockPos pos) {
             IBlockState state = world.getBlockState(pos);
             SoundType soundType = state.getBlock().getSoundType(state, world, pos, player);
             world.playSound(null, pos, soundType.getPlaceSound(), SoundCategory.BLOCKS, (soundType.getVolume() + 1.0F) / 2.0F, soundType.getPitch() * 0.8F);
         }
+
+        private Hooks() {}
     }
 }

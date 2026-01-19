@@ -13,23 +13,25 @@ public final class TransformerV13 {
     @Nullable
     public static Function<ClassVisitor, ClassVisitor> getVisitor(String name, String transformedName, byte[] bytes) {
         Function<ClassVisitor, ClassVisitor> function = null;
-        function = mix(function, BubbleColumnTransformer.visit(name, transformedName, bytes));
-        function = mix(function, AirBarTransformer.visit(name, transformedName, bytes));
-        function = mix(function, ItemEntityBuoyancyTransformer.visit(name, transformedName, bytes));
-        function = mix(function, BlockHugeMushroomTransformer.visit(name, transformedName, bytes));
-        function = mix(function, PotionTransformer.visit(name, transformedName, bytes));
-        function = mix(function, NewButtonTransformer.visit(name, transformedName, bytes));
-        function = mix(function, LoggingTransformer.visit(name, transformedName, bytes));
-        function = mix(function, BiomeNameTransformer.visit(name, transformedName, bytes));
-        function = mix(function, WaterColorTransformer.visit(name, transformedName, bytes));
-        function = mix(function, TridentTransformer.visit(name, transformedName, bytes));
-        function = mix(function, SwimmingTransformer.visit(name, transformedName, bytes));
-        function = mix(function, CameraTransformer.visit(name, transformedName, bytes));
-        function = mix(function, UncarvedPumpkinTransformer.visit(name, transformedName, bytes));
-        function = mix(function, BedExplosionTransformer.visit(name, transformedName, bytes));
+        function = mix(function, BubbleColumns.visit(name, transformedName, bytes));
+        function = mix(function, AirBarDepletion.visit(name, transformedName, bytes));
+        function = mix(function, ItemEntityBuoyancy.visit(name, transformedName, bytes));
+        function = mix(function, BlockHugeMushroomAlias.visit(name, transformedName, bytes));
+        function = mix(function, ConduitPowerImplementation.visit(name, transformedName, bytes));
+        function = mix(function, SlowFallingImplementation.visit(name, transformedName, bytes));
+//        function = mix(function, PotionTransformer.visit(name, transformedName, bytes));
+        function = mix(function, NewButtonStates.visit(name, transformedName, bytes));
+        function = mix(function, WaterLogging.visit(name, transformedName, bytes));
+        function = mix(function, BiomeNameTranslation.visit(name, transformedName, bytes));
+        function = mix(function, BetterWaterColor.visit(name, transformedName, bytes));
+        function = mix(function, TridentImplementation.visit(name, transformedName, bytes));
+        function = mix(function, SwimmingState.visit(name, transformedName, bytes));
+        function = mix(function, InterpolatedCameraMovement.visit(name, transformedName, bytes));
+        function = mix(function, UncarvedPumpkin.visit(name, transformedName, bytes));
+        function = mix(function, BedExplosionDeathMessage.visit(name, transformedName, bytes));
 
         // Fixes
-        function = mix(function, BannerSoundTransformer.visit(name, transformedName, bytes));
+        function = mix(function, FixBannerSound.visit(name, transformedName, bytes));
 
         return function;
     }

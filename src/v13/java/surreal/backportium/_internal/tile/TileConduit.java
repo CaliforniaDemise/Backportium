@@ -118,10 +118,10 @@ public class TileConduit extends TileEntity implements ITickable {
                 if (nearEntities == null) return;
                 for (EntityLivingBase entity : nearEntities) {
                     if (shouldApplyToEntity(entity)) {
-                        if (entity instanceof EntityPlayer) {
+                        if (AllTags.ENTITY_TAG.contains(AllTags.ENTITY_CONDUIT_GIVES_EFFECT, entity)) {
                             entity.addPotionEffect(new PotionEffect(ModPotions.CONDUIT_POWER, 13 * 20, 0, true, false));
                         }
-                        else if (this.toAttack == null && this.shouldAttack() && AllTags.ENTITY_TAG.contains(AllTags.ENTITY_BLOCK_CONDUIT_ATTACK, entity)) {
+                        else if (this.toAttack == null && this.shouldAttack() && AllTags.ENTITY_TAG.contains(AllTags.ENTITY_CONDUIT_ATTACKS, entity)) {
                             if (this.getDistanceSq(entity.posX, entity.posY, entity.posZ) <= 64) {
                                 this.toAttack = entity;
                             }

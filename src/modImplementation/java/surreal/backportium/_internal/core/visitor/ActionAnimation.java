@@ -1,6 +1,5 @@
 package surreal.backportium._internal.core.visitor;
 
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -17,32 +16,34 @@ import surreal.backportium.init.ModActions;
 
 import java.util.function.Function;
 
-public final class ActionVisitor {
+import static _mod.Constants.V_ACTION_ANIMATION;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/ActionVisitor$Hooks";
+public final class ActionAnimation {
+
+    private static final String HOOKS = V_ACTION_ANIMATION + "$Hooks";
 
     @Nullable
     public static Function<ClassVisitor, ClassVisitor> getClassVisitor(String name, String transformedName) {
-        if (transformedName.equals("net.minecraft.client.model.ModelBiped")) return ModelBipedVisitor::new;
+        if (transformedName.equals("net.minecraft.client.model.ModelBiped")) return ModelBiped::new;
         return null;
     }
 
-    public static class ModelBipedVisitor extends LeClassVisitor {
+    public static final class ModelBiped extends LeClassVisitor {
 
-        public ModelBipedVisitor(ClassVisitor cv) {
+        public ModelBiped(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("setRotationAngles", "func_78087_a"))) return new SetRotationAnglesVisitor(mv);
+            if (name.equals(getName("setRotationAngles", "func_78087_a"))) return new SetRotationAngles(mv);
             return mv;
         }
 
-        private static class SetRotationAnglesVisitor extends MethodVisitor {
+        private static final class SetRotationAngles extends MethodVisitor {
 
-            public SetRotationAnglesVisitor(MethodVisitor mv) {
+            public SetRotationAngles(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -65,10 +66,10 @@ public final class ActionVisitor {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         @SideOnly(Side.CLIENT)
-        public static void ModelBiped$setRotationAngles(ModelBiped model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
+        public static void ModelBiped$setRotationAngles(net.minecraft.client.model.ModelBiped model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
             if (entityIn instanceof EntityLivingBase) {
                 EntityLivingBase living = (EntityLivingBase) entityIn;
                 ItemStack stack = living.getActiveItemStack();
@@ -81,8 +82,8 @@ public final class ActionVisitor {
             }
         }
 
-
+        private Hooks() {}
     }
 
-    private ActionVisitor() {}
+    private ActionAnimation() {}
 }

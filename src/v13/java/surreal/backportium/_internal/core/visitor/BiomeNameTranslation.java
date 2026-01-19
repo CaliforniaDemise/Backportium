@@ -2,12 +2,11 @@ package surreal.backportium._internal.core.visitor;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
@@ -16,34 +15,38 @@ import surreal.backportium.api.world.biome.Translatable;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static _mod.Constants.A_TRANSLATABLE;
+import static _mod.Constants.V_BIOME_NAME_TRANSLATION;
+
 /**
  * Make biome names translatable. This doesn't change how biomeName behaves. If I18n doesn't have the key set, it will use default name instead.
  * - Add a field to Biome class called 'translationKey' and add getter and setter for it which is reachable with {@link Translatable}
  * - Set 'translationKey' field with biome registry AddCallback, because we need registry name to properly set the translation key.
  * - Change debug info to show both registry name and biome name.
- * Transforms {@link Biome}, {@link GameData}, {@link GuiOverlayDebug} and {@link org.cyclops.cyclopscore.config.configurable.ConfigurableBiome}
+ * Transforms {@link net.minecraft.world.biome.Biome}, {@link net.minecraftforge.registries.GameData}, {@link GuiOverlayDebug} and {@link org.cyclops.cyclopscore.config.configurable.ConfigurableBiome}
  */
-public final class BiomeNameTransformer {
+public final class BiomeNameTranslation {
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/BiomeNameTransformer$Hooks";
-    private static final String TRANSLATABLE = "surreal/backportium/api/world/biome/Translatable";
+    private static final String HOOKS = V_BIOME_NAME_TRANSLATION + "$Hooks";
+    private static final String TRANSLATABLE = A_TRANSLATABLE;
 
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.world.biome.Biome": return BiomeVisitor::new;
-            case "net.minecraftforge.registries.GameData": return GameDataVisitor::new;
+            case "net.minecraft.world.biome.Biome": return Biome::new;
+            case "net.minecraftforge.registries.GameData": return GameData::new;
             case "net.minecraft.client.gui.GuiOverlayDebug": return GuiOverlayDebug::new;
-            case "org.cyclops.cyclopscore.config.configurable.ConfigurableBiome": return ConfigurableBiomeVisitor::new;
+            case "org.cyclops.cyclopscore.config.configurable.ConfigurableBiome": return ConfigurableBiome::new;
+            default: return null;
         }
-        return null;
     }
 
     /**
      * Adds translationKey field and getter and setter for it and adds {@link Translatable} to Biomes interface list.
      */
-    private static class BiomeVisitor extends LeClassVisitor {
+    private static final class Biome extends LeClassVisitor {
 
-        public BiomeVisitor(ClassVisitor cv) {
+        public Biome(ClassVisitor cv) {
             super(cv);
         }
 
@@ -56,8 +59,8 @@ public final class BiomeNameTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>")) return new InitVisitor(mv);
-            if (name.equals(getName("getBiomeName", "func_185359_l"))) return new GetBiomeNameVisitor(mv);
+            if (name.equals("<init>")) return new Init(mv);
+            if (name.equals(getName("getBiomeName", "func_185359_l"))) return new GetBiomeName(mv);
             return mv;
         }
 
@@ -81,9 +84,9 @@ public final class BiomeNameTransformer {
             }
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -98,9 +101,9 @@ public final class BiomeNameTransformer {
             }
         }
 
-        private static class GetBiomeNameVisitor extends MethodVisitor {
+        private static final class GetBiomeName extends MethodVisitor {
 
-            public GetBiomeNameVisitor(MethodVisitor mv) {
+            public GetBiomeName(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -119,24 +122,24 @@ public final class BiomeNameTransformer {
     /**
      * Transform GameData to add a callback to set translation key based on biome registry name
      */
-    private static class GameDataVisitor extends LeClassVisitor {
+    private static final class GameData extends LeClassVisitor {
 
-        public GameDataVisitor(ClassVisitor cv) {
+        public GameData(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("init")) return new InitVisitor(mv);
+            if (name.equals("init")) return new Init(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
             private int count = 0;
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -156,7 +159,7 @@ public final class BiomeNameTransformer {
     /**
      * Replace basic getBiomeName() call with 'registryName (biomeName)' in debug info gui (F3)
      */
-    private static class GuiOverlayDebug extends LeClassVisitor {
+    private static final class GuiOverlayDebug extends LeClassVisitor {
 
         public GuiOverlayDebug(ClassVisitor cv) {
             super(cv);
@@ -165,13 +168,13 @@ public final class BiomeNameTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("call")) return new CallVisitor(mv);
+            if (name.equals("call")) return new Call(mv);
             return mv;
         }
 
-        private static class CallVisitor extends MethodVisitor {
+        private static final class Call extends MethodVisitor {
 
-            public CallVisitor(MethodVisitor mv) {
+            public Call(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -190,16 +193,16 @@ public final class BiomeNameTransformer {
      * Fixes Meneglin and other Cyclops Team mods' biomes translating biome names. Too stupid.
      */
     // From Cyclops Core
-    private static class ConfigurableBiomeVisitor extends LeClassVisitor {
+    private static final class ConfigurableBiome extends LeClassVisitor {
 
-        public ConfigurableBiomeVisitor(ClassVisitor cv) {
+        public ConfigurableBiome(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("constructProperties")) return new ConstructPropertiesVisitor(mv);
+            if (name.equals("constructProperties")) return new ConstructProperties(mv);
             return mv;
         }
 
@@ -216,11 +219,11 @@ public final class BiomeNameTransformer {
             }
         }
 
-        private static class ConstructPropertiesVisitor extends MethodVisitor {
+        private static final class ConstructProperties extends MethodVisitor {
 
             private boolean check = false;
 
-            public ConstructPropertiesVisitor(MethodVisitor mv) {
+            public ConstructProperties(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -237,7 +240,7 @@ public final class BiomeNameTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         @SideOnly(Side.CLIENT)
         public static String Biome$getBiomeName(String originalName, String translationKey) {
@@ -247,8 +250,8 @@ public final class BiomeNameTransformer {
             return originalName;
         }
 
-        public static RegistryBuilder<Biome> GameData$addAddCallback(RegistryBuilder<Biome> builder) {
-            return builder.add((IForgeRegistry.AddCallback<Biome>) (owner, stage, id, obj, oldObj) -> {
+        public static RegistryBuilder<net.minecraft.world.biome.Biome> GameData$addAddCallback(RegistryBuilder<net.minecraft.world.biome.Biome> builder) {
+            return builder.add((IForgeRegistry.AddCallback<net.minecraft.world.biome.Biome>) (owner, stage, id, obj, oldObj) -> {
                 Translatable extension = Translatable.cast(obj);
                 if (extension.getTranslationKey().isEmpty()) {
                     ResourceLocation location = Objects.requireNonNull(obj.getRegistryName());
@@ -258,10 +261,12 @@ public final class BiomeNameTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static String GuiIngame$getBiomeInfo(Biome biome) {
+        public static String GuiIngame$getBiomeInfo(net.minecraft.world.biome.Biome biome) {
             return biome.getRegistryName() + " (" + biome.getBiomeName() + ")";
         }
+
+        private Hooks() {}
     }
 
-    private BiomeNameTransformer() {}
+    private BiomeNameTranslation() {}
 }

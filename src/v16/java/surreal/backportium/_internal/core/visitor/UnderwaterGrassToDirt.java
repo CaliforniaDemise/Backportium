@@ -4,6 +4,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -12,34 +13,37 @@ import surreal.backportium._internal.world.LoggedAccess;
 
 import java.util.function.Function;
 
-public final class UnderwaterGrassTransformer {
+import static _mod.Constants.V_UNDERWATER_GRASS_TO_DIRT;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/UnderwaterGrassTransformer$Hooks";
+public final class UnderwaterGrassToDirt {
 
+    private static final String HOOKS = V_UNDERWATER_GRASS_TO_DIRT + "$Hooks";
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
             case "net.minecraft.block.BlockGrass":
-            case "net.minecraft.block.BlockMycelium": return GrassLikeVisitor::new;
+            case "net.minecraft.block.BlockMycelium": return GrassLike::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class GrassLikeVisitor extends LeClassVisitor {
+    private static final class GrassLike extends LeClassVisitor {
 
-        public GrassLikeVisitor(ClassVisitor cv) {
+        public GrassLike(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateTick", "func_180650_b"))) return new UpdateTickVisitor(mv);
+            if (name.equals(getName("updateTick", "func_180650_b"))) return new UpdateTick(mv);
             return mv;
         }
 
-        private static class UpdateTickVisitor extends MethodVisitor {
+        private static final class UpdateTick extends MethodVisitor {
 
-            public UpdateTickVisitor(MethodVisitor mv) {
+            public UpdateTick(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -59,7 +63,7 @@ public final class UnderwaterGrassTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static boolean GrassLike$handleUnderwater(World world, BlockPos pos) {
             if (world.isRemote || !world.isAreaLoaded(pos, 3)) {
@@ -72,7 +76,9 @@ public final class UnderwaterGrassTransformer {
             }
             return false;
         }
+
+        private Hooks() {}
     }
 
-    private UnderwaterGrassTransformer() {}
+    private UnderwaterGrassToDirt() {}
 }

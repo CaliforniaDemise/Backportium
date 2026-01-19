@@ -10,51 +10,54 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import surreal.backportium.Tags;
 import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
-import surreal.backportium.api.world.biome.CustomWaterColor;
 import surreal.backportium.util.NewMathHelper;
 import surreal.backportium.util.WaterUtil;
 
 import java.util.Objects;
 import java.util.function.Function;
 
-public final class WaterColorTransformer {
+import static _mod.Constants.A_BETTER_WATER_COLOR;
+import static _mod.Constants.V_BETTER_WATER_COLOR;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/WaterColorTransformer$Hooks";
-    private static final String CUSTOM_WATER_COLOR = "surreal/backportium/api/world/biome/CustomWaterColor";
+public final class BetterWaterColor {
 
+    private static final String HOOKS = V_BETTER_WATER_COLOR + "$Hooks";
+    private static final String BETTER_WATER_COLOR = A_BETTER_WATER_COLOR;
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.world.biome.Biome": return BiomeVisitor::new;
-            case "net.minecraft.world.biome.BiomeColorHelper$3": return BiomeColorHelper$WaterColorVisitor::new;
-            case "net.minecraft.client.renderer.BlockFluidRenderer": return BlockFluidRendererVisitor::new;
-            case "net.minecraft.client.renderer.ItemRenderer": return ItemRendererVisitor::new;
-            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
-            case "net.minecraft.block.BlockLiquid": return BlockLiquidVisitor::new;
-            case "net.minecraftforge.registries.GameData": return GameDataVisitor::new;
+            case "net.minecraft.world.biome.Biome": return Biome::new;
+            case "net.minecraft.world.biome.BiomeColorHelper$3": return BiomeColorHelper$WaterColor::new;
+            case "net.minecraft.client.renderer.BlockFluidRenderer": return BlockFluidRenderer::new;
+            case "net.minecraft.client.renderer.ItemRenderer": return ItemRenderer::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRenderer::new;
+            case "net.minecraft.block.BlockLiquid": return BlockLiquid::new;
+            case "net.minecraftforge.registries.GameData": return GameData::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class BiomeVisitor extends LeClassVisitor {
+    private static final class Biome extends LeClassVisitor {
 
-        public BiomeVisitor(ClassVisitor cv) {
+        public Biome(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            super.visit(version, access, name, signature, superName, getInterfaces(interfaces, CUSTOM_WATER_COLOR));
+            super.visit(version, access, name, signature, superName, getInterfaces(interfaces, BETTER_WATER_COLOR));
             super.visitField(ACC_PRIVATE, "actualWaterColor", "I", null, 0);
             super.visitField(ACC_PRIVATE, "waterFogColor", "I", null, WaterUtil.DEFAULT_WATER_FOG_COLOR);
         }
@@ -62,7 +65,7 @@ public final class WaterColorTransformer {
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("<init>")) return new InitVisitor(mv);
+            if (name.equals("<init>")) return new Init(mv);
             return mv;
         }
 
@@ -105,9 +108,9 @@ public final class WaterColorTransformer {
             }
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -126,9 +129,9 @@ public final class WaterColorTransformer {
         }
     }
 
-    private static class BiomeColorHelper$WaterColorVisitor extends LeClassVisitor {
+    private static final class BiomeColorHelper$WaterColor extends LeClassVisitor {
 
-        public BiomeColorHelper$WaterColorVisitor(ClassVisitor cv) {
+        public BiomeColorHelper$WaterColor(ClassVisitor cv) {
             super(cv);
         }
 
@@ -154,23 +157,23 @@ public final class WaterColorTransformer {
         }
     }
 
-    private static class BlockFluidRendererVisitor extends LeClassVisitor {
+    private static final class BlockFluidRenderer extends LeClassVisitor {
 
-        public BlockFluidRendererVisitor(ClassVisitor cv) {
+        public BlockFluidRenderer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("initAtlasSprites", "func_178268_a"))) return new InitAtlasSpritesVisitor(mv);
-            if (name.equals(getName("renderFluid", "func_178270_a"))) return new RenderFluidVisitor(mv);
+            if (name.equals(getName("initAtlasSprites", "func_178268_a"))) return new InitAtlasSprites(mv);
+            if (name.equals(getName("renderFluid", "func_178270_a"))) return new RenderFluid(mv);
             return mv;
         }
 
-        private static class InitAtlasSpritesVisitor extends MethodVisitor {
+        private static final class InitAtlasSprites extends MethodVisitor {
 
-            public InitAtlasSpritesVisitor(MethodVisitor mv) {
+            public InitAtlasSprites(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -184,11 +187,11 @@ public final class WaterColorTransformer {
             }
         }
 
-        private static class RenderFluidVisitor extends MethodVisitor {
+        private static final class RenderFluid extends MethodVisitor {
 
             private int count = 0;
 
-            public RenderFluidVisitor(MethodVisitor mv) {
+            public RenderFluid(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -207,39 +210,9 @@ public final class WaterColorTransformer {
         }
     }
 
-    // HMM
-    private static class TileCrucibleRendererVisitor extends LeClassVisitor {
+    private static final class ItemRenderer extends LeClassVisitor {
 
-        public TileCrucibleRendererVisitor(ClassVisitor cv) {
-            super(cv);
-        }
-
-        @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-
-            return mv;
-        }
-
-        private static class RenderFluidVisitor extends MethodVisitor {
-
-            public RenderFluidVisitor(MethodVisitor mv) {
-                super(ASM5, mv);
-            }
-
-            @Override
-            public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-                if (opcode == INVOKEVIRTUAL && name.equals(getName("getTexture", "func_178122_a"))) {
-                    super.visitMethodInsn(INVOKESTATIC, HOOKS, "RenderFluid$getTexture", "(Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)");
-                }
-            }
-        }
-    }
-
-    private static class ItemRendererVisitor extends LeClassVisitor {
-
-        public ItemRendererVisitor(ClassVisitor cv) {
+        public ItemRenderer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -250,7 +223,7 @@ public final class WaterColorTransformer {
             return mv;
         }
 
-        private static class RenderWaterOverlayTexture extends MethodVisitor {
+        private static final class RenderWaterOverlayTexture extends MethodVisitor {
 
             public RenderWaterOverlayTexture(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -264,25 +237,25 @@ public final class WaterColorTransformer {
         }
     }
 
-    private static class EntityRendererVisitor extends LeClassVisitor {
+    private static final class EntityRenderer extends LeClassVisitor {
 
-        public EntityRendererVisitor(ClassVisitor cv) {
+        public EntityRenderer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateFogColor", "func_78466_h"))) return new UpdateFogColorVisitor(mv);
-            if (name.equals(getName("setupFog", "func_78468_a"))) return new SetupFogVisitor(mv);
+            if (name.equals(getName("updateFogColor", "func_78466_h"))) return new UpdateFogColor(mv);
+            if (name.equals(getName("setupFog", "func_78468_a"))) return new SetupFog(mv);
             return mv;
         }
 
-        private static class UpdateFogColorVisitor extends MethodVisitor {
+        private static final class UpdateFogColor extends MethodVisitor {
 
             private boolean check = false;
 
-            public UpdateFogColorVisitor(MethodVisitor mv) {
+            public UpdateFogColor(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -301,11 +274,11 @@ public final class WaterColorTransformer {
             }
         }
 
-        private static class SetupFogVisitor extends MethodVisitor {
+        private static final class SetupFog extends MethodVisitor {
 
             private int count = 0;
 
-            public SetupFogVisitor(MethodVisitor mv) {
+            public SetupFog(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -323,9 +296,9 @@ public final class WaterColorTransformer {
         }
     }
 
-    private static class BlockLiquidVisitor extends LeClassVisitor {
+    private static final class BlockLiquid extends LeClassVisitor {
 
-        public BlockLiquidVisitor(ClassVisitor cv) {
+        public BlockLiquid(ClassVisitor cv) {
             super(cv);
         }
 
@@ -344,24 +317,24 @@ public final class WaterColorTransformer {
     /**
      * Transform GameData to add a callback to set water color based on biome registry name
      */
-    private static class GameDataVisitor extends LeClassVisitor {
+    private static final class GameData extends LeClassVisitor {
 
-        public GameDataVisitor(ClassVisitor cv) {
+        public GameData(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("init")) return new InitVisitor(mv);
+            if (name.equals("init")) return new Init(mv);
             return mv;
         }
 
-        private static class InitVisitor extends MethodVisitor {
+        private static final class Init extends MethodVisitor {
 
             private int count = 0;
 
-            public InitVisitor(MethodVisitor mv) {
+            public Init(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -378,10 +351,40 @@ public final class WaterColorTransformer {
         }
     }
 
-    @SuppressWarnings("unused")
-    public static class Hooks {
+    /* THAUMCRAFT */
+    private static final class TileCrucibleRenderer extends LeClassVisitor {
 
-        public static int Biome$getActualWaterColor(Biome biome, int actualColor) {
+        public TileCrucibleRenderer(ClassVisitor cv) {
+            super(cv);
+        }
+
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
+
+            return mv;
+        }
+
+        private static final class RenderFluid extends MethodVisitor {
+
+            public RenderFluid(MethodVisitor mv) {
+                super(ASM5, mv);
+            }
+
+            @Override
+            public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
+                if (opcode == INVOKEVIRTUAL && name.equals(getName("getTexture", "func_178122_a"))) {
+                    super.visitMethodInsn(INVOKESTATIC, HOOKS, "RenderFluid$getTexture", "(Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)");
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static final class Hooks {
+
+        public static int Biome$getActualWaterColor(net.minecraft.world.biome.Biome biome, int actualColor) {
             final int default_color_112 = 16777215;
             if (actualColor >= 0) return actualColor;
             if (FMLLaunchHandler.side().isClient()) {
@@ -391,7 +394,7 @@ public final class WaterColorTransformer {
             return WaterUtil.DEFAULT_WATER_COLOR;
         }
 
-        public static int Biome$getWaterFogColor(Biome biome, int fogColor) {
+        public static int Biome$getWaterFogColor(net.minecraft.world.biome.Biome biome, int fogColor) {
             if (fogColor != -1) {
                 return fogColor;
             }
@@ -409,7 +412,7 @@ public final class WaterColorTransformer {
             float f6 = 1.0F; // EntityPlayer#getWaterVision() 1.16
             if (state.getMaterial() == Material.WATER) {
                 long i = System.nanoTime() / 1000000L;
-                int fogColor = CustomWaterColor.cast(world.getBiome(pos)).getWaterFogColor(world, pos);
+                int fogColor = surreal.backportium.api.world.biome.BetterWaterColor.cast(world.getBiome(pos)).getWaterFogColor(world, pos);
                 if (fogAdjustTime < 0) {
                     targetFogColor = fogColor;
                     prevFogColor = fogColor;
@@ -447,17 +450,17 @@ public final class WaterColorTransformer {
             float f6 = 1.0F; // EntityPlayer#getWaterVision() 1.16
             GlStateManager.setFog(GlStateManager.FogMode.EXP2);
             density -= 0.05F;
-            Biome biome = entity.world.getBiome(new BlockPos(entity));
-            float newDensity = CustomWaterColor.cast(biome).getWaterFogDensity((EntityLivingBase) entity, density);
+            net.minecraft.world.biome.Biome biome = entity.world.getBiome(new BlockPos(entity));
+            float newDensity = surreal.backportium.api.world.biome.BetterWaterColor.cast(biome).getWaterFogDensity((EntityLivingBase) entity, density);
             if (newDensity != density) density = newDensity;
             else if (BiomeDictionary.hasType(biome, BiomeDictionary.Type.SWAMP)) density += 0.005F;
             density -= f6 * f6 * 0.03F;
             return density;
         }
 
-        public static RegistryBuilder<Biome> GameData$addAddCallback(RegistryBuilder<Biome> builder) {
-            return builder.add((IForgeRegistry.AddCallback<Biome>) (owner, stage, id, obj, oldObj) -> {
-                CustomWaterColor customWater = CustomWaterColor.cast(obj);
+        public static RegistryBuilder<net.minecraft.world.biome.Biome> GameData$addAddCallback(RegistryBuilder<net.minecraft.world.biome.Biome> builder) {
+            return builder.add((IForgeRegistry.AddCallback<net.minecraft.world.biome.Biome>) (owner, stage, id, obj, oldObj) -> {
+                surreal.backportium.api.world.biome.BetterWaterColor customWater = surreal.backportium.api.world.biome.BetterWaterColor.cast(obj);
                 ResourceLocation location = Objects.requireNonNull(obj.getRegistryName());
                 String namespace = location.getNamespace();
                 String path = location.getPath();
@@ -537,7 +540,9 @@ public final class WaterColorTransformer {
                 }
             });
         }
+
+        private Hooks() {}
     }
 
-    private WaterColorTransformer() {}
+    private BetterWaterColor() {}
 }

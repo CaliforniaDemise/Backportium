@@ -29,6 +29,6 @@ public class EnchantmentImpaling extends EnchantmentDefault {
     }
 
     public static boolean canApplyTo(Entity target) {
-        return AllTags.ENTITY_TAG.contains(AllTags.ENTITY_IMPALING_WHITELIST, target);
+        return AllTags.ENTITY_TAG.contains(AllTags.ENTITY_IMPALING_SENSITIVE, target);
     }
 }

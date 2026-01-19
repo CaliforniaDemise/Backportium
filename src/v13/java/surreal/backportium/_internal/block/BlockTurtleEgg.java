@@ -203,7 +203,7 @@ public class BlockTurtleEgg extends BlockClustered implements ModelProvider {
     private boolean canHatch(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos.down());
         IBlockState loggedState = Loggable.cast(this).getLoggedState(world, pos, state);
-        return AllTags.BLOCK_TAG.contains(AllTags.BLOCK_TURTLE_EGG_HATCHABLE, state) && loggedState.getBlock().isAir(loggedState, world, pos);
+        return AllTags.BLOCK_TAG.contains(AllTags.BLOCK_CAN_HATCH_TURTLE_EGG, state) && loggedState.getBlock().isAir(loggedState, world, pos);
     }
 
     static {

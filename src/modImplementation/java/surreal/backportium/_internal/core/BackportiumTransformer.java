@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import surreal.backportium._internal.core.visitor.*;
-import surreal.backportium._internal.core.visitor.additional.BetterShoulderEntitiesTransformer;
+import surreal.backportium._internal.core.visitor.BetterShoulderEntities;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +25,13 @@ public final class BackportiumTransformer implements IClassTransformer {
         if (transformedName.startsWith("surreal.backportium.")) return bytes;
         Function<ClassVisitor, ClassVisitor> function = null;
         function = mix(function, getVisitors(name, transformedName, bytes));
-        function = mix(function, MoreStates.getClassVisitor(name, transformedName));
-        function = mix(function, ActionVisitor.getClassVisitor(name, transformedName));
-        function = mix(function, SplashTextEventVisitor.getClassVisitor(name, transformedName));
-        function = mix(function, DynamicModelLoadingVisitor.getClassVisitor(name, transformedName));
-        function = mix(function, EntityStateVisitor.getClassVisitor(name, transformedName));
-        function = mix(function, BiomeOverrideVisitor.getClassVisitor(name, transformedName));
-        function = mix(function, TagTransformer.getVisitor(name, transformedName, bytes));
+        function = mix(function, MoreBlockStates.getClassVisitor(name, transformedName));
+        function = mix(function, ActionAnimation.getClassVisitor(name, transformedName));
+        function = mix(function, CustomSplashTexts.getClassVisitor(name, transformedName));
+        function = mix(function, ModelOverride.getClassVisitor(name, transformedName));
+        function = mix(function, EntityStates.getClassVisitor(name, transformedName));
+        function = mix(function, MoreBiomeOverride.getClassVisitor(name, transformedName));
+        function = mix(function, Tags.getVisitor(name, transformedName, bytes));
         function = mix(function, getAdditionalVisitors(name, transformedName, bytes));
         return apply(function, bytes, 3);
     }
@@ -46,7 +46,7 @@ public final class BackportiumTransformer implements IClassTransformer {
 
     private static Function<ClassVisitor, ClassVisitor> getAdditionalVisitors(String name, String transformedName, byte[] bytes) {
         Function<ClassVisitor, ClassVisitor> function = null;
-        function = mix(function, BetterShoulderEntitiesTransformer.visit(name, transformedName, bytes));
+        function = mix(function, BetterShoulderEntities.visit(name, transformedName, bytes));
         return function;
     }
 

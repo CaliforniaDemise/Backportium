@@ -138,7 +138,7 @@ public class BlockSeaPickle extends BlockClustered implements IGrowable, ModelPr
         if (!isPlaceable(worldIn, pos)) pos = pos.down();
         if (!isPlaceable(worldIn, pos)) return;
         IBlockState stateDown = worldIn.getBlockState(pos.down());
-        if (AllTags.BLOCK_TAG.contains(AllTags.BLOCK_SEA_PICKLE_GROWABLE, stateDown)) {
+        if (AllTags.BLOCK_TAG.contains(AllTags.BLOCK_CAN_GROW_SEA_PICKLE, stateDown)) {
             int amount = rand.nextInt(5);
             if (amount > 0) {
                 handleEntities(worldIn, rand, pos);

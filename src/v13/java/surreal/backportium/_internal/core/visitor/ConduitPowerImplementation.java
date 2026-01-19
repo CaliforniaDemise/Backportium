@@ -1,7 +1,6 @@
 package surreal.backportium._internal.core.visitor;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -14,38 +13,40 @@ import surreal.backportium.init.ModPotions;
 import java.util.Objects;
 import java.util.function.Function;
 
-public final class PotionTransformer {
+import static _mod.Constants.V_CONDUIT_POWER_IMPLEMENTATION;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/PotionTransformer$Hooks";
+public final class ConduitPowerImplementation {
 
+    private static final String HOOKS = V_CONDUIT_POWER_IMPLEMENTATION + "$Hooks";
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBaseVisitor::new;
-            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayerVisitor::new;
-            case "net.minecraft.client.renderer.EntityRenderer": return EntityRendererVisitor::new;
-            case "net.minecraft.block.Block": return BlockVisitor::new;
+            case "net.minecraft.entity.EntityLivingBase": return EntityLivingBase::new;
+            case "net.minecraft.entity.player.EntityPlayer": return EntityPlayer::new;
+            case "net.minecraft.client.renderer.EntityRenderer": return EntityRenderer::new;
+            case "net.minecraft.block.Block": return Block::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class EntityLivingBaseVisitor extends LeClassVisitor {
+    private static final class EntityLivingBase extends LeClassVisitor {
 
-        public EntityLivingBaseVisitor(ClassVisitor cv) {
+        public EntityLivingBase(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onEntityUpdate", "func_70030_z"))) return new OnEntityUpdateVisitor(mv);
-            if (name.equals(getName("getArmSwingAnimationEnd", "func_82166_i"))) return new GetArmSwingAnimationEndVisitor(mv);
-            if (name.equals(getName("travel", "func_191986_a"))) return new TravelVisitor(mv);
+            if (name.equals(getName("onEntityUpdate", "func_70030_z"))) return new OnEntityUpdate(mv);
+            if (name.equals(getName("getArmSwingAnimationEnd", "func_82166_i"))) return new GetArmSwingAnimationEnd(mv);
             return mv;
         }
 
-        private static class OnEntityUpdateVisitor extends MethodVisitor {
+        private static final class OnEntityUpdate extends MethodVisitor {
 
-            public OnEntityUpdateVisitor(MethodVisitor mv) {
+            public OnEntityUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -59,11 +60,11 @@ public final class PotionTransformer {
             }
         }
 
-        private static class GetArmSwingAnimationEndVisitor extends MethodVisitor {
+        private static final class GetArmSwingAnimationEnd extends MethodVisitor {
 
             private int count = 0;
 
-            public GetArmSwingAnimationEndVisitor(MethodVisitor mv) {
+            public GetArmSwingAnimationEnd(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -84,27 +85,11 @@ public final class PotionTransformer {
                 }
             }
         }
-
-        private static class TravelVisitor extends MethodVisitor {
-
-            public TravelVisitor(MethodVisitor mv) {
-                super(ASM5, mv);
-            }
-
-            @Override
-            public void visitLdcInsn(Object cst) {
-                if (cst.equals(0.08D) || cst.equals(-0.08D)) {
-                    super.visitVarInsn(ALOAD, 0);
-                    super.visitMethodInsn(INVOKESTATIC, HOOKS, "SlowFalling$getSpeed", "(DLnet/minecraft/entity/EntityLivingBase;)D", false);
-                }
-                super.visitLdcInsn(cst);
-            }
-        }
     }
 
-    private static class EntityPlayerVisitor extends LeClassVisitor {
+    private static final class EntityPlayer extends LeClassVisitor {
 
-        public EntityPlayerVisitor(ClassVisitor cv) {
+        public EntityPlayer(ClassVisitor cv) {
             super(cv);
         }
 
@@ -115,7 +100,7 @@ public final class PotionTransformer {
             return mv;
         }
 
-        private static class GetDigSpeed extends MethodVisitor {
+        private static final class GetDigSpeed extends MethodVisitor {
 
             public GetDigSpeed(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -138,25 +123,25 @@ public final class PotionTransformer {
         }
     }
 
-    private static class EntityRendererVisitor extends LeClassVisitor {
+    private static final class EntityRenderer extends LeClassVisitor {
 
-        public EntityRendererVisitor(ClassVisitor cv) {
+        public EntityRenderer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("updateLightmap", "func_78472_g"))) return new UpdateLightmapVisitor(mv);
-            if (name.equals(getName("getNightVisionBrightness", "func_180438_a"))) return new GetNightVisionBrightnessVisitor(mv);
-            if (name.equals(getName("updateFogColor", "func_78466_h"))) return new UpdateFogColorVisitor(mv);
-            if (name.equals(getName("setupFog", "func_78468_a"))) return new SetupFogVisitor(mv);
+            if (name.equals(getName("updateLightmap", "func_78472_g"))) return new UpdateLightmap(mv);
+            if (name.equals(getName("getNightVisionBrightness", "func_180438_a"))) return new GetNightVisionBrightness(mv);
+            if (name.equals(getName("updateFogColor", "func_78466_h"))) return new UpdateFogColor(mv);
+            if (name.equals(getName("setupFog", "func_78468_a"))) return new SetupFog(mv);
             return mv;
         }
 
-        private static class UpdateLightmapVisitor extends MethodVisitor {
+        private static final class UpdateLightmap extends MethodVisitor {
 
-            public UpdateLightmapVisitor(MethodVisitor mv) {
+            public UpdateLightmap(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -169,9 +154,9 @@ public final class PotionTransformer {
             }
         }
 
-        private static class GetNightVisionBrightnessVisitor extends MethodVisitor {
+        private static final class GetNightVisionBrightness extends MethodVisitor {
 
-            public GetNightVisionBrightnessVisitor(MethodVisitor mv) {
+            public GetNightVisionBrightness(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -196,11 +181,11 @@ public final class PotionTransformer {
             }
         }
 
-        private static class UpdateFogColorVisitor extends MethodVisitor {
+        private static final class UpdateFogColor extends MethodVisitor {
 
             private int count = 0;
 
-            public UpdateFogColorVisitor(MethodVisitor mv) {
+            public UpdateFogColor(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -218,11 +203,11 @@ public final class PotionTransformer {
             }
         }
 
-        private static class SetupFogVisitor extends MethodVisitor {
+        private static final class SetupFog extends MethodVisitor {
 
             private int count = 0;
 
-            public SetupFogVisitor(MethodVisitor mv) {
+            public SetupFog(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -241,22 +226,22 @@ public final class PotionTransformer {
         }
     }
 
-    private static class BlockVisitor extends LeClassVisitor {
+    private static final class Block extends LeClassVisitor {
 
-        public BlockVisitor(ClassVisitor cv) {
+        public Block(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals("getFogColor")) return new GetFogColorVisitor(mv);
+            if (name.equals("getFogColor")) return new GetFogColor(mv);
             return mv;
         }
 
-        private static class GetFogColorVisitor extends MethodVisitor {
+        private static final class GetFogColor extends MethodVisitor {
 
-            public GetFogColorVisitor(MethodVisitor mv) {
+            public GetFogColor(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -272,14 +257,13 @@ public final class PotionTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
-        public static boolean ConduitPower$isActive(boolean original, EntityLivingBase entity) {
+        public static boolean ConduitPower$isActive(boolean original, net.minecraft.entity.EntityLivingBase entity) {
             return original || (entity.isPotionActive(ModPotions.CONDUIT_POWER) && ModPotions.CONDUIT_POWER.shouldApply(entity));
         }
 
-
-        public static PotionEffect ConduitPower$getAmplifier(@Nullable PotionEffect original, EntityLivingBase entity) {
+        public static PotionEffect ConduitPower$getAmplifier(@Nullable PotionEffect original, net.minecraft.entity.EntityLivingBase entity) {
             PotionEffect conduitPower = entity.getActivePotionEffect(ModPotions.CONDUIT_POWER);
             if (original == null) return conduitPower;
             else if (conduitPower == null) return original;
@@ -292,7 +276,7 @@ public final class PotionTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static PotionEffect ConduitPower$getPotionEffect(@Nullable PotionEffect effect, EntityLivingBase entity) {
+        public static PotionEffect ConduitPower$getPotionEffect(@Nullable PotionEffect effect, net.minecraft.entity.EntityLivingBase entity) {
             PotionEffect effect1 = entity.getActivePotionEffect(ModPotions.CONDUIT_POWER);
             if (effect == null) return effect1;
             else if (effect1 == null) return effect;
@@ -300,19 +284,21 @@ public final class PotionTransformer {
         }
 
         @SideOnly(Side.CLIENT)
-        public static int ConduitPower$getNightVisionTime(EntityLivingBase entity, int original) {
+        public static int ConduitPower$getNightVisionTime(net.minecraft.entity.EntityLivingBase entity, int original) {
             if (entity.isPotionActive(ModPotions.CONDUIT_POWER)) return 201;
             return original;
         }
 
-        public static double SlowFalling$getSpeed(double original, EntityLivingBase entity) {
+        public static double SlowFalling$getSpeed(double original, net.minecraft.entity.EntityLivingBase entity) {
             if (entity.motionY <= 0.0 && entity.isPotionActive(ModPotions.SLOW_FALLING)) {
                 entity.fallDistance = 0.0F;
                 return original / (8.0 + Objects.requireNonNull(entity.getActivePotionEffect(ModPotions.SLOW_FALLING)).getAmplifier());
             }
             return original;
         }
+
+        private Hooks() {}
     }
 
-    private PotionTransformer() {}
+    private ConduitPowerImplementation() {}
 }

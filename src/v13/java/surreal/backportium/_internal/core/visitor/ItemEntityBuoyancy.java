@@ -5,6 +5,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -12,26 +13,30 @@ import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 
 import java.util.function.Function;
 
-public final class ItemEntityBuoyancyTransformer {
+import static _mod.Constants.C_MOD_LIST;
+import static _mod.Constants.V_ITEM_ENTITY_BUOYANCY;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/ItemEntityBuoyancyTransformer$Hooks";
-    private static final String MOD_LIST = "surreal/backportium/integration/ModList";
+public final class ItemEntityBuoyancy {
 
+    private static final String HOOKS = V_ITEM_ENTITY_BUOYANCY + "$Hooks";
+    private static final String MOD_LIST = C_MOD_LIST;
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
-        if (transformedName.equals("net.minecraft.entity.item.EntityItem")) return EntityItemVisitor::new;
+        if (transformedName.equals("net.minecraft.entity.item.EntityItem")) return EntityItem::new;
         return null;
     }
 
-    private static class EntityItemVisitor extends LeClassVisitor {
+    private static final class EntityItem extends LeClassVisitor {
 
-        public EntityItemVisitor(ClassVisitor cv) {
+        public EntityItem(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdateVisitor(mv);
+            if (name.equals(getName("onUpdate", "func_70071_h_"))) return new OnUpdate(mv);
             return mv;
         }
 
@@ -63,9 +68,9 @@ public final class ItemEntityBuoyancyTransformer {
             }
         }
 
-        private static class OnUpdateVisitor extends MethodVisitor {
+        private static final class OnUpdate extends MethodVisitor {
 
-            public OnUpdateVisitor(MethodVisitor mv) {
+            public OnUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -84,7 +89,7 @@ public final class ItemEntityBuoyancyTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         private static boolean $isBuoyant(Entity entity) {
             return true;
@@ -109,7 +114,9 @@ public final class ItemEntityBuoyancyTransformer {
             }
             return entity.hasNoGravity();
         }
+
+        private Hooks() {}
     }
 
-    private ItemEntityBuoyancyTransformer() {}
+    private ItemEntityBuoyancy() {}
 }

@@ -10,14 +10,14 @@ import net.minecraftforge.common.BiomeDictionary;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium._internal.world.biome.BiomeTypeProvider;
 import surreal.backportium.api.world.biome.Overridable;
-import surreal.backportium.api.world.biome.CustomWaterColor;
+import surreal.backportium.api.world.biome.BetterWaterColor;
 import surreal.backportium.init.ModBiomes;
 import surreal.backportium.world.gen.NoiseGeneratorDoublePerlin;
 
 import java.util.Objects;
 import java.util.Random;
 
-public class BiomeOceanFrozen extends Biome implements Overridable, CustomWaterColor, BiomeTypeProvider {
+public class BiomeOceanFrozen extends Biome implements Overridable, BetterWaterColor, BiomeTypeProvider {
 
     private static final NoiseGeneratorSimplex FROZEN_NOISE = new NoiseGeneratorSimplex(new Random(3456L));
     private static NoiseGeneratorDoublePerlin ICEBERG_SURFACE_NOISE = null;

@@ -12,32 +12,34 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-public final class SplashTextEventVisitor extends LeClassVisitor {
+import static _mod.Constants.V_CUSTOM_SPLASH_TEXTS;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/SplashTextEventVisitor$Hooks";
+public final class CustomSplashTexts extends LeClassVisitor {
 
-    private SplashTextEventVisitor(ClassVisitor cv) {
+    private static final String HOOKS = V_CUSTOM_SPLASH_TEXTS + "$Hooks";
+
+    private CustomSplashTexts(ClassVisitor cv) {
         super(cv);
     }
 
     @Nullable
     public static Function<ClassVisitor, ClassVisitor> getClassVisitor(String name, String transformedName) {
-        if (transformedName.equals("net.minecraft.client.gui.GuiMainMenu")) return SplashTextEventVisitor::new;
+        if (transformedName.equals("net.minecraft.client.gui.GuiMainMenu")) return CustomSplashTexts::new;
         return null;
     }
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-        if (name.equals("<init>")) return new InitVisitor(mv);
+        if (name.equals("<init>")) return new Init(mv);
         return mv;
     }
 
-    public static class InitVisitor extends MethodVisitor {
+    public static final class Init extends MethodVisitor {
 
         private int count = 0;
 
-        public InitVisitor(MethodVisitor mv) {
+        public Init(MethodVisitor mv) {
             super(ASM5, mv);
         }
 
@@ -61,11 +63,14 @@ public final class SplashTextEventVisitor extends LeClassVisitor {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
+
         public static String $postEvent(GuiMainMenu gui, String splashText, List<String> splashTexts, Random random) {
             MainMenuEvent.SplashText event = new MainMenuEvent.SplashText(gui, splashText, splashTexts, random);
             MinecraftForge.EVENT_BUS.post(event);
             return event.getNewSplashText();
         }
+
+        private Hooks() {}
     }
 }

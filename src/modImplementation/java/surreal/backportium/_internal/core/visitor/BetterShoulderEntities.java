@@ -1,6 +1,6 @@
-package surreal.backportium._internal.core.visitor.additional;
+package surreal.backportium._internal.core.visitor;
 
-import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -9,33 +9,36 @@ import surreal.backportium._internal.bytecode.asm.LeClassVisitor;
 
 import java.util.function.Function;
 
-public final class BetterShoulderEntitiesTransformer {
+import static _mod.Constants.V_BETTER_SHOULDER_ENTITIES;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/additional/BetterShoulderEntitiesTransformer$Hooks";
+public final class BetterShoulderEntities {
 
+    private static final String HOOKS = V_BETTER_SHOULDER_ENTITIES + "$Hooks";
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         if (!ConfigValues.sneakToDropParrots) return null;
-        if (transformedName.equals("net.minecraft.entity.player.EntityPlayer")) return EntityPlayerVisitor::new;
+        if (transformedName.equals("net.minecraft.entity.player.EntityPlayer")) return EntityPlayer::new;
         return null;
     }
 
-    private static class EntityPlayerVisitor extends LeClassVisitor {
+    private static final class EntityPlayer extends LeClassVisitor {
 
-        public EntityPlayerVisitor(ClassVisitor cv) {
+        public EntityPlayer(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("onLivingUpdate", "func_70636_d"))) return new OnLivingUpdateVisitor(mv);
-            if (name.equals(getName("addShoulderEntity", "func_192027_g"))) return new AddShoulderEntityVisitor(mv);
+            if (name.equals(getName("onLivingUpdate", "func_70636_d"))) return new OnLivingUpdate(mv);
+            if (name.equals(getName("addShoulderEntity", "func_192027_g"))) return new AddShoulderEntity(mv);
             return mv;
         }
 
-        private static class OnLivingUpdateVisitor extends MethodVisitor {
+        private static final class OnLivingUpdate extends MethodVisitor {
 
-            public OnLivingUpdateVisitor(MethodVisitor mv) {
+            public OnLivingUpdate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -49,9 +52,9 @@ public final class BetterShoulderEntitiesTransformer {
             }
         }
 
-        private static class AddShoulderEntityVisitor extends MethodVisitor {
+        private static final class AddShoulderEntity extends MethodVisitor {
 
-            public AddShoulderEntityVisitor(MethodVisitor mv) {
+            public AddShoulderEntity(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -71,12 +74,14 @@ public final class BetterShoulderEntitiesTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
-        public static boolean EntityPlayer$shouldSpawnShoulderEntities(boolean _defaultValue, EntityPlayer player) {
+        public static boolean EntityPlayer$shouldSpawnShoulderEntities(boolean _defaultValue, net.minecraft.entity.player.EntityPlayer player) {
             return !player.world.isRemote && (player.isSneaking() || player.isInWater());
         }
+
+        private Hooks() {}
     }
 
-    private BetterShoulderEntitiesTransformer() {}
+    private BetterShoulderEntities() {}
 }

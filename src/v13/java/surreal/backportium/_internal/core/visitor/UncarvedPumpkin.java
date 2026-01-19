@@ -5,6 +5,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -13,27 +14,30 @@ import surreal.backportium.init.ModBlocks;
 
 import java.util.function.Function;
 
-public final class UncarvedPumpkinTransformer {
+import static _mod.Constants.V_UNCARVED_PUMPKIN;
 
-    private static final String HOOKS = "surreal/backportium/_internal/core/visitor/UncarvedPumpkinTransformer$Hooks";
+public final class UncarvedPumpkin {
 
+    private static final String HOOKS = V_UNCARVED_PUMPKIN + "$Hooks";
+
+    @Nullable
     public static Function<ClassVisitor, ClassVisitor> visit(String name, String transformedName, byte[] bytes) {
         switch (transformedName) {
-            case "net.minecraft.block.BlockFence": return cv -> new BlockFenceLikeVisitor(cv, "func_194142_e");
-            case "net.minecraft.block.BlockWall": return cv -> new BlockFenceLikeVisitor(cv, "func_194143_e");
-            case "net.minecraft.block.BlockPane": return cv -> new BlockFenceLikeVisitor(cv, "func_193394_e");
-            case "net.minecraft.block.BlockStem": return BlockStemVisitor::new;
-            case "net.minecraft.stats.StatList": return StatListVisitor::new;
-            case "net.minecraft.world.gen.feature.WorldGenPumpkin": return WorldGenPumpkinVisitor::new;
+            case "net.minecraft.block.BlockFence": return cv -> new BlockFenceLike(cv, "func_194142_e");
+            case "net.minecraft.block.BlockWall": return cv -> new BlockFenceLike(cv, "func_194143_e");
+            case "net.minecraft.block.BlockPane": return cv -> new BlockFenceLike(cv, "func_193394_e");
+            case "net.minecraft.block.BlockStem": return BlockStem::new;
+            case "net.minecraft.stats.StatList": return StatList::new;
+            case "net.minecraft.world.gen.feature.WorldGenPumpkin": return WorldGenPumpkin::new;
+            default: return null;
         }
-        return null;
     }
 
-    private static class BlockFenceLikeVisitor extends LeClassVisitor {
+    private static final class BlockFenceLike extends LeClassVisitor {
 
         private final String srgName;
 
-        public BlockFenceLikeVisitor(ClassVisitor cv, String srgName) {
+        public BlockFenceLike(ClassVisitor cv, String srgName) {
             super(cv);
             this.srgName = srgName;
         }
@@ -45,7 +49,7 @@ public final class UncarvedPumpkinTransformer {
             return mv;
         }
 
-        private static class IsExcepBlockForAttachWithPiston extends MethodVisitor {
+        private static final class IsExcepBlockForAttachWithPiston extends MethodVisitor {
 
             public IsExcepBlockForAttachWithPiston(MethodVisitor mv) {
                 super(ASM5, mv);
@@ -63,9 +67,9 @@ public final class UncarvedPumpkinTransformer {
         }
     }
 
-    private static class BlockStemVisitor extends LeClassVisitor {
+    private static final class BlockStem extends LeClassVisitor {
 
-        public BlockStemVisitor(ClassVisitor cv) {
+        public BlockStem(ClassVisitor cv) {
             super(cv);
         }
 
@@ -73,13 +77,13 @@ public final class UncarvedPumpkinTransformer {
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
             if (name.equals(getName("getActualState", "func_176221_a")) || name.equals(getName("updateTick", "func_180650_b")))
-                return new GetCropVisitor(mv);
+                return new GetCrop(mv);
             return mv;
         }
 
-        private static class GetCropVisitor extends MethodVisitor {
+        private static final class GetCrop extends MethodVisitor {
 
-            public GetCropVisitor(MethodVisitor mv) {
+            public GetCrop(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -91,40 +95,24 @@ public final class UncarvedPumpkinTransformer {
                 }
             }
         }
-
-        private static class GetSeedItemVisitor extends MethodVisitor {
-
-            public GetSeedItemVisitor(MethodVisitor mv) {
-                super(ASM5, mv);
-            }
-
-            @Override
-            public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-                if (opcode == GETSTATIC && name.equals(getName("PUMPKIN", "field_150423_aK"))) {
-                    super.visitMethodInsn(INVOKESTATIC, HOOKS, "$getPumpkin", "()Lnet/minecraft/block/Block;", false);
-                    return;
-                }
-                super.visitFieldInsn(opcode, owner, name, desc);
-            }
-        }
     }
 
-    private static class StatListVisitor extends LeClassVisitor {
+    private static final class StatList extends LeClassVisitor {
 
-        public StatListVisitor(ClassVisitor cv) {
+        public StatList(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv = super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("replaceAllSimilarBlocks", "func_75924_a"))) return new ReplaceAllSimilarBlocksVisitor(mv);
+            if (name.equals(getName("replaceAllSimilarBlocks", "func_75924_a"))) return new ReplaceAllSimilarBlocks(mv);
             return mv;
         }
 
-        private static class ReplaceAllSimilarBlocksVisitor extends MethodVisitor {
+        private static final class ReplaceAllSimilarBlocks extends MethodVisitor {
 
-            public ReplaceAllSimilarBlocksVisitor(MethodVisitor mv) {
+            public ReplaceAllSimilarBlocks(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -143,24 +131,24 @@ public final class UncarvedPumpkinTransformer {
         }
     }
 
-    private static class WorldGenPumpkinVisitor extends LeClassVisitor {
+    private static final class WorldGenPumpkin extends LeClassVisitor {
 
-        public WorldGenPumpkinVisitor(ClassVisitor cv) {
+        public WorldGenPumpkin(ClassVisitor cv) {
             super(cv);
         }
 
         @Override
         public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
             MethodVisitor mv =  super.visitMethod(access, name, desc, signature, exceptions);
-            if (name.equals(getName("generate", "func_180709_b"))) return new GenerateVisitor(mv);
+            if (name.equals(getName("generate", "func_180709_b"))) return new Generate(mv);
             return mv;
         }
 
-        private static class GenerateVisitor extends MethodVisitor {
+        private static final class Generate extends MethodVisitor {
 
             private boolean check = false;
 
-            public GenerateVisitor(MethodVisitor mv) {
+            public Generate(MethodVisitor mv) {
                 super(ASM5, mv);
             }
 
@@ -186,7 +174,7 @@ public final class UncarvedPumpkinTransformer {
     }
 
     @SuppressWarnings("unused")
-    public static class Hooks {
+    public static final class Hooks {
 
         public static Block $getPumpkin() {
             return ModBlocks.PUMPKIN;
@@ -199,7 +187,9 @@ public final class UncarvedPumpkinTransformer {
         public static boolean WorldGenPumpkin$setBlockState(World world, BlockPos pos, IBlockState state, int flags) {
             return world.setBlockState(pos, ModBlocks.PUMPKIN.getDefaultState(), flags);
         }
+
+        private Hooks() {}
     }
 
-    private UncarvedPumpkinTransformer() {}
+    private UncarvedPumpkin() {}
 }

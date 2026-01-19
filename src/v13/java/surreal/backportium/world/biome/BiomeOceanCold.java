@@ -8,11 +8,11 @@ import net.minecraft.world.biome.BiomeOcean;
 import net.minecraft.world.chunk.ChunkPrimer;
 import org.jetbrains.annotations.NotNull;
 import surreal.backportium.api.world.biome.Overridable;
-import surreal.backportium.api.world.biome.CustomWaterColor;
+import surreal.backportium.api.world.biome.BetterWaterColor;
 
 import java.util.Random;
 
-public class BiomeOceanCold extends BiomeOcean implements Overridable, CustomWaterColor {
+public class BiomeOceanCold extends BiomeOcean implements Overridable, BetterWaterColor {
 
     public BiomeOceanCold(BiomeProperties properties) {
         super(properties);
