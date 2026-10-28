@@ -1,0 +1,120 @@
+plugins {
+    id 'java'
+    id 'com.cleanroommc.cleanroomgradle'
+    id 'com.cleanroommc.conventions' version '1.4.0'
+}
+
+group = root_package
+
+base {
+    archivesName = mod_id
+}
+
+def accessTransformerNames = access_transformers.tokenize()
+def dependOnHei = depend_on_hei.toBoolean()
+def heiDependency = { dependOnHei ? it.requires('had-enough-items') : it.optional('had-enough-items') }
+
+conventions {
+    if (mod_authors) {
+        author = mod_authors
+    }
+    mods {
+        if (curseforge_project_id) {
+            curseforge {
+                projectId = curseforge_project_id
+                heiDependency(it)
+            }
+        }
+        if (modrinth_project_id) {
+            modrinth {
+                projectId = modrinth_project_id
+                heiDependency(it)
+            }
+        }
+    }
+}
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'CurseMaven'
+                url 'https://curse.cleanroommc.com'
+            }
+        }
+        filter {
+            includeGroup 'curse.maven'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'CleanroomMC'
+                url 'https://maven.cleanroommc.com'
+            }
+        }
+        filter {
+            includeGroup 'mezz'
+        }
+    }
+}
+
+dependencies {
+    implementation cleanroom.userdev(cleanroom_version) {
+        accessTransformers.from(accessTransformerNames.collect { "src/main/resources/META-INF/$it" })
+    }
+    if (dependOnHei) {
+        implementation 'mezz:jei:4.36.1:dev'
+    } else {
+        runtimeOnly 'mezz:jei:4.36.1:dev'
+    }
+}
+
+cleanroom {
+    runs {
+        client {
+            configure {
+                username = minecraft_username
+                jvmArgs extra_jvm_args.tokenize()
+            }
+        }
+        server {
+            configure {
+                jvmArgs extra_jvm_args.tokenize()
+            }
+        }
+    }
+}
+
+tokenEnvoy {
+    set 'MOD_VERSION', project.version
+    set 'MOD_AUTHORS', mod_authors.tokenize(',')*.trim().join('", "')
+    set file('tokens.properties')
+}
+
+jar {
+    manifest {
+        if (accessTransformerNames) {
+            attributes 'FMLAT': accessTransformerNames.join(' ')
+        }
+        if (coremod_plugin_class) {
+            attributes 'FMLCorePlugin': coremod_plugin_class
+            if (coremod_includes_mod.toBoolean()) {
+                attributes 'FMLCorePluginContainsFMLMod': true, 'ForceLoadAsMod': true
+            }
+        }
+    }
+}
+
+tasks.withType(Checkstyle).configureEach {
+    enabled = enable_checkstyle.toBoolean()
+}
+
+tasks.matching { it.name in ['clearSkiesCheck', 'formatJavaCheck'] }.configureEach {
+    enabled = enable_formatting.toBoolean()
+}
+
+// TODO: fundamental Foundation issue
+tasks.withType(JavaExec).configureEach {
+    systemProperty 'foundation.loadsall', 'true'
+}
